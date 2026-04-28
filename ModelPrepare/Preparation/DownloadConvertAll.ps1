@@ -9,7 +9,9 @@ $YoloPoseModel = "$YoloModel-pose"
 $YoloClsModel  = "$YoloModel-cls"
 
 & $DownloadConvertPadle -Url "https://huggingface.co/monkt/paddleocr-onnx/resolve/main/detection/v3/det.onnx" -OutputPath "paddleocr/detection/v3/det.onnx" -InjectHead false
+& $DownloadConvertPadle -Url "https://huggingface.co/monkt/paddleocr-onnx/resolve/main/detection/v3/det.onnx" -OutputPath "paddleocr/detection/v3/det.onnx" -InjectHead true
 & $DownloadConvertPadle -Url "https://huggingface.co/monkt/paddleocr-onnx/resolve/main/detection/v5/det.onnx" -OutputPath "paddleocr/detection/v5/det.onnx" -InjectHead false
+& $DownloadConvertPadle -Url "https://huggingface.co/monkt/paddleocr-onnx/resolve/main/detection/v5/det.onnx" -OutputPath "paddleocr/detection/v5/det.onnx" -InjectHead true
 
 & $DownloadConvertYolo -Models $YoloModel     -ImgSize 640 -Batches 1,4 -Half false -Dynamic false -ByteBgr false
 & $DownloadConvertYolo -Models $YoloModel     -ImgSize 640 -Batches 1,4 -Half false -Dynamic false -ByteBgr true

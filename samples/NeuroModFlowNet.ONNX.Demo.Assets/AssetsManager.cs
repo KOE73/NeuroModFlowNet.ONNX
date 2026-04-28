@@ -7,7 +7,9 @@ public static class AssetsManager
     private static readonly HttpClient client = new HttpClient();
 
     public const string RepositoryId = "NeuroModFlowNet/NeuroModFlowNet-ONNX-Demo-Models";
+    public const string PaddleOcrRepositoryId = "monkt/paddleocr-onnx";
     public const string BaseAssetsUrl = $"https://huggingface.co/{RepositoryId}/resolve/main/";
+    public const string BasePaddleOcrAssetsUrl = $"https://huggingface.co/{PaddleOcrRepositoryId}/resolve/main/";
 
     public static async Task<string> GetAssetPathAsync(
         string modelFileName,
@@ -37,7 +39,7 @@ public static class AssetsManager
             Directory.CreateDirectory(fileDir);
         }
 
-        string url = (baseUrl ?? BaseAssetsUrl) + modelFileName.Replace('\\', '/');
+        string url = GetAssetUrl(modelFileName, baseUrl);
 
         try
         {
@@ -63,6 +65,29 @@ public static class AssetsManager
         }
 
         return filePath;
+    }
+
+    public static string GetAssetUrl(string modelFileName, string? baseUrl = null)
+    {
+        string normalizedModelFileName = modelFileName.TrimStart('/', '\\').Replace('\\', '/');
+
+        if(baseUrl != null)
+            return baseUrl + normalizedModelFileName;
+
+        if(IsOriginalPaddleOcrModel(normalizedModelFileName))
+        {
+            const string paddleOcrPrefix = "paddleocr/";
+            string paddleOcrModelFileName = normalizedModelFileName[paddleOcrPrefix.Length..];
+            return BasePaddleOcrAssetsUrl + paddleOcrModelFileName;
+        }
+
+        return BaseAssetsUrl + normalizedModelFileName;
+    }
+
+    private static bool IsOriginalPaddleOcrModel(string modelFileName)
+    {
+        return modelFileName.StartsWith("paddleocr/", StringComparison.OrdinalIgnoreCase) &&
+               !Path.GetFileNameWithoutExtension(modelFileName).EndsWith("_bytebgr", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

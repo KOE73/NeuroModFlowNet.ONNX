@@ -10,6 +10,8 @@ public sealed class InjectCommand : Command<InjectSettings>
     protected override int Execute([NotNull] CommandContext context, [NotNull] InjectSettings settings, CancellationToken ct)
     {
         if(ct.IsCancellationRequested) return -1;
+        Exception? injectionException = null;
+
         try
         {
             // 1. Select the appropriate injector based on user input
@@ -48,10 +50,16 @@ public sealed class InjectCommand : Command<InjectSettings>
                     }
                     catch(Exception ex)
                     {
+                        injectionException = ex;
                         AnsiConsole.WriteException(ex);
                     }
                 }
             );
+
+            if(injectionException is not null)
+            {
+                return 1;
+            }
         }
         catch(Exception ex)
         {

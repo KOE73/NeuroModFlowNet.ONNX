@@ -151,13 +151,24 @@ Third, when a model accepts `U8 BGR` input, CPU-side preprocessing can be much s
 - `labs/NeuroModFlowNet.ONNX.Lab.Algorithms` — visual checks and demonstrations for input algorithms.
 - `labs/NeuroModFlowNet.ONNX.Bench` — benchmark project and measurements.
 - `tests/NeuroModFlowNet.ONNX.Tests` — unit and integration tests.
-- `tools/NeuroModFlowNet.ONNX.Tools` — tools for inspecting and modifying ONNX models.
+- `tools/NeuroModFlowNet.ONNX.Tools` — CLI and helper library for inspecting ONNX graph structure, injecting preprocessing heads, and registering `.onnx` file integration.
 
 ## Tools
 
-`NeuroModFlowNet.ONNX.Tools` is a standalone CLI and library for working with ONNX models at graph level. It is used to inspect model structure, inputs, outputs, and attributes, and also for deeper transformations such as adding preprocessing heads or preparing a model for a specific backend.
+`NeuroModFlowNet.ONNX.Tools` is a standalone CLI and helper library for working with ONNX models at graph level.
 
-In practice, this layer can be as important as runtime code: when preprocessing can be moved into the model, the external pipeline becomes simpler and faster.
+The current toolset supports:
+
+- convenient viewing of model structure, including inputs, outputs, values, tensors, attributes, and graph nodes;
+- configurable graph output, including first/last node limits, full graph output, filters, and full input/output names;
+- injection of preprocessing heads such as byte BGR input conversion to FP16 or FP32 RGB tensors with normalization;
+- registration in the operating system for `.onnx` file integration and command aliases.
+
+The preprocessing head workflow is useful when simple conversion can be moved into the model itself. In that case the runtime pipeline can accept data closer to the source format, do less CPU-side preprocessing, and keep the converter/extractor path simpler.
+
+This is one of the key optimization paths for the project: a model with the right input head can remove repetitive per-frame conversion code from the application and make ONNX Runtime receive data in a format that is cheaper for the external pipeline to produce.
+
+See `tools/NeuroModFlowNet.ONNX.Tools/README.md` for command examples.
 
 ## Further Reading
 

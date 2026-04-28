@@ -10,13 +10,13 @@
     <Version>$([System.DateTime]::Now.ToString("yy.MMdd.HHmm"))</Version>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('windos'))">
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('linux'))">
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
     <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('osx'))">
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <DefineConstants>$(DefineConstants);OSX</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">

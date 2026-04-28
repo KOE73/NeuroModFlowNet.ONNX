@@ -1,0 +1,49 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Publish" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Folder Name="/Common/">
+    <File Path="AGENTS.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="PROJECT_REVIEW.md" />
+    <File Path="README.md" />
+    <File Path="README_RU.md" />
+  </Folder>
+  <Folder Name="/labs/">
+    <Project Path="labs/NeuroModFlowNet.ONNX.Bench/NeuroModFlowNet.ONNX.Bench.csproj" />
+    <Project Path="labs/NeuroModFlowNet.ONNX.Lab.Algorithms/NeuroModFlowNet.ONNX.Lab.Algorithms.csproj" />
+    <Project Path="labs/NeuroModFlowNet.ONNX.Lab/NeuroModFlowNet.ONNX.Lab.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/NeuroModFlowNet.ONNX.Demo.Assets/NeuroModFlowNet.ONNX.Demo.Assets.csproj" Id="2b26f4ef-084f-4786-b973-a5132130eb48">
+      <BuildType Solution="Publish|*" Project="Release" />
+    </Project>
+    <Project Path="samples/NeuroModFlowNet.ONNX.Demo.Dashboard/NeuroModFlowNet.ONNX.Demo.Dashboard.csproj">
+      <BuildType Solution="Publish|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".NM-Flow-Rules.md" />
+    <File Path="README.md" />
+    <File Path="README_RU.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/NeuroModFlowNet.ONNX.Diagnostics/NeuroModFlowNet.ONNX.Diagnostics.csproj" />
+    <Project Path="src/NeuroModFlowNet.ONNX.Visualizer/NeuroModFlowNet.ONNX.Visualizer.csproj">
+      <BuildType Solution="Publish|*" Project="Release" />
+    </Project>
+    <Project Path="src/NeuroModFlowNet.ONNX/NeuroModFlowNet.ONNX.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NeuroModFlowNet.ONNX.Tests/NeuroModFlowNet.ONNX.Tests.csproj" Id="088445c2-813e-48a9-b2f5-2dc114bd6478">
+      <BuildType Solution="Publish|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/NeuroModFlowNet.ONNX.Tools/NeuroModFlowNet.ONNX.Tools.csproj" Id="13c4e774-df91-46f2-ab54-46defd6185fa">
+      <BuildType Solution="Publish|*" Project="Release" />
+    </Project>
+  </Folder>
+</Solution>

@@ -1,0 +1,427 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Onnx.OnnxReflection">
+    <Position X="9.75" Y="42.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Onnx.AttributeProto" BaseTypeListCollapsed="true">
+    <Position X="36.75" Y="29.25" Width="17.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Onnx.AttributeProto.Types">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
+        <NestedTypes>
+          <Enum Name="Onnx.AttributeProto.Types.AttributeType">
+            <TypeIdentifier>
+              <NewMemberFileName>OnnxReflection\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Enum>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>CACgg0GiFPAgEC6NoQEgBgwzD1kAALogJQSgvGLtsJY=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="T" />
+      <Property Name="G" />
+      <Property Name="SparseTensor" />
+      <Property Name="Tp" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Tensors" />
+      <Property Name="Graphs" />
+      <Property Name="SparseTensors" />
+      <Property Name="TypeProtos" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Onnx.ValueInfoProto" BaseTypeListCollapsed="true">
+    <Position X="57" Y="24.5" Width="6.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CEAgEgAiEGAgACYEoAEgAAwAAEEAAIggAQAAgCAIMBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Type" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.NodeProto" BaseTypeListCollapsed="true">
+    <Position X="33.5" Y="20.25" Width="7.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CcAmGpAiGEAiUCYEiAEoACwgMkEAAJgyALAJgSEIMFA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Attribute" />
+      <Property Name="DeviceConfigurations" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.IntIntListEntryProto" BaseTypeListCollapsed="true">
+    <Position X="31.75" Y="52" Width="4" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAgEgAiIUAAQCYEgMAAAAAAAEEAAKAgAAAgAAAAkBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.NodeDeviceConfigurationProto" BaseTypeListCollapsed="true">
+    <Position X="31.5" Y="40.25" Width="4" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="ShardingSpec" Type="Onnx.ShardingSpecProto">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.11" Y="0.082" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAgAgkqAFgQAKYEgAAAMAAQAEEQAJAgEABAQAAAgBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ShardingSpec" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.ShardingSpecProto" BaseTypeListCollapsed="true">
+    <Position X="31.75" Y="46.25" Width="4" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AACgAgAiEECAAiYEggCAQAAAAEEAAIQggAGAJBCAABE=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="IndexToDeviceGroupMap" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.ShardedDimProto" BaseTypeListCollapsed="true">
+    <Position X="3.75" Y="48.5" Width="4" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAgAgAiIMABASaEgQAAAKAAAEEAAIAgAAAAAAAIgBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="SimpleSharding" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.SimpleShardedDimProto" BaseTypeListCollapsed="true">
+    <Position X="3.75" Y="55.25" Width="3.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Onnx.SimpleShardedDimProto.DimOneofCase" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>OnnxReflection\Onnx.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAgggImQUQAAiYEgAAQAAQEIkEIQYAgAAAAAAAggBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.TrainingInfoProto" BaseTypeListCollapsed="true">
+    <Position X="51.5" Y="4.5" Width="5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AIAgAgAiAEAAAGYEgAAAgAEIAEEAAIAgAYAABESEEBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Initialization" />
+      <Property Name="Algorithm" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.ModelProto" BaseTypeListCollapsed="true">
+    <Position X="37.75" Y="4" Width="7.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="Functions" Type="Onnx.FunctionProto" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="37.75" Y="11.304" />
+        <Point X="25.687" Y="11.304" />
+        <Point X="25.687" Y="26.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AMIkGgAqGEFkQDYlggGmSAIAi0FCAYgiiGAhIDALoBw=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Graph" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="OpsetImport" />
+      <Property Name="TrainingInfo" />
+      <Property Name="Functions" />
+      <Property Name="Configuration" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Onnx.DeviceConfigurationProto" BaseTypeListCollapsed="true">
+    <Position X="15.5" Y="3.25" Width="4.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CEAgAgAiAEGEAiYEgAABAAwACEEAAIAgAAAApAAAsBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.TensorAnnotation" BaseTypeListCollapsed="true">
+    <Position X="85" Y="13" Width="4.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAgAgAiEEgAACYEgAAAQAAEAEEAAYAgAAAAABCAABA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.GraphProto" BaseTypeListCollapsed="true">
+    <Position X="33.5" Y="13.5" Width="44.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CEAgkoFiEEAgACYEwDEoAAwCMFlCAJgoADAEgCEINFA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Node" />
+      <Property Name="Initializer" />
+      <Property Name="SparseInitializer" />
+      <Property Name="Input" />
+      <Property Name="Output" />
+      <Property Name="ValueInfo" />
+      <Property Name="QuantizationAnnotation" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Orientation="Left" Position="0.1" />
+  </Class>
+  <Class Name="Onnx.TensorProto" BaseTypeListCollapsed="true">
+    <Position X="71.25" Y="21.75" Width="6" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Onnx.TensorProto.Types">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
+        <NestedTypes>
+          <Enum Name="Onnx.TensorProto.Types.DataType">
+            <TypeIdentifier>
+              <NewMemberFileName>OnnxReflection\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Enum>
+          <Enum Name="Onnx.TensorProto.Types.DataLocation">
+            <TypeIdentifier>
+              <NewMemberFileName>OnnxReflection\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Enum>
+          <Class Name="Onnx.TensorProto.Types.Segment">
+            <TypeIdentifier>
+              <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+            <Lollipop Position="0.2" />
+          </Class>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>CHKgEiBqEM5hAaYE0AEigY8MAEEAIIigNCEBgKHc9Vg=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Onnx.SparseTensorProto" BaseTypeListCollapsed="true">
+    <Position X="49.5" Y="20.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAiAigEQAAKYEgAAAAAAAAEEEAIAgAAAgAADAABI=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.TensorShapeProto" BaseTypeListCollapsed="true">
+    <Position X="10.5" Y="26.25" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Onnx.TensorShapeProto.Types">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
+        <NestedTypes>
+          <Class Name="Onnx.TensorShapeProto.Types.Dimension">
+            <NestedTypes>
+              <Enum Name="Onnx.TensorShapeProto.Types.Dimension.ValueOneofCase" Collapsed="true">
+                <TypeIdentifier>
+                  <NewMemberFileName>OnnxReflection\Onnx.cs</NewMemberFileName>
+                </TypeIdentifier>
+              </Enum>
+            </NestedTypes>
+            <TypeIdentifier>
+              <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+            <Lollipop Position="0.2" />
+          </Class>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAiAgAiAEQAASYkgAAAAAAAAEEAAIAgAAAAAAAAABA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Onnx.TypeProto" BaseTypeListCollapsed="true">
+    <Position X="58.25" Y="32.75" Width="5.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Onnx.TypeProto.ValueOneofCase">
+        <TypeIdentifier>
+          <NewMemberFileName>OnnxReflection\Onnx.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Class Name="Onnx.TypeProto.Types">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
+        <NestedTypes>
+          <Class Name="Onnx.TypeProto.Types.Tensor">
+            <TypeIdentifier>
+              <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+            <Lollipop Position="0.2" />
+          </Class>
+          <Class Name="Onnx.TypeProto.Types.Sequence">
+            <TypeIdentifier>
+              <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+            <Lollipop Position="0.2" />
+          </Class>
+          <Class Name="Onnx.TypeProto.Types.Map">
+            <TypeIdentifier>
+              <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+            <Lollipop Position="0.2" />
+          </Class>
+          <Class Name="Onnx.TypeProto.Types.Optional">
+            <TypeIdentifier>
+              <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+            <Lollipop Position="0.2" />
+          </Class>
+          <Class Name="Onnx.TypeProto.Types.SparseTensor">
+            <TypeIdentifier>
+              <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+            </TypeIdentifier>
+            <Lollipop Position="0.2" />
+          </Class>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>ONNX\Onnx.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQAgAgBiAEBCASYOgAAAAAAEQEEAJKAkIAIADAIAAFA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.OperatorSetIdProto" BaseTypeListCollapsed="true">
+    <Position X="20" Y="13" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>IIAkAgAiCEAAQCYUgAAAABACAkEAAIAiAAAAAEBAgBA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Onnx.FunctionProto" BaseTypeListCollapsed="true">
+    <Position X="19.5" Y="26.25" Width="8.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CcImGoAiGEAmQCYE0BEoAAwiMkEgAJgqGDAJgSEKMFA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="AttributeProto" />
+      <Property Name="Node" />
+      <Property Name="OpsetImport" />
+      <Property Name="ValueInfo" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Enum Name="Onnx.Version">
+    <Position X="4" Y="42.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAEAAAAAAAEAAAAQqAEAAAAAAAAAAkAEAAEwAAA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Onnx.OperatorStatus">
+    <Position X="6.75" Y="42.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAIAAAAAAAAAA=</HashCode>
+      <FileName>ONNX\Onnx.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

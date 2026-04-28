@@ -1,0 +1,20 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "NeuroModFlowNet.ONNX.Tools view default": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Models\\det-to-obb\\26n_imgtext2obb_512_b1_fp16_head.onnx"
+    },
+    "NeuroModFlowNet.ONNX.Tools help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    },
+    "NeuroModFlowNet.ONNX.Tools inject --help": {
+      "commandName": "Project",
+      "commandLineArgs": "inject --help"
+    }
+  }
+}

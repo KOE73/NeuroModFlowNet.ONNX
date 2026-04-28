@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "C#: Dashboard Demo Debug",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-dashboard",
+            "program": "${workspaceFolder}/samples/NeuroModFlowNet.ONNX.Demo.Dashboard/bin/Debug/net10.0/NeuroModFlowNet.ONNX.Demo.Dashboard.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/NeuroModFlowNet.ONNX.Demo.Dashboard",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "C#: NeuroModFlowNet.ONNX.Tools Debug",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/tools/NeuroModFlowNet.ONNX.Tools/bin/Debug/net10.0-windows/NeuroModFlowNet.ONNX.Tools.dll",
+            "args": [
+                "--help"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }      
+    ]
+}

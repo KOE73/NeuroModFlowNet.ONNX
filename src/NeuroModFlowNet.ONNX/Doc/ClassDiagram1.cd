@@ -1,0 +1,1021 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="NeuroModFlowNet.ONNX.CudaConfig">
+    <Position X="8.25" Y="18.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>ABAgAQCAAAAAAIgAQAAAEhEAAAQAAAAgAAAIAAAAAAA=</HashCode>
+      <FileName>Core\OnnxConfigs\CudaConfig.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.ExecutionProviderConfig">
+    <Position X="4.75" Y="16" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Core\OnnxConfigs\ExecutionProviderConfig.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.TrtConfig">
+    <Position X="4.75" Y="18.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ABQgQQAAEAlAAAAIAAAAkiUQAAABADAAIAAACAgQIQA=</HashCode>
+      <FileName>Core\OnnxConfigs\TrtConfig.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.OnnxRuntimeContext">
+    <Position X="4.75" Y="4" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ACMCAUECwiAAIRAEAMAICANAABAAQAAEFIiAAEQQABY=</HashCode>
+      <FileName>Core\OnnxRuntimeContext.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="InferenceBackend" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegResult_FP16_Mask32">
+    <Position X="120.5" Y="27.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQgAAAIAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\OutData\YoloSegResult_FP16_Mask32.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegResult_FP32_Mask32">
+    <Position X="116.5" Y="27.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQgAAAIAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\OutData\YoloSegResult_FP32_Mask32.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.ImageRunner&lt;TIn, TOut, TAdapter, TExtractor&gt;" BaseTypeListCollapsed="true">
+    <Position X="17" Y="12" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAABAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Runners\ImageRunner.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="0.1" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.OnnxRuntimeContextExtensions">
+    <Position X="4.75" Y="13.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAgAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\OnnxRuntimeContextExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRMaskExtractor" BaseTypeListCollapsed="true">
+    <Position X="137" Y="8.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\PaddleOCRMaskExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRRecExtractor" BaseTypeListCollapsed="true">
+    <Position X="133.25" Y="8.5" Width="2.5" />
+    <NestedTypes>
+      <Struct Name="NeuroModFlowNet.ONNX.PaddleOCRRecExtractor.OcrResult" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Extractors\PaddleOCR\PaddleOCRRecExtractor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAIECAAAAAQAAAAAAQAAAAAAAAGAAAAAACAQAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Rec\PaddleOCRRecExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.StrategyRunner&lt;TIn, TOut, TAdapter, TExtractor&gt;">
+    <Position X="17" Y="6.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAACAAAAAAAQAAEAAQAAAAAAAg=</HashCode>
+      <FileName>Runners\StrategyRunner.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="0.133" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Runner">
+    <Position X="17" Y="3.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Runners\Runner.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Context" />
+    </ShowAsAssociation>
+    <Lollipop Orientation="Right" Position="0.1" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsExtractorBase&lt;TOut&gt;">
+    <Position X="66.75" Y="8.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAEAAAAAAAAAAAAAAiAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Extractors\YoloBoxNmsExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloPoseExtractorBase&lt;TOut&gt;">
+    <Position X="104.25" Y="8.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAEAAAAQAAAAAACAAiAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\Extractors\YoloPoseExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloObbNmsFP32Extractor">
+    <Position X="93" Y="13.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAQAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\Extractors\YoloObbNmsFP32Extractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegFP16SingleExtractor">
+    <Position X="120.75" Y="16.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\Extractors\YoloSegFP16SingleExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegFP32ExtractorBase&lt;TOut&gt;">
+    <Position X="116.5" Y="13.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAIAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\Extractors\YoloSegFP32ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_8UC1_SafeListExtractor" Collapsed="true">
+    <Position X="150" Y="16.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_8UC1_SafeListExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegFP32SingleExtractor">
+    <Position X="116.5" Y="16.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\Extractors\YoloSegFP32SingleExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloObbNmsExtractorBase&lt;TOut&gt;">
+    <Position X="93" Y="8.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAEAAAAAAAAAAAAAAiAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\Extractors\YoloObbNmsExtractorBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloObbNmsFP32StdExtractor">
+    <Position X="98" Y="13.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\Extractors\YoloObbNmsFP32StdExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloClsFP32SingleExtractor">
+    <Position X="85.25" Y="13.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\Extractors\YoloClsFP32SingleExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloClsExtractorBase&lt;TOut&gt;">
+    <Position X="82.25" Y="8.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEEAAAAAAAAAAAAAiAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\Extractors\YoloClsExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloPoseFP32ExtractorBase&lt;TOut&gt;">
+    <Position X="104.25" Y="12" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\Extractors\YoloPoseFP32ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloPoseFP32UniversalExtractor">
+    <Position X="103.25" Y="14.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\Extractors\YoloPoseFP32UniversalExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsFP16ExtractorBase&lt;TOut&gt;">
+    <Position X="66.75" Y="11.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Extractors\YoloBoxNmsFP16ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsFP32ExtractorBase&lt;TOut&gt;">
+    <Position X="71.5" Y="11.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Extractors\YoloBoxNmsFP32ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.ResultExtractorBase&lt;TOut&gt;">
+    <Position X="62.5" Y="2" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgACAAAQAAAAAAAAAAAAAAAAAAAAAgCAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\ResultExtractorBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloClsFP16ExtractorBase&lt;TOut&gt;">
+    <Position X="82.25" Y="11.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\Extractors\YoloClsFP16ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloClsFP32ExtractorBase&lt;TOut&gt;">
+    <Position X="85.25" Y="11.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\Extractors\YoloClsFP32ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_8UC1_Extractor" Collapsed="true">
+    <Position X="145.75" Y="16.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_8UC1_Extractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloClsFP16SingleExtractor">
+    <Position X="82.25" Y="13.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\Extractors\YoloClsFP16SingleExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Images.ConverterMatSingleBgrDirectU8">
+    <Position X="47" Y="7.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AQAAAEgABAAAQAAAAAgAAEAAAAAAAAAAAAACAAAAEAA=</HashCode>
+      <FileName>Inputs\Bgr\ConverterMatSingleBgrDirectU8.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="2.056" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Images.ConverterMatSingleNchwPosCvdnnFP32">
+    <Position X="37.25" Y="11.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAQAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\NchwPos\ConverterMatSingleNchwPosCvdnnFP32.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.ConverterBase&lt;TIn&gt;">
+    <Position X="35.75" Y="3.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEgACAAAQAAAAAAAAAAAAAAAAAAAAAgCAAAAAAA=</HashCode>
+      <FileName>Inputs\Base\ConverterBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.ConverterNchwBase&lt;TIn&gt;">
+    <Position X="35.75" Y="7.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAABAAAAAAAEAAACEAAAAAAAAAAAAACAAAAEAA=</HashCode>
+      <FileName>Inputs\Base\ConverterNchwBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.469" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Images.ConverterMatListNchwPosCvdnnFP16">
+    <Position X="41.5" Y="14.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAQAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\NchwPos\ConverterMatListNchwPosCvdnnFP16.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Images.ConverterMatListNchwPosCvdnnFP32">
+    <Position X="37.25" Y="14.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAQAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\NchwPos\ConverterMatListNchwPosCvdnnFP32.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Images.ConverterMatSingleNchwPosCvdnnFP16">
+    <Position X="41.5" Y="11.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAQAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\NchwPos\ConverterMatSingleNchwPosCvdnnFP16.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Nchw.ConverterMatListNchw&lt;TBuf, TAlgo&gt;">
+    <Position X="41.5" Y="17.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Nchw\ConverterMatListNchw.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Nchw.ConverterMatSingleNchw&lt;TBuf, TAlgo&gt;">
+    <Position X="37.25" Y="17.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Nchw\ConverterMatSingleNchw.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRRecListConverter" BaseTypeListCollapsed="true">
+    <Position X="45" Y="27.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAEAADAAAQAAAAAAAAEAAAAAAAAAAAAgAAAAAEAA=</HashCode>
+      <FileName>Inputs\PaddleOCR\PaddleOCRRecListConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRRecSingleConverter" BaseTypeListCollapsed="true">
+    <Position X="42.25" Y="31.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAEAADAAAQAAAAAAAAEAAAAAAAAAAAAgAAAAAEAA=</HashCode>
+      <FileName>Inputs\PaddleOCR\PaddleOCRRecSingleConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleUVDocConverter" BaseTypeListCollapsed="true">
+    <Position X="45" Y="31.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AQAAAEAADAAAQAAAAAAAAEAAAAAAAAAAAAgAAAAAEAA=</HashCode>
+      <FileName>Inputs\PaddleOCR\PaddleUVDocConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.162" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegFP16ExtractorBase&lt;TOut&gt;">
+    <Position X="120.75" Y="13.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\Extractors\YoloSegFP16ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloPoseFP32Keypoint17Extractor">
+    <Position X="107.25" Y="14.5" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\Extractors\YoloPoseFP32Keypoint17Extractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegExtractorBase&lt;TOut&gt;">
+    <Position X="116.5" Y="8.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAIAsAAACAAACACAAAEAIAAAAEAAAAAAAiAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\Extractors\YoloSegExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.BatchedResult&lt;T&gt;">
+    <Position X="65" Y="28.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\BatchedResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxFactory">
+    <Position X="66.75" Y="4.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>QAAAQAAAEyAAAAAAAAAAAQAAAABAAAAAAAAACAAAIEA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Factories\YoloBoxFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsFP32StdExtractor" Collapsed="true">
+    <Position X="73.25" Y="13.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Extractors\YoloBoxNmsFP32StdExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsFP32Extractor" Collapsed="true">
+    <Position X="73.25" Y="14" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Extractors\YoloBoxNmsFP32Extractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsFP16StdExtractor" Collapsed="true">
+    <Position X="68.5" Y="13.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Extractors\YoloBoxNmsFP16StdExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsFP16Extractor" Collapsed="true">
+    <Position X="68.5" Y="14" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\Extractors\YoloBoxNmsFP16Extractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloObbNmsFP32ExtractorBase&lt;TOut&gt;" Collapsed="true">
+    <Position X="93" Y="11.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\Extractors\YoloObbNmsFP32ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetExtractorBase&lt;TOut&gt;">
+    <Position X="150.75" Y="8.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AACgAAAAAAAEAAQAAAAAEAAAAAAAAEAAAQACEAAYAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\PaddleOCRDetExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_8UC3_RGBExtractor" Collapsed="true">
+    <Position X="145.75" Y="17.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_8UC3_RGBExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_ExtractorBase&lt;TOut&gt;">
+    <Position X="152.75" Y="12.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAgAAAAAAAQAAAAABAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_8UC3_RGB_SafeListExtractor" Collapsed="true">
+    <Position X="150" Y="17.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_8UC3_RGB_SafeListExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_ExtractorBase&lt;TOut&gt;">
+    <Position X="148.25" Y="12.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAQAAAAABAAAAAAAAAAAAAgQAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_ExtractorBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.BatchedResultBase&lt;T&gt;">
+    <Position X="62.75" Y="23.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAgAACBBAAAAEIBAAAEAAAAAAAAIAAIEAIAAAABAA=</HashCode>
+      <FileName>Outputs\Base\BatchedResultBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.BatchedResultPooled&lt;T&gt;">
+    <Position X="62.75" Y="28.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACACAEAAAIAAAAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\BatchedResultPooled.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.248" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PoseExtractor&lt;TResultFactory&gt;">
+    <Position X="162.5" Y="28" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\IBatchedResultFactoryPolicy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_16FC1_SafeExtractor" Collapsed="true">
+    <Position X="154.75" Y="15.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_16FC1_SafeExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_16FC1_SafeListExtractor" Collapsed="true">
+    <Position X="158.75" Y="15.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_16FC1_SafeListExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_16FC1_UnsafeExtractor" Collapsed="true">
+    <Position X="154.75" Y="15" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_16FC1_UnsafeExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_8UC1_Extractor" Collapsed="true">
+    <Position X="154.75" Y="16.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_8UC1_Extractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_8UC1_SafeListExtractor" Collapsed="true">
+    <Position X="158.75" Y="16.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_8UC1_SafeListExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_8UC3_RGB_SafeListExtractor" Collapsed="true">
+    <Position X="158.75" Y="17.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_8UC3_RGB_SafeListExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP16_8UC3_RGBExtractor" Collapsed="true">
+    <Position X="154.75" Y="17.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP16\PaddleOCRDetFP16_8UC3_RGBExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_32FC1_SafeExtractor" Collapsed="true">
+    <Position X="145.75" Y="15.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_32FC1_SafeExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_32FC1_SafeListExtractor" Collapsed="true">
+    <Position X="150" Y="15.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_32FC1_SafeListExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFP32_32FC1_UnsafeExtractor" Collapsed="true">
+    <Position X="145.75" Y="15" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Extractors\FP32\PaddleOCRDetFP32_32FC1_UnsafeExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetFactory">
+    <Position X="155" Y="27.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AIAAAIAQAAABCCAAAABAEgACUEBAAAAAAIIACAAAJCA=</HashCode>
+      <FileName>Outputs\PaddleOCR\Det\Factories\PaddleOCRDetFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleUVDocExtractor">
+    <Position X="143.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAEQAAAAAAABAAAAAAAAAAgAAACAAAAABA=</HashCode>
+      <FileName>Outputs\PaddleOCR\UVDoc\PaddleUVDocExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.PaddleOCRFactory">
+    <Position X="153" Y="27.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAgAAAAAAAAAEAAAAAAAAIAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\PaddleOCRFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxResultsFP16" BaseTypeListCollapsed="true">
+    <Position X="165" Y="28" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAEABAAAEAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\OutData\YoloBoxResultsFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloBoxResultsFP32" BaseTypeListCollapsed="true">
+    <Position X="74" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAEABAAAEAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\OutData\YoloBoxResultsFP32.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloClsCore">
+    <Position X="82.25" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAIAAAAAAAAAAAAAAAAAAAABAACAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\Extractors\YoloClsCore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloClsFactory">
+    <Position X="82.25" Y="4.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QAAAQAAAEyAAAAAAAAAAAQAAAABAAAAAAAAgAAAAIEA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\Factories\YoloClsFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloObbFactory">
+    <Position X="95.25" Y="20.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAAQAAAACAAAAAAAAAAAAAAAABAAAAAAAEACAAAIEA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\Factories\YoloObbFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloObbResultsFP32" BaseTypeListCollapsed="true">
+    <Position X="92.75" Y="20.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAEABAAAEAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\OutData\YoloObbResultsFP32.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloPoseFactory">
+    <Position X="104.25" Y="4.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAQAAAEyAAAABAAAAAAQAAAABAAAAAAAAgAAAAIEA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\Factories\YoloPoseFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloSegFactory">
+    <Position X="116.5" Y="4.75" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAiAAAAAAAAAAAQAAAABAAAAAAAAgAAAAIAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\Factories\YoloSegFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.OnnxRuntimePathHelper">
+    <Position X="11" Y="11" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAECAAACAgAAAAAAAAAAAAAACAAABAAAAAAAA=</HashCode>
+      <FileName>Core\OnnxConfigs\OnnxRuntimePathHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.TrtConfigDefaults">
+    <Position X="11" Y="13.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAABAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\OnnxConfigs\TrtConfigDefaults.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.ML.OnnxRuntime.RunOptions" Collapsed="true">
+    <Position X="10" Y="8" Width="4.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Microsoft.ML.OnnxRuntime.InferenceSession" Collapsed="true">
+    <Position X="10" Y="7" Width="4.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloCls">
+    <Position X="82.25" Y="16.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAgEAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\OutData\YoloCls.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Algorithms.SymmetricAlgorithmHelpers">
+    <Position X="37.25" Y="38.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAACAAAAADAAAAAAQAAAAAAgAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Sym\Helpers\SymmetricAlgorithmHelpers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Converters.Algorithms.PositiveAlgorithmHelpers">
+    <Position X="41.5" Y="38.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAQEAAAAAgAAAAAAgAAAAAAACA=</HashCode>
+      <FileName>Inputs\Algorithms\Pos\Helpers\PositiveAlgorithmHelpers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloObb_FP32_XYWHSCA">
+    <Position X="93" Y="16" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgEAAIAAAAEAAAAAAAAAEAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\InnerData\YoloObb_FP32_XYWHSCA.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloBox_FP32_XYWHSC">
+    <Position X="74" Y="16.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgEAAIAAAAEAAAAAAAAAAAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\InnerData\YoloBox_FP32_XYWHSC.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloPose_FP32_Keypoint_XYV">
+    <Position X="110" Y="17.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAEAAAAAAAAAAAAAAAQYAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\InnerData\YoloPose_FP32_Size57_Keypoint17.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloPose_FP32_Size57_Keypoint17">
+    <Position X="110" Y="22" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAgAAAAIAgEAAAAAAAEAAAAAAAAAAAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\InnerData\YoloPose_FP32_Size57_Keypoint17.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloPose_FP32_InlineKeypoints17">
+    <Position X="110" Y="20.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\InnerData\YoloPose_FP32_Size57_Keypoint17.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_keypoint0" />
+    </ShowAsAssociation>
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloSeg_FP32">
+    <Position X="116.5" Y="30.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAgEAAgAAAAIAAAAAAAAAAAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\OutData\YoloSeg_FP32.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.InlineArray_FP32_Mask32">
+    <Position X="116.5" Y="25.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\InnerData\YoloSeg_FP32_XYWHSC_Mask32.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloSeg_FP32_XYWHSC_Mask32">
+    <Position X="116.5" Y="20.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAgEAAgAAAAIAAAAAAAAAAAgAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\InnerData\YoloSeg_FP32_XYWHSC_Mask32.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="MaskCoefficients" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloBox_FP16_XYWHSC">
+    <Position X="68.5" Y="16.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgEAAIAAAAEAAAAAAAAAAAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\InnerData\YoloBox_FP16_XYWHSC.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.PosCvdnnFP16" BaseTypeListCollapsed="true">
+    <Position X="37.25" Y="22.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Pos\PosCvdnnFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.PosCvdnnFP32" BaseTypeListCollapsed="true">
+    <Position X="32.75" Y="22.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Pos\PosCvdnnFP32.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.PosDivHalfTensorReorderPtrFP16" BaseTypeListCollapsed="true">
+    <Position X="37.25" Y="26.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Pos\PosDivHalfTensorReorderPtrFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.PosReorderDivHalfPtrFP16" BaseTypeListCollapsed="true">
+    <Position X="37.25" Y="24.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Pos\PosReorderDivHalfPtrFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.PosReorderDivPtrHalfTensorFP16" BaseTypeListCollapsed="true">
+    <Position X="37.25" Y="29.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Pos\PosReorderDivPtrHalfTensorFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.227" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.PosReorderPtrDivHalfTensorFP16" BaseTypeListCollapsed="true">
+    <Position X="37.25" Y="28.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Pos\PosReorderPtrDivHalfTensorFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.SymCvdnnFP16" BaseTypeListCollapsed="true">
+    <Position X="44.5" Y="22.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAIAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Sym\SymCvdnnFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.SymCvdnnFP32" BaseTypeListCollapsed="true">
+    <Position X="42" Y="22.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAIAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Sym\SymCvdnnFP32.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.SymReorderNormPtrFP32" BaseTypeListCollapsed="true">
+    <Position X="42" Y="24.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAIAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Sym\SymReorderNormPtrFP32.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.Converters.Algorithms.SymReorderNormPtrHalfTensorFP16" BaseTypeListCollapsed="true">
+    <Position X="44.5" Y="24.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAIAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\Sym\SymReorderNormPtrHalfTensorFP16.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloBox">
+    <Position X="71.25" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAIAAAAEAAAAAAAAAAAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Box\OutData\YoloBox.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloObb">
+    <Position X="98" Y="16" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAIAAAAEAAAAAAAAAEAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Obb\OutData\YoloObb.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloSeg_FP16_XYWHSC_Mask32">
+    <Position X="120.5" Y="20.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAgEAAgAAAAIAAAAAAAAAAAgAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\InnerData\YoloSeg_FP16_XYWHSC_Mask32.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="MaskCoefficients" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.InlineArray_FP16_Mask_Count32">
+    <Position X="120.5" Y="25.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\InnerData\YoloSeg_FP16_XYWHSC_Mask32.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.BatchedResultFactory" BaseTypeListCollapsed="true">
+    <Position X="159.75" Y="31.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\BatchedResult.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.BatchedResultPooledFactory" BaseTypeListCollapsed="true">
+    <Position X="161" Y="31.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\BatchedResultPooled.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloClsTopKItem_FP32">
+    <Position X="82.25" Y="22.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\OutData\YoloCls.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloPose" BaseTypeListCollapsed="true">
+    <Position X="103.25" Y="20.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAgAAAAAAgAAAAAAAAEAAAAAAAAAAAAAEAIYAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\OutData\YoloPose.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloPose_FP32_RowsView">
+    <Position X="105.25" Y="20.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAACAAAAAQAAAAAAQAACAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\OutData\YoloPose_FP32_RowsView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloPose_FP32_RowView">
+    <Position X="103.25" Y="23.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEgAAAAIAgEAAAAAAAAAAAAAQAACAAgAEAKYAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\OutData\YoloPose_FP32_RowView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="NeuroModFlowNet.ONNX.YoloPoseKeypointXYV">
+    <Position X="105.75" Y="23.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQYAA=</HashCode>
+      <FileName>Outputs\Yolo\Pose\OutData\YoloPoseKeypointXYV.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="NeuroModFlowNet.ONNX.IOnnxModelOutputs">
+    <Position X="4.75" Y="2" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\OnnxRuntimeContext.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IInputConverter&lt;TIn&gt;">
+    <Position X="26.5" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAACAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Contracts\IInputConverter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IResultExtractor&lt;TOut&gt;">
+    <Position X="67.25" Y="2" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Contracts\IResultExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IRunner&lt;TIn, TOut&gt;">
+    <Position X="17.25" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAEAAQAAAAAAAg=</HashCode>
+      <FileName>Runners\Contracts\IRunner.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IConverterInfo">
+    <Position X="20" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Contracts\IConverterInfo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IImageInfo">
+    <Position X="23.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAABAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Inputs\Contracts\IImageInfo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.Converters.Algorithms.IMatFillAlgorithm&lt;TBuf&gt;">
+    <Position X="37.25" Y="19.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\IMatFillAlgorithm.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.Converters.Algorithms.IMatListFillAlgorithm&lt;TBuf&gt;">
+    <Position X="41.5" Y="19.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Algorithms\IMatListFillAlgorithm.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IYoloSeg_XYWHSC_Mask">
+    <Position X="116.5" Y="19" Width="7.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Seg\OutData\IYoloSeg_XYWHSC_Mask.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IOutAsT&lt;T&gt;">
+    <Position X="63" Y="15.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Contracts\IOutAsT.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IBatchedResult">
+    <Position X="63" Y="17.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\IBatchedResult.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IDetectionResult&lt;T&gt;">
+    <Position X="63" Y="19.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEABAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Contracts\IDetectionResult.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IBatchedResultFactoryPolicy&lt;TSelf&gt;">
+    <Position X="158.25" Y="27.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Base\IBatchedResultFactoryPolicy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IExtractorThreshold">
+    <Position X="161.5" Y="33.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Outputs\Contracts\IExtractorThreshold.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IYoloCls">
+    <Position X="84.25" Y="20.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Yolo\Cls\OutData\IYoloCls.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="NeuroModFlowNet.ONNX.InferenceBackend">
+    <Position X="10" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAACAAAAAAAAABIAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Core\OnnxConfigs\InferenceBackend.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="NeuroModFlowNet.ONNX.InputDataToSpanBufConverter&lt;TInput, TModelElement&gt;">
+    <Position X="89.75" Y="32" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Inputs\Contracts\InputDataToSpanBufConverter.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

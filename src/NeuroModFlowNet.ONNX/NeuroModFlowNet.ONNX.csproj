@@ -1,0 +1,86 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    
+    <!--For TensorSpan-->
+    <NoWarn>$(NoWarn);SYSLIB5001</NoWarn>
+
+    <!-- Под какие RIDs публикуемся/собираем ;osx-arm64-->
+    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    
+    <UseGpu>true</UseGpu>
+    
+    <Configurations>Debug;Release;Publish</Configurations>
+    
+    <Authors>KOE73</Authors>
+    
+    <Company>KOE73</Company>
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
+    <PackageReference Include="System.Numerics.Tensors" Version="10.0.7" />
+
+    <!-- Самая обёртка OpenCV (без нативных DLL) -->
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260330" />
+    
+    <!-- Базовый CPU-вариант ONNX Runtime как запасной (работает везде) -->
+    <!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />-->
+
+  </ItemGroup>
+
+
+  <!-- Нативные рантаймы OpenCV: ставим по RID -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)'=='win-x64'">
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.11.0.20250507" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RuntimeIdentifier)'=='linux-x64'">
+    <!-- Для Ubuntu 22.04 есть официальный runtime; можно заменить на свой дистрибутив при нужде -->
+    <PackageReference Include="OpenCvSharp4.official.runtime.linux-x64" Version="4.11.0.20250507" />
+  </ItemGroup>
+
+  
+  <ItemGroup Condition="'$(UseGpu)'=='true'">
+    <!-- Универсальный GPU-пакет: работает и на Windows, и на Linux -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.24.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseGpu)'!='true'">
+    <!-- CPU fallback -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
+  </ItemGroup>
+  
+  
+
+
+  <!--<ItemGroup>
+    <ProjectReference Include="..\..\NeuroModFlowNet.Core\NeuroModFlowNet.Core.csproj" />
+  </ItemGroup>-->
+
+  <ItemGroup>
+    <Using Include="OpenCvSharp" />
+    <Using Include="OpenCvSharp.Dnn" />
+    <Using Include="System.Numerics.Tensors" />
+    <Using Include="System.Buffers" />
+    <Using Include="System.Diagnostics" />
+    <Using Include="System.Runtime.InteropServices" />
+    <Using Include="OpenCvSharp.Size" Alias="CvSize" />
+    <Using Include="OpenCvSharp.Rect" Alias="CvRect" />
+    <Using Include="OpenCvSharp.Point" Alias="CvPoint" />
+    <Using Include="OpenCvSharp.Scalar" Alias="CvScalar" />
+  </ItemGroup>
+
+</Project>

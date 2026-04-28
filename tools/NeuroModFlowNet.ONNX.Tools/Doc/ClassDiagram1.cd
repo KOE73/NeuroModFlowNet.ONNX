@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="NeuroModFlowNet.ONNX.Tools.OnnxModel_Injector_Preprocessing_Byte2FP16_BGR2RGB_Norm_0_1">
+    <Position X="1.75" Y="6" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAIQCAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>ONNX\OnnxModel_Injector_Preprocessing_Byte2FP16_BGR2RGB_Norm_0_1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.OnnxModel_Injector_Preprocessing_Sequence_Byte2FP16_BGR2RGB_Norm_0_1">
+    <Position X="1.75" Y="8.5" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQCAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ONNX\OnnxModel_Injector_Preprocessing_Sequence_Byte2FP16_BGR2RGB_Norm_0_1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.OnnxModelModifier">
+    <Position X="0.5" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAQCAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>ONNX\OnnxModelModifier.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.OnnxModelToolBase">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ONNX\OnnxModelToolBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.OnnxModelAnalyzer_Spectre_Console">
+    <Position X="7.25" Y="2.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>QDQCAAIAAACEAgEQiAlACoItAQMABEAAAAVAAIBQAwE=</HashCode>
+      <FileName>ONNX\OnnxModelAnalyzer_Spectre_Console.cs</FileName>
+      <NewMemberFileName>ONNX\OnnxModelAnalyzer.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.OnnxModelAnalyzer_Console">
+    <Position X="4.75" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAEAAABAAIAAAAIABAAABAAAAAAAAQE=</HashCode>
+      <FileName>ONNX\OnnxModelAnalyzer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.CLI.AddHeadCommand" Collapsed="true">
+    <Position X="13.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CLI\ViewSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.CLI.AddHeadSettings" Collapsed="true">
+    <Position X="15" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAEAAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CLI\ViewSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.CLI.ViewCommand" Collapsed="true">
+    <Position X="13.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CLI\ViewSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.Tools.CLI.ViewSettings" Collapsed="true">
+    <Position X="15" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACCAAAAAAAABAAEAAAAAAAAABAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>CLI\ViewSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="3.119.2" />
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260330" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="OpenCvSharp" />
+    <Using Include="OpenCvSharp.Size" Alias="CvSize" />
+    <Using Include="OpenCvSharp.Rect" Alias="CvRect" />
+    <Using Include="OpenCvSharp.Point" Alias="CvPoint" />
+    <Using Include="OpenCvSharp.Scalar" Alias="CvScalar" />
+  </ItemGroup>
+</Project>

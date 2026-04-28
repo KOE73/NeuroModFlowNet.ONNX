@@ -1,0 +1,94 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!--<TargetFrameworks>net10.0-windows;net10.0</TargetFrameworks>-->
+    <!--<TargetFramework>net10.0-windows</TargetFramework>-->
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>$([System.DateTime]::Now.ToString("yy.MMdd.HHmm"))</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('windos'))">
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('linux'))">
+    <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('osx'))">
+    <DefineConstants>$(DefineConstants);OSX</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <!-- Отключаем генерацию исполняемого файла Windows для чистого .NET for Linux -->
+    <!--<UseAppHost>false</UseAppHost>-->
+  </PropertyGroup>
+
+  <!-- Секция только для финальной сборки (Release) -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <!-- Native AOT — это ультимативный режим.       Он сам по себе подразумевает SingleFile и SelfContained. -->
+    <PublishAot>true</PublishAot>
+
+    <!-- Тримминг обязателен для AOT -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+
+    <!-- Для системщика: убираем лишние символы для уменьшения размера -->
+    <StripSymbols>true</StripSymbols>
+    <OptimizationPreference>Size</OptimizationPreference>
+
+    <!-- Если появятся нативные либы, AOT потребует их рядом или статической линковки -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+    <DebugType>embedded</DebugType>
+
+
+    <!--<PublishSingleFile>true</PublishSingleFile>-->
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Запрещаем вырезать типы из Spectre и твои команды -->
+    <TrimmerRootAssembly Include="Spectre.Console" />
+    <TrimmerRootAssembly Include="Spectre.Console.Cli" />
+    <!-- Замени на имя СВОЕЙ сборки, где лежат команды -->
+    <TrimmerRootAssembly Include="NeuroModFlowNet.ONNX.Tools" />
+  </ItemGroup>
+  
+  <Target Name="CreateSingleExe" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' AND '$(IsPublishing)' != 'true'">
+    <Message Importance="high" Text="[SYSTEM] Starting Single-File Bundling..." />
+    <Exec Command="set DOTNET_CLI_UI_LANGUAGE=en-US &amp;&amp; dotnet publish --no-build -c Release -o $(ProjectDir)bin\SingleExe" />
+
+    <Message Importance="high" Text="[SUCCESS] Your standalone EXE is ready in bin\SingleExe\" />
+  </Target>
+
+  <!--<Target Name="CreateSingleExe" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Message Importance="high" Text="[SYSTEM] Starting Single-File Bundling..." />
+    --><!-- - -no-build /p:IncludeNativeLibrariesForSelfExtract=true--><!--
+    <Exec Command="set DOTNET_CLI_UI_LANGUAGE=en-US &amp;&amp; dotnet publish -r win-x64 -c Release  /p:PublishSingleFile=true /p:SelfContained=true /p:PublishTrimmed=true /p:IncludeNativeLibrariesForSelfExtract=true -o $(ProjectDir)bin\SingleExe" />
+
+    <Message Importance="high" Text="[SUCCESS] Your standalone EXE is ready in bin\SingleExe\" />
+  </Target>-->
+
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.34.1" />
+
+    <PackageReference Include="Spectre.Console" Version="0.55.2" />
+    <PackageReference Include="Spectre.Console.Analyzer" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Onnx" />
+    <Using Include="Google.Protobuf" />
+    <Using Include="Google.Protobuf.Collections" />
+  </ItemGroup>
+
+</Project>

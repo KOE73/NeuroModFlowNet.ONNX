@@ -1,0 +1,26 @@
+<Project>
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX'">
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>NeuroModFlowNet.ONNX</PackageId>
+    <Version>0.1.2</Version>
+    <Title>NeuroModFlowNet.ONNX</Title>
+    <Authors>KOE73</Authors>
+    <Company>KOE73</Company>
+    <Product>NeuroModFlowNet.ONNX</Product>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/KOE73/NeuroModFlowNet.ONNX</RepositoryUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>High-performance ONNX Runtime framework for real-time computer vision pipelines with strongly typed postprocessing.</Description>
+    <PackageTags>onnx;onnxruntime;computer-vision;yolo;ocr;paddleocr;detection;segmentation</PackageTags>
+  </PropertyGroup>
+</Project>

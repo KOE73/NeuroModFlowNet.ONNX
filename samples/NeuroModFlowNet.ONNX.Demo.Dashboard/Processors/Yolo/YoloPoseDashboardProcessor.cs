@@ -8,7 +8,7 @@ internal sealed class YoloPoseDashboardProcessor :
     DashboardFrameProcessorBase<IDetectionResult<YoloPose>>
 {
     public YoloPoseDashboardProcessor(DashboardModelSettings settings)
-        : base(ModelSlot.Pose, "YOLO POSE", "yolo26s-pose", settings)
+        : base(ModelSlot.Pose, "YOLO POSE", settings.PoseModelName, settings)
     {
     }
 

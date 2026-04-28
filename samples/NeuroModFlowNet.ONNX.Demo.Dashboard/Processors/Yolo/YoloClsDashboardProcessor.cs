@@ -8,7 +8,7 @@ internal sealed class YoloClsDashboardProcessor :
     DashboardFrameProcessorBase<IBatchedResult>
 {
     public YoloClsDashboardProcessor(DashboardModelSettings settings)
-        : base(ModelSlot.Cls, "YOLO CLS", "yolo26s-cls", settings)
+        : base(ModelSlot.Cls, "YOLO CLS", settings.ClsModelName, settings)
     {
     }
 

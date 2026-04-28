@@ -8,7 +8,7 @@ internal sealed class YoloBoxDashboardProcessor :
     DashboardFrameProcessorBase<IDetectionResult<YoloBox>>
 {
     public YoloBoxDashboardProcessor(DashboardModelSettings settings)
-        : base(ModelSlot.Box, "YOLO BOX DETECT", "yolo26s", settings)
+        : base(ModelSlot.Box, "YOLO BOX DETECT", settings.BoxModelName, settings)
     {
     }
 

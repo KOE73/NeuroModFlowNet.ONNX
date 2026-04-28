@@ -8,7 +8,7 @@ internal sealed class YoloObbDashboardProcessor :
     DashboardFrameProcessorBase<IDetectionResult<YoloObb>>
 {
     public YoloObbDashboardProcessor(DashboardModelSettings settings)
-        : base(ModelSlot.Obb, "YOLO OBB DETECT", "yolo26s-obb", settings)
+        : base(ModelSlot.Obb, "YOLO OBB DETECT", settings.ObbModelName, settings)
     {
     }
 

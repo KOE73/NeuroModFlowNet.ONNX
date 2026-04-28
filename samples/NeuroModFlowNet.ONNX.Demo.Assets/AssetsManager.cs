@@ -10,6 +10,7 @@ public static class AssetsManager
     public const string PaddleOcrRepositoryId = "monkt/paddleocr-onnx";
     public const string BaseAssetsUrl = $"https://huggingface.co/{RepositoryId}/resolve/main/";
     public const string BasePaddleOcrAssetsUrl = $"https://huggingface.co/{PaddleOcrRepositoryId}/resolve/main/";
+    public const string ModelsRootEnvironmentVariable = "NEUROMODFLOWNET_ONNX_MODELS";
 
     public static async Task<string> GetAssetPathAsync(
         string modelFileName,
@@ -22,15 +23,10 @@ public static class AssetsManager
 
         string localModelFileName = modelFileName.Replace('/', Path.DirectorySeparatorChar);
 
-        string filePath = targetModelsRoot == null
-            ? FindFileInSharedLocations("models", localModelFileName)
-            : Path.Combine(targetModelsRoot, localModelFileName);
+        string modelsRoot = ResolveModelsRoot(targetModelsRoot);
+        string filePath = Path.Combine(modelsRoot, localModelFileName);
 
         if(!forceDownload && File.Exists(filePath)) return filePath;
-
-        // Если файла нет, получаем путь, куда его стоит скачать (приоритет общей папке)
-        string targetDir = targetModelsRoot ?? FindSharedFolder("models");
-        filePath = Path.Combine(targetDir, localModelFileName);
 
         // Убеждаемся, что все подпапки для файла существуют
         string? fileDir = Path.GetDirectoryName(filePath);
@@ -67,6 +63,28 @@ public static class AssetsManager
         return filePath;
     }
 
+    public static string ResolveModelsRoot(string? targetModelsRoot = null, string? startDirectory = null)
+    {
+        if(!string.IsNullOrWhiteSpace(targetModelsRoot))
+            return Path.GetFullPath(targetModelsRoot);
+
+        string? environmentModelsRoot = Environment.GetEnvironmentVariable(ModelsRootEnvironmentVariable);
+        if(!string.IsNullOrWhiteSpace(environmentModelsRoot))
+            return Path.GetFullPath(environmentModelsRoot);
+
+        string? repositoryRoot = FindRepositoryRoot(startDirectory ?? AppContext.BaseDirectory);
+        if(repositoryRoot == null && startDirectory == null)
+            repositoryRoot = FindRepositoryRoot(Environment.CurrentDirectory);
+
+        if(repositoryRoot != null)
+            return Path.Combine(repositoryRoot, "models");
+
+        return Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "NeuroModFlowNet.ONNX",
+            "models");
+    }
+
     public static string GetAssetUrl(string modelFileName, string? baseUrl = null)
     {
         string normalizedModelFileName = modelFileName.TrimStart('/', '\\').Replace('\\', '/');
@@ -90,61 +108,24 @@ public static class AssetsManager
                !Path.GetFileNameWithoutExtension(modelFileName).EndsWith("_bytebgr", StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>
-    /// Ищет путь к файлу, проверяя корневую общую папку models выше по дереву.
-    /// Если файл не найден, возвращает путь, где он *должен* быть в общей папке.
-    /// </summary>
-    private static string FindFileInSharedLocations(string modelsFolderName, string modelFileName)
+    private static string? FindRepositoryRoot(string startDirectory)
     {
-        string currentFolder = AppDomain.CurrentDomain.BaseDirectory;
-        string? bestFolderSoFar = null;
+        string? currentFolder = Path.GetFullPath(startDirectory);
+        if(File.Exists(currentFolder))
+            currentFolder = Path.GetDirectoryName(currentFolder);
 
         while(!string.IsNullOrEmpty(currentFolder))
         {
-            // Проверяем {current}/{modelsFolderName}/{fileName} -- каноническая общая папка
-            string rootModelsPath = Path.Combine(currentFolder, modelsFolderName);
-            if(Directory.Exists(rootModelsPath))
-            {
-                bool isLocal = currentFolder.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") ||
-                               currentFolder.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}");
-
-                if(!isLocal) bestFolderSoFar ??= rootModelsPath;
-
-                string testModelPath = Path.Combine(rootModelsPath, modelFileName);
-                if(File.Exists(testModelPath))
-                    return testModelPath;
-            }
+            if(File.Exists(Path.Combine(currentFolder, "NeuroModFlowNet.ONNX.slnx")) ||
+               Directory.Exists(Path.Combine(currentFolder, ".git")) ||
+               File.Exists(Path.Combine(currentFolder, "Directory.Build.props")))
+                return currentFolder;
 
             DirectoryInfo? parent = Directory.GetParent(currentFolder);
             if(parent == null) break;
             currentFolder = parent.FullName;
         }
 
-        // Если файл не нашли, возвращаем путь в лучшей найденной "общей" папке или рядом с exe
-        string finalDir = bestFolderSoFar ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, modelsFolderName);
-        return Path.Combine(finalDir, modelFileName);
-    }
-
-    private static string FindSharedFolder(string folderName)
-    {
-        // Используем логику поиска, но без привязки к конкретному файлу
-        string currentFolder = AppDomain.CurrentDomain.BaseDirectory;
-
-        while(!string.IsNullOrEmpty(currentFolder))
-        {
-            string candidate = Path.Combine(currentFolder, folderName);
-            if(Directory.Exists(candidate))
-            {
-                bool isLocal = currentFolder.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") ||
-                               currentFolder.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}");
-                if(!isLocal) return candidate;
-            }
-
-            DirectoryInfo? parent = Directory.GetParent(currentFolder);
-            if(parent == null) break;
-            currentFolder = parent.FullName;
-        }
-
-        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folderName);
+        return null;
     }
 }

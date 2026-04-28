@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using NeuroModFlowNet.ONNX;
 using NeuroModFlowNet.ONNX.Demo.Assets;
 using NeuroModFlowNet.ONNX.Visualizer;
 using OpenCvSharp;
@@ -9,24 +8,10 @@ namespace NeuroModFlowNet.ONNX.Demo.Dashboard;
 
 internal class Program
 {
-    private const InferenceBackend Backend = InferenceBackend.TensorRt;
-    private const string Precision = "fp32";
-    private const int InputSize = 640;
-    private const bool IsByteBgr = false;
-
-    private static readonly HashSet<ModelSlot> EnabledSlots = new()
-    {
-        ModelSlot.Raw,
-        ModelSlot.Box,
-        ModelSlot.Obb,
-        ModelSlot.Seg,
-        ModelSlot.Pose,
-        ModelSlot.Cls,
-    };
-
     static async Task Main(string[] args)
     {
         OnnxRuntimePathHelper.InitFromConfig();
+        DashboardModelSettings settings = DashboardModelSettings.FromConfig();
 
         List<IDashboardFrameProcessor> processors = [];
 
@@ -35,12 +20,11 @@ internal class Program
             AnsiConsole.Clear();
             AnsiConsole.Write(new FigletText("NMFN DASHBOARD").Color(Color.Cyan1));
             AnsiConsole.MarkupLine("[bold white]Initializing Multi-Model Inference System...[/]");
-            AnsiConsole.MarkupLine($"[grey]Slots: {string.Join(", ", EnabledSlots)}[/]");
+            AnsiConsole.MarkupLine($"[grey]Slots: {string.Join(", ", settings.EnabledSlots)}[/]");
 
-            var settings = new DashboardModelSettings(Backend, InputSize, Precision, IsByteBgr);
             processors = CreateProcessors(settings);
             IDashboardFrameProcessor[] activeProcessors = processors
-                .Where(processor => EnabledSlots.Contains(processor.Slot))
+                .Where(processor => settings.EnabledSlots.Contains(processor.Slot))
                 .ToArray();
 
             foreach(IDashboardFrameProcessor processor in activeProcessors)

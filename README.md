@@ -12,6 +12,16 @@ The main data flow is:
 Input data -> Converter -> OnnxRuntimeContext / Runner -> Extractor -> Typed result
 ```
 
+## Demo Dashboard QuickStart
+
+Run the multi-model dashboard from a fresh clone:
+
+```powershell
+dotnet run -c Release --project .\samples\NeuroModFlowNet.ONNX.Demo.Dashboard\NeuroModFlowNet.ONNX.Demo.Dashboard.csproj
+```
+
+On first launch, demo models are downloaded into the repository-level `models/` folder, which is ignored by Git.
+
 ## Main Components
 
 ### Core

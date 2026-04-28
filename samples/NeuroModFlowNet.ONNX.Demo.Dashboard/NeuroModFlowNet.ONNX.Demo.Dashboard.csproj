@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu.Windows" Version="1.24.4" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
     <PackageReference Include="Spectre.Console" Version="0.55.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
     <PackageReference Include="System.Numerics.Tensors" Version="10.0.7" />
   </ItemGroup>
 

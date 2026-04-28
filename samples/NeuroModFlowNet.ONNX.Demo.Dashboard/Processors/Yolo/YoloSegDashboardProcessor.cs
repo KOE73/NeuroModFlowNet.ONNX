@@ -8,7 +8,7 @@ internal sealed class YoloSegDashboardProcessor :
     DashboardFrameProcessorBase<IBatchedResult>
 {
     public YoloSegDashboardProcessor(DashboardModelSettings settings)
-        : base(ModelSlot.Seg, "YOLO SEG", "yolo26s-seg", settings)
+        : base(ModelSlot.Seg, "YOLO SEG", settings.SegModelName, settings)
     {
     }
 

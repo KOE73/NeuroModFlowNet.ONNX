@@ -52,6 +52,93 @@ public class AssetsManagerDownloadTests
     }
 
     [Fact]
+    public void ResolveModelsRoot_UsesExplicitTargetModelsRoot()
+    {
+        string targetModelsRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+
+        string modelsRoot = AssetsManager.ResolveModelsRoot(targetModelsRoot);
+
+        Assert.Equal(Path.GetFullPath(targetModelsRoot), modelsRoot);
+    }
+
+    [Fact]
+    public void ResolveModelsRoot_UsesEnvironmentModelsRoot()
+    {
+        string? previousModelsRoot = Environment.GetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable);
+        string environmentModelsRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            Environment.SetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable, environmentModelsRoot);
+
+            string modelsRoot = AssetsManager.ResolveModelsRoot();
+
+            Assert.Equal(Path.GetFullPath(environmentModelsRoot), modelsRoot);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable, previousModelsRoot);
+        }
+    }
+
+    [Fact]
+    public void ResolveModelsRoot_UsesSolutionRootModelsFolder()
+    {
+        string? previousModelsRoot = Environment.GetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable);
+        string temporaryRoot = Path.Combine(Path.GetTempPath(), "NeuroModFlowNet.ONNX.Tests", Guid.NewGuid().ToString("N"));
+        string repositoryRoot = Path.Combine(temporaryRoot, "repo");
+        string startDirectory = Path.Combine(repositoryRoot, "samples", "Demo", "bin", "Debug", "net10.0");
+
+        try
+        {
+            Environment.SetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable, null);
+            Directory.CreateDirectory(Path.Combine(temporaryRoot, "models"));
+            Directory.CreateDirectory(startDirectory);
+            File.WriteAllText(Path.Combine(repositoryRoot, "NeuroModFlowNet.ONNX.slnx"), string.Empty);
+
+            string modelsRoot = AssetsManager.ResolveModelsRoot(startDirectory: startDirectory);
+
+            Assert.Equal(Path.Combine(repositoryRoot, "models"), modelsRoot);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable, previousModelsRoot);
+            if(Directory.Exists(temporaryRoot))
+                Directory.Delete(temporaryRoot, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void ResolveModelsRoot_FallsBackToLocalApplicationDataWhenRepositoryRootIsMissing()
+    {
+        string? previousModelsRoot = Environment.GetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable);
+        string temporaryRoot = Path.Combine(Path.GetTempPath(), "NeuroModFlowNet.ONNX.Tests", Guid.NewGuid().ToString("N"));
+        string startDirectory = Path.Combine(temporaryRoot, "published", "app");
+
+        try
+        {
+            Environment.SetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable, null);
+            Directory.CreateDirectory(Path.Combine(temporaryRoot, "models"));
+            Directory.CreateDirectory(startDirectory);
+
+            string modelsRoot = AssetsManager.ResolveModelsRoot(startDirectory: startDirectory);
+
+            Assert.Equal(
+                Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "NeuroModFlowNet.ONNX",
+                    "models"),
+                modelsRoot);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(AssetsManager.ModelsRootEnvironmentVariable, previousModelsRoot);
+            if(Directory.Exists(temporaryRoot))
+                Directory.Delete(temporaryRoot, recursive: true);
+        }
+    }
+
+    [Fact]
     public async Task GetAssetPathAsync_DownloadsPreparedModelFromConfiguredStorage()
     {
         string targetModelsRoot = Path.Combine(

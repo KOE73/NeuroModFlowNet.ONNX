@@ -12,6 +12,16 @@
 Input data -> Converter -> OnnxRuntimeContext / Runner -> Extractor -> Typed result
 ```
 
+## Быстрый старт Demo Dashboard
+
+Запуск multi-model dashboard из свежего клона:
+
+```powershell
+dotnet run -c Release --project .\samples\NeuroModFlowNet.ONNX.Demo.Dashboard\NeuroModFlowNet.ONNX.Demo.Dashboard.csproj
+```
+
+При первом запуске demo-модели скачиваются в папку `models/` в корне репозитория. Эта папка игнорируется Git.
+
 ## Основные компоненты
 
 ### Core

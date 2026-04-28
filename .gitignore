@@ -512,6 +512,8 @@ ModelPrepare/HuggingFace/.publish*/
 *.secrets.*
 appsettings.Local.json
 appsettings.*.Local.json
+**/*.local.config
+**/*.Local.config
 **/VideoSource.local.txt
 **/*.local.txt
 **/*.secrets.config

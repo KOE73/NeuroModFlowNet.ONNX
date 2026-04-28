@@ -507,6 +507,9 @@ models/
 ModelPrepare/HuggingFace/.publish/
 ModelPrepare/HuggingFace/.publish*/
 
+# generated NuGet publishing output
+NuGet/Publish/
+
 # local secrets (rtsp)
 *.secret.*
 *.secrets.*

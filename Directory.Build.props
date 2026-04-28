@@ -3,15 +3,17 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX'">
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX' or '$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Diagnostics' or '$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Visualizer'">
     <IsPackable>true</IsPackable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>NeuroModFlowNet.ONNX</PackageId>
+    <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild Condition="'$(Configuration)' != 'Release'">false</GeneratePackageOnBuild>
     <Version>0.1.2</Version>
-    <Title>NeuroModFlowNet.ONNX</Title>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)NuGet\Publish\$(Version)\</PackageOutputPath>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>portable</DebugType>
     <Authors>KOE73</Authors>
     <Company>KOE73</Company>
-    <Product>NeuroModFlowNet.ONNX</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/KOE73/NeuroModFlowNet.ONNX</RepositoryUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
@@ -20,7 +22,35 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Description>High-performance ONNX Runtime framework for real-time computer vision pipelines with strongly typed postprocessing.</Description>
-    <PackageTags>onnx;onnxruntime;computer-vision;yolo;ocr;paddleocr;detection;segmentation</PackageTags>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX'">
+    <PackageId>NeuroModFlowNet.ONNX</PackageId>
+    <Title>NeuroModFlowNet.ONNX</Title>
+    <Product>NeuroModFlowNet.ONNX</Product>
+    <Description>High-performance ONNX Runtime framework for real-time computer vision pipelines with strongly typed postprocessing.</Description>
+    <PackageTags>ocr;computer-vision;csharp;dotnet;yolo;object-detection;onnx;onnxruntime;paddleocr</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Diagnostics'">
+    <PackageId>NeuroModFlowNet.ONNX.Diagnostics</PackageId>
+    <Title>NeuroModFlowNet.ONNX.Diagnostics</Title>
+    <Product>NeuroModFlowNet.ONNX.Diagnostics</Product>
+    <Description>Diagnostics helpers for NeuroModFlowNet.ONNX runtime contexts and model metadata.</Description>
+    <PackageTags>ocr;computer-vision;csharp;dotnet;yolo;object-detection;onnx;onnxruntime;paddleocr;diagnostics</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Visualizer'">
+    <PackageId>NeuroModFlowNet.ONNX.Visualizer</PackageId>
+    <Title>NeuroModFlowNet.ONNX.Visualizer</Title>
+    <Product>NeuroModFlowNet.ONNX.Visualizer</Product>
+    <Description>Visualization helpers for rendering NeuroModFlowNet.ONNX inference results.</Description>
+    <PackageTags>ocr;computer-vision;csharp;dotnet;yolo;object-detection;onnx;onnxruntime;paddleocr;visualization</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102" PrivateAssets="all" />
+  </ItemGroup>
 </Project>

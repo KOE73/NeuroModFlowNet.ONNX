@@ -24,12 +24,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
-  </ItemGroup>
-
-
-
-  <ItemGroup>
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
     <PackageReference Include="System.Numerics.Tensors" Version="10.0.7" />
 

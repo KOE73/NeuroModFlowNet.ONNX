@@ -19,7 +19,7 @@ public class RegisterCommand : Command<RegisterSettings>
 #elif LINUX
 return RegisterLinux(alias, settings.Unregister);
 #else
-    AnsiConsole.MarkupLine("[red]ОС не поддерживается для этой команды[/]");
+    AnsiConsole.MarkupLine("[red]This OS is not supported by this command.[/]");
     return 1;
 #endif
     }
@@ -39,7 +39,7 @@ return RegisterLinux(alias, settings.Unregister);
             {
                 classesKey.DeleteSubKeyTree(progId, false);
                 classesKey.DeleteSubKeyTree(".onnx", false);
-                AnsiConsole.MarkupLine("[yellow]Windows:[/] Регистрация удалена.");
+                AnsiConsole.MarkupLine("[yellow]Windows:[/] Registration removed.");
                 return 0;
             }
 
@@ -52,7 +52,7 @@ return RegisterLinux(alias, settings.Unregister);
             using var extKey = classesKey.CreateSubKey(".onnx");
             extKey.SetValue("", progId);
 
-            AnsiConsole.MarkupLine("[green]Windows:[/] Программа зарегистрирована в реестре.");
+            AnsiConsole.MarkupLine("[green]Windows:[/] Application registered in the registry.");
             return 0;
         }
         catch(Exception ex)
@@ -75,7 +75,7 @@ try {
     if (unregister) {
         if (File.Exists(symlinkPath)) File.Delete(symlinkPath);
         // Удаление .desktop файла...
-        AnsiConsole.MarkupLine("[yellow]Linux:[/] Симлинки и десктоп-файлы удалены.");
+        AnsiConsole.MarkupLine("[yellow]Linux:[/] Symlinks and desktop files removed.");
         return 0;
     }
 
@@ -86,7 +86,7 @@ try {
 
     // Создание .desktop (GUI) - аналогично предыдущему коду...
     
-    AnsiConsole.MarkupLine($"[green]Linux:[/] Создан алиас '{alias}' и .desktop файл.");
+    AnsiConsole.MarkupLine($"[green]Linux:[/] Alias '{alias}' and .desktop file created.");
     return 0;
 } catch (Exception ex) {
     AnsiConsole.WriteException(ex);

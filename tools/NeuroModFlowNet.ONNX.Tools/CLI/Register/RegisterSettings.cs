@@ -10,15 +10,15 @@ namespace NeuroModFlowNet.ONNX.Tools.CLI;
 public sealed class RegisterSettings : CommandSettings
 {
     [CommandOption("-u|--unregister")]
-    [Description("Удалить регистрацию программы и ассоциации файлов из системы")]
+    [Description("Remove application registration and file associations from the system")]
     public bool Unregister { get; set; }
 
     [CommandOption("-f|--force")]
-    [Description("Принудительно перезаписать существующие ассоциации")]
+    [Description("Overwrite existing associations")]
     public bool Force { get; set; }
 
     [CommandOption("--alias <NAME>")]
-    [Description("Имя команды для вызова в терминале (актуально для Linux symlink)")]
+    [Description("Command name to use in the terminal (Linux symlink)")]
     [DefaultValue("nmf-onnx")]
     public string Alias { get; set; } = "nmf-onnx";
 
@@ -26,11 +26,11 @@ public sealed class RegisterSettings : CommandSettings
     public override ValidationResult Validate()
     {
         if(string.IsNullOrWhiteSpace(Alias))
-            return ValidationResult.Error("Имя команды (alias) не может быть пустым");
+            return ValidationResult.Error("Command alias cannot be empty.");
 
         // Проверка на недопустимые символы в имени команды для Linux
         if(Alias.Any(c => char.IsWhiteSpace(c) || Path.GetInvalidFileNameChars().Contains(c)))
-            return ValidationResult.Error("Имя команды содержит недопустимые символы");
+            return ValidationResult.Error("Command alias contains invalid characters.");
 
         return ValidationResult.Success();
     }

@@ -2,6 +2,7 @@ using NeuroModFlowNet.ONNX.Tools.CLI;
 using NeuroModFlowNet.ONNX.Tools.Modify;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.Globalization;
 
 namespace NeuroModFlowNet.ONNX.Tools;
 
@@ -10,6 +11,11 @@ internal class Program
 
     static int Main(string[] args)
     {
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en");
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+
         var version = typeof(Program).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
             .Cast<System.Reflection.AssemblyInformationalVersionAttribute>()
             .FirstOrDefault()?.InformationalVersion ?? "26.0000.0000";

@@ -117,8 +117,10 @@ if(-not (Test-Path -LiteralPath $publishPath))
     throw "NuGet publish folder was not found: $publishPath"
 }
 
-$packages = Get-ChildItem -LiteralPath $publishPath -Filter "*.nupkg" -File
-$symbols = Get-ChildItem -LiteralPath $publishPath -Filter "*.snupkg" -File
+$packages = Get-ChildItem -LiteralPath $publishPath -File |
+    Where-Object { $_.Extension -eq ".nupkg" }
+$symbols = Get-ChildItem -LiteralPath $publishPath -File |
+    Where-Object { $_.Extension -eq ".snupkg" }
 
 if($packages.Count -eq 0)
 {

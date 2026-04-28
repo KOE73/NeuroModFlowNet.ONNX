@@ -10,7 +10,7 @@ public class ViewCommand : Command<ViewSettings>
     {
         if(!File.Exists(settings.ModelPath))
         {
-            AnsiConsole.MarkupLine("[red]Error:[/] Model file not found at: [yellow]{settings.ModelPath}[/]");
+            AnsiConsole.MarkupLine($"[red]Error:[/] Model file not found at: [yellow]{settings.ModelPath}[/]");
             return 1;
         }
 

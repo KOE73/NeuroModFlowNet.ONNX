@@ -26,8 +26,8 @@ public class RealTimeView2 : IDisposable
 
     public async void ForAI()
     {
-        string modelBox_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName("yolo26s", _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
-        string modelObb_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName("yolo26s-obb", _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
+        string modelBox_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.BoxModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
+        string modelObb_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.ObbModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
 
         var modelBox_ = new OnnxRuntimeContext(modelBox_Path);
         var modelObb_ = new OnnxRuntimeContext(modelObb_Path);
@@ -38,11 +38,10 @@ public class RealTimeView2 : IDisposable
 
     public async void Run()
     {
-        string modelBox_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName("yolo26s", _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
-        //string modelObb_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName("yolo26s-obb", _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
-        string modelObb_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName("img-text-to-obb", _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
-        string modelPosePath = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName("yolo26s-pose", _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
-        string modelSeg_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName("yolo26s-seg", _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
+        string modelBox_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.BoxModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
+        string modelObb_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.ObbModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
+        string modelPosePath = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.PoseModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
+        string modelSeg_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.SegModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
 
         string modelDv3_Path = await AssetsManager.GetAssetPathAsync("/paddleocr/detection/v3/det.onnx");
         string modelDv5_Path = await AssetsManager.GetAssetPathAsync("/paddleocr/detection/v5/det.onnx");

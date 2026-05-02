@@ -502,6 +502,7 @@ models/
 # AI
 .continue/
 .codex-build/
+.dotnet-home/
 
 # generated model publishing staging
 ModelPrepare/HuggingFace/.publish/

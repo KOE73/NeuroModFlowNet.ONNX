@@ -21,20 +21,15 @@ Core goals:
 2. Execute inference.
 3. Transform raw model outputs into convenient strongly typed result structures.
 
-## Responsibilities
-- `Converters` handle input preparation and input format conversion.
-- `Extractors` handle output extraction and postprocessing.
 
 ## Project Structure
 - `src/NeuroModFlowNet.ONNX/` — core library.
-- `src/NeuroModFlowNet.ONNX/Abstract/` — base interfaces.
-- `src/NeuroModFlowNet.ONNX/Converters/` — input preparation and input format conversion.
-- `src/NeuroModFlowNet.ONNX/Extractors/` — output extraction and postprocessing.
 
 - `src/NeuroModFlowNet.ONNX.Visualizer/` — isolated project for rendering inference results.
 - `samples/` — library usage examples. After core or public API changes, keep samples aligned and update them when needed.
 - `labs/` — experiments, benchmarking, and architectural exploration. Do not treat this folder as the main architectural source of truth unless explicitly requested.
 - `tests/` —  unit and integration tests for pipeline correctness and regression safety.
+- `doc/` —  common documentation.
 
 
 ## Folder structure by models
@@ -48,11 +43,11 @@ Core goals:
 Static methods for creating typical extractors.
 CreateRunner - static method for automatic selection of converter and extractor based on model metadata.
 
-## 🔨 Архитектурные фундаменты (НЕ МЕНЯТЬ)
+## Архитектурные фундаменты (НЕ МЕНЯТЬ)
 *   **Универсальные раннеры**: Весь инференс завязан на базовый интерфейс `IRunner<TIn, TOut>`. Никаких специализированных маркерных интерфейсов вроде `IImageRunner`.
 
 
-## 🎨 Код-стайл и Оформление
+## Код-стайл и Оформление
 *   **Регионы (#region)**: Обязательны для больших файлов (от 10 методов и более). Используются для логической группировки методов по смыслу.
 *   **Версия языка**: Только самые последние фичи C# (C# 12/13+). Максимальное использование современных возможностей языка.
 

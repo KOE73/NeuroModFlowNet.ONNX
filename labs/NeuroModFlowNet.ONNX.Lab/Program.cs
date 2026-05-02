@@ -13,10 +13,10 @@ internal class Program
         OnnxRuntimePathHelper.InitFromConfig();
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        if(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ModelsRootPathEnvName)))
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ModelsRootPathEnvName)))
             Environment.SetEnvironmentVariable(ModelsRootPathEnvName, DefaultModelsRootPath);
 
         using RealTimeView2 realTimeView = new();
-        realTimeView.Run();
+        realTimeView.Run().GetAwaiter().GetResult();
     }
 }

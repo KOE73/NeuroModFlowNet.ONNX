@@ -36,7 +36,7 @@ public class RealTimeView2 : IDisposable
         var runnerObb_ = YoloObbFactory.CreateRunner<IDetectionResult<YoloObb>>(modelObb_);
     }
 
-    public async void Run()
+    public async Task Run()
     {
         string modelBox_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.BoxModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));
         string modelObb_Path = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(_settings.ObbModelName, _settings.InputSize, 1, _settings.ModelPrecision, isByteBgr: _settings.IsByteBgr));

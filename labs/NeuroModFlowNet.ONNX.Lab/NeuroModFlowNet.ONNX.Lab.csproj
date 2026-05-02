@@ -1,33 +1,48 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <Configurations>Debug;Release;Publish</Configurations>
-    <NoWarn>$(NoWarn);SYSLIB5001</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<Configurations>Debug;Release</Configurations>
+		<NoWarn>$(NoWarn);SYSLIB5001</NoWarn>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu.Windows" Version="1.24.4" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
-    <PackageReference Include="SkiaSharp" Version="3.119.2" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.119.2" />
-    <PackageReference Include="Spectre.Console" Version="0.55.2" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
-    <PackageReference Include="Spectre.Console.Analyzer" Version="1.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="App.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="App.local.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\samples\NeuroModFlowNet.ONNX.Demo.Assets\NeuroModFlowNet.ONNX.Demo.Assets.csproj" />
-    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
-    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Diagnostics\NeuroModFlowNet.ONNX.Diagnostics.csproj" />
-    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<!--NVIDIA-->
+		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />
+		
+		<!--CPU-->
+		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />-->
+
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
+
+		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
+		<PackageReference Include="SkiaSharp" Version="3.119.2" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.119.2" />
+		<PackageReference Include="Spectre.Console" Version="0.55.2" />
+		<PackageReference Include="Spectre.Console.Analyzer" Version="1.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\samples\NeuroModFlowNet.ONNX.Demo.Assets\NeuroModFlowNet.ONNX.Demo.Assets.csproj" />
+		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
+		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Diagnostics\NeuroModFlowNet.ONNX.Diagnostics.csproj" />
+		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
+	</ItemGroup>
 
 </Project>

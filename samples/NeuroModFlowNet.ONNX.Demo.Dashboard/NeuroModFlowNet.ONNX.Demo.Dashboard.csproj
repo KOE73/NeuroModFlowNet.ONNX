@@ -1,27 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <Configurations>Debug;Release</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<Configurations>Debug;Release</Configurations>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu.Windows" Version="1.24.4" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
-    <PackageReference Include="Spectre.Console" Version="0.55.2" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
-    <PackageReference Include="System.Numerics.Tensors" Version="10.0.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<!--NVIDIA-->
+		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
-    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Diagnostics\NeuroModFlowNet.ONNX.Diagnostics.csproj" />
-    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
-    <ProjectReference Include="..\NeuroModFlowNet.ONNX.Demo.Assets\NeuroModFlowNet.ONNX.Demo.Assets.csproj" />
-  </ItemGroup>
+		<!--CPU-->
+		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />-->
+
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
+		<PackageReference Include="System.Numerics.Tensors" Version="10.0.7" />
+
+		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
+		<PackageReference Include="Spectre.Console" Version="0.55.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
+		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Diagnostics\NeuroModFlowNet.ONNX.Diagnostics.csproj" />
+		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
+		<ProjectReference Include="..\NeuroModFlowNet.ONNX.Demo.Assets\NeuroModFlowNet.ONNX.Demo.Assets.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="App.local.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 
 </Project>

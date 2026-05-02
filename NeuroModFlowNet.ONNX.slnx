@@ -11,6 +11,11 @@
     <File Path="README.md" />
     <File Path="README_RU.md" />
   </Folder>
+  <Folder Name="/Doc/">
+    <File Path="doc/AppLocalConfig_ru.md" />
+    <File Path="doc/TestedConfigurations_ru.md" />
+    <File Path="doc/TODO.md" />
+  </Folder>
   <Folder Name="/labs/">
     <Project Path="labs/NeuroModFlowNet.ONNX.Bench/NeuroModFlowNet.ONNX.Bench.csproj" />
     <Project Path="labs/NeuroModFlowNet.ONNX.Lab.Algorithms/NeuroModFlowNet.ONNX.Lab.Algorithms.csproj" />

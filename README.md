@@ -103,6 +103,8 @@ For YOLO26, see:
 
 The library targets `.NET 10` and uses ONNX Runtime as the inference engine. The core project references `Microsoft.ML.OnnxRuntime.Gpu` when `UseGpu=true`, and falls back to the CPU ONNX Runtime package when GPU support is disabled at build time.
 
+Out of the box, the current GPU setup has been checked on RTX 5090. It has also been checked on GTX 1080 Ti with additional local CUDA/cuDNN path configuration. For tested combinations and `App.local.config` examples, see `doc/GpuRuntimeTestedConfigurations_ru.md` and `doc/GpuRuntimeLocalConfig_ru.md`.
+
 CPU execution does not require NVIDIA runtime libraries. CUDA and TensorRT execution do require native NVIDIA dependencies that match the ONNX Runtime GPU package used by the application.
 
 For CUDA execution, install:

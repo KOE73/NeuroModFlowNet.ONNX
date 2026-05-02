@@ -57,8 +57,15 @@ function Invoke-Git
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent $scriptRoot
 $propsPath = Join-Path $repoRoot "Directory.Build.props"
-$solutionPath = Join-Path $repoRoot "NeuroModFlowNet.ONNX.slnx"
+$srcRoot = Join-Path $repoRoot "src"
 $apiKeyPath = Join-Path $scriptRoot "nuget-api-key.local.txt"
+$srcProjects = @(Get-ChildItem -LiteralPath $srcRoot -Recurse -File -Filter "*.csproj" | Sort-Object FullName)
+$srcPackageIds = @($srcProjects | ForEach-Object { [IO.Path]::GetFileNameWithoutExtension($_.Name) })
+
+if($srcProjects.Count -eq 0)
+{
+    throw "No .csproj files found in source folder: $srcRoot"
+}
 
 $gitBranch = (Invoke-Git @("branch", "--show-current")).Trim()
 $gitCommit = (Invoke-Git @("rev-parse", "HEAD")).Trim()
@@ -107,8 +114,11 @@ if([string]::IsNullOrWhiteSpace($apiKey))
 
 if(-not $NoBuild)
 {
-    dotnet build $solutionPath -c Release
-    if($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    foreach($project in $srcProjects)
+    {
+        dotnet build $project.FullName -c Release
+        if($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    }
 }
 
 $publishPath = Join-Path $scriptRoot "Publish\$Version"
@@ -118,9 +128,9 @@ if(-not (Test-Path -LiteralPath $publishPath))
 }
 
 $packages = Get-ChildItem -LiteralPath $publishPath -File |
-    Where-Object { $_.Extension -eq ".nupkg" }
+    Where-Object { $_.Extension -eq ".nupkg" -and (Get-PackageId -FileName $_.Name -PackageVersion $Version) -in $srcPackageIds }
 $symbols = Get-ChildItem -LiteralPath $publishPath -File |
-    Where-Object { $_.Extension -eq ".snupkg" }
+    Where-Object { $_.Extension -eq ".snupkg" -and (Get-PackageId -FileName $_.Name -PackageVersion $Version) -in $srcPackageIds }
 
 if($packages.Count -eq 0)
 {
@@ -147,6 +157,7 @@ Write-Host "NuGet publish preview" -ForegroundColor Cyan
 Write-Host "Source:       $Source"
 Write-Host "Version:      $Version"
 Write-Host "Folder:       $publishPath"
+Write-Host "Scope:        src ($($srcProjects.Count) projects)"
 Write-Host "Git branch:   $gitBranch"
 Write-Host "Git commit:   $gitShortCommit ($gitCommit)"
 Write-Host "Git status:   $(if($gitHasUncommittedChanges) { "uncommitted changes allowed by -AllowUncommitted" } else { "clean" })"

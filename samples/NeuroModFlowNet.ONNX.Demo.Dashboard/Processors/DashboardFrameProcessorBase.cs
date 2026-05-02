@@ -41,7 +41,7 @@ internal abstract class DashboardFrameProcessorBase<TResult> : IDashboardFramePr
             Settings.InputSize,
             1,
             Settings.Precision,
-            isByteBgr: Settings.IsByteBgr);
+            isByteBgr: Settings.UseByteBgr);
 
         string modelPath = await AssetsManager.GetAssetPathAsync(modelFileName);
         Context = new OnnxRuntimeContext(modelPath, Settings.Backend);

@@ -7,7 +7,7 @@ public sealed class RealTimeViewSettings
 {
     private const string InferenceBackendConfigKey = "InferenceBackend";
     private const string ModelPrecisionConfigKey = "ModelPrecision";
-    private const string IsByteBgrConfigKey = "IsByteBgr";
+    private const string UseByteBgrConfigKey = "UseByteBgr";
     private const string InputSizeConfigKey = "InputSize";
     private const string BoxModelNameConfigKey = "BoxModelName";
     private const string ObbModelNameConfigKey = "ObbModelName";
@@ -16,7 +16,7 @@ public sealed class RealTimeViewSettings
 
     private const InferenceBackend DefaultInferenceBackend = InferenceBackend.TensorRt;
     private const string DefaultModelPrecision = "fp16";
-    private const bool DefaultIsByteBgr = true;
+    private const bool DefaultUseByteBgr = true;
     private const int DefaultInputSize = 640;
     private const string DefaultBoxModelName = "yolo26s";
     private const string DefaultObbModelName = "yolo26s-obb";
@@ -25,7 +25,7 @@ public sealed class RealTimeViewSettings
 
     public InferenceBackend InferenceBackend { get; init; } = DefaultInferenceBackend;
     public string ModelPrecision { get; init; } = DefaultModelPrecision;
-    public bool IsByteBgr { get; init; } = DefaultIsByteBgr;
+    public bool UseByteBgr { get; init; } = DefaultUseByteBgr;
     public int InputSize { get; init; } = DefaultInputSize;
     public string BoxModelName { get; init; } = DefaultBoxModelName;
     public string ObbModelName { get; init; } = DefaultObbModelName;
@@ -37,7 +37,7 @@ public sealed class RealTimeViewSettings
         {
             InferenceBackend = ReadInferenceBackend(InferenceBackendConfigKey, DefaultInferenceBackend),
             ModelPrecision = ReadString(ModelPrecisionConfigKey, DefaultModelPrecision),
-            IsByteBgr = ReadBool(IsByteBgrConfigKey, DefaultIsByteBgr),
+            UseByteBgr = ReadBool(UseByteBgrConfigKey, DefaultUseByteBgr),
             InputSize = ReadPositiveInt(InputSizeConfigKey, DefaultInputSize),
             BoxModelName = ReadString(BoxModelNameConfigKey, DefaultBoxModelName),
             ObbModelName = ReadString(ObbModelNameConfigKey, DefaultObbModelName),

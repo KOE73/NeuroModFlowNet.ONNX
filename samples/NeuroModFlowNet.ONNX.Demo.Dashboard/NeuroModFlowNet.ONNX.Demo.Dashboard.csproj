@@ -11,7 +11,8 @@
 
 	<ItemGroup>
 		<!--NVIDIA-->
-		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />
+		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.22.1" />
+		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />-->
 
 		<!--CPU-->
 		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />-->
@@ -31,6 +32,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="App.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="App.local.config">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

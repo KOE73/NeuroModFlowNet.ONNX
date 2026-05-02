@@ -12,14 +12,14 @@ Demo dashboard запускает несколько YOLO pipeline над одн
 - `Backend` задает ONNX Runtime execution provider.
 - `Precision` выбирает precision model assets.
 - `InputSize` задает входной размер модели.
-- `IsByteBgr` выбирает, принимает ли модель прямой `ByteBGR` input.
+- `UseByteBgr` выбирает, принимает ли модель прямой `ByteBGR` input.
 
 ## Пути к native runtime
 
 Dashboard вызывает `OnnxRuntimePathHelper.InitFromConfig()` до загрузки моделей. Для запуска через CUDA или TensorRT нужно либо добавить native-директории NVIDIA в системный `PATH`, либо указать их в `App.config`:
 
 ```xml
-<appSettings>
+<appSettings file="App.local.config">
   <add key="CudaBinPath" value="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.9\bin" />
   <add key="CudnnBinPath" value="C:\cuDNN\9.10.2.21_cuda12\bin" />
   <add key="TrtLibPath" value="C:\TensorRT\TensorRT-10.12.0.36-cuda12.9\lib" />

@@ -21,7 +21,8 @@
 
 	<ItemGroup>
 		<!--NVIDIA-->
-		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />
+		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.22.1" />
+		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />-->
 		
 		<!--CPU-->
 		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />-->

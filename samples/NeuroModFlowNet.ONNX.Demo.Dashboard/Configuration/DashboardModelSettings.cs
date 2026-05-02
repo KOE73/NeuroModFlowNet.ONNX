@@ -7,7 +7,7 @@ internal sealed record DashboardModelSettings(
     InferenceBackend Backend,
     int InputSize,
     string Precision,
-    bool IsByteBgr,
+    bool UseByteBgr,
     IReadOnlySet<ModelSlot> EnabledSlots,
     string BoxModelName,
     string ObbModelName,
@@ -18,16 +18,16 @@ internal sealed record DashboardModelSettings(
     public static DashboardModelSettings FromConfig()
     {
         return new DashboardModelSettings(
-            ReadEnum("DashboardBackend", InferenceBackend.TensorRt),
-            ReadInt("DashboardInputSize", 640),
-            ReadString("DashboardPrecision", "fp32"),
-            ReadBool("DashboardIsByteBgr", false),
+            ReadEnum("InferenceBackend", InferenceBackend.TensorRt),
+            ReadInt("InputSize", 640),
+            ReadString("ModelPrecision", "fp32"),
+            ReadBool("UseByteBgr", false),
             ReadEnabledSlots(),
-            ReadString("DashboardBoxModelName", "yolo26n"),
-            ReadString("DashboardObbModelName", "yolo26n-obb"),
-            ReadString("DashboardSegModelName", "yolo26n-seg"),
-            ReadString("DashboardPoseModelName", "yolo26n-pose"),
-            ReadString("DashboardClsModelName", "yolo26n-cls"));
+            ReadString("BoxModelName", "yolo26n"),
+            ReadString("ObbModelName", "yolo26n-obb"),
+            ReadString("SegModelName", "yolo26n-seg"),
+            ReadString("PoseModelName", "yolo26n-pose"),
+            ReadString("ClsModelName", "yolo26n-cls"));
     }
 
     private static string ReadString(string key, string defaultValue)
@@ -57,7 +57,7 @@ internal sealed record DashboardModelSettings(
 
     private static IReadOnlySet<ModelSlot> ReadEnabledSlots()
     {
-        string value = ReadString("DashboardEnabledSlots", "Raw,Box,Obb,Seg,Pose,Cls");
+        string value = ReadString("EnabledSlots", "Raw,Box,Obb,Seg,Pose,Cls");
         var enabledSlots = new HashSet<ModelSlot>();
 
         foreach(string slotName in value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

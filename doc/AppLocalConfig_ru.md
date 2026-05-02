@@ -26,7 +26,7 @@
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
-<appSettings file="App.local.config">
+<appSettings>
   <add key="CudaBinPath" value="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.9\bin" />
   <add key="CudnnBinPath" value="C:\cuDNN\9.10.2.21_cuda12\bin" />
   <add key="TrtLibPath" value="C:\TensorRT\TensorRT-10.12.0.36-cuda12.9\lib" />
@@ -36,7 +36,7 @@
   <add key="InferenceBackend" value="Cuda" />
 
   <add key="ModelPrecision" value="fp16" />
-  <add key="IsByteBgr" value="true" />
+  <add key="UseByteBgr" value="true" />
   <add key="InputSize" value="640" />
   <add key="BoxModelName" value="yolo26n" />
   <!--<add key="ObbModelName" value="yolo26n-obb" />-->
@@ -77,4 +77,3 @@
 - в `CudnnBinPath` лежат DLL cuDNN 9.x, а не cuDNN 8.x;
 - `OnnxRuntimePathHelper.InitFromConfig()` вызван до создания `OnnxRuntimeContext` или `InferenceSession`;
 - версия `Microsoft.ML.OnnxRuntime.Gpu` соответствует CUDA/cuDNN major-линейкам.
-

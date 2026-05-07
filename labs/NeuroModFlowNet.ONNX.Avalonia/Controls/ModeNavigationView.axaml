@@ -1,0 +1,164 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NeuroModFlowNet.ONNX.Avalonia.Controls.ModeNavigationView">
+    <!-- Left runtime rail: common realtime controls first, then model pipeline selection. -->
+    <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="0,0,1,0">
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Top"
+                       Text="Runtime"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="#101418"
+                       Margin="18,18,18,12" />
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="8,0,8,8"
+                            Spacing="10">
+                    <!-- Common realtime controls: these affect the whole camera/inference loop, not only OCR. -->
+                    <Border Background="#F7F9FB"
+                            BorderBrush="#C8D0D8"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="10">
+                        <StackPanel Spacing="10">
+                            <Grid ColumnDefinitions="*,*"
+                                  ColumnSpacing="8">
+                                <Button x:Name="Button_RuntimeStart"
+                                        Content="Start"
+                                        HorizontalAlignment="Stretch" />
+                                <Button Grid.Column="1"
+                                        x:Name="Button_RuntimeStop"
+                                        Content="Stop"
+                                        HorizontalAlignment="Stretch" />
+                            </Grid>
+
+                            <!-- Runtime state is deliberately bright: model initialization can take time. -->
+                            <Border x:Name="Border_RuntimeStatus"
+                                    Background="#22394650"
+                                    BorderBrush="#55667570"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="8,6">
+                                <Grid ColumnDefinitions="Auto,*"
+                                      ColumnSpacing="8">
+                                    <TextBlock x:Name="TextBlock_RuntimeStatusIndicator"
+                                               Text="●"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               VerticalAlignment="Top" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="TextBlock_RuntimeStatus"
+                                               TextWrapping="Wrap"
+                                               FontSize="15"
+                                               FontWeight="Bold" />
+                                </Grid>
+                            </Border>
+
+                            <Grid ColumnDefinitions="*,Auto,Auto"
+                                  ColumnSpacing="8">
+                                <TextBlock x:Name="TextBlock_FrameWidth"
+                                           VerticalAlignment="Center"
+                                           Foreground="#111820" />
+                                <Button Grid.Column="1"
+                                        x:Name="Button_FrameWidthMinus"
+                                        Content="-" />
+                                <Button Grid.Column="2"
+                                        x:Name="Button_FrameWidthPlus"
+                                        Content="+" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto,Auto"
+                                  ColumnSpacing="8">
+                                <TextBlock x:Name="TextBlock_RecognitionBatch"
+                                           VerticalAlignment="Center"
+                                           Foreground="#111820" />
+                                <Button Grid.Column="1"
+                                        x:Name="Button_RecognitionBatchMinus"
+                                        Content="-" />
+                                <Button Grid.Column="2"
+                                        x:Name="Button_RecognitionBatchPlus"
+                                        Content="+" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="Inference"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#101418"
+                               Margin="10,8,10,0" />
+
+                    <!-- Inference selector: controls which model pipelines actually run on the shared scene. -->
+                    <Border Background="#F7F9FB"
+                            BorderBrush="#C8D0D8"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="10">
+                        <StackPanel Spacing="10">
+                            <CheckBox x:Name="CheckBox_InferenceOcr"
+                                      Content="OCR pipeline"
+                                      Foreground="#111820" />
+                            <TextBlock x:Name="TextBlock_InferenceOcrInfo"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="11"
+                                       Foreground="#2C3440"
+                                       TextWrapping="Wrap"
+                                       Text="not loaded" />
+
+                            <CheckBox x:Name="CheckBox_InferenceBox"
+                                      Content="Detection Box"
+                                      Foreground="#111820" />
+                            <TextBlock x:Name="TextBlock_InferenceBoxInfo"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="11"
+                                       Foreground="#2C3440"
+                                       TextWrapping="Wrap"
+                                       Text="not loaded" />
+
+                            <CheckBox x:Name="CheckBox_InferenceObb"
+                                      Content="OBB Detection"
+                                      Foreground="#111820" />
+                            <TextBlock x:Name="TextBlock_InferenceObbInfo"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="11"
+                                       Foreground="#2C3440"
+                                       TextWrapping="Wrap"
+                                       Text="not loaded" />
+
+                            <CheckBox x:Name="CheckBox_InferenceSegmentation"
+                                      Content="Segmentation"
+                                      Foreground="#111820" />
+                            <TextBlock x:Name="TextBlock_InferenceSegmentationInfo"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="11"
+                                       Foreground="#2C3440"
+                                       TextWrapping="Wrap"
+                                       Text="not loaded" />
+
+                            <CheckBox x:Name="CheckBox_InferenceClassification"
+                                      Content="Classification"
+                                      Foreground="#111820" />
+                            <TextBlock x:Name="TextBlock_InferenceClassificationInfo"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="11"
+                                       Foreground="#2C3440"
+                                       TextWrapping="Wrap"
+                                       Text="not loaded" />
+
+                            <CheckBox x:Name="CheckBox_InferencePose"
+                                      Content="Pose"
+                                      Foreground="#111820" />
+                            <TextBlock x:Name="TextBlock_InferencePoseInfo"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="11"
+                                       Foreground="#2C3440"
+                                       TextWrapping="Wrap"
+                                       Text="not loaded" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </Border>
+</UserControl>

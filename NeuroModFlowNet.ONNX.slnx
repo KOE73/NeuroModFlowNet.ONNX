@@ -11,13 +11,22 @@
     <File Path="README.md" />
     <File Path="README_RU.md" />
   </Folder>
-  <Folder Name="/Doc/">
-    <File Path="doc/AppLocalConfig_ru.md" />
-    <File Path="doc/TestedConfigurations_ru.md" />
-    <File Path="doc/TODO.md" />
+  <Folder Name="/Docs/">
+    <File Path="docs/AppLocalConfig_ru.md" />
+    <File Path="docs/TestedConfigurations_ru.md" />
+    <File Path="docs/TODO.md" />
+  </Folder>
+  <Folder Name="/Docs/usage/">
+    <File Path="docs/usage/AGENTS.md" />
+  </Folder>
+  <Folder Name="/Docs/usage/Microsoft.ML.OnnxRuntime/">
+    <File Path="docs/usage/NeuroModFlowNet.ONNX/AI-Usage.md" />
+    <File Path="docs/usage/NeuroModFlowNet.ONNX/Usage.en.md" />
+    <File Path="docs/usage/NeuroModFlowNet.ONNX/Usage.ru.md" />
   </Folder>
   <Folder Name="/labs/">
     <Project Path="labs/NeuroModFlowNet.ONNX.Bench/NeuroModFlowNet.ONNX.Bench.csproj" />
+    <Project Path="labs/NeuroModFlowNet.ONNX.Avalonia/NeuroModFlowNet.ONNX.Avalonia.csproj" />
     <Project Path="labs/NeuroModFlowNet.ONNX.Lab.Algorithms/NeuroModFlowNet.ONNX.Lab.Algorithms.csproj" />
     <Project Path="labs/NeuroModFlowNet.ONNX.Lab/NeuroModFlowNet.ONNX.Lab.csproj" />
   </Folder>

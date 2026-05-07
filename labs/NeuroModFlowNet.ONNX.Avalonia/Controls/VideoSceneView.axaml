@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:rendering="clr-namespace:NeuroModFlowNet.ONNX.Avalonia.Rendering"
+             x:Class="NeuroModFlowNet.ONNX.Avalonia.Controls.VideoSceneView">
+    <Grid RowDefinitions="*,6,220">
+        <!-- Live canvas: frame and overlay are separate Skia custom draw operations.
+             This keeps image pixels out of Avalonia Bitmap/PNG pipelines and keeps overlay optional. -->
+        <Border CornerRadius="6"
+                ClipToBounds="True"
+                Background="Black">
+            <Panel ClipToBounds="True">
+                <rendering:SkiaFrameView x:Name="SkiaFrameView_MainFrame"
+                                         ZIndex="0" />
+                <rendering:SkiaOverlayView x:Name="SkiaOverlayView_MainOverlay"
+                                           ZIndex="1"
+                                           IsHitTestVisible="False" />
+            </Panel>
+        </Border>
+
+        <!-- Splitter between the main frame and OCR results.
+             Drag it vertically to give more space either to the video or to the ROI/text list. -->
+        <GridSplitter Grid.Row="1"
+                      Height="6"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Rows"
+                      Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+
+        <!-- OCR result list: each row is built in code as a compact grid with ROI image on the left and text on the right. -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="8">
+            <Grid RowDefinitions="Auto,*"
+                  RowSpacing="6">
+                <TextBlock Text="Recognition"
+                           FontWeight="SemiBold" />
+                <ListBox Grid.Row="1"
+                         x:Name="ListBox_RecognitionResults"
+                         Padding="0">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,0,0,1" />
+                            <Setter Property="MinHeight" Value="0" />
+                        </Style>
+                    </ListBox.Styles>
+                </ListBox>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

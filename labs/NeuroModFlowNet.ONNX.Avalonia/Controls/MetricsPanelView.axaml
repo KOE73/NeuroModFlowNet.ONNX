@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NeuroModFlowNet.ONNX.Avalonia.Controls.MetricsPanelView">
+    <!-- Compact diagnostics strip: one monospace row to leave vertical space for video and OCR results. -->
+    <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8,6">
+        <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Spacing="18">
+            <TextBlock Text="Runtime"
+                       FontFamily="Consolas"
+                       FontWeight="SemiBold" />
+            <TextBlock x:Name="TextBlock_Fps"
+                       FontFamily="Consolas" />
+            <TextBlock x:Name="TextBlock_DetectionMilliseconds"
+                       FontFamily="Consolas" />
+            <TextBlock x:Name="TextBlock_RoiMilliseconds"
+                       FontFamily="Consolas" />
+            <TextBlock x:Name="TextBlock_RecognitionMilliseconds"
+                       FontFamily="Consolas" />
+            <TextBlock x:Name="TextBlock_RecognitionItemCount"
+                       FontFamily="Consolas" />
+        </StackPanel>
+    </Border>
+</UserControl>

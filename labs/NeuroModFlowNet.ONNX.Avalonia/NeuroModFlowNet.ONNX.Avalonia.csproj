@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Configurations>Debug;Release</Configurations>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App.local.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.0.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.2" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\samples\NeuroModFlowNet.ONNX.Demo.Assets\NeuroModFlowNet.ONNX.Demo.Assets.csproj" />
+    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
+    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NeuroModFlowNet.ONNX.Lab\OCRRoi\**\*.cs" LinkBase="OCRRoi" />
+  </ItemGroup>
+
+</Project>

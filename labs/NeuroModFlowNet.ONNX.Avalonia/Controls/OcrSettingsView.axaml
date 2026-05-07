@@ -1,0 +1,114 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NeuroModFlowNet.ONNX.Avalonia.Controls.OcrSettingsView">
+    <!-- OCR task settings panel: only PaddleOCR/ROI options live here; common runtime controls are in the left rail. -->
+    <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="12">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="14">
+                <TextBlock Text="OCR Configuration"
+                           FontSize="18"
+                           FontWeight="SemiBold" />
+
+                <!-- Recognition tensor width affects PaddleOCR Rec persistent input/output buffers. Height is model-fixed here. -->
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      ColumnSpacing="8">
+                    <TextBlock x:Name="TextBlock_RecognitionInputWidth"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            x:Name="Button_RecognitionInputWidthMinus"
+                            Content="-" />
+                    <Button Grid.Column="2"
+                            x:Name="Button_RecognitionInputWidthPlus"
+                            Content="+" />
+                </Grid>
+
+                <!-- ROI processing stack: current lab defaults are brightness 40, contrast 115%, gamma 5.0. -->
+                <TextBlock Text="ROI Processing"
+                           FontWeight="SemiBold" />
+                <CheckBox x:Name="CheckBox_RoiProcessingEnabled"
+                          Content="Apply processing pipeline" />
+
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      ColumnSpacing="8">
+                    <TextBlock x:Name="TextBlock_RoiHeightScale"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            x:Name="Button_RoiHeightScaleMinus"
+                            Content="-" />
+                    <Button Grid.Column="2"
+                            x:Name="Button_RoiHeightScalePlus"
+                            Content="+" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      ColumnSpacing="8">
+                    <TextBlock x:Name="TextBlock_RoiDisplayScale"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            x:Name="Button_RoiDisplayScaleMinus"
+                            Content="-" />
+                    <Button Grid.Column="2"
+                            x:Name="Button_RoiDisplayScalePlus"
+                            Content="+" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      ColumnSpacing="8">
+                    <TextBlock x:Name="TextBlock_Brightness"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            x:Name="Button_BrightnessMinus"
+                            Content="-" />
+                    <Button Grid.Column="2"
+                            x:Name="Button_BrightnessPlus"
+                            Content="+" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      ColumnSpacing="8">
+                    <TextBlock x:Name="TextBlock_Contrast"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            x:Name="Button_ContrastMinus"
+                            Content="-" />
+                    <Button Grid.Column="2"
+                            x:Name="Button_ContrastPlus"
+                            Content="+" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      ColumnSpacing="8">
+                    <TextBlock x:Name="TextBlock_Gamma"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            x:Name="Button_GammaMinus"
+                            Content="-" />
+                    <Button Grid.Column="2"
+                            x:Name="Button_GammaPlus"
+                            Content="+" />
+                </Grid>
+
+                <Button x:Name="Button_RotateProcessingStages"
+                        Content="Rotate stages" />
+
+                <!-- Text mode keeps the three console modes visible without requiring keyboard focus. -->
+                <TextBlock Text="Recognition Text"
+                           FontWeight="SemiBold" />
+                <ComboBox x:Name="ComboBox_RecognitionTextMode"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="Standard" />
+                    <ComboBoxItem Content="With spaces" />
+                    <ComboBoxItem Content="Candidates" />
+                </ComboBox>
+
+                <TextBlock x:Name="TextBlock_ProcessingPipeline"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>

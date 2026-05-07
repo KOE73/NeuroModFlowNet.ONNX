@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:NeuroModFlowNet.ONNX.Avalonia.Controls"
+        x:Class="NeuroModFlowNet.ONNX.Avalonia.MainWindow"
+        Title="NeuroModFlowNet.ONNX Avalonia Lab"
+        Width="1500"
+        Height="920"
+        MinWidth="1180"
+        MinHeight="720">
+
+    <!-- Root grid: left navigation, center live workspace, right settings.
+         Bottom metrics are kept under the center/right area because they are mode-independent diagnostics. -->
+    <Grid RowDefinitions="*,64"
+          ColumnDefinitions="280,6,*,6,320"
+          Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+
+        <!-- Left mode rail: this is intentionally coarse-grained so OCR is only one future mode. -->
+        <controls:ModeNavigationView Grid.RowSpan="2"
+                                     x:Name="ModeNavigationView_ModeNavigation"
+                                     Margin="0" />
+
+        <!-- Left splitter: lets the operator resize the inference selector and central scene. -->
+        <GridSplitter Grid.Column="1"
+                      Grid.RowSpan="2"
+                      Width="6"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Columns"
+                      Background="#D0D7DF" />
+
+        <!-- Center workspace: frame + overlay are drawn through Skia layers, not many Avalonia shapes. -->
+        <controls:VideoSceneView Grid.Column="2"
+                                 x:Name="VideoSceneView_LiveVideoScene"
+                                 Margin="12,12,8,8" />
+
+        <!-- Vertical splitter: lets the operator resize the center workspace and right OCR settings panel. -->
+        <GridSplitter Grid.Column="3"
+                      Grid.RowSpan="2"
+                      Width="6"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Columns"
+                      Background="#D0D7DF" />
+
+        <!-- Right task panel: all live-tunable OCR settings live here for mouse-only experiments. -->
+        <controls:OcrSettingsView Grid.Column="4"
+                                  x:Name="OcrSettingsView_OcrSettings"
+                                  Margin="8,12,12,8" />
+
+        <!-- Bottom diagnostics: intended for FPS, stage timings, queue fill and future charts. -->
+        <controls:MetricsPanelView Grid.Row="1"
+                                   Grid.Column="2"
+                                   Grid.ColumnSpan="3"
+                                   x:Name="MetricsPanelView_RuntimeMetrics"
+                                   Margin="12,4,12,12" />
+    </Grid>
+</Window>

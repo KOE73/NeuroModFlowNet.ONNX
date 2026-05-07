@@ -1,4 +1,6 @@
 using Microsoft.ML.OnnxRuntime.Tensors;
+using System.Runtime.InteropServices;
+using Float16 = Microsoft.ML.OnnxRuntime.Float16;
 
 namespace NeuroModFlowNet.ONNX;
 
@@ -19,7 +21,8 @@ public abstract class YoloClsFP16ExtractorBase<TOut> : YoloClsExtractorBase<TOut
 
     public YoloCls GetOutput()
     {
-        var data = Model.GetTensorDataAsSpan<Half>();
+        var dataFloat16 = Model.GetTensorDataAsSpan<Float16>();
+        var data = MemoryMarshal.Cast<Float16, Half>(dataFloat16);
         int offset = 0;
 
         int bestIdx = 0;

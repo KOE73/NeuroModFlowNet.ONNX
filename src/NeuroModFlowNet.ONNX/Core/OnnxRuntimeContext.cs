@@ -1,4 +1,5 @@
 using Microsoft.ML.OnnxRuntime;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace NeuroModFlowNet.ONNX;
@@ -35,6 +36,8 @@ public interface IOnnxModelOutputs
 /// <item><term>Интроспекция</term><description> Кэширование метаданных (формы, имена) позволяет избежать лишних обращений к словарям во время инференса.</description></item>
 /// </list>
 /// </remarks>
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
+[DebuggerTypeProxy(typeof(OnnxRuntimeContextDebugView))]
 public sealed class OnnxRuntimeContext : IDisposable, IOnnxModelOutputs
 {
     public static implicit operator OnnxRuntimeContext(string modelPath) => new(modelPath);
@@ -279,5 +282,12 @@ public sealed class OnnxRuntimeContext : IDisposable, IOnnxModelOutputs
 
     public string? GetCustomMetadata(string key)
         => Session.ModelMetadata.CustomMetadataMap.TryGetValue(key, out var val) ? val : null;
+    #endregion
+
+    #region Debug Display
+
+    string DebuggerDisplay =>
+        $"{InferenceBackend} {Path.GetFileName(ModelPath)} | IN:{InputNames.Count} OUT:{OutputNames.Count}";
+
     #endregion
 }

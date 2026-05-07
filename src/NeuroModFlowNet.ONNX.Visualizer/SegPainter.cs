@@ -61,25 +61,26 @@ public static class SegPainter
                 
                 using var actualImgMask = modelSpaceMask[cropRect];
 
-                // 4. Resize the "clean" image mask portion to the actual VIEW cell size
-                using var fullFrameMask = new Mat();
-                Cv2.Resize(actualImgMask, fullFrameMask, new Size(mat.Width, mat.Height));
+                // 4. Crop only the bbox mask area and resize it to the bbox on screen.
+                int maskX = Math.Clamp((int)MathF.Round(r.X * (actualImgMask.Width / (float)mat.Width)), 0, actualImgMask.Width - 1);
+                int maskY = Math.Clamp((int)MathF.Round(r.Y * (actualImgMask.Height / (float)mat.Height)), 0, actualImgMask.Height - 1);
+                int maskRight = Math.Clamp((int)MathF.Round(r.Right * (actualImgMask.Width / (float)mat.Width)), maskX + 1, actualImgMask.Width);
+                int maskBottom = Math.Clamp((int)MathF.Round(r.Bottom * (actualImgMask.Height / (float)mat.Height)), maskY + 1, actualImgMask.Height);
+                var maskCropRect = new Rect(maskX, maskY, maskRight - maskX, maskBottom - maskY);
+
+                using var bboxSourceMask = actualImgMask[maskCropRect];
+                using var bboxFloatMask = new Mat();
+                Cv2.Resize(bboxSourceMask, bboxFloatMask, new Size(r.Width, r.Height));
 
                 // 5. Threshold and convert to 8U
                 using var maskBin = new Mat();
-                Cv2.Threshold(fullFrameMask, maskBin, 0.5, 1.0, ThresholdTypes.Binary);
+                Cv2.Threshold(bboxFloatMask, maskBin, 0.5, 1.0, ThresholdTypes.Binary);
                 using var mask8u = new Mat();
                 maskBin.ConvertTo(mask8u, MatType.CV_8UC1, 255.0);
 
-                // 6. Crop by bounding box and draw
-                using var bboxMask = new Mat(mat.Size(), MatType.CV_8UC1, Scalar.Black);
-                Cv2.Rectangle(bboxMask, r, Scalar.White, -1);
-                
-                using var finalMask = new Mat();
-                Cv2.BitwiseAnd(mask8u, bboxMask, finalMask);
-
-                using var colorMat = new Mat(mat.Size(), MatType.CV_8UC3, color);
-                colorMat.CopyTo(overlay, finalMask);
+                // 6. Draw into the target bbox only. Avoid full-frame temp Mats per detection.
+                using Mat overlayRoi = overlay[r];
+                overlayRoi.SetTo(color, mask8u);
             }
             else if (r.Width > 2 && r.Height > 2)
             {

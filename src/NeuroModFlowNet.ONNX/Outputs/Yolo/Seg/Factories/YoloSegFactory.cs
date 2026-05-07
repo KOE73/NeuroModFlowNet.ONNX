@@ -38,9 +38,12 @@ public static class YoloSegFactory
     {
         var inputMeta  = context.Session.InputMetadata.Values.First();
 
-        // Prototype tensor is the second output (output1), determines result precision.
+        // Detection tensor may stay FP32 while prototype tensor is FP16.
+        // In that mixed case detections must still be decoded as FP32.
         var outputMetas = context.Session.OutputMetadata.Values.ToArray();
+        var detectionMeta = outputMetas[0];
         var prototypeMeta = outputMetas.Length > 1 ? outputMetas[1] : outputMetas[0];
+        bool detectionIsFP16 = detectionMeta.ElementDataType == TensorElementType.Float16;
         bool prototypeIsFP16 = prototypeMeta.ElementDataType == TensorElementType.Float16;
 
         Type converterType = inputMeta.ElementDataType switch
@@ -51,8 +54,10 @@ public static class YoloSegFactory
             _ => throw new NotSupportedException($"Unsupported input data type: {inputMeta.ElementDataType}")
         };
 
-        (Type resultType, Type extractorType) = prototypeIsFP16
+        (Type resultType, Type extractorType) = detectionIsFP16 && prototypeIsFP16
             ? (typeof(YoloSegResult_FP16_Mask32), typeof(YoloSegFP16SingleExtractor))
+            : prototypeIsFP16
+                ? (typeof(YoloSegResult_FP32_Mask32), typeof(YoloSegFP32MixedSingleExtractor))
             : (typeof(YoloSegResult_FP32_Mask32), typeof(YoloSegFP32SingleExtractor));
 
         Type closedType = typeof(ImageRunner<,,,>).MakeGenericType(

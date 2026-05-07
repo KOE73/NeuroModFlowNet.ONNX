@@ -7,6 +7,8 @@ using System.Text;
 
 public class PaddleOCRRecExtractor : ResultExtractorBase<List<PaddleOCRRecExtractor.OcrResult>>
 {
+    public const int OutputWidthStride = 8;
+
     public int ModelDetectionAttributes { get; private set; }
     public int DetectionWidth { get; private set; }
 
@@ -17,7 +19,11 @@ public class PaddleOCRRecExtractor : ResultExtractorBase<List<PaddleOCRRecExtrac
 
     protected override void Init()
     {
-        DetectionWidth = (int)Model.ModelInputShapes[Model.PrimaryInputName][3] / 8;
+        long[] inputShape = Model.IsInputPersistentValueInitialized(Model.PrimaryInputName)
+            ? Model.GetRealInputShape(Model.PrimaryInputName)
+            : Model.ModelInputShapes[Model.PrimaryInputName];
+
+        DetectionWidth = (int)inputShape[3] / OutputWidthStride;
         ModelDetectionAttributes = (int)Model.ModelOutputShapes[Model.PrimaryOutputName][2];
 
         // Auto-load dictionary
@@ -30,12 +36,10 @@ public class PaddleOCRRecExtractor : ResultExtractorBase<List<PaddleOCRRecExtrac
         if(!File.Exists(filePath))
         {
             IsAlphabetLoaded = false;
-            Console.WriteLine($"Файл словаря не найден: {filePath}");
-            return;
+            throw new FileNotFoundException("Dictionary file not found.", filePath);
         }
 
         string[] fileLines = File.ReadAllLines(filePath, Encoding.UTF8);
-        Console.WriteLine($"Словарь загружен. Количество символов: {fileLines.Length}");
         string[] alphabet = ["", .. fileLines, " "];
 
         if(alphabet.Length != ModelDetectionAttributes)

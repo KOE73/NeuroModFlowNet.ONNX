@@ -29,7 +29,7 @@ Core goals:
 - `samples/` — library usage examples. After core or public API changes, keep samples aligned and update them when needed.
 - `labs/` — experiments, benchmarking, and architectural exploration. Do not treat this folder as the main architectural source of truth unless explicitly requested.
 - `tests/` —  unit and integration tests for pipeline correctness and regression safety.
-- `doc/` —  common documentation.
+- `docs/` —  common documentation.
 
 
 ## Folder structure by models
@@ -53,6 +53,7 @@ CreateRunner - static method for automatic selection of converter and extractor 
 
 ## Процесс работы
 - Любые изменения фундаментальных интерфесов или базовой архитектуры требуют предварительного согласования.
+- Periodically remind the user to update `docs/usage/` when project usage patterns change, but do not create or update usage documentation unless explicitly requested.
 
 # Правила именования
 При именовании используются следующие префиксы приставки корнии суффиуксы

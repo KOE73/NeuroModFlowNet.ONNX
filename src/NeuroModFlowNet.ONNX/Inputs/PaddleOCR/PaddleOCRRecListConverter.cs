@@ -15,10 +15,14 @@ public class PaddleOCRRecListConverter : IImageConverter<List<Mat>>
     public void SetModel(OnnxRuntimeContext context)
     {
         Model = context;
-        Batch = (int)Model.ModelInputShapes[Model.PrimaryInputName][0];
-        Channels = (int)Model.ModelInputShapes[Model.PrimaryInputName][1];
-        Height = (int)Model.ModelInputShapes[Model.PrimaryInputName][2];
-        Width = (int)Model.ModelInputShapes[Model.PrimaryInputName][3];
+        long[] shape = Model.IsInputPersistentValueInitialized(Model.PrimaryInputName)
+            ? Model.GetRealInputShape(Model.PrimaryInputName)
+            : Model.ModelInputShapes[Model.PrimaryInputName];
+
+        Batch = (int)shape[0];
+        Channels = (int)shape[1];
+        Height = (int)shape[2];
+        Width = (int)shape[3];
     }
 
     public unsafe void Prepare(List<Mat> input)

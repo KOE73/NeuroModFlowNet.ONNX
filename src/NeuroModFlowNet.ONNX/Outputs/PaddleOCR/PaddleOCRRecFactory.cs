@@ -3,7 +3,7 @@ using NeuroModFlowNet.ONNX.Converters.Nchw;
 
 namespace NeuroModFlowNet.ONNX;
 
-public static class PaddleOCRFactory
+public static class PaddleOCRRecFactory
 {
     public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_32FC1_SafeExtractor>
         CreateDet(string modelPath, InferenceBackend inferenceBackend = InferenceBackend.Cuda, Action<ExecutionProviderConfig>? configure = null)

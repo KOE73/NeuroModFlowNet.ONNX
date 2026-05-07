@@ -20,9 +20,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!--NVIDIA-->
-		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.22.1" />
-		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />-->
+		<!-- NVIDIA -->
+    <!-- GTX -->
+    <!--<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.22.1" />-->
+    <!-- RTX -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />
 		
 		<!--CPU-->
 		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />-->
@@ -44,6 +46,10 @@
 		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
 		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Diagnostics\NeuroModFlowNet.ONNX.Diagnostics.csproj" />
 		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="OCRRoi\" />
 	</ItemGroup>
 
 </Project>

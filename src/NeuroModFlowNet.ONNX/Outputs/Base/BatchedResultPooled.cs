@@ -1,19 +1,27 @@
-﻿using System.Runtime.CompilerServices;
+﻿namespace NeuroModFlowNet.ONNX;
 
-namespace NeuroModFlowNet.ONNX;
-
-/// <summary>
-/// Вспомогательный класс.
-/// Организует хранение результатов детекции в виде единого плотного массива с индексами для каждого батча.
-/// Основное преимущество, экономи GC. 
-/// При большом количестве детекций (например, при сегментации) позволяет избежать большого количества мелких массивов для каждого батча.
-/// 
-/// TODO: посмотреть как пулы использоватью
-/// </summary>
-/// <typeparam name="T"></typeparam>
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
+/// <summary>
+/// EN:
+/// Stores batched results in an array rented from ArrayPool instead of allocating _data with new.
+/// This reduces managed allocations and GC pressure for large or frequently created result buffers.
+/// The rented array must be returned to the pool through Dispose.
+///
+/// RU:
+/// Хранит результаты batch в массиве, взятом из ArrayPool, а не созданном через new для _data.
+/// Это снижает количество managed-аллокаций и нагрузку на GC при больших или часто создаваемых буферах результатов.
+/// Арендованный массив должен быть возвращен в пул через Dispose.
+/// </summary>
+/// <remarks>
+/// EN:
+/// The buffer is cleared before return only when T contains references.
+///
+/// RU:
+/// Буфер очищается перед возвратом только если T содержит ссылки.
+/// </remarks>
+/// <typeparam name="T">Result item type.</typeparam>
 public sealed class BatchedResultPooled<T> : BatchedResultBase<T>, IDisposable
     where T : struct
 {
@@ -40,6 +48,15 @@ public sealed class BatchedResultPooled<T> : BatchedResultBase<T>, IDisposable
 }
 
 
+/// <summary>
+/// EN:
+/// Result storage policy that creates BatchedResultPooled{T}.
+/// The result object is allocated with new, but its _data array is rented from ArrayPool.
+///
+/// RU:
+/// Политика хранения результата, создающая BatchedResultPooled{T}.
+/// Объект результата выделяется через new, но его массив _data берется из ArrayPool.
+/// </summary>
 public readonly struct BatchedResultPooledFactory
     : IBatchedResultFactoryPolicy<BatchedResultPooledFactory>
 {

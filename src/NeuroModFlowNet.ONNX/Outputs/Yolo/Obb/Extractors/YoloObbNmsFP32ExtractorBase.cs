@@ -42,7 +42,7 @@ public abstract class YoloObbNmsFP32ExtractorBase<TOut> : YoloObbNmsExtractorBas
         var data = Model.GetTensorDataAsSpan<float>();
         var allDetections = MemoryMarshal.Cast<float, YoloObb_FP32_XYWHSCA>(data);
 
-        var result = new BatchedResultPooled<YoloObb>(BatchCount, BatchCount * ItemCount);
+        var result = BatchedResultPooledFactory.Create<YoloObb>(BatchCount, BatchCount * ItemCount);
 
         for(int batch = 0; batch < BatchCount; batch++)
         {

@@ -1,14 +1,28 @@
-﻿namespace NeuroModFlowNet.ONNX;   
+namespace NeuroModFlowNet.ONNX;
 
 /// <summary>
-/// Вспомогательный класс.
-/// Организует хранение результатов детекции в виде единого плотного массива с индексами для каждого батча.
-/// Основное преимущество, экономи GC. 
-/// При большом количестве детекций (например, при сегментации) позволяет избежать большого количества мелких массивов для каждого батча.
-/// 
-/// TODO: посмотреть как пулы использоватью
+/// EN:
+/// Stores results for all batch items in one dense array.
+/// Each batch stores only its range in the shared array: Offset + Length.
+/// This avoids many small per-batch arrays and reduces GC pressure.
+///
+/// RU:
+/// Хранит результаты всех элементов batch в одном плотном массиве.
+/// Для каждого batch сохраняется только диапазон в общем массиве: Offset + Length.
+/// Это позволяет избежать множества мелких массивов на каждый batch и снижает нагрузку на GC.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <remarks>
+/// <code>
+///   _ranges:
+///   Batch 0          Batch 1      Batch 2
+///   O=0 L=3          O=3 L=2      O=5 L=4
+///   | I0 I1 I2 |     | I0 I1 |    | I0 I1 I2 I3 |
+///
+///   _data:
+///   | B0.I0 B0.I1 B0.I2 | B1.I0 B1.I1 | B2.I0 B2.I1 B2.I2 B2.I3 |
+/// </code>
+/// </remarks>
+/// <typeparam name="T">The value type of the items contained in the batched result.</typeparam>
 public abstract class BatchedResultBase<T> : IBatchedResult, IDetectionResult<T>
     where T : struct
 {

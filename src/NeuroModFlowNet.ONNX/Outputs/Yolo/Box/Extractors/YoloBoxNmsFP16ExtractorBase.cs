@@ -1,6 +1,5 @@
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
-using System.Runtime.InteropServices;
 
 namespace NeuroModFlowNet.ONNX;
 
@@ -27,7 +26,6 @@ public abstract class YoloBoxNmsFP16ExtractorBase<TOut> : YoloBoxNmsExtractorBas
         var data = Model.GetTensorDataAsSpan<Float16>();
         var allDetections = MemoryMarshal.Cast<Float16, YoloBox_FP16_XYWHSC>(data);
 
-        //var result = new BatchedResultPooled<YoloBox_FP16_XYWHSC>(BatchCount, BatchCount * ItemCount);
         var result = BatchedResultPooledFactory.Create<YoloBox_FP16_XYWHSC>(BatchCount, BatchCount * ItemCount);
 
         Half threshold = (Half)Threshold;
@@ -47,10 +45,10 @@ public abstract class YoloBoxNmsFP16ExtractorBase<TOut> : YoloBoxNmsExtractorBas
 
     public IDetectionResult<YoloBox> GetOutputStd()
     {
-        var data = Model.GetTensorDataAsSpan<float>();
-        var allDetections = MemoryMarshal.Cast<float, YoloBox_FP16_XYWHSC>(data);
+        var data = Model.GetTensorDataAsSpan<Float16>();
+        var allDetections = MemoryMarshal.Cast<Float16, YoloBox_FP16_XYWHSC>(data);
 
-        var result = new BatchedResultPooled<YoloBox>(BatchCount, BatchCount * ItemCount);
+        var result = BatchedResultPooledFactory.Create<YoloBox>(BatchCount, BatchCount * ItemCount);
         Half threshold = (Half)Threshold;
 
         for(int batch = 0; batch < BatchCount; batch++)

@@ -22,7 +22,6 @@ public abstract class YoloBoxNmsFP32ExtractorBase<TOut> : YoloBoxNmsExtractorBas
         var data = Model.GetTensorDataAsSpan<float>();
         var allDetections = MemoryMarshal.Cast<float, YoloBox_FP32_XYWHSC>(data);
 
-        //var result = new BatchedResultPooled<YoloBox_FP32_XYWHSC>(BatchCount, BatchCount * ItemCount);
         var result = BatchedResultPooledFactory.Create<YoloBox_FP32_XYWHSC>(BatchCount, BatchCount * ItemCount);
 
         for(int batch = 0; batch < BatchCount; batch++)
@@ -43,7 +42,7 @@ public abstract class YoloBoxNmsFP32ExtractorBase<TOut> : YoloBoxNmsExtractorBas
         var data = Model.GetTensorDataAsSpan<float>();
         var allDetections = MemoryMarshal.Cast<float, YoloBox_FP32_XYWHSC>(data);
 
-        var result = new BatchedResultPooled<YoloBox>(BatchCount, BatchCount * ItemCount);
+        var result = BatchedResultPooledFactory.Create<YoloBox>(BatchCount, BatchCount * ItemCount);
 
         for(int batch = 0; batch < BatchCount; batch++)
         {

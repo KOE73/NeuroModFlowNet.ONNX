@@ -290,36 +290,62 @@ public sealed class RealTimeInferenceEngine : IDisposable
         ReadOnlySpan<YoloObb> boxes,
         LetterboxInfo letterboxInfo)
     {
-        var transform = new ImageResizeTransform(letterboxInfo.Ratio, letterboxInfo.OffsetX, letterboxInfo.OffsetY);
+        var mapper = LetterboxCoordinateMapper.Create(letterboxInfo.Ratio, letterboxInfo.OffsetX, letterboxInfo.OffsetY);
 
-            List<RotatedRect> sourceRects = ImageCoordinateMapper.MapYoloObbToSourceRects(
+        // Most realtime OCR frames have a small number of text boxes. Keep that path stack-only;
+        // larger batches fall back to a normal array until a reusable workspace/pool is added.
+        Span<OcrQuadRegion> sourceRegions = boxes.Length <= 1000
+            ? stackalloc OcrQuadRegion[boxes.Length]
+            : new OcrQuadRegion[boxes.Length];
+
+        YoloObbOcrRegionMapper.MapToSourceRegions(
             boxes,
-            transform,
-            recognitionOptions.RoiHeightScale);
+            mapper,
+            recognitionOptions.RoiHeightScale,
+            sourceRegions);
+
+        var options = new TextRegionExtractionOptions(
+            recognitionOptions.RecognitionInputWidth,
+            recognitionOptions.RecognitionInputHeight,
+            recognitionOptions.ProcessingStage);
 
         List<(Mat Roi, Point LabelPoint)> preparedImages = [];
 
-        foreach(RotatedRect sourceRect in sourceRects)
+        foreach(OcrQuadRegion sourceRegion in sourceRegions)
         {
-            Mat? recognitionRoi = OcrRoiExtractor.TryExtractRecognitionRoi(
+            if(!NaiveTextRegionExtractor.Shared.TryExtract(
                 sourceMat,
-                sourceRect,
-                recognitionOptions.RecognitionInputWidth,
-                recognitionOptions.RecognitionInputHeight,
-                recognitionOptions.ProcessingStage);
-
+                sourceRegion,
+                options,
+                out Mat? recognitionRoi)) continue;
             if(recognitionRoi is null) continue;
 
-            preparedImages.Add((recognitionRoi, GetRecognitionLabelPoint(sourceRect, sourceMat)));
+            preparedImages.Add((recognitionRoi, GetRecognitionLabelPoint(sourceRegion, sourceMat)));
         }
 
         return preparedImages;
     }
 
-    static Point GetRecognitionLabelPoint(RotatedRect sourceRect, Mat sourceMat)
+    static Point GetRecognitionLabelPoint(OcrQuadRegion sourceRegion, Mat sourceMat)
     {
-        Rect bounds = ClipRect(sourceRect.BoundingRect(), sourceMat.Width, sourceMat.Height);
+        Rect bounds = ClipRect(GetBoundingRect(sourceRegion), sourceMat.Width, sourceMat.Height);
         return new Point(bounds.X, Math.Max(0, bounds.Y - RecognitionLabelOffsetY));
+    }
+
+    static Rect GetBoundingRect(OcrQuadRegion sourceRegion)
+    {
+        float left = Math.Min(Math.Min(sourceRegion.X0, sourceRegion.X1), Math.Min(sourceRegion.X2, sourceRegion.X3));
+        float top = Math.Min(Math.Min(sourceRegion.Y0, sourceRegion.Y1), Math.Min(sourceRegion.Y2, sourceRegion.Y3));
+        float right = Math.Max(Math.Max(sourceRegion.X0, sourceRegion.X1), Math.Max(sourceRegion.X2, sourceRegion.X3));
+        float bottom = Math.Max(Math.Max(sourceRegion.Y0, sourceRegion.Y1), Math.Max(sourceRegion.Y2, sourceRegion.Y3));
+
+        int x = (int)Math.Floor(left);
+        int y = (int)Math.Floor(top);
+        return new Rect(
+            x,
+            y,
+            Math.Max(1, (int)Math.Ceiling(right) - x),
+            Math.Max(1, (int)Math.Ceiling(bottom) - y));
     }
 
     static Rect ClipRect(Rect rect, int width, int height)
@@ -380,7 +406,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
         bool drawBoxDetection,
         bool drawObbDetection)
     {
-        var transform = new ImageResizeTransform(letterboxInfo.Ratio, letterboxInfo.OffsetX, letterboxInfo.OffsetY);
+        var mapper = LetterboxCoordinateMapper.Create(letterboxInfo.Ratio, letterboxInfo.OffsetX, letterboxInfo.OffsetY);
         List<OverlayObb> overlayBoxes = new(boxDetections.Length + obbDetections.Length);
 
         if(drawBoxDetection)
@@ -396,9 +422,9 @@ public sealed class RealTimeInferenceEngine : IDisposable
         {
             foreach(YoloObb box in obbDetections)
             {
-                RotatedRect sourceRect = ImageCoordinateMapper.MapYoloObbToSourceRect(box, transform);
+                OcrQuadRegion sourceRegion = YoloObbOcrRegionMapper.MapToSourceRegion(box, mapper);
                 string className = resources.ModelObb.GetYoloClassName(box.Class);
-                overlayBoxes.Add(CreateOverlayBox(sourceRect, BoxPainter.ClassColorSkia(box.Class), $"{className} {box.Score:P0}"));
+                overlayBoxes.Add(CreateOverlayBox(sourceRegion, BoxPainter.ClassColorSkia(box.Class), $"{className} {box.Score:P0}"));
             }
         }
 
@@ -433,11 +459,19 @@ public sealed class RealTimeInferenceEngine : IDisposable
             label);
     }
 
-    static OverlayObb CreateOverlayBox(RotatedRect sourceRect, SKColor color, string label)
+    static OverlayObb CreateOverlayBox(OcrQuadRegion sourceRegion, SKColor color, string label)
     {
-        Point2f[] points = sourceRect.Points();
+        Point2f[] points =
+        [
+            sourceRegion.Point0,
+            sourceRegion.Point1,
+            sourceRegion.Point2,
+            sourceRegion.Point3,
+        ];
+
+        Rect bounds = GetBoundingRect(sourceRegion);
         return new OverlayObb(
-            new SKPoint(sourceRect.Center.X, sourceRect.Center.Y),
+            new SKPoint(bounds.X + bounds.Width * 0.5f, bounds.Y + bounds.Height * 0.5f),
             points.Select(point => new SKPoint(point.X, point.Y)).ToArray(),
             color,
             label);

@@ -42,9 +42,9 @@ public class RealTimeView2 : IDisposable
     bool disposed;
 
     readonly RealTimeViewSettings _settings = RealTimeViewSettings.FromConfig();
-    readonly OcrRoiBrightnessContrastStage recognitionRoiBrightnessContrastStage = new(RecognitionRoiBrightness, RecognitionRoiContrastPercent);
-    readonly OcrRoiGammaCorrectionStage recognitionRoiGammaCorrectionStage = new(RecognitionRoiGamma);
-    readonly OcrRoiProcessingPipeline recognitionRoiProcessingStage;
+    readonly TextRegionBrightnessContrastStage recognitionRoiBrightnessContrastStage = new(RecognitionRoiBrightness, RecognitionRoiContrastPercent);
+    readonly TextRegionGammaCorrectionStage recognitionRoiGammaCorrectionStage = new(RecognitionRoiGamma);
+    readonly TextRegionProcessingPipeline recognitionRoiProcessingStage;
 
     VideoCapture? capture;
     Mat? sourceMat;
@@ -75,7 +75,7 @@ public class RealTimeView2 : IDisposable
 
     public RealTimeView2()
     {
-        recognitionRoiProcessingStage = new OcrRoiProcessingPipeline(
+        recognitionRoiProcessingStage = new TextRegionProcessingPipeline(
             recognitionRoiBrightnessContrastStage,
             recognitionRoiGammaCorrectionStage);
     }
@@ -665,39 +665,65 @@ public class RealTimeView2 : IDisposable
         ReadOnlySpan<YoloObb> boxes,
         LetterboxInfo letterboxInfo)
     {
-        var transform = new ImageResizeTransform(
+        var mapper = LetterboxCoordinateMapper.Create(
             letterboxInfo.Ratio,
             letterboxInfo.OffsetX,
             letterboxInfo.OffsetY);
 
-        List<RotatedRect> sourceRects = ImageCoordinateMapper.MapYoloObbToSourceRects(
+        // Most realtime OCR frames have a small number of text boxes. Keep that path stack-only;
+        // larger batches fall back to a normal array until a reusable workspace/pool is added.
+        Span<OcrQuadRegion> sourceRegions = boxes.Length <= 1000
+            ? stackalloc OcrQuadRegion[boxes.Length]
+            : new OcrQuadRegion[boxes.Length];
+
+        YoloObbOcrRegionMapper.MapToSourceRegions(
             boxes,
-            transform,
-            RecognitionRoiHeightScale);
+            mapper,
+            RecognitionRoiHeightScale,
+            sourceRegions);
+
+        var options = new TextRegionExtractionOptions(
+            RecognitionInputWidth,
+            RecognitionInputHeight,
+            recognitionRoiProcessingEnabled ? recognitionRoiProcessingStage : null);
 
         List<(Mat Roi, Point LabelPoint)> preparedImages = [];
 
-        foreach(RotatedRect sourceRect in sourceRects)
+        foreach(OcrQuadRegion sourceRegion in sourceRegions)
         {
-            Mat? recognitionRoi = OcrRoiExtractor.TryExtractRecognitionRoi(
+            if(!NaiveTextRegionExtractor.Shared.TryExtract(
                 sourceMat,
-                sourceRect,
-                RecognitionInputWidth,
-                RecognitionInputHeight,
-                recognitionRoiProcessingEnabled ? recognitionRoiProcessingStage : null);
-
+                sourceRegion,
+                options,
+                out Mat? recognitionRoi)) continue;
             if(recognitionRoi is null) continue;
 
-            preparedImages.Add((recognitionRoi, GetRecognitionLabelPoint(sourceRect, sourceMat)));
+            preparedImages.Add((recognitionRoi, GetRecognitionLabelPoint(sourceRegion, sourceMat)));
         }
 
         return preparedImages;
     }
 
-    private static Point GetRecognitionLabelPoint(RotatedRect sourceRect, Mat sourceMat)
+    private static Point GetRecognitionLabelPoint(OcrQuadRegion sourceRegion, Mat sourceMat)
     {
-        Rect bounds = ClipRect(sourceRect.BoundingRect(), sourceMat.Width, sourceMat.Height);
+        Rect bounds = ClipRect(GetBoundingRect(sourceRegion), sourceMat.Width, sourceMat.Height);
         return new Point(bounds.X, Math.Max(0, bounds.Y - RecognitionLabelOffsetY));
+    }
+
+    private static Rect GetBoundingRect(OcrQuadRegion sourceRegion)
+    {
+        float left = Math.Min(Math.Min(sourceRegion.X0, sourceRegion.X1), Math.Min(sourceRegion.X2, sourceRegion.X3));
+        float top = Math.Min(Math.Min(sourceRegion.Y0, sourceRegion.Y1), Math.Min(sourceRegion.Y2, sourceRegion.Y3));
+        float right = Math.Max(Math.Max(sourceRegion.X0, sourceRegion.X1), Math.Max(sourceRegion.X2, sourceRegion.X3));
+        float bottom = Math.Max(Math.Max(sourceRegion.Y0, sourceRegion.Y1), Math.Max(sourceRegion.Y2, sourceRegion.Y3));
+
+        int x = (int)Math.Floor(left);
+        int y = (int)Math.Floor(top);
+        return new Rect(
+            x,
+            y,
+            Math.Max(1, (int)Math.Ceiling(right) - x),
+            Math.Max(1, (int)Math.Ceiling(bottom) - y));
     }
 
     private static Rect ClipRect(Rect rect, int width, int height)

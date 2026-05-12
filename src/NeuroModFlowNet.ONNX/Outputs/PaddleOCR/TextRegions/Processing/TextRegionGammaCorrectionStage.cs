@@ -2,14 +2,22 @@ using OpenCvSharp;
 
 namespace NeuroModFlowNet.ONNX;
 
-public sealed class OcrRoiGammaCorrectionStage : IOcrRoiProcessingStage, IOcrRoiGammaCorrectionSettings, IDisposable
+/// <summary>
+/// EN: Gamma-correction normalization stage for OCR text-region crops.
+/// RU: Шаг gamma-коррекции для нормализации OCR-кропов текстовых областей.
+/// </summary>
+/// <remarks>
+/// EN: The lookup table is rebuilt only when gamma changes, so the per-frame path stays as a single OpenCV LUT call.
+/// RU: Lookup table перестраивается только при изменении gamma, поэтому на кадр остается один вызов OpenCV LUT.
+/// </remarks>
+public sealed class TextRegionGammaCorrectionStage : ITextRegionProcessingStage, ITextRegionGammaCorrectionSettings, IDisposable
 {
     readonly Mat lookupTable = new(1, 256, MatType.CV_8UC1);
     double gamma;
 
     public string Name { get; } = "Gamma";
 
-    public OcrRoiGammaCorrectionStage(double gamma)
+    public TextRegionGammaCorrectionStage(double gamma)
     {
         Gamma = gamma;
     }

@@ -27,13 +27,13 @@ public sealed class RecognitionOptions : IDisposable
     const double RoiDisplayScaleMin = 0.5;
     const double RoiDisplayScaleMax = 6.0;
 
-    readonly OcrRoiBrightnessContrastStage brightnessContrastStage = new(40, 115);
-    readonly OcrRoiGammaCorrectionStage gammaCorrectionStage = new(5.0);
-    readonly OcrRoiProcessingPipeline processingPipeline;
+    readonly TextRegionBrightnessContrastStage brightnessContrastStage = new(40, 115);
+    readonly TextRegionGammaCorrectionStage gammaCorrectionStage = new(5.0);
+    readonly TextRegionProcessingPipeline processingPipeline;
 
     public RecognitionOptions()
     {
-        processingPipeline = new OcrRoiProcessingPipeline(
+        processingPipeline = new TextRegionProcessingPipeline(
             brightnessContrastStage,
             gammaCorrectionStage);
     }
@@ -51,7 +51,7 @@ public sealed class RecognitionOptions : IDisposable
     public double Brightness => brightnessContrastStage.Brightness;
     public double ContrastPercent => brightnessContrastStage.ContrastPercent;
     public double Gamma => gammaCorrectionStage.Gamma;
-    public IOcrRoiProcessingStage? ProcessingStage => ProcessingEnabled ? processingPipeline : null;
+    public ITextRegionProcessingStage? ProcessingStage => ProcessingEnabled ? processingPipeline : null;
     public int RecognitionOutputItemCount => RecognitionInputWidth / PaddleOCRRecExtractor.OutputWidthStride;
 
     public void AdjustFrameWidth(int delta) =>

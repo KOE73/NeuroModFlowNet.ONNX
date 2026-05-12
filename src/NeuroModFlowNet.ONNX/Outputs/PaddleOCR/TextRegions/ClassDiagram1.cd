@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="NeuroModFlowNet.ONNX.NaiveTextRegionExtractor" BaseTypeListCollapsed="true">
+    <Position X="6" Y="2.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQABAAAAAAQAABAAAAAAAAIAAAAAFAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Extraction\NaiveTextRegionExtractor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.YoloObbOcrRegionMapper">
+    <Position X="1.5" Y="2.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Mapping\YoloObbOcrRegionMapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.TextRegionProcessingPipeline" BaseTypeListCollapsed="true">
+    <Position X="1.75" Y="9.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAIgAEAAAKAAAAAQAgAABAQAAAAACAAACAAAAABAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\TextRegionProcessingPipeline.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.TextRegionBrightnessContrastStage" BaseTypeListCollapsed="true">
+    <Position X="6" Y="9.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAAAAAAACAAIA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\TextRegionBrightnessContrastStage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" />
+  </Class>
+  <Class Name="NeuroModFlowNet.ONNX.TextRegionGammaCorrectionStage" BaseTypeListCollapsed="true">
+    <Position X="10.5" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAACAAAgAAAgAAAAQAAIAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\TextRegionGammaCorrectionStage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.1" />
+  </Class>
+  <Interface Name="NeuroModFlowNet.ONNX.ITextRegionExtractor">
+    <Position X="6" Y="1" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Extraction\ITextRegionExtractor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IImageCoordinateMapper">
+    <Position X="1.5" Y="1" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Mapping\IImageCoordinateMapper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.ITextRegionProcessingStage">
+    <Position X="1.75" Y="7" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\ITextRegionProcessingStage.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.ITextRegionBrightnessContrastSettings">
+    <Position X="6" Y="7.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAIA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\ITextRegionBrightnessContrastSettings.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.ITextRegionGammaCorrectionSettings">
+    <Position X="10.5" Y="7.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\ITextRegionGammaCorrectionSettings.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

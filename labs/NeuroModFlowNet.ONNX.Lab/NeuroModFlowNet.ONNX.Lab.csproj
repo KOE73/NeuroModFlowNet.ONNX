@@ -48,8 +48,4 @@
 		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="OCRRoi\" />
-	</ItemGroup>
-
 </Project>

@@ -63,7 +63,7 @@
 
 | Подключение | Ответственность |
 | --- | --- |
-| `..\NeuroModFlowNet.ONNX.Lab\OCRRoi\**\*.cs` | В проект подключены ROI extractor и processing stages из консольной lab-демки через `Compile LinkBase`. Это временное решение для lab-переиспользования до переноса в основную библиотеку. |
+| `src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Roi` | ROI extractor, coordinate mapper и processing stages находятся в основной библиотеке. Avalonia и консольная lab-демка используют один библиотечный код без `Compile LinkBase`. |
 | `NeuroModFlowNet.ONNX.Visualizer` | Сейчас используется для `Letterbox` и цветовой логики. Текущие painter-ы в основном рисуют в `Mat`, поэтому Avalonia overlay имеет отдельный Skia painter. |
 
 ## Known Runtime Risks
@@ -73,7 +73,7 @@
 | Нажатие `Start` не дает видео | Смотреть статус справа. Сейчас модели инициализируются до первого camera frame, поэтому долгий старт может выглядеть как зависание. |
 | PaddleOCR Rec падает на отрицательном tensor shape | Проверить, что `InferenceResources.EnsureRecognitionBatch(...)` вызван до создания `RunnerRec`. Для Rec модели dynamic output нельзя оставлять на автоинициализацию persistent output. |
 | Recognition classes hardcoded | Не использовать `438`. Размер третьей оси output берется из `ModelRec.ModelOutputShapes[PrimaryOutputName][2]`. |
-| OCR-строка без картинки | `SkiaFrameView` принимает BGRA/BGR/GRAY и приводит к BGRA перед отрисовкой. Если картинка пустая, проверять сам `OcrRoiExtractor`. |
+| OCR-строка без картинки | `SkiaFrameView` принимает BGRA/BGR/GRAY и приводит к BGRA перед отрисовкой. Если картинка пустая, проверять `NaiveTextRegionExtractor`. |
 | Кажется, что `Start` не нажали | Окно запускает engine автоматически после инициализации UI. Правую панель статуса смотреть первой: `Starting...`, `Initializing models...`, `Running` или ошибка camera-only. |
-| Overlay не совпадает с кадром | Проверять mapping `LetterboxInfo -> ImageResizeTransform -> source frame`. |
+| Overlay не совпадает с кадром | Проверять mapping `LetterboxInfo -> LetterboxCoordinateMapper -> source frame`. |
 | `Visualizer` не покрывает Avalonia | Нужен backend-neutral visualizer contract: geometry/style отдельно, OpenCV/Skia/Avalonia renderers отдельно. |

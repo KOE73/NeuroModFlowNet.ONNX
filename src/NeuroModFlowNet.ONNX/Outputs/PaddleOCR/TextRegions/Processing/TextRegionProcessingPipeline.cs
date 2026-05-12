@@ -2,14 +2,24 @@ using OpenCvSharp;
 
 namespace NeuroModFlowNet.ONNX;
 
-public sealed class OcrRoiProcessingPipeline : IOcrRoiProcessingStage, IDisposable
+/// <summary>
+/// EN: Ordered post-processing chain for OCR text-region crops.
+/// RU: Упорядоченная цепочка постобработки OCR-кропов текстовых областей.
+/// </summary>
+/// <remarks>
+/// EN: The pipeline is mutable for lab/demo controls, but each <see cref="Process"/> call works on a snapshot.
+/// That keeps UI reconfiguration isolated from the current frame and avoids holding locks while OpenCV work runs.
+/// RU: Pipeline изменяемый для lab/demo-настроек, но каждый вызов <see cref="Process"/> работает со snapshot.
+/// Так изменение настроек из UI не вмешивается в текущий кадр, а lock не удерживается во время работы OpenCV.
+/// </remarks>
+public sealed class TextRegionProcessingPipeline : ITextRegionProcessingStage, IDisposable
 {
-    readonly List<IOcrRoiProcessingStage> stages;
+    readonly List<ITextRegionProcessingStage> stages;
     readonly object syncRoot = new();
 
     public string Name { get; } = "Pipeline";
 
-    public OcrRoiProcessingPipeline(params IOcrRoiProcessingStage[] stages)
+    public TextRegionProcessingPipeline(params ITextRegionProcessingStage[] stages)
     {
         this.stages = [.. stages];
     }
@@ -23,13 +33,13 @@ public sealed class OcrRoiProcessingPipeline : IOcrRoiProcessingStage, IDisposab
         }
     }
 
-    public IReadOnlyList<IOcrRoiProcessingStage> GetStages()
+    public IReadOnlyList<ITextRegionProcessingStage> GetStages()
     {
         lock(syncRoot)
             return stages.ToArray();
     }
 
-    public void Add(IOcrRoiProcessingStage stage)
+    public void Add(ITextRegionProcessingStage stage)
     {
         ArgumentNullException.ThrowIfNull(stage);
 
@@ -37,7 +47,7 @@ public sealed class OcrRoiProcessingPipeline : IOcrRoiProcessingStage, IDisposab
             stages.Add(stage);
     }
 
-    public void Insert(int index, IOcrRoiProcessingStage stage)
+    public void Insert(int index, ITextRegionProcessingStage stage)
     {
         ArgumentNullException.ThrowIfNull(stage);
 
@@ -45,17 +55,17 @@ public sealed class OcrRoiProcessingPipeline : IOcrRoiProcessingStage, IDisposab
             stages.Insert(index, stage);
     }
 
-    public IOcrRoiProcessingStage RemoveAt(int index)
+    public ITextRegionProcessingStage RemoveAt(int index)
     {
         lock(syncRoot)
         {
-            IOcrRoiProcessingStage stage = stages[index];
+            ITextRegionProcessingStage stage = stages[index];
             stages.RemoveAt(index);
             return stage;
         }
     }
 
-    public bool Remove(IOcrRoiProcessingStage stage)
+    public bool Remove(ITextRegionProcessingStage stage)
     {
         ArgumentNullException.ThrowIfNull(stage);
 
@@ -67,7 +77,7 @@ public sealed class OcrRoiProcessingPipeline : IOcrRoiProcessingStage, IDisposab
     {
         lock(syncRoot)
         {
-            IOcrRoiProcessingStage stage = stages[sourceIndex];
+            ITextRegionProcessingStage stage = stages[sourceIndex];
             stages.RemoveAt(sourceIndex);
             stages.Insert(targetIndex, stage);
         }
@@ -83,13 +93,13 @@ public sealed class OcrRoiProcessingPipeline : IOcrRoiProcessingStage, IDisposab
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        IOcrRoiProcessingStage[] stagesSnapshot;
+        ITextRegionProcessingStage[] stagesSnapshot;
         lock(syncRoot)
             stagesSnapshot = [.. stages];
 
         Mat current = source.Clone();
 
-        foreach(IOcrRoiProcessingStage stage in stagesSnapshot)
+        foreach(ITextRegionProcessingStage stage in stagesSnapshot)
         {
             Mat next = stage.Process(current);
             current.Dispose();
@@ -101,11 +111,11 @@ public sealed class OcrRoiProcessingPipeline : IOcrRoiProcessingStage, IDisposab
 
     public void Dispose()
     {
-        IOcrRoiProcessingStage[] stagesSnapshot;
+        ITextRegionProcessingStage[] stagesSnapshot;
         lock(syncRoot)
             stagesSnapshot = [.. stages];
 
-        foreach(IOcrRoiProcessingStage stage in stagesSnapshot)
+        foreach(ITextRegionProcessingStage stage in stagesSnapshot)
         {
             if(stage is IDisposable disposableStage)
                 disposableStage.Dispose();

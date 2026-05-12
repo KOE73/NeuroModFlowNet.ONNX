@@ -34,8 +34,4 @@
     <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Visualizer\NeuroModFlowNet.ONNX.Visualizer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\NeuroModFlowNet.ONNX.Lab\OCRRoi\**\*.cs" LinkBase="OCRRoi" />
-  </ItemGroup>
-
 </Project>

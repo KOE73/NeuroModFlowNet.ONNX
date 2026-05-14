@@ -105,11 +105,7 @@ public sealed class NaiveTextRegionExtractor : ITextRegionExtractor
         Debug.Assert(targetWidth > 0);
         Debug.Assert(targetHeight > 0);
 
-        var result = new Mat(
-            targetHeight,
-            targetWidth,
-            source.Type(),
-            Scalar.Black);
+        var result = new Mat(targetHeight, targetWidth, source.Type());
 
         if(source.Empty()) return result;
 
@@ -128,8 +124,9 @@ public sealed class NaiveTextRegionExtractor : ITextRegionExtractor
         Cv2.Resize(source, resized, new Size(scaledWidth, scaledHeight));
 
         int y = (targetHeight - scaledHeight) / 2;
-        using Mat targetRoi = result[new Rect(0, y, scaledWidth, scaledHeight)];
-        resized.CopyTo(targetRoi);
+        int bottom = targetHeight - scaledHeight - y;
+        int right = targetWidth - scaledWidth;
+        Cv2.CopyMakeBorder(resized, result, y, bottom, 0, right, BorderTypes.Replicate);
 
         return result;
     }

@@ -24,6 +24,9 @@ public class RealTimeView2 : IDisposable
     const int RecognitionOutputItemCount = RecognitionInputWidth / PaddleOCRRecExtractor.OutputWidthStride;
     const int RecognitionBatchMin = 1;
     const int RecognitionBatchMax = 16;
+    const int RecognitionMaxRegionsPerFrame = 64;
+    const bool RecognitionOverlapSuppressionEnabled = true;
+    const bool RecognitionLineMergeEnabled = false;
     const int RecognitionLabelOffsetY = 6;
     const double RecognitionRoiBrightness = 40;
     const double RecognitionRoiContrastPercent = 115;
@@ -670,9 +673,9 @@ public class RealTimeView2 : IDisposable
             letterboxInfo.OffsetX,
             letterboxInfo.OffsetY);
 
-        // Most realtime OCR frames have a small number of text boxes. Keep that path stack-only;
-        // larger batches fall back to a normal array until a reusable workspace/pool is added.
-        Span<OcrQuadRegion> sourceRegions = boxes.Length <= 1000
+        // Most realtime OCR frames have a small number of text boxes. Keep the detector-to-region
+        // bridge stack-only; region postprocessing owns the cached geometry for filters/overlap/merge.
+        Span<OcrQuadRegion> mappedSourceRegions = boxes.Length <= 1000
             ? stackalloc OcrQuadRegion[boxes.Length]
             : new OcrQuadRegion[boxes.Length];
 
@@ -680,7 +683,18 @@ public class RealTimeView2 : IDisposable
             boxes,
             mapper,
             RecognitionRoiHeightScale,
-            sourceRegions);
+            mappedSourceRegions);
+
+        var postprocessOptions = new OcrRegionPostprocessorOptions
+        {
+            MaxRegions = RecognitionMaxRegionsPerFrame,
+            EnableOverlapSuppression = RecognitionOverlapSuppressionEnabled,
+            EnableLineMerge = RecognitionLineMergeEnabled,
+            MaxMergedRegionAspectRatio = RecognitionInputWidth / (float)RecognitionInputHeight,
+        };
+
+        List<OcrQuadRegion> sourceRegions = [];
+        OcrRegionPostprocessor.Shared.Process(mappedSourceRegions, postprocessOptions, sourceRegions);
 
         var options = new TextRegionExtractionOptions(
             RecognitionInputWidth,

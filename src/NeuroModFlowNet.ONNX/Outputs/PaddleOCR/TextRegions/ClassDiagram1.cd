@@ -27,7 +27,7 @@
     <Position X="6" Y="9.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAAAAAAACAAIA=</HashCode>
-      <FileName>Outputs\PaddleOCR\TextRegions\Processing\TextRegionBrightnessContrastStage.cs</FileName>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\BrightnessContrast\TextRegionBrightnessContrastStage.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.1" />
   </Class>
@@ -35,7 +35,7 @@
     <Position X="10.5" Y="9.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAACAAAgAAAgAAAAQAAIAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>Outputs\PaddleOCR\TextRegions\Processing\TextRegionGammaCorrectionStage.cs</FileName>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\GammaCorrection\TextRegionGammaCorrectionStage.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.1" />
   </Class>
@@ -64,14 +64,14 @@
     <Position X="6" Y="7.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAIA=</HashCode>
-      <FileName>Outputs\PaddleOCR\TextRegions\Processing\ITextRegionBrightnessContrastSettings.cs</FileName>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\BrightnessContrast\ITextRegionBrightnessContrastSettings.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="NeuroModFlowNet.ONNX.ITextRegionGammaCorrectionSettings">
     <Position X="10.5" Y="7.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>Outputs\PaddleOCR\TextRegions\Processing\ITextRegionGammaCorrectionSettings.cs</FileName>
+      <FileName>Outputs\PaddleOCR\TextRegions\Processing\GammaCorrection\ITextRegionGammaCorrectionSettings.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

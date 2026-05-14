@@ -26,6 +26,14 @@ public sealed class TextRegionBrightnessContrastStage : ITextRegionProcessingSta
         ContrastPercent = contrastPercent;
     }
 
+    public TextRegionBrightnessContrastStage(TextRegionBrightnessContrastOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        Brightness = options.Brightness;
+        ContrastPercent = options.ContrastPercent;
+    }
+
     public Mat Process(Mat source)
     {
         ArgumentNullException.ThrowIfNull(source);

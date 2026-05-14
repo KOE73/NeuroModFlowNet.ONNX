@@ -22,6 +22,13 @@ public sealed class TextRegionGammaCorrectionStage : ITextRegionProcessingStage,
         Gamma = gamma;
     }
 
+    public TextRegionGammaCorrectionStage(TextRegionGammaCorrectionOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        Gamma = options.Gamma;
+    }
+
     public double Gamma
     {
         get => gamma;

@@ -16,17 +16,20 @@ public sealed class RealTimeOneFrameData : IDisposable
 {
     public RealTimeOneFrameData(
         Mat frame,
+        Mat detFrame,
         FrameOverlaySnapshot overlay,
         IReadOnlyList<RealTimeRecognitionItemData> recognitionItems,
         RealTimeMetricsSnapshot metrics)
     {
         Frame = frame;
+        DetFrame = detFrame;
         Overlay = overlay;
         RecognitionItems = recognitionItems;
         Metrics = metrics;
     }
 
     public Mat Frame { get; }
+    public Mat DetFrame { get; }
     public FrameOverlaySnapshot Overlay { get; }
     public IReadOnlyList<RealTimeRecognitionItemData> RecognitionItems { get; }
     public RealTimeMetricsSnapshot Metrics { get; }
@@ -34,6 +37,7 @@ public sealed class RealTimeOneFrameData : IDisposable
     public void Dispose()
     {
         Frame.Dispose();
+        DetFrame.Dispose();
         foreach(RealTimeRecognitionItemData recognitionItem in RecognitionItems)
             recognitionItem.Dispose();
     }

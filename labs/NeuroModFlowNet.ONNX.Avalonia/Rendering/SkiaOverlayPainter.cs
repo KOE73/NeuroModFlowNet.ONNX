@@ -31,6 +31,12 @@ internal static class SkiaOverlayPainter
             IsAntialias = true,
         };
 
+        using var fillPaint = new SKPaint
+        {
+            Style = SKPaintStyle.Fill,
+            IsAntialias = true,
+        };
+
         using var centerPaint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
@@ -40,18 +46,27 @@ internal static class SkiaOverlayPainter
 
         using var textPaint = new SKPaint
         {
-            Color = SKColors.White,
+            Color = new SKColor(255, 255, 255, 220),
             IsAntialias = true,
+        };
+
+        using var textOutlinePaint = new SKPaint
+        {
+            Color = new SKColor(0, 0, 0, 150),
+            IsAntialias = true,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 2,
         };
 
         using var backgroundPaint = new SKPaint
         {
-            Color = new SKColor(20, 20, 20, 210),
+            Color = new SKColor(10, 10, 10, 130),
             Style = SKPaintStyle.Fill,
+            IsAntialias = true,
         };
 
         using var typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold);
-        using var font = new SKFont(typeface, Math.Max(12, 14 * scale));
+        using var font = new SKFont(typeface, Math.Max(9, 11 * scale));
 
         foreach(OverlayObb box in snapshot.ObbBoxes)
         {
@@ -68,13 +83,22 @@ internal static class SkiaOverlayPainter
             }
 
             path.Close();
-            canvas.DrawPath(path, strokePaint);
-            canvas.DrawCircle(MapPoint(box.Center, frameRect, scale), Math.Max(2, 3 * scale), centerPaint);
-            DrawLabel(canvas, box.Label, MapPoint(box.Points[0], frameRect, scale), font, textPaint, backgroundPaint);
+            if(box.Fill)
+            {
+                fillPaint.Color = box.Color;
+                canvas.DrawPath(path, fillPaint);
+            }
+            else
+            {
+                strokePaint.Color = box.Color;
+                canvas.DrawPath(path, strokePaint);
+                canvas.DrawCircle(MapPoint(box.Center, frameRect, scale), Math.Max(2, 3 * scale), centerPaint);
+                DrawLabel(canvas, box.Label, MapPoint(box.Points[0], frameRect, scale), font, textPaint, textOutlinePaint, backgroundPaint);
+            }
         }
 
         foreach(OverlayText text in snapshot.Texts)
-            DrawLabel(canvas, text.Text, MapPoint(text.Position, frameRect, scale), font, textPaint, backgroundPaint);
+            DrawLabel(canvas, text.Text, MapPoint(text.Position, frameRect, scale), font, textPaint, textOutlinePaint, backgroundPaint);
     }
 
     private static SKPoint MapPoint(SKPoint point, SKRect frameRect, float scale) =>
@@ -86,19 +110,22 @@ internal static class SkiaOverlayPainter
         SKPoint topLeft,
         SKFont font,
         SKPaint textPaint,
+        SKPaint textOutlinePaint,
         SKPaint backgroundPaint)
     {
         if(string.IsNullOrWhiteSpace(text)) return;
 
         font.MeasureText(text, out SKRect textBounds, textPaint);
-        float y = Math.Max(topLeft.Y - 4, textBounds.Height + 6);
+        float padding = 1f;
+        float y = Math.Max(topLeft.Y - 2, textBounds.Height + padding);
         var backgroundRect = new SKRect(
             topLeft.X,
-            y - textBounds.Height - 5,
-            topLeft.X + textBounds.Width + 8,
-            y + 3);
+            y - textBounds.Height - padding,
+            topLeft.X + textBounds.Width + padding * 2,
+            y + padding);
 
-        canvas.DrawRect(backgroundRect, backgroundPaint);
-        canvas.DrawText(text, topLeft.X + 4, y, font, textPaint);
+        canvas.DrawRoundRect(backgroundRect, 2, 2, backgroundPaint);
+        canvas.DrawText(text, topLeft.X + padding, y, font, textOutlinePaint);
+        canvas.DrawText(text, topLeft.X + padding, y, font, textPaint);
     }
 }

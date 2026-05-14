@@ -28,12 +28,14 @@ internal sealed class InferenceResources : IDisposable
     public OnnxRuntimeContext ModelSeg { get; private set; } = null!;
     public OnnxRuntimeContext ModelCls { get; private set; } = null!;
     public OnnxRuntimeContext ModelPose { get; private set; } = null!;
+    public OnnxRuntimeContext ModelDet { get; private set; } = null!;
     public OnnxRuntimeContext ModelRec { get; private set; } = null!;
     public IRunner<Mat, IDetectionResult<YoloBox>> RunnerBox { get; private set; } = null!;
     public IRunner<Mat, IDetectionResult<YoloObb>> RunnerObb { get; private set; } = null!;
     public IRunner<Mat, IBatchedResult> RunnerSeg { get; private set; } = null!;
     public IRunner<Mat, IBatchedResult> RunnerCls { get; private set; } = null!;
     public IRunner<Mat, IDetectionResult<YoloPose>> RunnerPose { get; private set; } = null!;
+    public IRunner<Mat, Mat> RunnerDet { get; private set; } = null!;
     public ImageRunner<List<Mat>, List<PaddleOCRRecExtractor.OcrResult>, PaddleOCRRecListConverter, PaddleOCRRecExtractor>? RunnerRec { get; private set; }
     public IReadOnlyList<RuntimeModelInfo> ModelInfos { get; private set; } = [];
 
@@ -61,6 +63,22 @@ internal sealed class InferenceResources : IDisposable
         RefreshModelInfos();
     }
 
+    public void EnsureDetFrameShape(Mat letterboxedFrame)
+    {
+        ArgumentNullException.ThrowIfNull(letterboxedFrame);
+
+        if(ModelDet.IsInputPersistentValueInitialized(ModelDet.PrimaryInputName))
+            return;
+
+        // EN: PaddleOCR Det has dynamic spatial dimensions. The Avalonia realtime loop feeds the same
+        // letterboxed tensor as YOLO OBB, so initialize persistent buffers once from that actual frame size.
+        // RU: У PaddleOCR Det динамические spatial dimensions. Avalonia realtime loop подает тот же
+        // letterbox tensor, что и YOLO OBB, поэтому persistent buffers инициализируются один раз по реальному размеру кадра.
+        ModelDet.InitInputPersistentValue(ModelDet.PrimaryInputName, [1, 3, letterboxedFrame.Width, letterboxedFrame.Height]);
+        ModelDet.InitOutputPersistentValue(ModelDet.PrimaryOutputName, [1, 1, letterboxedFrame.Width, letterboxedFrame.Height]);
+        RefreshModelInfos();
+    }
+
     async Task InitializeAsync(RecognitionOptions recognitionOptions)
     {
         string modelBoxPath = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(settings.BoxModelName, settings.InputSize, 1, settings.ModelPrecision, isByteBgr: settings.UseByteBgr));
@@ -68,14 +86,17 @@ internal sealed class InferenceResources : IDisposable
         string modelSegPath = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(settings.SegModelName, settings.InputSize, 1, settings.ModelPrecision, isByteBgr: settings.UseByteBgr));
         string modelClsPath = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(settings.ClsModelName, settings.InputSize, 1, settings.ModelPrecision, isByteBgr: settings.UseByteBgr));
         string modelPosePath = await AssetsManager.GetAssetPathAsync(ModelNaming.GetFileName(settings.PoseModelName, settings.InputSize, 1, settings.ModelPrecision, isByteBgr: settings.UseByteBgr));
-        string recognitionModelPath = await AssetsManager.GetAssetPathAsync(GetPaddleModelPath("/paddleocr/languages/english/rec.onnx", settings.PaddleRecModelPrecision, settings.PaddleRecUseByteBgr));
-        await AssetsManager.GetAssetPathAsync("/paddleocr/languages/english/dict.txt");
+        string paddleDetModelPath = await AssetsManager.GetAssetPathAsync(GetPaddleModelPath("/paddleocr/detection/v5/det.onnx", settings.PaddleDetModelPrecision, settings.PaddleDetUseByteBgr));
+        string recognitionModelPath = await ResolvePaddleRecModelPathAsync();
+        if(string.IsNullOrWhiteSpace(settings.PaddleRecModelPath))
+            await AssetsManager.GetAssetPathAsync("/paddleocr/languages/english/dict.txt");
 
         ModelBox = new OnnxRuntimeContext(modelBoxPath, settings.InferenceBackend);
         ModelObb = new OnnxRuntimeContext(modelObbPath, settings.InferenceBackend);
         ModelSeg = new OnnxRuntimeContext(modelSegPath, settings.InferenceBackend);
         ModelCls = new OnnxRuntimeContext(modelClsPath, settings.InferenceBackend);
         ModelPose = new OnnxRuntimeContext(modelPosePath, settings.InferenceBackend);
+        ModelDet = new OnnxRuntimeContext(paddleDetModelPath, settings.PaddleDetInferenceBackend);
         ModelRec = new OnnxRuntimeContext(recognitionModelPath, settings.PaddleRecInferenceBackend);
 
         RunnerBox = YoloBoxFactory.CreateRunner<IDetectionResult<YoloBox>>(ModelBox);
@@ -83,6 +104,7 @@ internal sealed class InferenceResources : IDisposable
         RunnerSeg = YoloSegFactory.CreateRunner(ModelSeg);
         RunnerCls = YoloClsFactory.CreateRunner(ModelCls);
         RunnerPose = YoloPoseFactory.CreateRunner(ModelPose);
+        RunnerDet = PaddleOCRDetFactory.CreateRunner<Mat, Mat>(ModelDet, MatType.CV_32FC1);
         RunnerObb.OutAs<IExtractorThreshold>()!.Threshold = 0.3f;
         EnsureRecognitionBatch(recognitionOptions);
     }
@@ -94,6 +116,7 @@ internal sealed class InferenceResources : IDisposable
             CreateModelInfo("ocr", "OCR", ModelObb, ModelRec),
             CreateModelInfo("box", "Detection Box", ModelBox),
             CreateModelInfo("obb", "OBB Detection", ModelObb),
+            CreateModelInfo("det", "PaddleOCR Det", ModelDet),
             CreateModelInfo("seg", "Segmentation", ModelSeg),
             CreateModelInfo("cls", "Classification", ModelCls),
             CreateModelInfo("pose", "Pose", ModelPose),
@@ -116,6 +139,7 @@ internal sealed class InferenceResources : IDisposable
             Environment.NewLine,
             FormatIoLine("DETIN", detectorModel.PrimaryInputName, ResolveInputType(detectorModel, detectorModel.PrimaryInputName), ResolveInputShape(detectorModel, detectorModel.PrimaryInputName)),
             FormatIoLine("D_OUT", detectorModel.PrimaryOutputName, ResolveOutputType(detectorModel, detectorModel.PrimaryOutputName), ResolveOutputShape(detectorModel, detectorModel.PrimaryOutputName)),
+            $"RECMDL {recognitionModel.ModelPath}",
             FormatIoLine("RECIN", recognitionModel.PrimaryInputName, ResolveInputType(recognitionModel, recognitionModel.PrimaryInputName), ResolveInputShape(recognitionModel, recognitionModel.PrimaryInputName)),
             FormatIoLine("R_OUT", recognitionModel.PrimaryOutputName, ResolveOutputType(recognitionModel, recognitionModel.PrimaryOutputName), ResolveOutputShape(recognitionModel, recognitionModel.PrimaryOutputName)));
 
@@ -176,6 +200,21 @@ internal sealed class InferenceResources : IDisposable
             : $"{modelDirectory}/{configuredModelFileName}";
     }
 
+    async Task<string> ResolvePaddleRecModelPathAsync()
+    {
+        if(string.IsNullOrWhiteSpace(settings.PaddleRecModelPath))
+            return await AssetsManager.GetAssetPathAsync(GetPaddleModelPath("/paddleocr/languages/english/rec.onnx", settings.PaddleRecModelPrecision, settings.PaddleRecUseByteBgr));
+
+        if(!Path.IsPathRooted(settings.PaddleRecModelPath))
+            throw new InvalidOperationException($"PaddleRecModelPath must be a full file path: {settings.PaddleRecModelPath}");
+
+        string modelPath = Path.GetFullPath(settings.PaddleRecModelPath);
+        if(!File.Exists(modelPath))
+            throw new FileNotFoundException("Configured PaddleOCR Rec model was not found.", modelPath);
+
+        return modelPath;
+    }
+
     public void Dispose()
     {
         RunnerBox?.Dispose();
@@ -183,12 +222,14 @@ internal sealed class InferenceResources : IDisposable
         RunnerSeg?.Dispose();
         RunnerCls?.Dispose();
         RunnerPose?.Dispose();
+        RunnerDet?.Dispose();
         RunnerRec?.Dispose();
         ModelBox?.Dispose();
         ModelObb?.Dispose();
         ModelSeg?.Dispose();
         ModelCls?.Dispose();
         ModelPose?.Dispose();
+        ModelDet?.Dispose();
         ModelRec?.Dispose();
     }
 }

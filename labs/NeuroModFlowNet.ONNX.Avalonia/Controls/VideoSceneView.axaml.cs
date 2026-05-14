@@ -4,6 +4,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using NeuroModFlowNet.ONNX.Avalonia.Runtime;
 using OpenCvSharp;
+using System.Globalization;
 
 namespace NeuroModFlowNet.ONNX.Avalonia.Controls;
 
@@ -21,9 +22,10 @@ public partial class VideoSceneView : UserControl
         InitializeComponent();
     }
 
-    public void UpdateFrame(Mat frame, FrameOverlaySnapshot overlay)
+    public void UpdateFrame(Mat frame, Mat detFrame, FrameOverlaySnapshot overlay)
     {
         SkiaFrameView_MainFrame.UpdateFrame(frame);
+        SkiaFrameView_DetFrame.UpdateFrame(detFrame);
         SkiaOverlayView_MainOverlay.UpdateOverlay(overlay);
     }
 
@@ -56,26 +58,51 @@ public partial class VideoSceneView : UserControl
             FontSize = 13,
         };
 
+        var debugBlock = new TextBlock
+        {
+            Text = $"HPS\n{FormatRoiHeightDebug(recognitionItem.RoiHeightDebug)}",
+            VerticalAlignment = VerticalAlignment.Top,
+            FontFamily = new FontFamily("Consolas"),
+            FontSize = 9,
+            LineHeight = 9,
+            Foreground = Brushes.DimGray,
+            Margin = new Thickness(0, 1, 3, 0),
+        };
+
         var grid = new Grid
         {
-            ColumnDefinitions = new ColumnDefinitions("Auto,*"),
+            ColumnDefinitions = new ColumnDefinitions("Auto,Auto,*"),
             MinHeight = Math.Max(1, recognitionItem.Roi.Height * displayScale) + 2,
-            ColumnSpacing = 8,
+            ColumnSpacing = 4,
             Margin = new Thickness(0, 0, 0, 1),
         };
 
-        grid.Children.Add(new Border
+        grid.Children.Add(debugBlock);
+
+        var roiBorder = new Border
         {
             Background = Brushes.Black,
             BorderBrush = Brushes.DimGray,
             BorderThickness = new Thickness(1),
             ClipToBounds = true,
             Child = skiaFrameView,
-        });
+        };
+        Grid.SetColumn(roiBorder, 1);
+        grid.Children.Add(roiBorder);
 
-        Grid.SetColumn(textBlock, 1);
+        Grid.SetColumn(textBlock, 2);
         grid.Children.Add(textBlock);
 
         return grid;
+    }
+
+    private static string FormatRoiHeightDebug(RoiHeightDebugData debugData)
+    {
+        if(debugData.SourceHeight <= 0)
+            return "-";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"{debugData.SourceHeight:F0}/{debugData.Pad:F0}/{debugData.Scale:F2}");
     }
 }

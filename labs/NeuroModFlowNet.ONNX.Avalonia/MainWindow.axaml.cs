@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
 using NeuroModFlowNet.ONNX.Avalonia.Runtime;
+using NeuroModFlowNet.ONNX.Demo.Assets;
 using OpenCvSharp;
 
 namespace NeuroModFlowNet.ONNX.Avalonia;
@@ -30,10 +31,14 @@ public partial class MainWindow : global::Avalonia.Controls.Window
         engine.ModelInfoChanged += OnModelInfoChanged;
 
         ModeNavigationView_ModeNavigation.BindOptions(recognitionOptions);
+        ModeNavigationView_ModeNavigation.SetVideoSourceInfo(VideoCaptureConfig.GetSourceInfo());
         OcrSettingsView_OcrSettings.BindOptions(recognitionOptions);
         ModeNavigationView_ModeNavigation.SetStatus("Ready");
         ModeNavigationView_ModeNavigation.StartRequested += async (_, _) => await StartEngineAsync();
         ModeNavigationView_ModeNavigation.StopRequested += async (_, _) => await engine.StopAsync();
+        ModeNavigationView_ModeNavigation.PauseRequested += (_, _) => engine.Pause();
+        ModeNavigationView_ModeNavigation.PlayRequested += (_, _) => engine.Play();
+        ModeNavigationView_ModeNavigation.StepRequested += (_, _) => engine.StepFrame();
         OcrSettingsView_OcrSettings.OptionsChanged += (_, _) => OcrSettingsView_OcrSettings.Refresh();
         ModeNavigationView_ModeNavigation.OptionsChanged += (_, _) => ModeNavigationView_ModeNavigation.Refresh();
 
@@ -53,7 +58,7 @@ public partial class MainWindow : global::Avalonia.Controls.Window
         {
             using(update)
             {
-                VideoSceneView_LiveVideoScene.UpdateFrame(update.Frame, update.Overlay);
+                VideoSceneView_LiveVideoScene.UpdateFrame(update.Frame, update.DetFrame, update.Overlay);
                 VideoSceneView_LiveVideoScene.UpdateRecognition(update.RecognitionItems);
                 MetricsPanelView_RuntimeMetrics.UpdateMetrics(update.Metrics);
             }
@@ -85,7 +90,19 @@ public partial class MainWindow : global::Avalonia.Controls.Window
 
         using var bgra = new Mat();
         Cv2.CvtColor(placeholder, bgra, ColorConversionCodes.BGR2BGRA);
-        VideoSceneView_LiveVideoScene.UpdateFrame(bgra, new FrameOverlaySnapshot(bgra.Width, bgra.Height, [], []));
+        using var detPlaceholder = new Mat(720, 1280, MatType.CV_8UC3, Scalar.Black);
+        Cv2.PutText(
+            detPlaceholder,
+            "PaddleOCR Det",
+            new Point(420, 360),
+            HersheyFonts.HersheySimplex,
+            1.2,
+            new Scalar(80, 80, 80),
+            2,
+            LineTypes.AntiAlias);
+        using var detBgra = new Mat();
+        Cv2.CvtColor(detPlaceholder, detBgra, ColorConversionCodes.BGR2BGRA);
+        VideoSceneView_LiveVideoScene.UpdateFrame(bgra, detBgra, new FrameOverlaySnapshot(bgra.Width, bgra.Height, [], []));
     }
 
     protected override void OnClosed(EventArgs e)

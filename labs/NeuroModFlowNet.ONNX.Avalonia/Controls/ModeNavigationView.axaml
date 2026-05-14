@@ -32,6 +32,26 @@
                                         Content="Stop"
                                         HorizontalAlignment="Stretch" />
                             </Grid>
+                            <Grid ColumnDefinitions="*,*,*"
+                                  ColumnSpacing="8">
+                                <Button x:Name="Button_RuntimePause"
+                                        Content="Pause"
+                                        HorizontalAlignment="Stretch" />
+                                <Button Grid.Column="1"
+                                        x:Name="Button_RuntimePlay"
+                                        Content="Play"
+                                        HorizontalAlignment="Stretch" />
+                                <Button Grid.Column="2"
+                                        x:Name="Button_RuntimeStep"
+                                        Content="Step"
+                                        HorizontalAlignment="Stretch" />
+                            </Grid>
+
+                            <TextBlock x:Name="TextBlock_VideoSource"
+                                       FontFamily="Cascadia Mono, Consolas, Courier New"
+                                       FontSize="11"
+                                       Foreground="#2C3440"
+                                       TextWrapping="Wrap" />
 
                             <!-- Runtime state is deliberately bright: model initialization can take time. -->
                             <Border x:Name="Border_RuntimeStatus"
@@ -95,66 +115,98 @@
                             BorderThickness="1"
                             CornerRadius="6"
                             Padding="10">
-                        <StackPanel Spacing="10">
-                            <CheckBox x:Name="CheckBox_InferenceOcr"
-                                      Content="OCR pipeline"
-                                      Foreground="#111820" />
-                            <TextBlock x:Name="TextBlock_InferenceOcrInfo"
-                                       FontFamily="Cascadia Mono, Consolas, Courier New"
-                                       FontSize="11"
-                                       Foreground="#2C3440"
-                                       TextWrapping="Wrap"
-                                       Text="not loaded" />
+                        <StackPanel Spacing="6">
+                            <StackPanel Spacing="1">
+                                <CheckBox x:Name="CheckBox_InferenceOcr"
+                                          Content="OCR pipeline"
+                                          FontWeight="Bold"
+                                          Foreground="#111820" />
+                                <TextBlock x:Name="TextBlock_InferenceOcrInfo"
+                                           FontFamily="Cascadia Mono, Consolas, Courier New"
+                                           FontSize="11"
+                                           Foreground="#2C3440"
+                                           TextWrapping="Wrap"
+                                           Text="not loaded" />
+                            </StackPanel>
 
-                            <CheckBox x:Name="CheckBox_InferenceBox"
-                                      Content="Detection Box"
-                                      Foreground="#111820" />
-                            <TextBlock x:Name="TextBlock_InferenceBoxInfo"
-                                       FontFamily="Cascadia Mono, Consolas, Courier New"
-                                       FontSize="11"
-                                       Foreground="#2C3440"
-                                       TextWrapping="Wrap"
-                                       Text="not loaded" />
+                            <StackPanel Spacing="1">
+                                <CheckBox x:Name="CheckBox_InferenceDet"
+                                          Content="PaddleOCR Det"
+                                          FontWeight="Bold"
+                                          IsEnabled="False"
+                                          Foreground="#111820" />
+                                <TextBlock x:Name="TextBlock_InferenceDetInfo"
+                                           FontFamily="Cascadia Mono, Consolas, Courier New"
+                                           FontSize="11"
+                                           Foreground="#2C3440"
+                                           TextWrapping="Wrap"
+                                           Text="not loaded" />
+                            </StackPanel>
 
-                            <CheckBox x:Name="CheckBox_InferenceObb"
-                                      Content="OBB Detection"
-                                      Foreground="#111820" />
-                            <TextBlock x:Name="TextBlock_InferenceObbInfo"
-                                       FontFamily="Cascadia Mono, Consolas, Courier New"
-                                       FontSize="11"
-                                       Foreground="#2C3440"
-                                       TextWrapping="Wrap"
-                                       Text="not loaded" />
+                            <StackPanel Spacing="1">
+                                <CheckBox x:Name="CheckBox_InferenceBox"
+                                          Content="Detection Box"
+                                          FontWeight="Bold"
+                                          Foreground="#111820" />
+                                <TextBlock x:Name="TextBlock_InferenceBoxInfo"
+                                           FontFamily="Cascadia Mono, Consolas, Courier New"
+                                           FontSize="11"
+                                           Foreground="#2C3440"
+                                           TextWrapping="Wrap"
+                                           Text="not loaded" />
+                            </StackPanel>
 
-                            <CheckBox x:Name="CheckBox_InferenceSegmentation"
-                                      Content="Segmentation"
-                                      Foreground="#111820" />
-                            <TextBlock x:Name="TextBlock_InferenceSegmentationInfo"
-                                       FontFamily="Cascadia Mono, Consolas, Courier New"
-                                       FontSize="11"
-                                       Foreground="#2C3440"
-                                       TextWrapping="Wrap"
-                                       Text="not loaded" />
+                            <StackPanel Spacing="1">
+                                <CheckBox x:Name="CheckBox_InferenceObb"
+                                          Content="OBB Detection"
+                                          FontWeight="Bold"
+                                          Foreground="#111820" />
+                                <TextBlock x:Name="TextBlock_InferenceObbInfo"
+                                           FontFamily="Cascadia Mono, Consolas, Courier New"
+                                           FontSize="11"
+                                           Foreground="#2C3440"
+                                           TextWrapping="Wrap"
+                                           Text="not loaded" />
+                            </StackPanel>
 
-                            <CheckBox x:Name="CheckBox_InferenceClassification"
-                                      Content="Classification"
-                                      Foreground="#111820" />
-                            <TextBlock x:Name="TextBlock_InferenceClassificationInfo"
-                                       FontFamily="Cascadia Mono, Consolas, Courier New"
-                                       FontSize="11"
-                                       Foreground="#2C3440"
-                                       TextWrapping="Wrap"
-                                       Text="not loaded" />
+                            <StackPanel Spacing="1">
+                                <CheckBox x:Name="CheckBox_InferenceSegmentation"
+                                          Content="Segmentation"
+                                          FontWeight="Bold"
+                                          Foreground="#111820" />
+                                <TextBlock x:Name="TextBlock_InferenceSegmentationInfo"
+                                           FontFamily="Cascadia Mono, Consolas, Courier New"
+                                           FontSize="11"
+                                           Foreground="#2C3440"
+                                           TextWrapping="Wrap"
+                                           Text="not loaded" />
+                            </StackPanel>
 
-                            <CheckBox x:Name="CheckBox_InferencePose"
-                                      Content="Pose"
-                                      Foreground="#111820" />
-                            <TextBlock x:Name="TextBlock_InferencePoseInfo"
-                                       FontFamily="Cascadia Mono, Consolas, Courier New"
-                                       FontSize="11"
-                                       Foreground="#2C3440"
-                                       TextWrapping="Wrap"
-                                       Text="not loaded" />
+                            <StackPanel Spacing="1">
+                                <CheckBox x:Name="CheckBox_InferenceClassification"
+                                          Content="Classification"
+                                          FontWeight="Bold"
+                                          Foreground="#111820" />
+                                <TextBlock x:Name="TextBlock_InferenceClassificationInfo"
+                                           FontFamily="Cascadia Mono, Consolas, Courier New"
+                                           FontSize="11"
+                                           Foreground="#2C3440"
+                                           TextWrapping="Wrap"
+                                           Text="not loaded" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="1">
+                                <CheckBox x:Name="CheckBox_InferencePose"
+                                          Content="Pose"
+                                          FontWeight="Bold"
+                                          Foreground="#111820" />
+                                <TextBlock x:Name="TextBlock_InferencePoseInfo"
+                                           FontFamily="Cascadia Mono, Consolas, Courier New"
+                                           FontSize="11"
+                                           Foreground="#2C3440"
+                                           TextWrapping="Wrap"
+                                           Text="not loaded" />
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </StackPanel>

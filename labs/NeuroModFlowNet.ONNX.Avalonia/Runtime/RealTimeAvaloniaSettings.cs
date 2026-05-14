@@ -24,6 +24,7 @@ public sealed class RealTimeAvaloniaSettings
     const string PaddleRecInferenceBackendConfigKey = "PaddleRecInferenceBackend";
     const string PaddleRecModelPrecisionConfigKey = "PaddleRecModelPrecision";
     const string PaddleRecUseByteBgrConfigKey = "PaddleRecUseByteBgr";
+    const string PaddleRecModelPathConfigKey = "PaddleRecModelPath";
     const string InputSizeConfigKey = "InputSize";
     const string BoxModelNameConfigKey = "BoxModelName";
     const string ObbModelNameConfigKey = "ObbModelName";
@@ -53,6 +54,7 @@ public sealed class RealTimeAvaloniaSettings
     public InferenceBackend PaddleRecInferenceBackend { get; init; } = DefaultPaddleInferenceBackend;
     public string PaddleRecModelPrecision { get; init; } = DefaultPaddleModelPrecision;
     public bool PaddleRecUseByteBgr { get; init; } = DefaultPaddleUseByteBgr;
+    public string? PaddleRecModelPath { get; init; }
     public int InputSize { get; init; } = DefaultInputSize;
     public string BoxModelName { get; init; } = DefaultBoxModelName;
     public string ObbModelName { get; init; } = DefaultObbModelName;
@@ -72,6 +74,7 @@ public sealed class RealTimeAvaloniaSettings
             PaddleRecInferenceBackend = ReadInferenceBackend(PaddleRecInferenceBackendConfigKey, DefaultPaddleInferenceBackend),
             PaddleRecModelPrecision = ReadString(PaddleRecModelPrecisionConfigKey, DefaultPaddleModelPrecision),
             PaddleRecUseByteBgr = ReadBool(PaddleRecUseByteBgrConfigKey, DefaultPaddleUseByteBgr),
+            PaddleRecModelPath = ReadOptionalString(PaddleRecModelPathConfigKey),
             InputSize = ReadPositiveInt(InputSizeConfigKey, DefaultInputSize),
             BoxModelName = ReadString(BoxModelNameConfigKey, DefaultBoxModelName),
             ObbModelName = ReadString(ObbModelNameConfigKey, DefaultObbModelName),
@@ -84,6 +87,12 @@ public sealed class RealTimeAvaloniaSettings
     {
         string? value = ConfigurationManager.AppSettings[key];
         return string.IsNullOrWhiteSpace(value) ? fallback : value.Trim();
+    }
+
+    static string? ReadOptionalString(string key)
+    {
+        string? value = ConfigurationManager.AppSettings[key];
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 
     static bool ReadBool(string key, bool fallback)

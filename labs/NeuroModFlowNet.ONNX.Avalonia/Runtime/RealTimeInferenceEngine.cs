@@ -25,9 +25,12 @@ public sealed class RealTimeInferenceEngine : IDisposable
     readonly RealTimeAvaloniaSettings settings;
     readonly RecognitionOptions recognitionOptions;
     readonly object lifecycleSyncRoot = new();
+    readonly object playbackSyncRoot = new();
 
     CancellationTokenSource? cancellationTokenSource;
     Task? workerTask;
+    bool isPaused;
+    int pendingStepCount;
     bool disposed;
 
     #endregion
@@ -45,6 +48,14 @@ public sealed class RealTimeInferenceEngine : IDisposable
     public event EventHandler<IReadOnlyList<RuntimeModelInfo>>? ModelInfoChanged;
 
     public bool IsRunning => workerTask is { IsCompleted: false };
+    public bool IsPaused
+    {
+        get
+        {
+            lock(playbackSyncRoot)
+                return isPaused;
+        }
+    }
 
     public void Dispose()
     {
@@ -73,6 +84,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
             if(IsRunning) return Task.CompletedTask;
 
             StatusChanged?.Invoke(this, "Starting...");
+            ResetPlaybackState();
             cancellationTokenSource = new CancellationTokenSource();
             workerTask = Task.Run(() => RunAsync(cancellationTokenSource.Token));
         }
@@ -109,7 +121,56 @@ public sealed class RealTimeInferenceEngine : IDisposable
         }
 
         tokenSource.Dispose();
+        ResetPlaybackState();
         StatusChanged?.Invoke(this, "Stopped");
+    }
+
+    public void Pause()
+    {
+        ThrowIfDisposed();
+
+        lock(playbackSyncRoot)
+        {
+            isPaused = true;
+            pendingStepCount = 0;
+        }
+
+        StatusChanged?.Invoke(this, "Paused");
+    }
+
+    public void Play()
+    {
+        ThrowIfDisposed();
+
+        lock(playbackSyncRoot)
+        {
+            isPaused = false;
+            pendingStepCount = 0;
+        }
+
+        StatusChanged?.Invoke(this, IsRunning ? "Running" : "Ready");
+    }
+
+    public void StepFrame()
+    {
+        ThrowIfDisposed();
+
+        lock(playbackSyncRoot)
+        {
+            isPaused = true;
+            pendingStepCount++;
+        }
+
+        StatusChanged?.Invoke(this, "Paused: next frame requested");
+    }
+
+    void ResetPlaybackState()
+    {
+        lock(playbackSyncRoot)
+        {
+            isPaused = false;
+            pendingStepCount = 0;
+        }
     }
 
     #endregion
@@ -120,6 +181,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
     {
         using VideoCapture capture = VideoCaptureConfig.CreateFromConfig();
         using var sourceFrame = new Mat();
+        using var heldFrame = new Mat();
         using InferenceResources? resources = await TryCreateInferenceResourcesAsync(cancellationToken);
 
         int initializedBatchSize = recognitionOptions.BatchSize;
@@ -128,12 +190,12 @@ public sealed class RealTimeInferenceEngine : IDisposable
 
         while(!cancellationToken.IsCancellationRequested)
         {
-            using Mat capturedFrame = CaptureFrame(capture, sourceFrame);
+            using Mat capturedFrame = CaptureOrReplayFrame(capture, sourceFrame, heldFrame);
             using Mat resizedFrame = ResizeFrame(capturedFrame, recognitionOptions.FrameWidth);
 
             RealTimeOneFrameData update = resources is null
-                ? BuildCameraOnlyUpdate(resizedFrame, ref lastFrameTicks)
-                : ProcessInferenceFrame(resources, resizedFrame, ref initializedBatchSize, ref initializedRecognitionShapeVersion, ref lastFrameTicks);
+                ? BuildCameraOnlyUpdate(capturedFrame, ref lastFrameTicks)
+                : ProcessInferenceFrame(resources, capturedFrame, resizedFrame, ref initializedBatchSize, ref initializedRecognitionShapeVersion, ref lastFrameTicks);
 
             FrameReady?.Invoke(this, update);
             await Task.Delay(1, cancellationToken);
@@ -152,7 +214,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
             InferenceResources resources = await InferenceResources.CreateAsync(settings, recognitionOptions);
             ModelInfoChanged?.Invoke(this, resources.ModelInfos);
             cancellationToken.ThrowIfCancellationRequested();
-            StatusChanged?.Invoke(this, "Running");
+            StatusChanged?.Invoke(this, IsPaused ? "Paused" : "Running");
             return resources;
         }
         catch(Exception exception) when(exception is not OperationCanceledException)
@@ -168,6 +230,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
 
     RealTimeOneFrameData ProcessInferenceFrame(
         InferenceResources resources,
+        Mat sourceFrame,
         Mat resizedFrame,
         ref int initializedBatchSize,
         ref int initializedRecognitionShapeVersion,
@@ -196,14 +259,18 @@ public sealed class RealTimeInferenceEngine : IDisposable
            !segmentationEnabled &&
            !classificationEnabled &&
            !poseEnabled)
-            return BuildCameraOnlyUpdate(resizedFrame, ref lastFrameTicks);
+            return BuildCameraOnlyUpdate(sourceFrame, ref lastFrameTicks);
 
         var metricsStopwatch = System.Diagnostics.Stopwatch.StartNew();
         using Mat letterboxed = resizedFrame.Letterbox(settings.InputSize, settings.InputSize, out LetterboxInfo letterboxInfo);
+        LetterboxInfo sourceLetterboxInfo = CreateSourceLetterboxInfo(letterboxInfo, resizedFrame, sourceFrame);
+        if(ocrEnabled)
+            resources.EnsureDetFrameShape(letterboxed);
 
         long detectionStartTicks = metricsStopwatch.ElapsedTicks;
         IDetectionResult<YoloBox>? boxResult = boxDetectionEnabled ? resources.RunnerBox.Predict(letterboxed) : null;
         IDetectionResult<YoloObb>? obbResult = obbPredictionNeeded ? resources.RunnerObb.Predict(letterboxed) : null;
+        Mat? detScoreMap = ocrEnabled ? resources.RunnerDet.Predict(letterboxed) : null;
         IBatchedResult? segmentationResult = segmentationEnabled ? resources.RunnerSeg.Predict(letterboxed) : null;
         IBatchedResult? classificationResult = classificationEnabled ? resources.RunnerCls.Predict(letterboxed) : null;
         IDetectionResult<YoloPose>? poseResult = poseEnabled ? resources.RunnerPose.Predict(letterboxed) : null;
@@ -213,39 +280,46 @@ public sealed class RealTimeInferenceEngine : IDisposable
         {
             YoloBox[] boxBoxes = boxResult?.GetBatch(0).ToArray() ?? [];
             YoloObb[] obbBoxes = obbResult?.GetBatch(0).ToArray() ?? [];
+            List<OcrQuadRegion> detRegions = detScoreMap is null
+                ? []
+                : PrepareDetSourceRegions(detScoreMap, sourceLetterboxInfo);
 
             long roiStartTicks = metricsStopwatch.ElapsedTicks;
-            List<(Mat Roi, Point LabelPoint)> preparedImages = ocrEnabled
-                ? PrepareRecognitionImages(resizedFrame, obbBoxes, letterboxInfo)
+            List<(Mat Roi, Point LabelPoint, RoiHeightDebugData RoiHeightDebug)> preparedImages = ocrEnabled
+                ? PrepareRecognitionImages(sourceFrame, obbBoxes, sourceLetterboxInfo)
                 : [];
             double roiMilliseconds = ElapsedMilliseconds(metricsStopwatch, roiStartTicks);
 
             try
             {
                 long recognitionStartTicks = metricsStopwatch.ElapsedTicks;
-                List<(string Text, Point LabelPoint, Mat Roi)> recognitionRows = ocrEnabled
+                List<(string Text, Point LabelPoint, Mat Roi, RoiHeightDebugData RoiHeightDebug)> recognitionRows = ocrEnabled
                     ? PredictRecognition(resources, preparedImages)
                     : [];
                 double recognitionMilliseconds = ElapsedMilliseconds(metricsStopwatch, recognitionStartTicks);
 
-                using Mat visualizedFrame = resizedFrame.Clone();
+                using Mat visualizedFrame = sourceFrame.Clone();
                 DrawAdditionalInferenceResults(
                     visualizedFrame,
                     segmentationResult,
                     classificationResult,
                     poseResult,
-                    letterboxInfo,
+                    sourceLetterboxInfo,
                     resources,
                     segmentationEnabled,
                     classificationEnabled,
                     poseEnabled);
                 Mat displayFrame = ToBgra(visualizedFrame);
+                Mat detDisplayFrame = detScoreMap is null
+                    ? CreateEmptyDetPreview(sourceFrame)
+                    : CreateDetPreview(detScoreMap);
 
                 FrameOverlaySnapshot overlay = BuildOverlay(
-                    resizedFrame,
+                    sourceFrame,
                     boxBoxes,
                     obbBoxes,
-                    letterboxInfo,
+                    detRegions,
+                    sourceLetterboxInfo,
                     resources,
                     recognitionRows,
                     boxDetectionEnabled,
@@ -253,10 +327,11 @@ public sealed class RealTimeInferenceEngine : IDisposable
 
                 return new RealTimeOneFrameData(
                     displayFrame,
+                    detDisplayFrame,
                     overlay,
                     recognitionRows
                         .Take(12)
-                        .Select(row => new RealTimeRecognitionItemData(row.Roi.Clone(), row.Text, recognitionOptions.RoiDisplayScale))
+                        .Select(row => new RealTimeRecognitionItemData(row.Roi.Clone(), row.Text, recognitionOptions.RoiDisplayScale, row.RoiHeightDebug))
                         .ToArray(),
                     new RealTimeMetricsSnapshot(
                         CalculateFps(ref lastFrameTicks),
@@ -267,7 +342,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
             }
             finally
             {
-                foreach((Mat roi, _) in preparedImages)
+                foreach((Mat roi, _, _) in preparedImages)
                     roi.Dispose();
             }
         }
@@ -278,6 +353,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
             (segmentationResult as IDisposable)?.Dispose();
             (classificationResult as IDisposable)?.Dispose();
             (poseResult as IDisposable)?.Dispose();
+            detScoreMap?.Dispose();
         }
     }
 
@@ -285,23 +361,38 @@ public sealed class RealTimeInferenceEngine : IDisposable
 
     #region Recognition ROI Preparation
 
-    List<(Mat Roi, Point LabelPoint)> PrepareRecognitionImages(
-        Mat sourceMat,
+    List<(Mat Roi, Point LabelPoint, RoiHeightDebugData RoiHeightDebug)> PrepareRecognitionImages(
+        Mat sourceFrame,
         ReadOnlySpan<YoloObb> boxes,
         LetterboxInfo letterboxInfo)
     {
         var mapper = LetterboxCoordinateMapper.Create(letterboxInfo.Ratio, letterboxInfo.OffsetX, letterboxInfo.OffsetY);
 
-        // Most realtime OCR frames have a small number of text boxes. Keep that path stack-only;
-        // larger batches fall back to a normal array until a reusable workspace/pool is added.
-        Span<OcrQuadRegion> sourceRegions = boxes.Length <= 1000
+        // Most realtime OCR frames have a small number of text boxes. Keep the detector-to-region
+        // bridge stack-only; the common postprocessor caches geometry for all enabled cleanup features.
+        Span<OcrQuadRegion> mappedSourceRegions = boxes.Length <= 1000
             ? stackalloc OcrQuadRegion[boxes.Length]
             : new OcrQuadRegion[boxes.Length];
+        Span<RoiHeightDebugData> mappedHeightDebug = boxes.Length <= 1000
+            ? stackalloc RoiHeightDebugData[boxes.Length]
+            : new RoiHeightDebugData[boxes.Length];
 
-        YoloObbOcrRegionMapper.MapToSourceRegions(
-            boxes,
-            mapper,
-            recognitionOptions.RoiHeightScale,
+        for(int index = 0; index < boxes.Length; index++)
+        {
+            // Adaptive ROI padding must be tuned in the same coordinate system that the cropper uses.
+            // Map the unscaled detector box to the original source frame first, derive its real text-line
+            // height there, then map the scaled box through the same source-frame mapper.
+            OcrQuadRegion unscaledSourceRegion = YoloObbOcrRegionMapper.MapToSourceRegion(boxes[index], mapper);
+            float sourceRegionHeight = GetRegionHeight(unscaledSourceRegion);
+            RoiHeightDebugData heightDebug = recognitionOptions.CalculateRoiHeightDebug(sourceRegionHeight);
+            mappedSourceRegions[index] = YoloObbOcrRegionMapper.MapToSourceRegion(boxes[index], mapper, heightDebug.Scale);
+            mappedHeightDebug[index] = heightDebug;
+        }
+
+        List<OcrQuadRegion> sourceRegions = [];
+        OcrRegionPostprocessor.Shared.Process(
+            mappedSourceRegions,
+            recognitionOptions.CreateRegionPostprocessorOptions(),
             sourceRegions);
 
         var options = new TextRegionExtractionOptions(
@@ -309,21 +400,87 @@ public sealed class RealTimeInferenceEngine : IDisposable
             recognitionOptions.RecognitionInputHeight,
             recognitionOptions.ProcessingStage);
 
-        List<(Mat Roi, Point LabelPoint)> preparedImages = [];
+        List<(Mat Roi, Point LabelPoint, RoiHeightDebugData RoiHeightDebug)> preparedImages = [];
 
         foreach(OcrQuadRegion sourceRegion in sourceRegions)
         {
             if(!NaiveTextRegionExtractor.Shared.TryExtract(
-                sourceMat,
+                sourceFrame,
                 sourceRegion,
                 options,
                 out Mat? recognitionRoi)) continue;
             if(recognitionRoi is null) continue;
 
-            preparedImages.Add((recognitionRoi, GetRecognitionLabelPoint(sourceRegion, sourceMat)));
+            RoiHeightDebugData heightDebug = FindNearestHeightDebug(sourceRegion, mappedSourceRegions, mappedHeightDebug);
+            preparedImages.Add((recognitionRoi, GetRecognitionLabelPoint(sourceRegion, sourceFrame), heightDebug));
         }
 
         return preparedImages;
+    }
+
+    static RoiHeightDebugData FindNearestHeightDebug(
+        OcrQuadRegion displayRegion,
+        ReadOnlySpan<OcrQuadRegion> sourceRegions,
+        ReadOnlySpan<RoiHeightDebugData> heightDebugData)
+    {
+        if(sourceRegions.Length == 0 || heightDebugData.Length == 0)
+            return RoiHeightDebugData.Empty;
+
+        Point2f displayCenter = GetRegionCenter(displayRegion);
+        float bestDistanceSquared = float.PositiveInfinity;
+        int bestIndex = 0;
+
+        for(int index = 0; index < sourceRegions.Length; index++)
+        {
+            Point2f sourceCenter = GetRegionCenter(sourceRegions[index]);
+            float dx = displayCenter.X - sourceCenter.X;
+            float dy = displayCenter.Y - sourceCenter.Y;
+            float distanceSquared = dx * dx + dy * dy;
+            if(distanceSquared >= bestDistanceSquared) continue;
+
+            bestDistanceSquared = distanceSquared;
+            bestIndex = index;
+        }
+
+        // After suppression or line merge the resulting quad may not have a strict one-to-one source OBB.
+        // Nearest-center debug keeps the UI cheap and still shows which original height formula drove the ROI.
+        return heightDebugData[Math.Min(bestIndex, heightDebugData.Length - 1)];
+    }
+
+    static Point2f GetRegionCenter(OcrQuadRegion region) =>
+        new(
+            (region.X0 + region.X1 + region.X2 + region.X3) * 0.25f,
+            (region.Y0 + region.Y1 + region.Y2 + region.Y3) * 0.25f);
+
+    static float GetRegionHeight(OcrQuadRegion region) =>
+        MathF.Max(
+            Distance(region.Point0, region.Point3),
+            Distance(region.Point1, region.Point2));
+
+    static float Distance(Point2f left, Point2f right)
+    {
+        float dx = left.X - right.X;
+        float dy = left.Y - right.Y;
+        return MathF.Sqrt(dx * dx + dy * dy);
+    }
+
+    static LetterboxInfo CreateSourceLetterboxInfo(LetterboxInfo displayLetterboxInfo, Mat displayFrame, Mat sourceFrame)
+    {
+        if(displayFrame.Width == sourceFrame.Width && displayFrame.Height == sourceFrame.Height)
+            return displayLetterboxInfo;
+
+        float displayScale = displayFrame.Width / (float)sourceFrame.Width;
+
+        return new LetterboxInfo
+        {
+            Ratio = displayLetterboxInfo.Ratio * displayScale,
+            OffsetX = displayLetterboxInfo.OffsetX,
+            OffsetY = displayLetterboxInfo.OffsetY,
+            SourceWidth = sourceFrame.Width,
+            SourceHeight = sourceFrame.Height,
+            TargetWidth = displayLetterboxInfo.TargetWidth,
+            TargetHeight = displayLetterboxInfo.TargetHeight,
+        };
     }
 
     static Point GetRecognitionLabelPoint(OcrQuadRegion sourceRegion, Mat sourceMat)
@@ -361,11 +518,11 @@ public sealed class RealTimeInferenceEngine : IDisposable
 
     #region Recognition Prediction
 
-    List<(string Text, Point LabelPoint, Mat Roi)> PredictRecognition(
+    List<(string Text, Point LabelPoint, Mat Roi, RoiHeightDebugData RoiHeightDebug)> PredictRecognition(
         InferenceResources resources,
-        List<(Mat Roi, Point LabelPoint)> preparedImages)
+        List<(Mat Roi, Point LabelPoint, RoiHeightDebugData RoiHeightDebug)> preparedImages)
     {
-        List<(string Text, Point LabelPoint, Mat Roi)> outputResults = [];
+        List<(string Text, Point LabelPoint, Mat Roi, RoiHeightDebugData RoiHeightDebug)> outputResults = [];
 
         for(int offset = 0; offset < preparedImages.Count; offset += recognitionOptions.BatchSize)
         {
@@ -384,12 +541,52 @@ public sealed class RealTimeInferenceEngine : IDisposable
                 if(recognitionResult.IsEmpty) continue;
 
                 string recognitionText = recognitionOptions.FormatRecognitionText(recognitionResult);
-                (Mat roi, Point labelPoint) = preparedImages[offset + index];
-                outputResults.Add((recognitionText, labelPoint, roi));
+                (Mat roi, Point labelPoint, RoiHeightDebugData heightDebug) = preparedImages[offset + index];
+                outputResults.Add((recognitionText, labelPoint, roi, heightDebug));
             }
         }
 
         return outputResults;
+    }
+
+    #endregion
+
+    #region PaddleOCR Det Region Preparation
+
+    List<OcrQuadRegion> PrepareDetSourceRegions(Mat detScoreMap, LetterboxInfo sourceLetterboxInfo)
+    {
+        List<OcrQuadRegion> modelRegions = [];
+        PaddleOCRDetMaskRegionExtractor.Shared.Extract(
+            detScoreMap,
+            new PaddleOCRDetMaskRegionExtractorOptions(),
+            modelRegions);
+
+        if(modelRegions.Count == 0)
+            return [];
+
+        var mapper = LetterboxCoordinateMapper.Create(
+            sourceLetterboxInfo.Ratio,
+            sourceLetterboxInfo.OffsetX,
+            sourceLetterboxInfo.OffsetY);
+
+        Span<Point2f> modelPoints = stackalloc Point2f[4];
+        Span<Point2f> sourcePoints = stackalloc Point2f[4];
+        List<OcrQuadRegion> mappedRegions = new(modelRegions.Count);
+
+        foreach(OcrQuadRegion modelRegion in modelRegions)
+        {
+            modelRegion.CopyTo(modelPoints);
+            mapper.MapPointsToSource(modelPoints, sourcePoints);
+            mappedRegions.Add(OcrQuadRegion.FromPoints(sourcePoints));
+        }
+
+        List<OcrQuadRegion> sourceRegions = [];
+        OcrRegionPostprocessor.Shared.Process(
+            System.Runtime.InteropServices.CollectionsMarshal.AsSpan(mappedRegions),
+            recognitionOptions.CreateRegionPostprocessorOptions(),
+            sourceRegions);
+
+        return sourceRegions;
     }
 
     #endregion
@@ -400,21 +597,25 @@ public sealed class RealTimeInferenceEngine : IDisposable
         Mat frame,
         ReadOnlySpan<YoloBox> boxDetections,
         ReadOnlySpan<YoloObb> obbDetections,
+        IReadOnlyList<OcrQuadRegion> detRegions,
         LetterboxInfo letterboxInfo,
         InferenceResources resources,
-        IReadOnlyList<(string Text, Point LabelPoint, Mat Roi)> recognitionRows,
+        IReadOnlyList<(string Text, Point LabelPoint, Mat Roi, RoiHeightDebugData RoiHeightDebug)> recognitionRows,
         bool drawBoxDetection,
         bool drawObbDetection)
     {
         var mapper = LetterboxCoordinateMapper.Create(letterboxInfo.Ratio, letterboxInfo.OffsetX, letterboxInfo.OffsetY);
-        List<OverlayObb> overlayBoxes = new(boxDetections.Length + obbDetections.Length);
+        List<OverlayObb> overlayBoxes = new(boxDetections.Length + obbDetections.Length + detRegions.Count);
+
+        foreach(OcrQuadRegion detRegion in detRegions)
+            overlayBoxes.Add(CreateOverlayBox(detRegion, new SKColor(0, 190, 80, 72), string.Empty, fill: true));
 
         if(drawBoxDetection)
         {
             foreach(YoloBox box in boxDetections)
             {
                 string className = resources.ModelBox.GetYoloClassName(box.Class);
-                overlayBoxes.Add(CreateOverlayBox(box, letterboxInfo, BoxPainter.ClassColorSkia(box.Class), $"{className} {box.Score:P0}"));
+                overlayBoxes.Add(CreateOverlayBox(box, letterboxInfo, BoxPainter.ClassColorSkia(box.Class), FormatDetectionLabel(className, box.Score)));
             }
         }
 
@@ -424,15 +625,19 @@ public sealed class RealTimeInferenceEngine : IDisposable
             {
                 OcrQuadRegion sourceRegion = YoloObbOcrRegionMapper.MapToSourceRegion(box, mapper);
                 string className = resources.ModelObb.GetYoloClassName(box.Class);
-                overlayBoxes.Add(CreateOverlayBox(sourceRegion, BoxPainter.ClassColorSkia(box.Class), $"{className} {box.Score:P0}"));
+                overlayBoxes.Add(CreateOverlayBox(sourceRegion, SKColors.Red, FormatDetectionLabel(className, box.Score)));
             }
         }
 
-        OverlayText[] texts = recognitionRows
-            .Select(row => new OverlayText(new SKPoint(row.LabelPoint.X, row.LabelPoint.Y), row.Text))
-            .ToArray();
+        // OCR text is intentionally kept in the ROI/result panel only. On the main image it hides small boxes
+        // and makes class/score labels harder to read during detector tuning.
+        return new FrameOverlaySnapshot(frame.Width, frame.Height, overlayBoxes, []);
+    }
 
-        return new FrameOverlaySnapshot(frame.Width, frame.Height, overlayBoxes, texts);
+    static string FormatDetectionLabel(string className, float score)
+    {
+        string compactClassName = className.Length <= 8 ? className : className[..8];
+        return $"{compactClassName} {score * 100:F0}%";
     }
 
     static OverlayObb CreateOverlayBox(YoloBox box, LetterboxInfo letterboxInfo, SKColor color, string label)
@@ -459,7 +664,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
             label);
     }
 
-    static OverlayObb CreateOverlayBox(OcrQuadRegion sourceRegion, SKColor color, string label)
+    static OverlayObb CreateOverlayBox(OcrQuadRegion sourceRegion, SKColor color, string label, bool fill = false)
     {
         Point2f[] points =
         [
@@ -474,7 +679,8 @@ public sealed class RealTimeInferenceEngine : IDisposable
             new SKPoint(bounds.X + bounds.Width * 0.5f, bounds.Y + bounds.Height * 0.5f),
             points.Select(point => new SKPoint(point.X, point.Y)).ToArray(),
             color,
-            label);
+            label,
+            fill);
     }
 
     #endregion
@@ -602,8 +808,9 @@ public sealed class RealTimeInferenceEngine : IDisposable
     RealTimeOneFrameData BuildCameraOnlyUpdate(Mat resizedFrame, ref long lastFrameTicks)
     {
         Mat displayFrame = ToBgra(resizedFrame);
+        Mat detDisplayFrame = CreateEmptyDetPreview(resizedFrame);
         var metrics = new RealTimeMetricsSnapshot(CalculateFps(ref lastFrameTicks), 0, 0, 0, 0);
-        return new RealTimeOneFrameData(displayFrame, new FrameOverlaySnapshot(displayFrame.Width, displayFrame.Height, [], []), [], metrics);
+        return new RealTimeOneFrameData(displayFrame, detDisplayFrame, new FrameOverlaySnapshot(displayFrame.Width, displayFrame.Height, [], []), [], metrics);
     }
 
     #endregion
@@ -621,6 +828,26 @@ public sealed class RealTimeInferenceEngine : IDisposable
         return dummy;
     }
 
+    Mat CaptureOrReplayFrame(VideoCapture capture, Mat reusableFrame, Mat heldFrame)
+    {
+        bool shouldReadFrame;
+        lock(playbackSyncRoot)
+        {
+            shouldReadFrame = !isPaused || pendingStepCount > 0 || heldFrame.Empty();
+            if(isPaused && pendingStepCount > 0)
+                pendingStepCount--;
+        }
+
+        if(shouldReadFrame)
+        {
+            Mat capturedFrame = CaptureFrame(capture, reusableFrame);
+            capturedFrame.CopyTo(heldFrame);
+            return capturedFrame;
+        }
+
+        return heldFrame.Clone();
+    }
+
     static Mat ResizeFrame(Mat input, int targetWidth)
     {
         double aspectRatio = input.Height / (double)input.Width;
@@ -633,8 +860,38 @@ public sealed class RealTimeInferenceEngine : IDisposable
     static Mat ToBgra(Mat source)
     {
         var bgra = new Mat();
-        Cv2.CvtColor(source, bgra, ColorConversionCodes.BGR2BGRA);
+        if(source.Channels() == 4)
+            source.CopyTo(bgra);
+        else if(source.Channels() == 3)
+            Cv2.CvtColor(source, bgra, ColorConversionCodes.BGR2BGRA);
+        else if(source.Channels() == 1)
+            Cv2.CvtColor(source, bgra, ColorConversionCodes.GRAY2BGRA);
+        else
+            source.CopyTo(bgra);
+
         return bgra;
+    }
+
+    static Mat CreateDetPreview(Mat scoreMap)
+    {
+        using var preview8u = new Mat();
+        scoreMap.ConvertTo(preview8u, MatType.CV_8UC1, 255.0);
+        return ToBgra(preview8u);
+    }
+
+    static Mat CreateEmptyDetPreview(Mat sourceFrame)
+    {
+        using var preview = new Mat(sourceFrame.Height, sourceFrame.Width, MatType.CV_8UC3, Scalar.Black);
+        Cv2.PutText(
+            preview,
+            "PaddleOCR Det",
+            new Point(Math.Max(12, sourceFrame.Width / 2 - 150), Math.Max(32, sourceFrame.Height / 2)),
+            HersheyFonts.HersheySimplex,
+            0.9,
+            new Scalar(70, 70, 70),
+            2,
+            LineTypes.AntiAlias);
+        return ToBgra(preview);
     }
 
     #endregion

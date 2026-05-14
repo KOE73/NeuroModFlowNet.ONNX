@@ -14,16 +14,18 @@ namespace NeuroModFlowNet.ONNX.Avalonia.Runtime;
 /// </remarks>
 public sealed class RealTimeRecognitionItemData : IDisposable
 {
-    public RealTimeRecognitionItemData(Mat roi, string text, double displayScale)
+    public RealTimeRecognitionItemData(Mat roi, string text, double displayScale, RoiHeightDebugData roiHeightDebug)
     {
         Roi = roi;
         Text = text;
         DisplayScale = displayScale;
+        RoiHeightDebug = roiHeightDebug;
     }
 
     public Mat Roi { get; }
     public string Text { get; }
     public double DisplayScale { get; }
+    public RoiHeightDebugData RoiHeightDebug { get; }
 
     public void Dispose()
     {

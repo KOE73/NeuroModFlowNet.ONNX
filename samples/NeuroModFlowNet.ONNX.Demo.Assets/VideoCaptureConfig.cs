@@ -13,6 +13,13 @@ public static class VideoCaptureConfig
         return Create(source);
     }
 
+    public static VideoCaptureSourceInfo GetSourceInfo(string configKey = DefaultConfigKey)
+    {
+        string source = ConfigurationManager.AppSettings[configKey] ?? "0";
+        string resolvedSource = ResolveSource(source, out string? linkPath, out string? linkContent);
+        return new VideoCaptureSourceInfo(configKey, source, resolvedSource, linkPath, linkContent);
+    }
+
     public static VideoCapture Create(string source)
     {
         string resolvedSource = ResolveSource(source);
@@ -22,9 +29,14 @@ public static class VideoCaptureConfig
             : new VideoCapture(resolvedSource);
     }
 
-    private static string ResolveSource(string source)
+    private static string ResolveSource(string source) =>
+        ResolveSource(source, out _, out _);
+
+    private static string ResolveSource(string source, out string? linkPath, out string? linkContent)
     {
         source = source.Trim();
+        linkPath = null;
+        linkContent = null;
 
         if(source.Length == 0)
             return "0";
@@ -39,6 +51,8 @@ public static class VideoCaptureConfig
         if(fileSource.Length == 0)
             throw new InvalidOperationException($"Video source file is empty: {fullPath}");
 
+        linkPath = fullPath;
+        linkContent = fileSource;
         return fileSource;
     }
 

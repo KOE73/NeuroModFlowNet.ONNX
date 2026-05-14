@@ -1,114 +1,435 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="NeuroModFlowNet.ONNX.Avalonia.Controls.OcrSettingsView">
-    <!-- OCR task settings panel: only PaddleOCR/ROI options live here; common runtime controls are in the left rail. -->
-    <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-            BorderThickness="1"
-            CornerRadius="6"
-            Padding="12">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="14">
-                <TextBlock Text="OCR Configuration"
-                           FontSize="18"
-                           FontWeight="SemiBold" />
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="FontFamily" Value="Consolas" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="FontFamily" Value="Consolas" />
+      <Setter Property="FontSize" Value="9" />
+      <Setter Property="Padding" Value="2,0" />
+      <Setter Property="MinHeight" Value="16" />
+      <Setter Property="MinWidth" Value="20" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="CheckBox">
+      <Setter Property="FontFamily" Value="Consolas" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="FontFamily" Value="Consolas" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
+    <Style Selector="Expander.compact">
+      <Setter Property="FontFamily" Value="Consolas" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="MinHeight" Value="14" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
 
-                <!-- Recognition tensor width affects PaddleOCR Rec persistent input/output buffers. Height is model-fixed here. -->
-                <Grid ColumnDefinitions="*,Auto,Auto"
-                      ColumnSpacing="8">
-                    <TextBlock x:Name="TextBlock_RecognitionInputWidth"
-                               VerticalAlignment="Center" />
-                    <Button Grid.Column="1"
-                            x:Name="Button_RecognitionInputWidthMinus"
-                            Content="-" />
-                    <Button Grid.Column="2"
-                            x:Name="Button_RecognitionInputWidthPlus"
-                            Content="+" />
-                </Grid>
+    <Style Selector="Expander.compact /template/ ToggleButton#ExpanderHeader">
+      <Setter Property="MinHeight" Value="14" />
+      <Setter Property="Padding" Value="2,0,0,0" />
+    </Style>
 
-                <!-- ROI processing stack: current lab defaults are brightness 40, contrast 115%, gamma 5.0. -->
-                <TextBlock Text="ROI Processing"
-                           FontWeight="SemiBold" />
-                <CheckBox x:Name="CheckBox_RoiProcessingEnabled"
-                          Content="Apply processing pipeline" />
+  </UserControl.Styles>
 
-                <Grid ColumnDefinitions="*,Auto,Auto"
-                      ColumnSpacing="8">
-                    <TextBlock x:Name="TextBlock_RoiHeightScale"
-                               VerticalAlignment="Center" />
-                    <Button Grid.Column="1"
-                            x:Name="Button_RoiHeightScaleMinus"
-                            Content="-" />
-                    <Button Grid.Column="2"
-                            x:Name="Button_RoiHeightScalePlus"
-                            Content="+" />
-                </Grid>
+  <!-- OCR task settings panel: only PaddleOCR/ROI options live here; common runtime controls are in the left rail. -->
+  <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+          BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+          BorderThickness="1"
+          CornerRadius="6"
+          Padding="6">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="4">
+        <TextBlock Text="OCR Configuration"
+                   FontSize="14"
+                   FontWeight="SemiBold" />
 
-                <Grid ColumnDefinitions="*,Auto,Auto"
-                      ColumnSpacing="8">
-                    <TextBlock x:Name="TextBlock_RoiDisplayScale"
-                               VerticalAlignment="Center" />
-                    <Button Grid.Column="1"
-                            x:Name="Button_RoiDisplayScaleMinus"
-                            Content="-" />
-                    <Button Grid.Column="2"
-                            x:Name="Button_RoiDisplayScalePlus"
-                            Content="+" />
-                </Grid>
+        <!-- Recognition tensor width affects PaddleOCR Rec persistent input/output buffers. Height is model-fixed here. -->
+        <Grid ColumnDefinitions="*,Auto,Auto"
+              ColumnSpacing="2">
+          <TextBlock x:Name="TextBlock_RecognitionInputWidth"
+                     VerticalAlignment="Center" />
+          <Button Grid.Column="1"
+                  x:Name="Button_RecognitionInputWidthMinus"
+                  Content="-" />
+          <Button Grid.Column="2"
+                  x:Name="Button_RecognitionInputWidthPlus"
+                  Content="+" />
+        </Grid>
 
-                <Grid ColumnDefinitions="*,Auto,Auto"
-                      ColumnSpacing="8">
-                    <TextBlock x:Name="TextBlock_Brightness"
-                               VerticalAlignment="Center" />
-                    <Button Grid.Column="1"
-                            x:Name="Button_BrightnessMinus"
-                            Content="-" />
-                    <Button Grid.Column="2"
-                            x:Name="Button_BrightnessPlus"
-                            Content="+" />
-                </Grid>
+        <!-- ROI processing stack uses neutral defaults; tuning stages can be added below. -->
+        <TextBlock Text="ROI Processing"
+                   FontWeight="SemiBold" />
 
-                <Grid ColumnDefinitions="*,Auto,Auto"
-                      ColumnSpacing="8">
-                    <TextBlock x:Name="TextBlock_Contrast"
-                               VerticalAlignment="Center" />
-                    <Button Grid.Column="1"
-                            x:Name="Button_ContrastMinus"
-                            Content="-" />
-                    <Button Grid.Column="2"
-                            x:Name="Button_ContrastPlus"
-                            Content="+" />
-                </Grid>
+        <Grid ColumnDefinitions="*,Auto,Auto"
+              ColumnSpacing="2">
+          <TextBlock x:Name="TextBlock_RoiHeightScale"
+                     VerticalAlignment="Center" />
+          <Button Grid.Column="1"
+                  x:Name="Button_RoiHeightScaleMinus"
+                  Content="-" />
+          <Button Grid.Column="2"
+                  x:Name="Button_RoiHeightScalePlus"
+                  Content="+" />
+        </Grid>
 
-                <Grid ColumnDefinitions="*,Auto,Auto"
-                      ColumnSpacing="8">
-                    <TextBlock x:Name="TextBlock_Gamma"
-                               VerticalAlignment="Center" />
-                    <Button Grid.Column="1"
-                            x:Name="Button_GammaMinus"
-                            Content="-" />
-                    <Button Grid.Column="2"
-                            x:Name="Button_GammaPlus"
-                            Content="+" />
-                </Grid>
+        <CheckBox x:Name="CheckBox_AdaptiveRoiHeight"
+                  Content="Adaptive ROI height" />
 
-                <Button x:Name="Button_RotateProcessingStages"
-                        Content="Rotate stages" />
+        <Grid ColumnDefinitions="*,20,20,20"
+              ColumnSpacing="2">
+          <TextBlock x:Name="TextBlock_RoiAdaptiveBasePad"
+                     VerticalAlignment="Center" />
+          <Button Grid.Column="1"
+                  x:Name="Button_RoiAdaptiveReset"
+                  Content="⋈" />
+          <Button Grid.Column="2"
+                  x:Name="Button_RoiAdaptiveBasePadMinus"
+                  Content="-" />
+          <Button Grid.Column="3"
+                  x:Name="Button_RoiAdaptiveBasePadPlus"
+                  Content="+" />
+        </Grid>
 
-                <!-- Text mode keeps the three console modes visible without requiring keyboard focus. -->
-                <TextBlock Text="Recognition Text"
-                           FontWeight="SemiBold" />
-                <ComboBox x:Name="ComboBox_RecognitionTextMode"
-                          SelectedIndex="0">
-                    <ComboBoxItem Content="Standard" />
-                    <ComboBoxItem Content="With spaces" />
-                    <ComboBoxItem Content="Candidates" />
-                </ComboBox>
+        <Grid ColumnDefinitions="*,20,20,20"
+              ColumnSpacing="2">
+          <TextBlock x:Name="TextBlock_RoiAdaptivePadRatio"
+                     VerticalAlignment="Center" />
+          <Button Grid.Column="2"
+                  x:Name="Button_RoiAdaptivePadRatioMinus"
+                  Content="-" />
+          <Button Grid.Column="3"
+                  x:Name="Button_RoiAdaptivePadRatioPlus"
+                  Content="+" />
+        </Grid>
 
-                <TextBlock x:Name="TextBlock_ProcessingPipeline"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <Grid ColumnDefinitions="*,20,20,20"
+              ColumnSpacing="2">
+          <TextBlock x:Name="TextBlock_RoiAdaptiveMaxPad"
+                     VerticalAlignment="Center" />
+          <Button Grid.Column="2"
+                  x:Name="Button_RoiAdaptiveMaxPadMinus"
+                  Content="-" />
+          <Button Grid.Column="3"
+                  x:Name="Button_RoiAdaptiveMaxPadPlus"
+                  Content="+" />
+        </Grid>
+
+        <Grid ColumnDefinitions="*,Auto,Auto"
+              ColumnSpacing="2">
+          <TextBlock x:Name="TextBlock_RoiDisplayScale"
+                     VerticalAlignment="Center" />
+          <Button Grid.Column="1"
+                  x:Name="Button_RoiDisplayScaleMinus"
+                  Content="-" />
+          <Button Grid.Column="2"
+                  x:Name="Button_RoiDisplayScalePlus"
+                  Content="+" />
+        </Grid>
+
+        <!-- OBB analyzer runs after detector OBB mapping and before perspective ROI extraction. -->
+        <Expander  Classes="compact"
+                   IsExpanded="True"
+                  Padding="0">
+          <Expander.Resources>
+            <x:Double x:Key="ExpanderMinHeight">18</x:Double>
+            <x:Double x:Key="ExpanderChevronButtonSize">14</x:Double>
+            <Thickness x:Key="ExpanderChevronMargin">4,0,4,0</Thickness>
+            <Thickness x:Key="ExpanderHeaderPadding">4,0,0,0</Thickness>
+            <Thickness x:Key="ExpanderContentPadding">0</Thickness>
+          </Expander.Resources>
+
+          <Expander.Header>
+            <TextBlock Text="OBB Analyzer"
+                       FontWeight="SemiBold"
+                       FontSize="11"/>
+          </Expander.Header>
+          <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                  BorderThickness="1"
+                  CornerRadius="3"
+                  Padding="3">
+            <StackPanel Spacing="2">
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock Text="Domain filters"
+                           FontWeight="SemiBold"
+                           FontSize="11" />
+                <TextBlock Grid.Column="1"
+                           Text="⋈"
+                           FontSize="9"
+                           TextAlignment="Center" />
+                <TextBlock Grid.Column="2"
+                           Text="min-"
+                           FontSize="9"
+                           TextAlignment="Center" />
+                <TextBlock Grid.Column="3"
+                           Text="min+"
+                           FontSize="9"
+                           TextAlignment="Center" />
+                <TextBlock Grid.Column="4"
+                           Text="max-"
+                           FontSize="9"
+                           TextAlignment="Center" />
+                <TextBlock Grid.Column="5"
+                           Text="max+"
+                           FontSize="9"
+                           TextAlignment="Center" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMaxRegions"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMaxRegionsMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMaxRegionsPlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerHeightLimits"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        x:Name="Button_AnalyzerHeightLimitsReset"
+                        Content="⋈" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMinHeightMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMinHeightPlus"
+                        Content="+" />
+                <Button Grid.Column="4"
+                        x:Name="Button_AnalyzerMaxHeightMinus"
+                        Content="-" />
+                <Button Grid.Column="5"
+                        x:Name="Button_AnalyzerMaxHeightPlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerWidthLimits"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        x:Name="Button_AnalyzerWidthLimitsReset"
+                        Content="⋈" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMinWidthMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMinWidthPlus"
+                        Content="+" />
+                <Button Grid.Column="4"
+                        x:Name="Button_AnalyzerMaxWidthMinus"
+                        Content="-" />
+                <Button Grid.Column="5"
+                        x:Name="Button_AnalyzerMaxWidthPlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerAspectLimits"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        x:Name="Button_AnalyzerAspectLimitsReset"
+                        Content="⋈" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMinAspectMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMinAspectPlus"
+                        Content="+" />
+                <Button Grid.Column="4"
+                        x:Name="Button_AnalyzerMaxAspectMinus"
+                        Content="-" />
+                <Button Grid.Column="5"
+                        x:Name="Button_AnalyzerMaxAspectPlus"
+                        Content="+" />
+              </Grid>
+
+              <Border Height="1"
+                      Margin="0,3,0,0"
+                      Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+              <TextBlock Text="Suppress overlaps"
+                         FontWeight="SemiBold"
+                         FontSize="11" />
+              <CheckBox x:Name="CheckBox_AnalyzerOverlapSuppression"
+                        Content="Suppress overlaps" />
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerOverlapRatio"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerOverlapRatioMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerOverlapRatioPlus"
+                        Content="+" />
+              </Grid>
+
+              <Border Height="1"
+                      Margin="0,3,0,0"
+                      Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+              <TextBlock Text="Merge"
+                         FontWeight="SemiBold"
+                         FontSize="11" />
+              <CheckBox x:Name="CheckBox_AnalyzerLineMerge"
+                        Content="Merge nearby fragments" />
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMergeAngle"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMergeAngleMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMergeAnglePlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMergeNormal"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMergeNormalMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMergeNormalPlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMergeGap"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMergeGapMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMergeGapPlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMergeHeightRatio"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMergeHeightRatioMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMergeHeightRatioPlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMergeCoverage"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        x:Name="Button_AnalyzerMergeCoverageMinus"
+                        Content="-" />
+                <Button Grid.Column="3"
+                        x:Name="Button_AnalyzerMergeCoveragePlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMaxMergedWidth"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        x:Name="Button_AnalyzerMaxMergedWidthReset"
+                        Content="⋈" />
+                <Button Grid.Column="4"
+                        x:Name="Button_AnalyzerMaxMergedWidthMinus"
+                        Content="-" />
+                <Button Grid.Column="5"
+                        x:Name="Button_AnalyzerMaxMergedWidthPlus"
+                        Content="+" />
+              </Grid>
+
+              <Grid ColumnDefinitions="*,20,20,20,20,20"
+                    ColumnSpacing="2">
+                <TextBlock x:Name="TextBlock_AnalyzerMaxMergedAspect"
+                           VerticalAlignment="Center" />
+                <Button Grid.Column="1"
+                        x:Name="Button_AnalyzerMaxMergedAspectReset"
+                        Content="⋈" />
+                <Button Grid.Column="4"
+                        x:Name="Button_AnalyzerMaxMergedAspectMinus"
+                        Content="-" />
+                <Button Grid.Column="5"
+                        x:Name="Button_AnalyzerMaxMergedAspectPlus"
+                        Content="+" />
+              </Grid>
             </StackPanel>
-        </ScrollViewer>
-    </Border>
+          </Border>
+        </Expander>
+
+        <!-- Processing pipeline controls only image normalization/filter stages applied to each cropped ROI. -->
+        <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="1"
+                CornerRadius="3"
+                Padding="3">
+          <StackPanel Spacing="2">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="2">
+              <TextBlock Text="Processing Modules"
+                         FontWeight="SemiBold" />
+              <CheckBox Grid.Column="1"
+                        x:Name="CheckBox_RoiProcessingEnabled"
+                        Content="Apply" />
+            </Grid>
+
+            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="1"
+                    CornerRadius="3"
+                    Padding="3">
+              <StackPanel x:Name="Panel_AvailableProcessingList"
+                          Spacing="2" />
+            </Border>
+
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="2">
+              <TextBlock Text="Selected Processing"
+                         FontWeight="SemiBold" />
+              <Button Grid.Column="1"
+                      x:Name="Button_RotateProcessingStages"
+                      Content="rotate" />
+            </Grid>
+            <StackPanel x:Name="Panel_SelectedProcessingCards"
+                        Spacing="2" />
+
+            <TextBlock x:Name="TextBlock_ProcessingPipeline"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+          </StackPanel>
+        </Border>
+
+        <!-- Text mode keeps the three console modes visible without requiring keyboard focus. -->
+        <TextBlock Text="Recognition Text"
+                   FontWeight="SemiBold" />
+        <ComboBox x:Name="ComboBox_RecognitionTextMode"
+                  SelectedIndex="0">
+          <ComboBoxItem Content="Standard" />
+          <ComboBoxItem Content="With spaces" />
+          <ComboBoxItem Content="Candidates" />
+        </ComboBox>
+
+      </StackPanel>
+    </ScrollViewer>
+  </Border>
 </UserControl>

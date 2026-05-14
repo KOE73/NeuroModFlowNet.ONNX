@@ -5,17 +5,34 @@
     <Grid RowDefinitions="*,6,220">
         <!-- Live canvas: frame and overlay are separate Skia custom draw operations.
              This keeps image pixels out of Avalonia Bitmap/PNG pipelines and keeps overlay optional. -->
-        <Border CornerRadius="6"
-                ClipToBounds="True"
-                Background="Black">
-            <Panel ClipToBounds="True">
-                <rendering:SkiaFrameView x:Name="SkiaFrameView_MainFrame"
-                                         ZIndex="0" />
-                <rendering:SkiaOverlayView x:Name="SkiaOverlayView_MainOverlay"
-                                           ZIndex="1"
-                                           IsHitTestVisible="False" />
-            </Panel>
-        </Border>
+        <Grid ColumnDefinitions="*,6,*">
+            <Border CornerRadius="6"
+                    ClipToBounds="True"
+                    Background="Black">
+                <Panel ClipToBounds="True">
+                    <rendering:SkiaFrameView x:Name="SkiaFrameView_MainFrame"
+                                             ZIndex="0" />
+                    <rendering:SkiaOverlayView x:Name="SkiaOverlayView_MainOverlay"
+                                               ZIndex="1"
+                                               IsHitTestVisible="False" />
+                </Panel>
+            </Border>
+
+            <!-- Splitter between the source frame and PaddleOCR Det score-map preview. -->
+            <GridSplitter Grid.Column="1"
+                          Width="6"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeDirection="Columns"
+                          Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+
+            <Border Grid.Column="2"
+                    CornerRadius="6"
+                    ClipToBounds="True"
+                    Background="Black">
+                <rendering:SkiaFrameView x:Name="SkiaFrameView_DetFrame" />
+            </Border>
+        </Grid>
 
         <!-- Splitter between the main frame and OCR results.
              Drag it vertically to give more space either to the video or to the ROI/text list. -->

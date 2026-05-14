@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
+using NeuroModFlowNet.ONNX.Demo.Assets;
 using NeuroModFlowNet.ONNX.Avalonia.Runtime;
 
 namespace NeuroModFlowNet.ONNX.Avalonia.Controls;
@@ -18,6 +19,9 @@ public partial class ModeNavigationView : UserControl
 {
     public event EventHandler? StartRequested;
     public event EventHandler? StopRequested;
+    public event EventHandler? PauseRequested;
+    public event EventHandler? PlayRequested;
+    public event EventHandler? StepRequested;
     public event EventHandler? OptionsChanged;
 
     RecognitionOptions? options;
@@ -29,6 +33,9 @@ public partial class ModeNavigationView : UserControl
 
         Button_RuntimeStart.Click += (_, _) => StartRequested?.Invoke(this, EventArgs.Empty);
         Button_RuntimeStop.Click += (_, _) => StopRequested?.Invoke(this, EventArgs.Empty);
+        Button_RuntimePause.Click += (_, _) => PauseRequested?.Invoke(this, EventArgs.Empty);
+        Button_RuntimePlay.Click += (_, _) => PlayRequested?.Invoke(this, EventArgs.Empty);
+        Button_RuntimeStep.Click += (_, _) => StepRequested?.Invoke(this, EventArgs.Empty);
         Button_FrameWidthMinus.Click += (_, _) => ChangeOptions(item => item.AdjustFrameWidth(-40));
         Button_FrameWidthPlus.Click += (_, _) => ChangeOptions(item => item.AdjustFrameWidth(40));
         Button_RecognitionBatchMinus.Click += (_, _) => ChangeOptions(item => item.AdjustBatchSize(-1));
@@ -64,6 +71,7 @@ public partial class ModeNavigationView : UserControl
         try
         {
             CheckBox_InferenceOcr.IsChecked = options.InferenceSelection.OcrEnabled;
+            CheckBox_InferenceDet.IsChecked = options.InferenceSelection.OcrEnabled;
             CheckBox_InferenceBox.IsChecked = options.InferenceSelection.BoxDetectionEnabled;
             CheckBox_InferenceObb.IsChecked = options.InferenceSelection.ObbDetectionEnabled;
             CheckBox_InferenceSegmentation.IsChecked = options.InferenceSelection.SegmentationEnabled;
@@ -87,6 +95,7 @@ public partial class ModeNavigationView : UserControl
     public void UpdateModelInfo(IReadOnlyList<RuntimeModelInfo> modelInfos)
     {
         TextBlock_InferenceOcrInfo.Text = FindModelDetails("ocr");
+        TextBlock_InferenceDetInfo.Text = FindModelDetails("det");
         TextBlock_InferenceBoxInfo.Text = FindModelDetails("box");
         TextBlock_InferenceObbInfo.Text = FindModelDetails("obb");
         TextBlock_InferenceSegmentationInfo.Text = FindModelDetails("seg");
@@ -94,6 +103,13 @@ public partial class ModeNavigationView : UserControl
         TextBlock_InferencePoseInfo.Text = FindModelDetails("pose");
 
         string FindModelDetails(string key) => modelInfos.FirstOrDefault(item => string.Equals(item.Key, key, StringComparison.OrdinalIgnoreCase))?.Details ?? "not loaded";
+    }
+
+    public void SetVideoSourceInfo(VideoCaptureSourceInfo sourceInfo)
+    {
+        TextBlock_VideoSource.Text = sourceInfo.IsLinked
+            ? $"{sourceInfo.ConfigKey}: {sourceInfo.ConfigValue}\nfile: {sourceInfo.LinkPath}\nvalue: {sourceInfo.LinkContent}"
+            : $"{sourceInfo.ConfigKey}: {sourceInfo.ConfigValue}";
     }
 
     private void ApplyStatusStyle(string status)
@@ -109,6 +125,9 @@ public partial class ModeNavigationView : UserControl
     {
         if(status.Contains("Running", StringComparison.OrdinalIgnoreCase))
             return (Color.FromRgb(38, 186, 92), Color.FromRgb(20, 48, 32), Color.FromRgb(46, 120, 72));
+
+        if(status.Contains("Paused", StringComparison.OrdinalIgnoreCase))
+            return (Color.FromRgb(84, 158, 255), Color.FromRgb(22, 38, 62), Color.FromRgb(52, 94, 150));
 
         if(status.Contains("Starting", StringComparison.OrdinalIgnoreCase) ||
            status.Contains("Initializing", StringComparison.OrdinalIgnoreCase))

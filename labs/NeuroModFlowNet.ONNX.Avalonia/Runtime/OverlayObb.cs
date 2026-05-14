@@ -12,16 +12,18 @@ namespace NeuroModFlowNet.ONNX.Avalonia.Runtime;
 /// </remarks>
 public sealed class OverlayObb
 {
-    public OverlayObb(SKPoint center, SKPoint[] points, SKColor color, string label)
+    public OverlayObb(SKPoint center, SKPoint[] points, SKColor color, string label, bool fill = false)
     {
         Center = center;
         Points = points;
         Color = color;
         Label = label;
+        Fill = fill;
     }
 
     public SKPoint Center { get; }
     public SKPoint[] Points { get; }
     public SKColor Color { get; }
     public string Label { get; }
+    public bool Fill { get; }
 }

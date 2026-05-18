@@ -2,7 +2,12 @@ namespace NeuroModFlowNet.ONNX.Converters;
 
 /// <summary>
 /// EN: Base class for input adapters with NCHW shape (Batch, Channels, Height, Width).
+/// Note: While using OpenCvSharp's <c>CvDnn.BlobFromImage</c> is considered the gold standard (reference implementation) for accuracy and correctness,
+/// it is not the most optimal in terms of performance and execution speed due to extra allocations and data copying.
+/// <para/>
 /// RU: Базовый класс для адаптеров ввода с формой NCHW (Batch, Channels, Height, Width).
+/// Примечание: Использование метода <c>CvDnn.BlobFromImage</c> библиотеки OpenCvSharp считается образцовым (эталонным) с точки зрения корректности,
+/// однако не является лучшим по быстродействию из-за дополнительных аллокаций и копирования данных.
 /// </summary>
 public abstract class ConverterNchwBase<TIn> :
     ConverterBase<TIn>,

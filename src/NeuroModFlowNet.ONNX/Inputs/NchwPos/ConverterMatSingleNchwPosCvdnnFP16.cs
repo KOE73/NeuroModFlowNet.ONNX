@@ -2,8 +2,15 @@ using Microsoft.ML.OnnxRuntime;
 
 namespace NeuroModFlowNet.ONNX.Converters.Images;
 
+/// <summary>
+/// EN: NCHW converter for a single Mat input utilizing <c>CvDnn.BlobFromImage</c> (Float16).
+/// This implementation represents the reference standard for correctness, but is not the most performant due to allocation and copy overhead.
+/// <para/>
+/// RU: NCHW-конвертер для одного изображения Mat с использованием <c>CvDnn.BlobFromImage</c> (Float16).
+/// Использование данного подхода считается образцовым по правильности, но не лучшим по быстродействию из-за аллокаций и копирования данных.
+/// </summary>
 public class ConverterMatSingleNchwPosCvdnnFP16 : ConverterNchwBase<Mat>
-    {
+{
 
     public override string ConverterName => "CvDnnBlobAdapter (Float16 Normalized)";
     public Type InputType => typeof(Mat);

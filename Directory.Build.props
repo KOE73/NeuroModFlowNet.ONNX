@@ -7,7 +7,7 @@
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
     <GeneratePackageOnBuild Condition="'$(Configuration)' != 'Release'">false</GeneratePackageOnBuild>
-    <Version>0.1.6</Version>
+    <Version>0.1.7</Version>
     <PackageOutputPath>$(MSBuildThisFileDirectory)NuGet\Publish\$(Version)\</PackageOutputPath>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

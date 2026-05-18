@@ -17,9 +17,9 @@ public sealed class TextRegionGammaCorrectionStage : ITextRegionProcessingStage,
 
     public string Name { get; } = "Gamma";
 
-    public TextRegionGammaCorrectionStage(double gamma)
+    public TextRegionGammaCorrectionStage()
     {
-        Gamma = gamma;
+        Gamma = 1.0;
     }
 
     public TextRegionGammaCorrectionStage(TextRegionGammaCorrectionOptions options)

@@ -1,7 +1,14 @@
 namespace NeuroModFlowNet.ONNX.Converters.Images;
 
+/// <summary>
+/// EN: NCHW converter for a batch of Mat inputs utilizing <c>CvDnn.BlobFromImages</c> (Float32).
+/// This implementation represents the reference standard for correctness, but is not the most performant due to allocation and copy overhead.
+/// <para/>
+/// RU: NCHW-конвертер для батча изображений Mat с использованием <c>CvDnn.BlobFromImages</c> (Float32).
+/// Использование данного подхода считается образцовым по правильности, но не лучшим по быстродействию из-за аллокаций и копирования данных.
+/// </summary>
 public class ConverterMatListNchwPosCvdnnFP32 : ConverterNchwBase<List<Mat>>
-    {
+{
 
     public override string ConverterName => "CvDnnBlobBatchAdapter (Float32 Normalized)";
     public Type InputType => typeof(List<Mat>);

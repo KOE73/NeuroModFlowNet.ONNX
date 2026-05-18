@@ -4,8 +4,15 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 namespace NeuroModFlowNet.ONNX.Converters.Images;
 
 /// <summary>
-/// Конвертер для моделей, ожидающих вход в виде BGR-байтов (uint8), с прямым использованием данных из Mat без копирования.
-/// Ожидается, что модель принимает входной тензор с формой [1, H, W, 3] и типом данных uint8.
+/// EN: Input adapter for models expecting BGR-bytes (uint8) with direct zero-copy usage of <see cref="Mat"/> memory.
+/// This adapter leverages a key project feature: support for a modified model head that accepts native <see cref="Mat"/> pointer data directly.
+/// This achieves zero allocation and zero copying by pinning the Mat memory buffer.
+/// Expects a 4D input tensor with shape [1, H, W, 3] and uint8 data type.
+/// <para/>
+/// RU: Адаптер ввода для моделей, ожидающих BGR-байты (uint8), с прямым (zero-copy) использованием памяти <see cref="Mat"/> без копирования.
+/// Данный адаптер реализует ключевую фичу проекта — работу с модифицированной головой модели, которая принимает данные <see cref="Mat"/> напрямую.
+/// Это позволяет исключить аллокации и копирование данных благодаря передаче указателя на буфер памяти Mat.
+/// Ожидается четырехмерный входной тензор с формой [1, H, W, 3] и типом данных uint8.
 /// </summary>
 public class ConverterMatSingleBgrDirectU8 : ConverterBase<Mat>,
     IImageConverter<Mat>

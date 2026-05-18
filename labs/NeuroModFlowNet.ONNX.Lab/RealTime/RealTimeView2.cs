@@ -45,8 +45,15 @@ public class RealTimeView2 : IDisposable
     bool disposed;
 
     readonly RealTimeViewSettings _settings = RealTimeViewSettings.FromConfig();
-    readonly TextRegionBrightnessContrastStage recognitionRoiBrightnessContrastStage = new(RecognitionRoiBrightness, RecognitionRoiContrastPercent);
-    readonly TextRegionGammaCorrectionStage recognitionRoiGammaCorrectionStage = new(RecognitionRoiGamma);
+    readonly TextRegionBrightnessContrastStage recognitionRoiBrightnessContrastStage = new()
+    {
+        Brightness = RecognitionRoiBrightness,
+        ContrastPercent = RecognitionRoiContrastPercent
+    };
+    readonly TextRegionGammaCorrectionStage recognitionRoiGammaCorrectionStage = new()
+    {
+        Gamma = RecognitionRoiGamma
+    };
     readonly TextRegionProcessingPipeline recognitionRoiProcessingStage;
 
     VideoCapture? capture;

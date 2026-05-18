@@ -18,12 +18,10 @@ public sealed class TextRegionBrightnessContrastStage : ITextRegionProcessingSta
 
     public double Brightness { get; set; }
 
-    public double ContrastPercent { get; set; }
+    public double ContrastPercent { get; set; } = 100;
 
-    public TextRegionBrightnessContrastStage(double brightness, double contrastPercent)
+    public TextRegionBrightnessContrastStage()
     {
-        Brightness = brightness;
-        ContrastPercent = contrastPercent;
     }
 
     public TextRegionBrightnessContrastStage(TextRegionBrightnessContrastOptions options)

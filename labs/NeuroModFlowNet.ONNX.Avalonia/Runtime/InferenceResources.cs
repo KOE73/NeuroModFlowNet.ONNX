@@ -17,10 +17,12 @@ namespace NeuroModFlowNet.ONNX.Avalonia.Runtime;
 internal sealed class InferenceResources : IDisposable
 {
     readonly RealTimeAvaloniaSettings settings;
+    readonly AvaloniaJsonConfig jsonConfig;
 
-    InferenceResources(RealTimeAvaloniaSettings settings)
+    InferenceResources(RealTimeAvaloniaSettings settings, AvaloniaJsonConfig jsonConfig)
     {
         this.settings = settings;
+        this.jsonConfig = jsonConfig;
     }
 
     public OnnxRuntimeContext ModelBox { get; private set; } = null!;
@@ -41,9 +43,10 @@ internal sealed class InferenceResources : IDisposable
 
     public static async Task<InferenceResources> CreateAsync(
         RealTimeAvaloniaSettings settings,
-        RecognitionOptions recognitionOptions)
+        RecognitionOptions recognitionOptions,
+        AvaloniaJsonConfig jsonConfig)
     {
-        var resources = new InferenceResources(settings);
+        var resources = new InferenceResources(settings, jsonConfig);
         await resources.InitializeAsync(recognitionOptions);
         return resources;
     }
@@ -105,7 +108,7 @@ internal sealed class InferenceResources : IDisposable
         RunnerCls = YoloClsFactory.CreateRunner(ModelCls);
         RunnerPose = YoloPoseFactory.CreateRunner(ModelPose);
         RunnerDet = PaddleOCRDetFactory.CreateRunner<Mat, Mat>(ModelDet, MatType.CV_32FC1);
-        RunnerObb.OutAs<IExtractorThreshold>()!.Threshold = 0.3f;
+        RunnerObb.OutAs<IExtractorThreshold>()!.Threshold = jsonConfig.Inference.ObbThreshold;
         EnsureRecognitionBatch(recognitionOptions);
     }
 

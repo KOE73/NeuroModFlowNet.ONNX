@@ -24,6 +24,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
 
     readonly RealTimeAvaloniaSettings settings;
     readonly RecognitionOptions recognitionOptions;
+    readonly AvaloniaJsonConfig jsonConfig;
     readonly object lifecycleSyncRoot = new();
     readonly object playbackSyncRoot = new();
 
@@ -37,10 +38,11 @@ public sealed class RealTimeInferenceEngine : IDisposable
 
     #region Lifecycle
 
-    public RealTimeInferenceEngine(RealTimeAvaloniaSettings settings, RecognitionOptions recognitionOptions)
+    public RealTimeInferenceEngine(RealTimeAvaloniaSettings settings, RecognitionOptions recognitionOptions, AvaloniaJsonConfig jsonConfig)
     {
         this.settings = settings;
         this.recognitionOptions = recognitionOptions;
+        this.jsonConfig = jsonConfig;
     }
 
     public event EventHandler<RealTimeOneFrameData>? FrameReady;
@@ -211,7 +213,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
         try
         {
             StatusChanged?.Invoke(this, "Initializing models...");
-            InferenceResources resources = await InferenceResources.CreateAsync(settings, recognitionOptions);
+            InferenceResources resources = await InferenceResources.CreateAsync(settings, recognitionOptions, jsonConfig);
             ModelInfoChanged?.Invoke(this, resources.ModelInfos);
             cancellationToken.ThrowIfCancellationRequested();
             StatusChanged?.Invoke(this, IsPaused ? "Paused" : "Running");
@@ -558,7 +560,7 @@ public sealed class RealTimeInferenceEngine : IDisposable
         List<OcrQuadRegion> modelRegions = [];
         PaddleOCRDetMaskRegionExtractor.Shared.Extract(
             detScoreMap,
-            new PaddleOCRDetMaskRegionExtractorOptions(),
+            jsonConfig.Postprocessing.DetMask,
             modelRegions);
 
         if(modelRegions.Count == 0)

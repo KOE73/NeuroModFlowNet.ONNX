@@ -19,7 +19,7 @@
   <Folder Name="/Docs/usage/">
     <File Path="docs/usage/AGENTS.md" />
   </Folder>
-  <Folder Name="/Docs/usage/Microsoft.ML.OnnxRuntime/">
+  <Folder Name="/Docs/usage/NeuroModFlowNet.ONNX/">
     <File Path="docs/usage/NeuroModFlowNet.ONNX/AI-Usage.md" />
     <File Path="docs/usage/NeuroModFlowNet.ONNX/Usage.en.md" />
     <File Path="docs/usage/NeuroModFlowNet.ONNX/Usage.ru.md" />

@@ -37,30 +37,50 @@ public sealed class RecognitionOptions : IDisposable
     const float RegionAspectRatioMin = 0f;
     const float RegionAspectRatioMax = 50f;
 
-    readonly TextRegionBrightnessContrastStage brightnessContrastStage = new(0, 100);
-    readonly TextRegionGammaCorrectionStage gammaCorrectionStage = new(1.0);
+    readonly TextRegionBrightnessContrastStage brightnessContrastStage;
+    readonly TextRegionGammaCorrectionStage gammaCorrectionStage;
     readonly TextRegionProcessingPipeline processingPipeline;
     readonly List<ITextRegionProcessingStage> removedProcessingStages = [];
     int selectedProcessingStageIndex;
 
-    public RecognitionOptions()
+    /// <summary>
+    /// EN: Initializes options from a JSON-deserialized <see cref="OcrRecognitionRoiOptions"/> DTO.
+    /// RU: Инициализирует настройки из JSON-десериализованного DTO <see cref="OcrRecognitionRoiOptions"/>.
+    /// </summary>
+    public RecognitionOptions(OcrRecognitionRoiOptions roiOptions)
     {
-        processingPipeline = new TextRegionProcessingPipeline(
-            brightnessContrastStage,
-            gammaCorrectionStage);
+        ArgumentNullException.ThrowIfNull(roiOptions);
+
+        RecognitionInputWidth = Math.Clamp(AlignToStride(roiOptions.NormalizedTargetWidth), RecognitionInputWidthMin, RecognitionInputWidthMax);
+        RecognitionInputHeight = Math.Clamp(roiOptions.NormalizedTargetHeight, RecognitionInputHeightMin, RecognitionInputHeightMax);
+        RoiHeightScale = Math.Clamp(roiOptions.HeightScale, RoiHeightScaleMin, RoiHeightScaleMax);
+        AdaptiveRoiHeightEnabled = roiOptions.AdaptiveHeightEnabled;
+        RoiAdaptiveBasePad = Math.Clamp(roiOptions.AdaptiveBasePad, RoiAdaptiveBasePadMin, RoiAdaptiveBasePadMax);
+        RoiAdaptivePadRatio = Math.Clamp(roiOptions.AdaptivePadRatio, RoiAdaptivePadRatioMin, RoiAdaptivePadRatioMax);
+        RoiAdaptiveMaxPad = Math.Clamp(roiOptions.AdaptiveMaxPad, RoiAdaptiveMaxPadMin, RoiAdaptiveMaxPadMax);
+
+        (brightnessContrastStage, gammaCorrectionStage, processingPipeline) = BuildPipelineFromOptions(roiOptions.Processing);
+    }
+
+    /// <summary>
+    /// EN: Initializes options from library defaults — equivalent to an empty <see cref="OcrRecognitionRoiOptions"/>.
+    /// RU: Инициализирует настройки из дефолтов библиотеки — эквивалентно пустому <see cref="OcrRecognitionRoiOptions"/>.
+    /// </summary>
+    public RecognitionOptions() : this(new OcrRecognitionRoiOptions())
+    {
     }
 
     public int FrameWidth { get; private set; } = 640;
     public int BatchSize { get; private set; } = 1;
     // Local rec.onnx metadata reports [batch, 3, 48, width]; the external PaddleOCR config says height=32.
     // Runtime follows the ONNX contract, so keep 48 unless the model file is replaced.
-    public int RecognitionInputHeight { get; private set; } = 48;
-    public int RecognitionInputWidth { get; private set; } = 320;
-    public float RoiHeightScale { get; private set; } = 2f;
-    public bool AdaptiveRoiHeightEnabled { get; set; } = true;
-    public float RoiAdaptiveBasePad { get; private set; } = 1f;
-    public float RoiAdaptivePadRatio { get; private set; } = 0.25f;
-    public float RoiAdaptiveMaxPad { get; private set; } = 8f;
+    public int RecognitionInputHeight { get; private set; }
+    public int RecognitionInputWidth { get; private set; }
+    public float RoiHeightScale { get; private set; }
+    public bool AdaptiveRoiHeightEnabled { get; set; }
+    public float RoiAdaptiveBasePad { get; private set; }
+    public float RoiAdaptivePadRatio { get; private set; }
+    public float RoiAdaptiveMaxPad { get; private set; }
     public double RoiDisplayScale { get; private set; } = 1.0;
     public float MinRegionHeight { get; private set; }
     public float MaxRegionHeight { get; private set; } = float.PositiveInfinity;
@@ -512,6 +532,54 @@ public sealed class RecognitionOptions : IDisposable
         {
             Kind = stageKind,
         });
+
+    /// <summary>
+    /// EN: Builds the two dedicated editable stage instances and the pipeline from JSON options.
+    /// BrightnessContrast and Gamma stages are always created so that UI Adjust* methods keep working
+    /// regardless of the JSON stage list order. Other stage kinds are created through the factory.
+    /// RU: Создает два выделенных редактируемых stage и pipeline из JSON-опций.
+    /// BrightnessContrast и Gamma stage создаются всегда, чтобы UI Adjust*-методы работали
+    /// независимо от порядка stage в JSON. Остальные виды stage создаются через factory.
+    /// </summary>
+    private static (TextRegionBrightnessContrastStage BrightnessContrast, TextRegionGammaCorrectionStage Gamma, TextRegionProcessingPipeline Pipeline)
+        BuildPipelineFromOptions(TextRegionProcessingPipelineOptions? options)
+    {
+        TextRegionBrightnessContrastOptions brightnessContrastOptions = new();
+        TextRegionGammaCorrectionOptions gammaCorrectionOptions = new();
+
+        if(options is not null)
+        {
+            foreach(TextRegionProcessingStageOptions stageOptions in options.Stages)
+            {
+                if(stageOptions.Kind == TextRegionProcessingStageKind.BrightnessContrast && stageOptions.BrightnessContrast is not null)
+                    brightnessContrastOptions = stageOptions.BrightnessContrast;
+                else if(stageOptions.Kind == TextRegionProcessingStageKind.Gamma && stageOptions.Gamma is not null)
+                    gammaCorrectionOptions = stageOptions.Gamma;
+            }
+        }
+
+        var brightnessContrastStage = new TextRegionBrightnessContrastStage(brightnessContrastOptions);
+        var gammaCorrectionStage = new TextRegionGammaCorrectionStage(gammaCorrectionOptions);
+
+        if(options is null || !options.Enabled || options.Stages.Count == 0)
+            return (brightnessContrastStage, gammaCorrectionStage, new TextRegionProcessingPipeline(brightnessContrastStage, gammaCorrectionStage));
+
+        List<ITextRegionProcessingStage> pipelineStages = new(options.Stages.Count);
+        foreach(TextRegionProcessingStageOptions stageOptions in options.Stages)
+        {
+            // EN: Substitute the dedicated editable instances so that UI Adjust* mutations affect the live pipeline.
+            // RU: Подставляем выделенные редактируемые экземпляры, чтобы UI Adjust*-мутации влияли на живой pipeline.
+            ITextRegionProcessingStage stage = stageOptions.Kind switch
+            {
+                TextRegionProcessingStageKind.BrightnessContrast => brightnessContrastStage,
+                TextRegionProcessingStageKind.Gamma => gammaCorrectionStage,
+                _ => TextRegionProcessingStageFactory.CreateStage(stageOptions),
+            };
+            pipelineStages.Add(stage);
+        }
+
+        return (brightnessContrastStage, gammaCorrectionStage, new TextRegionProcessingPipeline([.. pipelineStages]));
+    }
 
     private static string FormatProcessingStageName(ITextRegionProcessingStage stage) =>
         stage switch

@@ -18,14 +18,16 @@ namespace NeuroModFlowNet.ONNX.Avalonia;
 /// </remarks>
 public partial class MainWindow : global::Avalonia.Controls.Window
 {
-    readonly RecognitionOptions recognitionOptions = new();
+    readonly RecognitionOptions recognitionOptions;
     readonly RealTimeInferenceEngine engine;
 
     public MainWindow()
     {
         InitializeComponent();
 
-        engine = new RealTimeInferenceEngine(RealTimeAvaloniaSettings.FromConfig(), recognitionOptions);
+        AvaloniaJsonConfig jsonConfig = AvaloniaJsonConfig.Load();
+        recognitionOptions = new RecognitionOptions(jsonConfig.Postprocessing.RecognitionRoi);
+        engine = new RealTimeInferenceEngine(RealTimeAvaloniaSettings.FromConfig(), recognitionOptions, jsonConfig);
         engine.FrameReady += OnFrameReady;
         engine.StatusChanged += OnStatusChanged;
         engine.ModelInfoChanged += OnModelInfoChanged;

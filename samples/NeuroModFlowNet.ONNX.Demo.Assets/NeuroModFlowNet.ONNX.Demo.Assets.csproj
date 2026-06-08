@@ -13,5 +13,9 @@
     <PackageReference Include="Spectre.Console" Version="0.55.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
+  </ItemGroup>
   
 </Project>

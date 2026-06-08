@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="NeuroModFlowNet.Pipeline.CoordinateTransformGraph">
+    <Position X="28.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAIAg=</HashCode>
+      <FileName>Coordinates\CoordinateTransformGraph.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineRunTrace">
+    <Position X="25.25" Y="1.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAQAAAAAAAAAAAAAAAIAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Diagnostics\PipelineRunTrace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineVariableDebugInspector">
+    <Position X="32.25" Y="9.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAgAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Diagnostics\PipelineVariableDebugInspector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineRunHandle">
+    <Position X="3.5" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Execution\PipelineRunHandle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineRunInputs">
+    <Position X="5.25" Y="6.75" Width="2" />
+    <AssociationLine Name="Empty" Type="NeuroModFlowNet.Pipeline.PipelineRunInputs" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.25" Y="7.104" />
+        <Point X="5" Y="7.104" />
+        <Point X="5" Y="7.812" />
+        <Point X="5.25" Y="7.812" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAIAAAAAAAAAACAAAAAgIAAAAAA=</HashCode>
+      <FileName>Execution\PipelineRunInputs.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Empty" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineRunLedger">
+    <Position X="13.75" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAAAAAgAAAQAAAABQAAAAAAAAAABAARACQAAAA=</HashCode>
+      <FileName>Execution\PipelineRunLedger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineRunOutput">
+    <Position X="5.25" Y="9.75" Width="1.75" />
+    <AssociationLine Name="Empty" Type="NeuroModFlowNet.Pipeline.PipelineRunOutput" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.25" Y="10.046" />
+        <Point X="5" Y="10.046" />
+        <Point X="5" Y="10.639" />
+        <Point X="5.25" Y="10.639" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABACAIAAAAAAAAAAAAAABAhAAAAAAA=</HashCode>
+      <FileName>Execution\PipelineRunOutput.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Empty" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineVmController" BaseTypeListCollapsed="true">
+    <Position X="10" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAEAAACAAiIAAAAgQADAFAAAMBAAAAACAAABAAAE=</HashCode>
+      <FileName>Execution\PipelineVmController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="program" />
+      <Property Name="GlobalMemory" />
+      <Property Name="RunLedger" />
+      <Property Name="SyncGates" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.BranchIfInstruction">
+    <Position X="17.5" Y="19.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Instructions\BranchIfInstruction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.ConditionalPipelineInstruction" BaseTypeListCollapsed="true">
+    <Position X="19.75" Y="16.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAEAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Instructions\ConditionalPipelineInstruction.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="innerInstruction" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.DelegatePipelineInstruction">
+    <Position X="22.25" Y="19.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Instructions\DelegatePipelineInstruction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.OrderedSyncInstruction">
+    <Position X="19.75" Y="19.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAEA=</HashCode>
+      <FileName>Instructions\OrderedSyncInstruction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineInstructionBase">
+    <Position X="16.75" Y="16.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Instructions\PipelineInstructionBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineInstructionFailureException">
+    <Position X="4.5" Y="16.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Instructions\PipelineInstructionFailureException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineProgram">
+    <Position X="10.25" Y="14" Width="1.5" />
+    <AssociationLine Name="Empty" Type="NeuroModFlowNet.Pipeline.PipelineProgram" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.25" Y="14.478" />
+        <Point X="7.537" Y="14.478" />
+        <Point X="7.537" Y="15.015" />
+        <Point X="10.25" Y="15.015" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAEAAAABAAAAIAAAAAAAAIAAAACAAAAAAAAEA=</HashCode>
+      <FileName>Instructions\PipelineProgram.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Empty" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineProgramBuilder">
+    <Position X="12.25" Y="16.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAABAAAAAAAAAAAAAAgAAAKAAAAAAAAAA=</HashCode>
+      <FileName>Instructions\PipelineProgramBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineGlobalMemory">
+    <Position X="17.75" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAABABAAAIAAAAAAAAAACAAAAABAAAAAAA=</HashCode>
+      <FileName>Memory\PipelineGlobalMemory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Resources" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineResourceRegistry">
+    <Position X="21.25" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAACAAAKBAAAAAAAAAAAAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Resources\PipelineResourceRegistry.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="0.1" />
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineSyncGate">
+    <Position X="13.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAQAABAAAAAAQAAAAAAQACABAAAAAAAAAACAAARA=</HashCode>
+      <FileName>Synchronization\PipelineSyncGate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineSyncGateRegistry">
+    <Position X="10" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAQAAAAAAAAAAAAAAAAAAAAAEAAAQA=</HashCode>
+      <FileName>Synchronization\PipelineSyncGateRegistry.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NeuroModFlowNet.Pipeline.PipelineRunContext">
+    <Position X="26.5" Y="5.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAoCAAhIBAKAAQBAAAIAAIgDAEQECBAAAQAAA=</HashCode>
+      <FileName>Contexts\PipelineRunContext.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="GlobalMemory" />
+      <Property Name="Resources" />
+      <Property Name="Coordinates" />
+      <Property Name="Trace" />
+      <Property Name="DebugGate" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="NeuroModFlowNet.Pipeline.ICoordinateTransform">
+    <Position X="32.25" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAEAAg=</HashCode>
+      <FileName>Coordinates\ICoordinateTransform.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.Pipeline.IPipelineInstructionDebugGate">
+    <Position X="32" Y="5.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Diagnostics\IPipelineInstructionDebugGate.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.Pipeline.IPipelineInstruction">
+    <Position X="16.75" Y="14" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Instructions\IPipelineInstruction.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.Pipeline.IPipelineResource">
+    <Position X="21.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Resources\IPipelineResource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="NeuroModFlowNet.Pipeline.PipelineVariableMemoryLocation">
+    <Position X="32.25" Y="11.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAACIABA=</HashCode>
+      <FileName>Diagnostics\PipelineVariableMemoryLocation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="NeuroModFlowNet.Pipeline.PipelineRunStatus">
+    <Position X="2.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAIAgAAAAAAAAAAAAAAIABAAAAAAAAA=</HashCode>
+      <FileName>Execution\PipelineRunStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="NeuroModFlowNet.Pipeline.PipelineInstructionResultKind">
+    <Position X="8.75" Y="20" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAgAAAAAAAAAAAAgAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Instructions\PipelineInstructionResultKind.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

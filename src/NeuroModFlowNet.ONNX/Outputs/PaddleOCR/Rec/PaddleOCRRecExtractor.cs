@@ -10,7 +10,6 @@ public class PaddleOCRRecExtractor : ResultExtractorBase<List<PaddleOCRRecExtrac
     public const int OutputWidthStride = 8;
 
     public int ModelDetectionAttributes { get; private set; }
-    public int DetectionWidth { get; private set; }
 
     public string[] Alphabet { get; private set; } = Array.Empty<string>();
     public bool IsAlphabetLoaded { get; private set; } = false;
@@ -19,11 +18,6 @@ public class PaddleOCRRecExtractor : ResultExtractorBase<List<PaddleOCRRecExtrac
 
     protected override void Init()
     {
-        long[] inputShape = Model.IsInputPersistentValueInitialized(Model.PrimaryInputName)
-            ? Model.GetRealInputShape(Model.PrimaryInputName)
-            : Model.ModelInputShapes[Model.PrimaryInputName];
-
-        DetectionWidth = (int)inputShape[3] / OutputWidthStride;
         ModelDetectionAttributes = (int)Model.ModelOutputShapes[Model.PrimaryOutputName][2];
 
         // Auto-load dictionary
@@ -49,7 +43,7 @@ public class PaddleOCRRecExtractor : ResultExtractorBase<List<PaddleOCRRecExtrac
         IsAlphabetLoaded = true;
     }
 
-    public override List<OcrResult> Extract()
+    public override List<OcrResult> Extract(IOnnxModelOutputs outputs)
     {
         if(!IsAlphabetLoaded)
         {
@@ -59,7 +53,7 @@ public class PaddleOCRRecExtractor : ResultExtractorBase<List<PaddleOCRRecExtrac
             return new List<OcrResult>();
         }
 
-        var tensorSpan = Model.GetOutputValue(Model.PrimaryOutputName).GetTensorDataAsTensorSpan<float>();
+        var tensorSpan = outputs.GetOutputValue(Model.PrimaryOutputName).GetTensorDataAsTensorSpan<float>();
         return AnalizeResult_GetText(tensorSpan);
     }
 

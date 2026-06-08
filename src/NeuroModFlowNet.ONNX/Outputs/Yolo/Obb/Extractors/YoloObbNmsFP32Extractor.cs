@@ -7,9 +7,9 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class YoloObbNmsFP32Extractor : YoloObbNmsFP32ExtractorBase<IDetectionResult<YoloObb_FP32_XYWHSCA>>
 {
-    public override IDetectionResult<YoloObb_FP32_XYWHSCA> Extract()
+    public override IDetectionResult<YoloObb_FP32_XYWHSCA> Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutput();
+        return GetOutput(outputs);
     }
 
     public static Dictionary<int, YoloObb_FP32_XYWHSCA[]> ExtractFromTensor(

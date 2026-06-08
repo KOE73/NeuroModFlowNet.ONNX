@@ -15,32 +15,32 @@ public static class PaddleOCRDetFactory
     #region Static Methods
 
     // Single Mat
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_32FC1_SafeExtractor> Single_FP32_32FC1_Safe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_32FC1_UnsafeExtractor> Single_FP32_32FC1_Unsafe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC1_Extractor> Single_FP32_8UC1(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC3_RGBExtractor> Single_FP32_8UC3_RGB(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_32FC1_SafeExtractor> Single_FP32_32FC1_Safe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_32FC1_UnsafeExtractor> Single_FP32_32FC1_Unsafe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC1_Extractor> Single_FP32_8UC1(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC3_RGBExtractor> Single_FP32_8UC3_RGB(OnnxExecutionContext context) => new(context);
 
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_SafeExtractor> Single_FP16_16FC1_Safe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_UnsafeExtractor> Single_FP16_16FC1_Unsafe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC1_Extractor> Single_FP16_8UC1(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC3_RGBExtractor> Single_FP16_8UC3_RGB(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_SafeExtractor> Single_FP16_16FC1_Safe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_UnsafeExtractor> Single_FP16_16FC1_Unsafe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC1_Extractor> Single_FP16_8UC1(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC3_RGBExtractor> Single_FP16_8UC3_RGB(OnnxExecutionContext context) => new(context);
 
     // List<Mat>
-    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_32FC1_SafeListExtractor> List_FP32_32FC1_Safe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC1_SafeListExtractor> List_FP32_8UC1_Safe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC3_RGB_SafeListExtractor> List_FP32_8UC3_RGB_Safe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_SafeListExtractor> List_FP16_16FC1_Safe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC1_SafeListExtractor> List_FP16_8UC1_Safe(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC3_RGB_SafeListExtractor> List_FP16_8UC3_RGB_Safe(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_32FC1_SafeListExtractor> List_FP32_32FC1_Safe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC1_SafeListExtractor> List_FP32_8UC1_Safe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<float, SymCvdnnFP32>, PaddleOCRDetFP32_8UC3_RGB_SafeListExtractor> List_FP32_8UC3_RGB_Safe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_SafeListExtractor> List_FP16_16FC1_Safe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC1_SafeListExtractor> List_FP16_8UC1_Safe(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC3_RGB_SafeListExtractor> List_FP16_8UC3_RGB_Safe(OnnxExecutionContext context) => new(context);
 
     /// <summary>
     /// EN: Automatically selects converter and extractor based on model metadata, requested output MatType and safety mode.
     /// RU: Автоматически выбирает конвертер и экстрактор по метаданным модели, запрошенному MatType выхода и режиму безопасного доступа.
     /// </summary>
-    public static IRunner<TIn, TOut> CreateRunner<TIn, TOut>(OnnxRuntimeContext context, MatType outputMatType, bool safe = true)
+    public static IRunner<TIn, TOut> CreateRunner<TIn, TOut>(OnnxExecutionContext context, MatType outputMatType, bool safe = true)
     {
-        var inputMeta = context.Session.InputMetadata[context.PrimaryInputName];
-        var outputMeta = context.Session.OutputMetadata[context.PrimaryOutputName];
+        var inputMeta = context.Model.Session.InputMetadata[context.Model.PrimaryInputName];
+        var outputMeta = context.Model.Session.OutputMetadata[context.Model.PrimaryOutputName];
 
         bool isInputFp16 = inputMeta.ElementDataType == TensorElementType.Float16;
         bool isOutputFp16 = outputMeta.ElementDataType == TensorElementType.Float16;

@@ -14,25 +14,25 @@ public static class YoloPoseFactory
 {
     // ──────────────────────────────── Single Mat, FP32 ────────────────────────────────
 
-    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> Single_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> Single_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleBgrDirectU8, YoloPoseFP32Keypoint17Extractor> Single_BgrDirect_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> Single_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> Single_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleBgrDirectU8, YoloPoseFP32Keypoint17Extractor> Single_BgrDirect_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────────── Single Mat, FP16 ────────────────────────────────
 
-    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> Single_PosCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> Single_SymCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleBgrDirectU8, YoloPoseFP32Keypoint17Extractor> Single_BgrDirect_FP16(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> Single_PosCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> Single_SymCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleBgrDirectU8, YoloPoseFP32Keypoint17Extractor> Single_BgrDirect_FP16(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────── List<Mat> Batch, FP32 ──────────────────────────────
 
-    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<float, PosCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> List_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<float, SymCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> List_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<float, PosCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> List_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<float, SymCvdnnFP32>, YoloPoseFP32Keypoint17Extractor> List_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────── List<Mat> Batch, FP16 ──────────────────────────────
 
-    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<Float16, PosCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> List_PosCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<Float16, SymCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> List_SymCvdnn_FP16(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<Float16, PosCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> List_PosCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<Float16, SymCvdnnFP16>, YoloPoseFP32Keypoint17Extractor> List_SymCvdnn_FP16(OnnxExecutionContext context) => new(context);
 
     // ─────────────────────────── Auto-detect from metadata ───────────────────────────
 
@@ -42,9 +42,9 @@ public static class YoloPoseFactory
     /// RU: Автоматически выбирает конвертер по метаданным входного тензора.
     ///     Выход всегда FP32 для Pose-моделей.
     /// </summary>
-    public static IRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>> CreateRunner17(OnnxRuntimeContext context)
+    public static IRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>> CreateRunner17(OnnxExecutionContext context)
     {
-        var inputMeta = context.Session.InputMetadata.Values.First();
+        var inputMeta = context.Model.Session.InputMetadata.Values.First();
 
         Type converterType = inputMeta.ElementDataType switch
         {
@@ -64,9 +64,9 @@ public static class YoloPoseFactory
     }
 
 
-    public static IRunner<Mat, IDetectionResult<YoloPose>> CreateRunner(OnnxRuntimeContext context)
+    public static IRunner<Mat, IDetectionResult<YoloPose>> CreateRunner(OnnxExecutionContext context)
     {
-        var inputMeta = context.Session.InputMetadata.Values.First();
+        var inputMeta = context.Model.Session.InputMetadata.Values.First();
 
         Type converterType = inputMeta.ElementDataType switch
         {

@@ -15,13 +15,13 @@ public class YoloSegFP32MixedSingleExtractor : YoloSegFP32ExtractorBase<YoloSegR
         if(BatchCount != 1)
             throw new InvalidOperationException($"Invalid BatchCount for {nameof(YoloSegFP32MixedSingleExtractor)}: BatchCount={BatchCount}. Expected 1.");
 
-        var prototypeMeta = Model.Session.OutputMetadata[MaskPrototypesOutputName];
-        if(prototypeMeta.ElementDataType != TensorElementType.Float16)
-            throw new InvalidOperationException($"Model mask prototypes produce {prototypeMeta.ElementDataType}, but mixed SEG extractor requires Float16.");
+        var elementType = Model.GetOutputElementType(MaskPrototypesOutputName);
+        if(elementType != TensorElementType.Float16)
+            throw new InvalidOperationException($"Model mask prototypes produce {elementType}, but mixed SEG extractor requires Float16.");
     }
 
-    public override YoloSegResult_FP32_Mask32 Extract()
+    public override YoloSegResult_FP32_Mask32 Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutput_Mixed();
+        return GetOutput_Mixed(outputs);
     }
 }

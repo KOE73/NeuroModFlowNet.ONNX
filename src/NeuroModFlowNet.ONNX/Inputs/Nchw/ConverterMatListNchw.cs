@@ -17,7 +17,7 @@ public class ConverterMatListNchw<TBuf, TAlgo> : ConverterNchwBase<List<Mat>>
 
     public sealed override void Prepare(List<Mat> images)
     {
-        var buffer = Model.GetInputBuffer<TBuf>(Model.PrimaryInputName);
+        var buffer = Context.GetInputBuffer<TBuf>(Model.PrimaryInputName);
         if(images is null || images.Count == 0) { buffer.Clear(); return; }
         TAlgo.Fill(images, buffer, images.Count, SizeOne, PixelsCount);
     }

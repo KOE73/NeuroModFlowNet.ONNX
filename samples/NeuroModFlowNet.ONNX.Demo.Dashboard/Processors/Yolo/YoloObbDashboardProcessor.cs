@@ -12,7 +12,7 @@ internal sealed class YoloObbDashboardProcessor :
     {
     }
 
-    protected override IRunner<Mat, IDetectionResult<YoloObb>> CreateRunner(OnnxRuntimeContext context)
+    protected override IRunner<Mat, IDetectionResult<YoloObb>> CreateRunner(OnnxExecutionContext context)
         => YoloObbFactory.CreateRunner<IDetectionResult<YoloObb>>(context);
 
     protected override void DrawResult(

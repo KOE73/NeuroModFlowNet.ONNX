@@ -17,15 +17,15 @@ public abstract class YoloSegFP16ExtractorBase<TOut> : YoloSegExtractorBase<TOut
     protected override void Check()
     {
         base.Check();
-        var meta = Model.Session.OutputMetadata[MaskPrototypesOutputName];
-        if(meta.ElementDataType != TensorElementType.Float16)
-            throw new InvalidOperationException($"Model produces {meta.ElementDataType}, but FP16 extractor requires Float16 for mask prototypes.");
+        var elementType = Model.GetOutputElementType(MaskPrototypesOutputName);
+        if(elementType != TensorElementType.Float16)
+            throw new InvalidOperationException($"Model produces {elementType}, but FP16 extractor requires Float16 for mask prototypes.");
     }
 
-    public unsafe YoloSegResult_FP16_Mask32 GetOutput()
+    public unsafe YoloSegResult_FP16_Mask32 GetOutput(IOnnxModelOutputs outputs)
     {
-        var detectionData = Model.GetTensorDataAsSpan<float>(DetectionWithMaskCoefficientsOutputName);
-        var maskData = Model.GetTensorDataAsSpan<Float16>(MaskPrototypesOutputName);
+        var detectionData = outputs.GetTensorDataAsSpan<float>(DetectionWithMaskCoefficientsOutputName);
+        var maskData = outputs.GetTensorDataAsSpan<Float16>(MaskPrototypesOutputName);
 
         var lineSeg = MemoryMarshal.Cast<float, YoloSeg_FP16_XYWHSC_Mask32>(detectionData);
         YoloSeg_FP16_XYWHSC_Mask32* tmp = stackalloc YoloSeg_FP16_XYWHSC_Mask32[ItemCount];

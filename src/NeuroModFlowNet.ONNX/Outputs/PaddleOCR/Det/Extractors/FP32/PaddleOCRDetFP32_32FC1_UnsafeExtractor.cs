@@ -7,5 +7,5 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class PaddleOCRDetFP32_32FC1_UnsafeExtractor : PaddleOCRDetFP32_ExtractorBase<Mat>
 {
-    public override Mat Extract() => GetOutputAsMat_32FC1_Unsafe();
+    public override Mat Extract(IOnnxModelOutputs outputs) => GetOutputAsMat_32FC1_Unsafe(outputs);
 }

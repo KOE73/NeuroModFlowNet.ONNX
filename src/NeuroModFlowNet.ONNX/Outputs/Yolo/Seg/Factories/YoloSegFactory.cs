@@ -14,15 +14,15 @@ public static class YoloSegFactory
 {
     // ──────────────────────────────── Single Mat, FP32 ────────────────────────────────
 
-    public static ImageRunner<Mat, YoloSegResult_FP32_Mask32, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloSegFP32SingleExtractor> Single_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloSegResult_FP32_Mask32, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloSegFP32SingleExtractor> Single_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloSegResult_FP32_Mask32, ConverterMatSingleBgrDirectU8, YoloSegFP32SingleExtractor> Single_BgrDirect_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, YoloSegResult_FP32_Mask32, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloSegFP32SingleExtractor> Single_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloSegResult_FP32_Mask32, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloSegFP32SingleExtractor> Single_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloSegResult_FP32_Mask32, ConverterMatSingleBgrDirectU8, YoloSegFP32SingleExtractor> Single_BgrDirect_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────────── Single Mat, FP16 (mixed output) ─────────────────
 
-    public static ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloSegFP16SingleExtractor> Single_PosCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloSegFP16SingleExtractor> Single_SymCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleBgrDirectU8, YoloSegFP16SingleExtractor> Single_BgrDirect_FP16(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloSegFP16SingleExtractor> Single_PosCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloSegFP16SingleExtractor> Single_SymCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleBgrDirectU8, YoloSegFP16SingleExtractor> Single_BgrDirect_FP16(OnnxExecutionContext context) => new(context);
 
     // ─────────────────────────── Auto-detect from metadata ───────────────────────────
 
@@ -34,13 +34,13 @@ public static class YoloSegFactory
     ///     Тип результата определяется по тензору прототипов (output1):
     ///     FP32 прототипы → FP32 результат, FP16 → смешанный результат.
     /// </summary>
-    public static IRunner<Mat, IBatchedResult> CreateRunner(OnnxRuntimeContext context)
+    public static IRunner<Mat, IBatchedResult> CreateRunner(OnnxExecutionContext context)
     {
-        var inputMeta  = context.Session.InputMetadata.Values.First();
+        var inputMeta  = context.Model.Session.InputMetadata.Values.First();
 
         // Detection tensor may stay FP32 while prototype tensor is FP16.
         // In that mixed case detections must still be decoded as FP32.
-        var outputMetas = context.Session.OutputMetadata.Values.ToArray();
+        var outputMetas = context.Model.Session.OutputMetadata.Values.ToArray();
         var detectionMeta = outputMetas[0];
         var prototypeMeta = outputMetas.Length > 1 ? outputMetas[1] : outputMetas[0];
         bool detectionIsFP16 = detectionMeta.ElementDataType == TensorElementType.Float16;

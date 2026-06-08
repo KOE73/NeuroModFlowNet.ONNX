@@ -15,7 +15,7 @@ public class ConverterMatSingleNchwPosCvdnnFP32 : ConverterNchwBase<Mat>
 
     public override unsafe void Prepare(Mat image)
     {
-        var buffer = Model.GetInputBuffer<float>(Model.PrimaryInputName);
+        var buffer = Context.GetInputBuffer<float>(Model.PrimaryInputName);
         if(image.Empty()) { buffer.Clear(); return; }
 
         double scale = 1.0 / 255.0;

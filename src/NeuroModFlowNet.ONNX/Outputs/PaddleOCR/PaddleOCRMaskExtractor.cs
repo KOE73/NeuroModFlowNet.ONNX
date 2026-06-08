@@ -2,11 +2,11 @@ namespace NeuroModFlowNet.ONNX;
 
 public class PaddleOCRMaskExtractor : ResultExtractorBase<Mat>
 {
-    public override unsafe Mat Extract()
+    public override unsafe Mat Extract(IOnnxModelOutputs outputs)
     {
         return default!;
         // TODO Востановить!
-        //var data = Model.GetTensorDataAsSpan<float>();
+        //var data = outputs.GetTensorDataAsSpan<float>();
         //var shape = Model.ModelOutputShapes[Model.PrimaryOutputName];
         //int h = (int)shape[2], w = (int)shape[3];
         //fixed (float* p = data)

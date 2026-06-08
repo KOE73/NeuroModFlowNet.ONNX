@@ -12,6 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
     <PackageReference Include="xunit.v3" Version="3.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
@@ -25,7 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Graph\NeuroModFlowNet.ONNX.Graph.csproj" />
     <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
+    <ProjectReference Include="..\..\src\NeuroModFlowNet.Pipeline.ONNX\NeuroModFlowNet.Pipeline.ONNX.csproj" />
+    <ProjectReference Include="..\..\src\NeuroModFlowNet.Pipeline\NeuroModFlowNet.Pipeline.csproj" />
     <ProjectReference Include="..\..\samples\NeuroModFlowNet.ONNX.Demo.Assets\NeuroModFlowNet.ONNX.Demo.Assets.csproj" />
   </ItemGroup>
 

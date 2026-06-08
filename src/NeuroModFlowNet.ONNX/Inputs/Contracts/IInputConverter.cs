@@ -12,7 +12,7 @@ public interface IInputConverter<in TIn>
     /// EN: Initializes the adapter with model metadata (e.g. input shapes).
     /// RU: Инициализация адаптера метаданными модели (напр. размерами тензоров входа).
     /// </summary>
-    void SetModel(OnnxRuntimeContext context);
+    void SetModel(OnnxExecutionContext context);
 
     /// <summary>
     /// EN: Prepares the model input tensors from the provided raw object.

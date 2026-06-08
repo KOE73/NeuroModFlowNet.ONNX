@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NeuroModFlowNet.Pipeline.Avalonia.VMDebug.Views.CommandBarPaneView">
+    <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="1"
+            Padding="3">
+        <StackPanel Orientation="Horizontal"
+                    Spacing="4">
+            <TextBlock Text="Host"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="2,0,2,0" />
+            <Button Content="Start"
+                    Command="{Binding StartCommand}"
+                    ToolTip.Tip="Start the host loop that feeds one input into the VM." />
+            <Button Content="Stop"
+                    Command="{Binding StopCommand}"
+                    ToolTip.Tip="Stop the host loop and dispose VM runtime resources." />
+            <Button Content="Pause"
+                    Command="{Binding PauseCommand}"
+                    ToolTip.Tip="Freeze the host loop. No new VM transactions are submitted." />
+            <Button Content="Run"
+                    Command="{Binding RunCommand}"
+                    ToolTip.Tip="Resume continuous loop execution." />
+            <Button Content="Step"
+                    Command="{Binding StepCommand}"
+                    ToolTip.Tip="Submit one source frame while paused." />
+
+            <Border Width="1"
+                    Height="22"
+                    Margin="6,0"
+                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+
+            <TextBlock Text="VM"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="2,0,2,0" />
+            <Button Content="Compile"
+                    Command="{Binding CompileCommand}"
+                    ToolTip.Tip="Validate the VM text and rebuild the visible step list." />
+            <Button Content="Prev"
+                    Command="{Binding PreviousTraceCommand}"
+                    ToolTip.Tip="Select previous instruction in the last VM trace." />
+            <Button Content="Next"
+                    Command="{Binding NextTraceCommand}"
+                    ToolTip.Tip="Select next instruction in the last VM trace." />
+
+            <Border Width="1"
+                    Height="22"
+                    Margin="6,0"
+                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+
+            <TextBlock Text="Debug"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="2,0,2,0" />
+            <Button Content="Frame"
+                    Command="{Binding DebugFrameCommand}"
+                    ToolTip.Tip="Submit one frame and stop before the first VM instruction." />
+            <Button Content="Next"
+                    Command="{Binding DebugNextInstructionCommand}"
+                    ToolTip.Tip="Execute the stopped instruction and stop before the next one." />
+        </StackPanel>
+    </Border>
+</UserControl>

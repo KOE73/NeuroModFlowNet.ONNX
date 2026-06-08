@@ -12,14 +12,14 @@ public abstract class YoloClsFP32ExtractorBase<TOut> : YoloClsExtractorBase<TOut
 {
     protected override void Check()
     {
-        var meta = Model.Session.OutputMetadata[Model.PrimaryOutputName];
-        if(meta.ElementDataType != TensorElementType.Float)
-            throw new InvalidOperationException($"Model produces {meta.ElementDataType}, but FP32 extractor requires Float.");
+        var elementType = Model.GetOutputElementType(Model.PrimaryOutputName);
+        if(elementType != TensorElementType.Float)
+            throw new InvalidOperationException($"Model produces {elementType}, but FP32 extractor requires Float.");
     }
 
-    public YoloCls GetOutput()
+    public YoloCls GetOutput(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<float>();
+        var data = outputs.GetTensorDataAsSpan<float>();
         var batchSpan = data.Slice(0, ClassesCount);
 
         int bestIndex = TensorPrimitives.IndexOfMax(batchSpan);

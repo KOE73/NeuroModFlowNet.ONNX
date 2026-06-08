@@ -3,7 +3,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX' or '$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Diagnostics' or '$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Visualizer'">
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX' or '$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Diagnostics' or '$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Visualizer' or '$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Graph'">
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
     <GeneratePackageOnBuild Condition="'$(Configuration)' != 'Release'">false</GeneratePackageOnBuild>
@@ -47,6 +47,14 @@
     <Product>NeuroModFlowNet.ONNX.Visualizer</Product>
     <Description>Visualization helpers for rendering NeuroModFlowNet.ONNX inference results.</Description>
     <PackageTags>ocr;computer-vision;csharp;dotnet;yolo;object-detection;onnx;onnxruntime;paddleocr;visualization</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'NeuroModFlowNet.ONNX.Graph'">
+    <PackageId>NeuroModFlowNet.ONNX.Graph</PackageId>
+    <Title>NeuroModFlowNet.ONNX.Graph</Title>
+    <Product>NeuroModFlowNet.ONNX.Graph</Product>
+    <Description>ONNX graph construction and model-generation helpers for NeuroModFlowNet.ONNX.</Description>
+    <PackageTags>csharp;dotnet;onnx;protobuf;graph;model-generation;onnxruntime</PackageTags>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' == 'true'">

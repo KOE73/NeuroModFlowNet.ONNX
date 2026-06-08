@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:rendering="clr-namespace:NeuroModFlowNet.Pipeline.Avalonia.VMDebug.Rendering"
+             x:Class="NeuroModFlowNet.Pipeline.Avalonia.VMDebug.Controls.VideoSceneView">
+    <Border CornerRadius="6"
+            ClipToBounds="True"
+            Background="Black">
+        <Panel ClipToBounds="True">
+            <rendering:SkiaFrameView x:Name="SkiaFrameView_MainFrame"
+                                     ZIndex="0" />
+            <rendering:SkiaOverlayView x:Name="SkiaOverlayView_MainOverlay"
+                                       ZIndex="1"
+                                       IsHitTestVisible="False" />
+        </Panel>
+    </Border>
+</UserControl>

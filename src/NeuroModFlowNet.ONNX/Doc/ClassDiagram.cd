@@ -30,15 +30,9 @@
   <Class Name="NeuroModFlowNet.ONNX.OnnxRuntimeContext">
     <Position X="8.25" Y="4.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>ACMCAUECwiAAIRAEAIAICANAABAAQAAEFIiAAEQQABY=</HashCode>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Core\OnnxRuntimeContext.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="InferenceBackend" />
-      <Property Name="Session" />
-      <Property Name="RunOptions" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="NeuroModFlowNet.ONNX.YoloSegResult_FP16_Mask32">
     <Position X="127.25" Y="28.75" Width="3.25" />
@@ -64,7 +58,7 @@
     </TypeIdentifier>
     <Lollipop Orientation="Right" Position="0.1" />
   </Class>
-  <Class Name="NeuroModFlowNet.ONNX.OnnxRuntimeContextExtensions">
+  <Class Name="NeuroModFlowNet.ONNX.OnnxMetadataExtensions">
     <Position X="8.25" Y="13.5" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAEAAAAAAAAAgAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
@@ -88,7 +82,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAIECAAAAAQAAAAAAQAAABAAAAGAAAAAACAQAAAAA=</HashCode>
+      <HashCode>AAAAIEAAAAAAQAAAAAAQAAABAAAAGAAAAAACAQAAAAA=</HashCode>
       <FileName>Outputs\PaddleOCR\Rec\PaddleOCRRecExtractor.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -106,9 +100,6 @@
       <HashCode>AAAAAAAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Runners\Runner.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Context" />
-    </ShowAsAssociation>
     <Lollipop Orientation="Right" Position="0.1" />
   </Class>
   <Class Name="NeuroModFlowNet.ONNX.YoloBoxNmsExtractorBase&lt;TOut&gt;">
@@ -416,7 +407,7 @@
   <Class Name="NeuroModFlowNet.ONNX.PaddleOCRDetExtractorBase&lt;TOut&gt;">
     <Position X="143" Y="8.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AACgAAAAAAAEAAQAAAAAEAAAAAAAAEAAAQACEAAYAAA=</HashCode>
+      <HashCode>AAAgAAAAAAAAAAQAAAQAAgAAAAAAAAAAAQACEABYAAA=</HashCode>
       <FileName>Outputs\PaddleOCR\Det\Extractors\PaddleOCRDetExtractorBase.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -658,17 +649,17 @@
       <FileName>Inputs\Algorithms\Pos\Helpers\PositiveAlgorithmHelpers.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="NeuroModFlowNet.ONNX.OnnxRuntimeContextDebugNode" Collapsed="true">
-    <Position X="7.25" Y="1.25" Width="2.5" />
+  <Class Name="NeuroModFlowNet.ONNX.OnnxExecutionContextDebugNode" Collapsed="true">
+    <Position X="7.25" Y="0.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAABAACgAAAAAAAACgAAAxAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Core\OnnxRuntimeContextDebugNode.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="NeuroModFlowNet.ONNX.OnnxRuntimeContextDebugView" Collapsed="true">
-    <Position X="10" Y="1.25" Width="2.5" />
+  <Class Name="NeuroModFlowNet.ONNX.OnnxExecutionContextDebugView" Collapsed="true">
+    <Position X="10" Y="0.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAiAAAAAAAAAAAEAAEACAEAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <HashCode>AAAiAAAAAAAAAAAEAAEACAEAAAAAAAAAAQAAAAgAAAA=</HashCode>
       <FileName>Core\OnnxRuntimeContextDebugView.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -1143,13 +1134,6 @@
       <FileName>Outputs\Yolo\Pose\OutData\YoloPoseKeypointXYV.cs</FileName>
     </TypeIdentifier>
   </Struct>
-  <Interface Name="NeuroModFlowNet.ONNX.IOnnxModelOutputs">
-    <Position X="8.25" Y="2.25" Width="3.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Core\OnnxRuntimeContext.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="NeuroModFlowNet.ONNX.IInputConverter&lt;TIn&gt;">
     <Position X="30" Y="1.5" Width="2.25" />
     <TypeIdentifier>
@@ -1318,8 +1302,22 @@
       <FileName>Outputs\PaddleOCR\TextRegions\Processing\ITextRegionProcessingStage.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IModelMetadataProvider">
+    <Position X="13.5" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQgAAQAAEAAAACAAAgAAAQAAAEAAAAAAAABA=</HashCode>
+      <FileName>Outputs\Contracts\IModelMetadataProvider.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NeuroModFlowNet.ONNX.IOnnxModelOutputs">
+    <Position X="8.25" Y="1.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAJAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Outputs\Contracts\IOnnxModelOutputs.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Enum Name="NeuroModFlowNet.ONNX.InferenceBackend">
-    <Position X="13.5" Y="5.25" Width="1.5" />
+    <Position X="13.5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAACAAAAAAAAABIAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
       <FileName>Core\OnnxConfigs\InferenceBackend.cs</FileName>

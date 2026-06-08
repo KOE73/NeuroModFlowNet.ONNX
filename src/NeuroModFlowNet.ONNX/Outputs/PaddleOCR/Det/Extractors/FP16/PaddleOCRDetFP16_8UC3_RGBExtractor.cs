@@ -7,5 +7,5 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class PaddleOCRDetFP16_8UC3_RGBExtractor : PaddleOCRDetFP16_ExtractorBase<Mat>
 {
-    public override Mat Extract() => GetOutputAsMat_8UC3_RGB();
+    public override Mat Extract(IOnnxModelOutputs outputs) => GetOutputAsMat_8UC3_RGB(outputs);
 }

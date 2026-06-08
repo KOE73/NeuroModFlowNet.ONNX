@@ -12,7 +12,7 @@ internal sealed class YoloClsDashboardProcessor :
     {
     }
 
-    protected override IRunner<Mat, IBatchedResult> CreateRunner(OnnxRuntimeContext context)
+    protected override IRunner<Mat, IBatchedResult> CreateRunner(OnnxExecutionContext context)
         => YoloClsFactory.CreateRunner(context);
 
     protected override void DrawResult(

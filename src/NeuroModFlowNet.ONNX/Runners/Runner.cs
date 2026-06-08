@@ -2,9 +2,9 @@ namespace NeuroModFlowNet.ONNX;
 
 public abstract class Runner : IDisposable
 {
-    protected Runner(OnnxRuntimeContext context) => Context = context;
+    protected Runner(OnnxExecutionContext context) => Context = context;
 
-    protected OnnxRuntimeContext Context { get; }
+    protected OnnxExecutionContext Context { get; }
 
     public virtual void Dispose() => Context?.Dispose();
 }

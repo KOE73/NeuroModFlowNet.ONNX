@@ -2,12 +2,12 @@ using System.Text.RegularExpressions;
 
 namespace NeuroModFlowNet.ONNX;
 
-public static partial class OnnxRuntimeContextExtensions
+public static partial class OnnxMetadataExtensions
 {
     [GeneratedRegex(@"(\d+):\s*['""]([^'""\[\]]+)['""]")]
     private static partial Regex PythonDictRegex();
 
-    public static Dictionary<int, string> GetMetadataMap(this OnnxRuntimeContext context, string key)
+    public static Dictionary<int, string> GetMetadataMap(this OnnxModel context, string key)
     {
         var raw = context.GetCustomMetadata(key);
         if (raw == null) return new();
@@ -18,6 +18,12 @@ public static partial class OnnxRuntimeContextExtensions
         return result;
     }
 
-    public static string GetYoloClassName(this OnnxRuntimeContext context, int id) 
+    public static string GetYoloClassName(this OnnxModel context, int id) 
         => context.GetMetadataMap("names").TryGetValue(id, out var name) ? name : $"#{id}";
+
+    public static Dictionary<int, string> GetMetadataMap(this OnnxExecutionContext context, string key) =>
+        context.Model.GetMetadataMap(key);
+
+    public static string GetYoloClassName(this OnnxExecutionContext context, int id) =>
+        context.Model.GetYoloClassName(id);
 }

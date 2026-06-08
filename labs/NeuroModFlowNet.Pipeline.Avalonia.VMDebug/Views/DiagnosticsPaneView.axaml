@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NeuroModFlowNet.Pipeline.Avalonia.VMDebug.Views.DiagnosticsPaneView">
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="4"
+          Margin="4">
+        <Border Background="{Binding RuntimeStatusBackground}"
+                BorderBrush="{Binding RuntimeStatusBorder}"
+                BorderThickness="1"
+                CornerRadius="3"
+                Padding="5,3">
+            <TextBlock Text="{Binding RuntimeStatus}"
+                       TextWrapping="Wrap"
+                       FontWeight="Bold"
+                       Foreground="{Binding RuntimeStatusForeground}" />
+        </Border>
+
+        <TextBox Grid.Row="1"
+                 IsReadOnly="True"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 Text="{Binding DiagnosticsText}" />
+    </Grid>
+</UserControl>

@@ -29,7 +29,7 @@ internal abstract class DashboardFrameProcessorBase<TResult> : IDashboardFramePr
 
     protected string ModelName { get; }
     protected DashboardModelSettings Settings { get; private set; }
-    protected OnnxRuntimeContext? Context { get; private set; }
+    protected OnnxExecutionContext? Context { get; private set; }
     protected IRunner<Mat, TResult>? Runner { get; private set; }
     protected bool HasResult => _hasResult;
     protected TResult Result => _result;
@@ -44,7 +44,7 @@ internal abstract class DashboardFrameProcessorBase<TResult> : IDashboardFramePr
             isByteBgr: Settings.UseByteBgr);
 
         string modelPath = await AssetsManager.GetAssetPathAsync(modelFileName);
-        Context = new OnnxRuntimeContext(modelPath, Settings.Backend);
+        Context = new OnnxExecutionContext(new OnnxModel(modelPath, Settings.Backend), ownsModel: true);
         Runner = CreateRunner(Context);
         Context.WriteInfo();
     }
@@ -77,7 +77,7 @@ internal abstract class DashboardFrameProcessorBase<TResult> : IDashboardFramePr
         DrawResult(target, frameInfo, _result);
     }
 
-    protected abstract IRunner<Mat, TResult> CreateRunner(OnnxRuntimeContext context);
+    protected abstract IRunner<Mat, TResult> CreateRunner(OnnxExecutionContext context);
     protected abstract void DrawResult(Mat target, in DashboardFrameInfo frameInfo, TResult result);
 
     protected string GetClassName(int classId) => Context?.GetYoloClassName(classId) ?? $"#{classId}";

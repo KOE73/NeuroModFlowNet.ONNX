@@ -17,7 +17,7 @@ public class ConverterMatSingleNchw<TBuf, TAlgo> : ConverterNchwBase<Mat>
 
     public sealed override void Prepare(Mat image)
     {
-        var buffer = Model.GetInputBuffer<TBuf>(Model.PrimaryInputName);
+        var buffer = Context.GetInputBuffer<TBuf>(Model.PrimaryInputName);
         if(image.Empty()) { buffer.Clear(); return; }
         TAlgo.Fill(image, buffer, PixelsCount);
     }

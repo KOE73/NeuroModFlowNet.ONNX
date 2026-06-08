@@ -12,14 +12,14 @@ public abstract class YoloObbNmsFP32ExtractorBase<TOut> : YoloObbNmsExtractorBas
 {
     protected override void Check()
     {
-        var meta = Model.Session.OutputMetadata[Model.PrimaryOutputName];
-        if(meta.ElementDataType != TensorElementType.Float)
-            throw new InvalidOperationException($"Model produces {meta.ElementDataType}, but FP32 extractor requires Float.");
+        var elementType = Model.GetOutputElementType(Model.PrimaryOutputName);
+        if(elementType != TensorElementType.Float)
+            throw new InvalidOperationException($"Model produces {elementType}, but FP32 extractor requires Float.");
     }
 
-    public IDetectionResult<YoloObb_FP32_XYWHSCA> GetOutput()
+    public IDetectionResult<YoloObb_FP32_XYWHSCA> GetOutput(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<float>();
+        var data = outputs.GetTensorDataAsSpan<float>();
         var allDetections = MemoryMarshal.Cast<float, YoloObb_FP32_XYWHSCA>(data);
 
         var result = BatchedResultPooledFactory.Create<YoloObb_FP32_XYWHSCA>(BatchCount, BatchCount * ItemCount);
@@ -37,9 +37,9 @@ public abstract class YoloObbNmsFP32ExtractorBase<TOut> : YoloObbNmsExtractorBas
         return result;
     }
 
-    public IDetectionResult<YoloObb> GetOutputStd()
+    public IDetectionResult<YoloObb> GetOutputStd(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<float>();
+        var data = outputs.GetTensorDataAsSpan<float>();
         var allDetections = MemoryMarshal.Cast<float, YoloObb_FP32_XYWHSCA>(data);
 
         var result = BatchedResultPooledFactory.Create<YoloObb>(BatchCount, BatchCount * ItemCount);

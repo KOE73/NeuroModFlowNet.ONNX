@@ -14,19 +14,19 @@ public class PaddleUVDocExtractor : ResultExtractorBase<Mat>
         OutputImageWidth = (int)Model.ModelOutputShapes[Model.PrimaryOutputName][3];
     }
 
-    public ReadOnlySpan<float> GetOutputAsSpan()
+    public ReadOnlySpan<float> GetOutputAsSpan(IOnnxModelOutputs outputs)
     {
-        return Model.GetTensorDataAsSpan<float>(Model.PrimaryOutputName);
+        return outputs.GetTensorDataAsSpan<float>(Model.PrimaryOutputName);
     }
 
-    public override Mat Extract()
+    public override Mat Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutputAsMat32FC1();
+        return GetOutputAsMat32FC1(outputs);
     }
 
-    public unsafe Mat GetOutputAsMat32FC1()
+    public unsafe Mat GetOutputAsMat32FC1(IOnnxModelOutputs outputs)
     {
-        var output = GetOutputAsSpan();
+        var output = GetOutputAsSpan(outputs);
         int channelSize = OutputImageWidth * OutputImageHeight;
 
         fixed(float* p = output)
@@ -42,9 +42,9 @@ public class PaddleUVDocExtractor : ResultExtractorBase<Mat>
         }
     }
 
-    public unsafe Mat GetOutputAsMat8UC3()
+    public unsafe Mat GetOutputAsMat8UC3(IOnnxModelOutputs outputs)
     {
-        using Mat merged32 = GetOutputAsMat32FC1();
+        using Mat merged32 = GetOutputAsMat32FC1(outputs);
         Mat result8U = new Mat();
         merged32.ConvertTo(result8U, MatType.CV_8UC3, 255.0);
         return result8U;

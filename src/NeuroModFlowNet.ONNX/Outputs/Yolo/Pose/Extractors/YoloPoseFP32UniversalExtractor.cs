@@ -7,9 +7,9 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class YoloPoseFP32UniversalExtractor : YoloPoseFP32ExtractorBase<IDetectionResult<YoloPose>>
 {
-    public override IDetectionResult<YoloPose> Extract()
+    public override IDetectionResult<YoloPose> Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutput();
+        return GetOutput(outputs);
     }
 
 
@@ -23,9 +23,9 @@ public class YoloPoseFP32UniversalExtractor : YoloPoseFP32ExtractorBase<IDetecti
     // Поэтому сохраняем уже "обычный" managed DTO.
     // ------------------------------------------------------------
 
-    public IDetectionResult<YoloPose> GetOutput()
+    public IDetectionResult<YoloPose> GetOutput(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<float>();
+        var data = outputs.GetTensorDataAsSpan<float>();
 
         // allRows содержит все detection подряд по всем batch.
         var allRows = new YoloPose_FP32_RowsView(data, KeypointsCount);

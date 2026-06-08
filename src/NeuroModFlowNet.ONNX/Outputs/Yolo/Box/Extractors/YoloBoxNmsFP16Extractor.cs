@@ -7,8 +7,8 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class YoloBoxNmsFP16Extractor : YoloBoxNmsFP16ExtractorBase<IDetectionResult<YoloBox_FP16_XYWHSC>>
 {
-    public override IDetectionResult<YoloBox_FP16_XYWHSC> Extract()
+    public override IDetectionResult<YoloBox_FP16_XYWHSC> Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutput();
+        return GetOutput(outputs);
     }
 }

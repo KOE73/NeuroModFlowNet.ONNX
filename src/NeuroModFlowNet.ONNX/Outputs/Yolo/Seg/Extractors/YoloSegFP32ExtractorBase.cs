@@ -17,15 +17,15 @@ public abstract class YoloSegFP32ExtractorBase<TOut> : YoloSegExtractorBase<TOut
     protected override void Check()
     {
         base.Check();
-        var meta = Model.Session.OutputMetadata[DetectionWithMaskCoefficientsOutputName];
-        if(meta.ElementDataType != TensorElementType.Float)
-            throw new InvalidOperationException($"Model produces {meta.ElementDataType}, but FP32 extractor requires Float.");
+        var elementType = Model.GetOutputElementType(DetectionWithMaskCoefficientsOutputName);
+        if(elementType != TensorElementType.Float)
+            throw new InvalidOperationException($"Model produces {elementType}, but FP32 extractor requires Float.");
     }
 
-    public unsafe YoloSegResult_FP32_Mask32 GetOutput()
+    public unsafe YoloSegResult_FP32_Mask32 GetOutput(IOnnxModelOutputs outputs)
     {
-        var detectionData = Model.GetTensorDataAsSpan<float>(DetectionWithMaskCoefficientsOutputName);
-        var prototypeData = Model.GetTensorDataAsSpan<float>(MaskPrototypesOutputName);
+        var detectionData = outputs.GetTensorDataAsSpan<float>(DetectionWithMaskCoefficientsOutputName);
+        var prototypeData = outputs.GetTensorDataAsSpan<float>(MaskPrototypesOutputName);
 
         var lineSeg = MemoryMarshal.Cast<float, YoloSeg_FP32_XYWHSC_Mask32>(detectionData);
         var tensorSeg = new ReadOnlyTensorSpan<YoloSeg_FP32_XYWHSC_Mask32>(lineSeg, [BatchCount, ItemCount]);
@@ -67,10 +67,10 @@ public abstract class YoloSegFP32ExtractorBase<TOut> : YoloSegExtractorBase<TOut
         return result;
     }
 
-    public unsafe YoloSegResult_FP32_Mask32 GetOutput_Mixed()
+    public unsafe YoloSegResult_FP32_Mask32 GetOutput_Mixed(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<float>(DetectionWithMaskCoefficientsOutputName);
-        var data1 = Model.GetTensorDataAsSpan<Float16>(MaskPrototypesOutputName);
+        var data = outputs.GetTensorDataAsSpan<float>(DetectionWithMaskCoefficientsOutputName);
+        var data1 = outputs.GetTensorDataAsSpan<Float16>(MaskPrototypesOutputName);
 
         var lineSeg = MemoryMarshal.Cast<float, YoloSeg_FP32_XYWHSC_Mask32>(data);
         var tensorSeg = new ReadOnlyTensorSpan<YoloSeg_FP32_XYWHSC_Mask32>(lineSeg, [BatchCount, ItemCount]);

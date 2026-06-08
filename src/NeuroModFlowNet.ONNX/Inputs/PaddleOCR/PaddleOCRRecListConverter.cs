@@ -4,7 +4,9 @@ namespace NeuroModFlowNet.ONNX;
 
 public class PaddleOCRRecListConverter : IImageConverter<List<Mat>>
 {
-    public OnnxRuntimeContext Model { get; private set; } = default!;
+    public OnnxExecutionContext Context { get; private set; } = default!;
+    OnnxModel Model => Context.Model;
+
     public string ConverterName => "PaddleOCRRecListConverter";
 
     public int Width { get; private set; }
@@ -12,11 +14,11 @@ public class PaddleOCRRecListConverter : IImageConverter<List<Mat>>
     public int Channels { get; private set; }
     public int Batch { get; private set; }
 
-    public void SetModel(OnnxRuntimeContext context)
+    public void SetModel(OnnxExecutionContext context)
     {
-        Model = context;
-        long[] shape = Model.IsInputPersistentValueInitialized(Model.PrimaryInputName)
-            ? Model.GetRealInputShape(Model.PrimaryInputName)
+        Context = context;
+        long[] shape = Context.IsInputPersistentValueInitialized(Model.PrimaryInputName)
+            ? Context.GetRealInputShape(Model.PrimaryInputName)
             : Model.ModelInputShapes[Model.PrimaryInputName];
 
         Batch = (int)shape[0];
@@ -27,7 +29,7 @@ public class PaddleOCRRecListConverter : IImageConverter<List<Mat>>
 
     public unsafe void Prepare(List<Mat> input)
     {
-        var buffer = Model.GetInputBuffer<float>(Model.PrimaryInputName);
+        var buffer = Context.GetInputBuffer<float>(Model.PrimaryInputName);
         if(input == null || input.Count == 0)
         {
             buffer.Clear();

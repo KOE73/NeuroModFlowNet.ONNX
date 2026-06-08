@@ -17,7 +17,7 @@ public class ConverterMatListNchwPosCvdnnFP16 : ConverterNchwBase<List<Mat>>
 
     public override unsafe void Prepare(List<Mat> images)
     {
-        var buffer = Model.GetInputBuffer<Float16>(Model.PrimaryInputName);
+        var buffer = Context.GetInputBuffer<Float16>(Model.PrimaryInputName);
         if(images == null || images.Count == 0) { buffer.Clear(); return; }
 
         double scale = 1.0 / 255.0;

@@ -54,11 +54,11 @@ internal sealed class InferenceResources : IDisposable
     public void EnsureRecognitionBatch(RecognitionOptions recognitionOptions)
     {
         ModelRec.InitInputPersistentValue(
-            ModelRec.PrimaryInputName,
+            ModelRec.Model.PrimaryInputName,
             [recognitionOptions.BatchSize, 3, recognitionOptions.RecognitionInputHeight, recognitionOptions.RecognitionInputWidth]);
 
         ModelRec.InitOutputPersistentValue(
-            ModelRec.PrimaryOutputName,
+            ModelRec.Model.PrimaryOutputName,
             [recognitionOptions.BatchSize, recognitionOptions.RecognitionOutputItemCount, ResolveRecognitionOutputAttributes()]);
 
         RunnerRec?.Dispose();
@@ -70,15 +70,15 @@ internal sealed class InferenceResources : IDisposable
     {
         ArgumentNullException.ThrowIfNull(letterboxedFrame);
 
-        if(ModelDet.IsInputPersistentValueInitialized(ModelDet.PrimaryInputName))
+        if(ModelDet.IsInputPersistentValueInitialized(ModelDet.Model.PrimaryInputName))
             return;
 
         // EN: PaddleOCR Det has dynamic spatial dimensions. The Avalonia realtime loop feeds the same
         // letterboxed tensor as YOLO OBB, so initialize persistent buffers once from that actual frame size.
         // RU: У PaddleOCR Det динамические spatial dimensions. Avalonia realtime loop подает тот же
         // letterbox tensor, что и YOLO OBB, поэтому persistent buffers инициализируются один раз по реальному размеру кадра.
-        ModelDet.InitInputPersistentValue(ModelDet.PrimaryInputName, [1, 3, letterboxedFrame.Width, letterboxedFrame.Height]);
-        ModelDet.InitOutputPersistentValue(ModelDet.PrimaryOutputName, [1, 1, letterboxedFrame.Width, letterboxedFrame.Height]);
+        ModelDet.InitInputPersistentValue(ModelDet.Model.PrimaryInputName, [1, 3, letterboxedFrame.Width, letterboxedFrame.Height]);
+        ModelDet.InitOutputPersistentValue(ModelDet.Model.PrimaryOutputName, [1, 1, letterboxedFrame.Width, letterboxedFrame.Height]);
         RefreshModelInfos();
     }
 
@@ -130,8 +130,8 @@ internal sealed class InferenceResources : IDisposable
     {
         string details = string.Join(
             Environment.NewLine,
-            model.ModelInputShapes.Select(item => FormatIoLine("IN ", item.Key, ResolveInputType(model, item.Key), ResolveInputShape(model, item.Key)))
-                .Concat(model.ModelOutputShapes.Select(item => FormatIoLine("OUT", item.Key, ResolveOutputType(model, item.Key), ResolveOutputShape(model, item.Key)))));
+            model.Model.ModelInputShapes.Select(item => FormatIoLine("IN ", item.Key, ResolveInputType(model, item.Key), ResolveInputShape(model, item.Key)))
+                .Concat(model.Model.ModelOutputShapes.Select(item => FormatIoLine("OUT", item.Key, ResolveOutputType(model, item.Key), ResolveOutputShape(model, item.Key)))));
 
         return new RuntimeModelInfo(key, title, details);
     }
@@ -140,26 +140,26 @@ internal sealed class InferenceResources : IDisposable
     {
         string details = string.Join(
             Environment.NewLine,
-            FormatIoLine("DETIN", detectorModel.PrimaryInputName, ResolveInputType(detectorModel, detectorModel.PrimaryInputName), ResolveInputShape(detectorModel, detectorModel.PrimaryInputName)),
-            FormatIoLine("D_OUT", detectorModel.PrimaryOutputName, ResolveOutputType(detectorModel, detectorModel.PrimaryOutputName), ResolveOutputShape(detectorModel, detectorModel.PrimaryOutputName)),
-            $"RECMDL {recognitionModel.ModelPath}",
-            FormatIoLine("RECIN", recognitionModel.PrimaryInputName, ResolveInputType(recognitionModel, recognitionModel.PrimaryInputName), ResolveInputShape(recognitionModel, recognitionModel.PrimaryInputName)),
-            FormatIoLine("R_OUT", recognitionModel.PrimaryOutputName, ResolveOutputType(recognitionModel, recognitionModel.PrimaryOutputName), ResolveOutputShape(recognitionModel, recognitionModel.PrimaryOutputName)));
+            FormatIoLine("DETIN", detectorModel.Model.PrimaryInputName, ResolveInputType(detectorModel, detectorModel.Model.PrimaryInputName), ResolveInputShape(detectorModel, detectorModel.Model.PrimaryInputName)),
+            FormatIoLine("D_OUT", detectorModel.Model.PrimaryOutputName, ResolveOutputType(detectorModel, detectorModel.Model.PrimaryOutputName), ResolveOutputShape(detectorModel, detectorModel.Model.PrimaryOutputName)),
+            $"RECMDL {recognitionModel.Model.ModelPath}",
+            FormatIoLine("RECIN", recognitionModel.Model.PrimaryInputName, ResolveInputType(recognitionModel, recognitionModel.Model.PrimaryInputName), ResolveInputShape(recognitionModel, recognitionModel.Model.PrimaryInputName)),
+            FormatIoLine("R_OUT", recognitionModel.Model.PrimaryOutputName, ResolveOutputType(recognitionModel, recognitionModel.Model.PrimaryOutputName), ResolveOutputShape(recognitionModel, recognitionModel.Model.PrimaryOutputName)));
 
         return new RuntimeModelInfo(key, title, details);
     }
 
     static long[] ResolveInputShape(OnnxRuntimeContext model, string name) =>
-        model.IsInputPersistentValueInitialized(name) ? model.GetRealInputShape(name) : model.ModelInputShapes[name];
+        model.IsInputPersistentValueInitialized(name) ? model.GetRealInputShape(name) : model.Model.ModelInputShapes[name];
 
     static long[] ResolveOutputShape(OnnxRuntimeContext model, string name) =>
-        model.IsOutputPersistentValueInitialized(name) ? model.GetRealOutputShape(name) : model.ModelOutputShapes[name];
+        model.IsOutputPersistentValueInitialized(name) ? model.GetRealOutputShape(name) : model.Model.ModelOutputShapes[name];
 
     static string ResolveInputType(OnnxRuntimeContext model, string name) =>
-        model.Session.InputMetadata[name].ElementDataType.ToString();
+        model.Model.Session.InputMetadata[name].ElementDataType.ToString();
 
     static string ResolveOutputType(OnnxRuntimeContext model, string name) =>
-        model.Session.OutputMetadata[name].ElementDataType.ToString();
+        model.Model.Session.OutputMetadata[name].ElementDataType.ToString();
 
     static string FormatIoLine(string marker, string name, string elementType, IReadOnlyList<long> shape) =>
         $"{marker} {ShortName(name),-8} {ShortType(elementType),-7} {FormatShape(shape)}";
@@ -175,7 +175,7 @@ internal sealed class InferenceResources : IDisposable
 
     int ResolveRecognitionOutputAttributes()
     {
-        long[] outputShape = ModelRec.ModelOutputShapes[ModelRec.PrimaryOutputName];
+        long[] outputShape = ModelRec.Model.ModelOutputShapes[ModelRec.Model.PrimaryOutputName];
         if(outputShape.Length < 3)
             throw new InvalidOperationException($"PaddleOCR Rec output must be 3D, actual shape: {string.Join(",", outputShape)}");
 

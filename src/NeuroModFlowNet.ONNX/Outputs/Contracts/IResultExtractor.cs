@@ -3,6 +3,6 @@ namespace NeuroModFlowNet.ONNX;
 
 public interface IResultExtractor<out TOut> 
 {
-    void SetModel(OnnxRuntimeContext context);
-    TOut Extract();
+    void SetModel(IModelMetadataProvider metadata);
+    TOut Extract(IOnnxModelOutputs outputs);
 }

@@ -4,7 +4,7 @@ using Spectre.Console.Rendering;
 
 namespace NeuroModFlowNet.ONNX.Diagnostics;
 
-public static class OnnxRuntimeContextDiagnosticsExtensions
+public static class OnnxExecutionContextDiagnosticsExtensions
 {
     public static TableBorder TensorTableBorder = TableBorder.Minimalist;
     private static readonly Style InputStyle = new(foreground: Color.Green);
@@ -14,11 +14,11 @@ public static class OnnxRuntimeContextDiagnosticsExtensions
 
     private static readonly string[] DefaultMetadataKeys = ["names", "args", "stride"];
 
-    public static void WriteInfo(this OnnxRuntimeContext context, bool includeMetadata = false, IReadOnlyCollection<string>? metadataKeys = null)
+    public static void WriteInfo(this OnnxExecutionContext context, bool includeMetadata = false, IReadOnlyCollection<string>? metadataKeys = null)
         => context.WriteInfo(AnsiConsole.Console, includeMetadata, metadataKeys);
 
     public static void WriteInfo(
-        this OnnxRuntimeContext context,
+        this OnnxExecutionContext context,
         IAnsiConsole console,
         bool includeMetadata = false,
         IReadOnlyCollection<string>? metadataKeys = null)
@@ -32,9 +32,9 @@ public static class OnnxRuntimeContextDiagnosticsExtensions
         root.AddRow(CreateHeaderGrid(context));
         root.AddRow(CreateTensorTable(context));
 
-        if(includeMetadata && context.Session.ModelMetadata.CustomMetadataMap.Count > 0)
+        if(includeMetadata && context.Model.Session.ModelMetadata.CustomMetadataMap.Count > 0)
         {
-            IReadOnlyDictionary<string, string> metadata = SelectMetadata(context.Session.ModelMetadata.CustomMetadataMap, metadataKeys);
+            IReadOnlyDictionary<string, string> metadata = SelectMetadata(context.Model.Session.ModelMetadata.CustomMetadataMap, metadataKeys);
             if(metadata.Count > 0)
                 root.AddRow(CreateMetadataTable(metadata));
         }
@@ -47,24 +47,28 @@ public static class OnnxRuntimeContextDiagnosticsExtensions
         console.Write(panel);
     }
 
-    private static Grid CreateHeaderGrid(OnnxRuntimeContext context)
+    private static Grid CreateHeaderGrid(OnnxExecutionContext context)
     {
         Grid grid = new Grid()
             .AddColumn(new GridColumn().NoWrap().PadRight(2))
             .AddColumn();
 
-        grid.AddRow("[grey]Path[/]", Markup.Escape(context.ModelPath));
+        grid.AddRow("[grey]Source[/]", Markup.Escape(context.Model.ModelSource.Kind.ToString()));
+
+        if(context.Model.ModelSource.Path is not null)
+            grid.AddRow("[grey]Path[/]", Markup.Escape(context.Model.ModelSource.Path));
+        else
+            grid.AddRow("[grey]Name[/]", Markup.Escape(context.Model.ModelSource.DisplayName));
 
         return grid;
     }
 
-    //ONNX Runtime Context
-    private static string CreateHeader(OnnxRuntimeContext context) =>
-        $" ONNX Runtime Context " +
-        $"[yellow]{Markup.Escape(context.InferenceBackend.ToString())}[/] " +
-        $"[bold cyan] {Markup.Escape(Path.GetFileName(context.ModelPath))} [/] "
+    private static string CreateHeader(OnnxExecutionContext context) =>
+        $" ONNX Execution Context " +
+        $"[yellow]{Markup.Escape(context.Model.InferenceBackend.ToString())}[/] " +
+        $"[bold cyan] {Markup.Escape(context.Model.ModelSource.DisplayName)} [/] "
         ;
-    private static Table CreateTensorTable(OnnxRuntimeContext context)
+    private static Table CreateTensorTable(OnnxExecutionContext context)
     {
         Table table = new Table()
             .Border(TensorTableBorder)
@@ -73,14 +77,14 @@ public static class OnnxRuntimeContextDiagnosticsExtensions
             .AddColumn(new TableColumn(new Text("Type", HeaderStyle)))
             .AddColumn(new TableColumn(new Text("Shape", HeaderStyle)));
 
-        foreach((string name, NodeMetadata node) in context.Session.InputMetadata)
+        foreach((string name, NodeMetadata node) in context.Model.Session.InputMetadata)
             table.AddRow(
                 new Text("IN", InputStyle),
                 new Text(name, InputStyle),
                 new Text(node.ElementDataType.ToString(), InputStyle),
                 new Text(FormatShape(node.Dimensions), InputStyle));
 
-        foreach((string name, NodeMetadata node) in context.Session.OutputMetadata)
+        foreach((string name, NodeMetadata node) in context.Model.Session.OutputMetadata)
             table.AddRow(
                 new Text("OUT", OutputStyle),
                 new Text(name, OutputStyle),

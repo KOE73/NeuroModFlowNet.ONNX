@@ -14,25 +14,25 @@ public static class YoloClsFactory
 {
     // ──────────────────────────────── Single Mat, FP32 ────────────────────────────────
 
-    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloClsFP32SingleExtractor> Single_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloClsFP32SingleExtractor> Single_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloCls, ConverterMatSingleBgrDirectU8, YoloClsFP32SingleExtractor> Single_BgrDirect_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloClsFP32SingleExtractor> Single_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloClsFP32SingleExtractor> Single_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloCls, ConverterMatSingleBgrDirectU8, YoloClsFP32SingleExtractor> Single_BgrDirect_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────────── Single Mat, FP16 ────────────────────────────────
 
-    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloClsFP16SingleExtractor> Single_PosCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloClsFP16SingleExtractor> Single_SymCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, YoloCls, ConverterMatSingleBgrDirectU8, YoloClsFP16SingleExtractor> Single_BgrDirect_FP16(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloClsFP16SingleExtractor> Single_PosCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloClsFP16SingleExtractor> Single_SymCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, YoloCls, ConverterMatSingleBgrDirectU8, YoloClsFP16SingleExtractor> Single_BgrDirect_FP16(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────── List<Mat> Batch, FP32 ──────────────────────────────
 
-    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<float, PosCvdnnFP32>, YoloClsFP32SingleExtractor> List_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<float, SymCvdnnFP32>, YoloClsFP32SingleExtractor> List_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<float, PosCvdnnFP32>, YoloClsFP32SingleExtractor> List_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<float, SymCvdnnFP32>, YoloClsFP32SingleExtractor> List_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────── List<Mat> Batch, FP16 ──────────────────────────────
 
-    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<Float16, PosCvdnnFP16>, YoloClsFP16SingleExtractor> List_PosCvdnn_FP16(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<Float16, SymCvdnnFP16>, YoloClsFP16SingleExtractor> List_SymCvdnn_FP16(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<Float16, PosCvdnnFP16>, YoloClsFP16SingleExtractor> List_PosCvdnn_FP16(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<Float16, SymCvdnnFP16>, YoloClsFP16SingleExtractor> List_SymCvdnn_FP16(OnnxExecutionContext context) => new(context);
 
     // ─────────────────────────── Auto-detect from metadata ───────────────────────────
 
@@ -43,10 +43,10 @@ public static class YoloClsFactory
     /// RU: Автоматически выбирает конвертер и экстрактор по метаданным модели.
     ///     Для Cls-моделей точность выхода соответствует входу.
     /// </summary>
-    public static IRunner<Mat, IBatchedResult> CreateRunner(OnnxRuntimeContext context)
+    public static IRunner<Mat, IBatchedResult> CreateRunner(OnnxExecutionContext context)
     {
-        var inputMeta  = context.Session.InputMetadata.Values.First();
-        var outputMeta = context.Session.OutputMetadata.Values.First();
+        var inputMeta  = context.Model.Session.InputMetadata.Values.First();
+        var outputMeta = context.Model.Session.OutputMetadata.Values.First();
 
         bool outputIsFP16 = outputMeta.ElementDataType == TensorElementType.Float16;
 

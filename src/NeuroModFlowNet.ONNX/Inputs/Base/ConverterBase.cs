@@ -7,7 +7,9 @@ namespace NeuroModFlowNet.ONNX.Converters;
 public abstract class ConverterBase<TIn> :
     IInputConverter<TIn>
     {
-    public OnnxRuntimeContext Model { get; private set; } = default!;
+    public OnnxExecutionContext Context { get; private set; } = default!;
+
+    protected OnnxModel Model => Context.Model;
 
     public virtual string ConverterName => GetType().Name;
 
@@ -15,9 +17,9 @@ public abstract class ConverterBase<TIn> :
     /// EN: Main entry for initialization.
     /// RU: Основной вход для инициализации.
     /// </summary>
-    public void SetModel(OnnxRuntimeContext context)
+    public void SetModel(OnnxExecutionContext context)
     {
-        Model = context;
+        Context = context;
         Init();
         Check();
     }

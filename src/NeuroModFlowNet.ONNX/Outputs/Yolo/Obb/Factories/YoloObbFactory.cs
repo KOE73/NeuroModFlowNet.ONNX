@@ -14,18 +14,18 @@ public static class YoloObbFactory
 {
     // ──────────────────────────────── Single Mat, FP32 ────────────────────────────────
 
-    public static ImageRunner<Mat, IDetectionResult<YoloObb>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloObbNmsFP32StdExtractor> Single_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, IDetectionResult<YoloObb>, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloObbNmsFP32StdExtractor> Single_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<Mat, IDetectionResult<YoloObb>, ConverterMatSingleBgrDirectU8, YoloObbNmsFP32StdExtractor> Single_BgrDirect_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloObb>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloObbNmsFP32StdExtractor> Single_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloObb>, ConverterMatSingleNchw<float, SymCvdnnFP32>, YoloObbNmsFP32StdExtractor> Single_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloObb>, ConverterMatSingleBgrDirectU8, YoloObbNmsFP32StdExtractor> Single_BgrDirect_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────────── Single Mat, Internal FP32 ──────────────────────
 
-    public static ImageRunner<Mat, IDetectionResult<YoloObb_FP32_XYWHSCA>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloObbNmsFP32Extractor> SingleInternal_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloObb_FP32_XYWHSCA>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloObbNmsFP32Extractor> SingleInternal_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────── List<Mat> Batch, FP32 ──────────────────────────────
 
-    public static ImageRunner<List<Mat>, IDetectionResult<YoloObb>, ConverterMatListNchw<float, PosCvdnnFP32>, YoloObbNmsFP32StdExtractor> List_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
-    public static ImageRunner<List<Mat>, IDetectionResult<YoloObb>, ConverterMatListNchw<float, SymCvdnnFP32>, YoloObbNmsFP32StdExtractor> List_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<List<Mat>, IDetectionResult<YoloObb>, ConverterMatListNchw<float, PosCvdnnFP32>, YoloObbNmsFP32StdExtractor> List_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
+    public static ImageRunner<List<Mat>, IDetectionResult<YoloObb>, ConverterMatListNchw<float, SymCvdnnFP32>, YoloObbNmsFP32StdExtractor> List_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     // ────────────────────────────── Generic Creation ────────────────────────────────
 
@@ -33,11 +33,11 @@ public static class YoloObbFactory
     /// EN: Automatically selects converter and extractor based on model metadata (Single Mat).
     /// RU: Автоматически выбирает конвертер и экстрактор по метаданным модели (Single Mat).
     /// </summary>
-    public static IRunner<Mat, TOut> CreateRunner<TOut>(OnnxRuntimeContext context)
+    public static IRunner<Mat, TOut> CreateRunner<TOut>(OnnxExecutionContext context)
          where TOut : IBatchedResult
     {
-        var inputMeta = context.Session.InputMetadata[context.PrimaryInputName];
-        var outputMeta = context.Session.OutputMetadata[context.PrimaryOutputName];
+        var inputMeta = context.Model.Session.InputMetadata[context.Model.PrimaryInputName];
+        var outputMeta = context.Model.Session.OutputMetadata[context.Model.PrimaryOutputName];
 
         // OBB output is always FP32 according to specs
         bool isFp16 = outputMeta.ElementDataType == TensorElementType.Float16;

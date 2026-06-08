@@ -10,11 +10,12 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class PaddleOCRDetFP32_8UC1_SafeListExtractor : PaddleOCRDetFP32_ExtractorBase<List<Mat>>
 {
-    public override List<Mat> Extract()
+    public override List<Mat> Extract(IOnnxModelOutputs outputs)
     {
-        var result = new List<Mat>(BatchCount);
-        for(int i = 0; i < BatchCount; i++)
-            result.Add(GetOutputAsMat_8UC1(i));
+        int batchCount = GetBatchCount(outputs);
+        var result = new List<Mat>(batchCount);
+        for(int i = 0; i < batchCount; i++)
+            result.Add(GetOutputAsMat_8UC1(outputs, i));
         return result;
     }
 }

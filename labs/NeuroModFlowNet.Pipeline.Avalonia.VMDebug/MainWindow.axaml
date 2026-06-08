@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="NeuroModFlowNet.Pipeline.Avalonia.VMDebug.MainWindow"
+        Title="NeuroModFlowNet Pipeline VM Debug"
+        Width="1720"
+        Height="920"
+        MinWidth="1180"
+        MinHeight="720"
+        FontFamily="Cascadia Mono, Consolas, Courier New"
+        FontSize="12">
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Padding" Value="8,3" />
+            <Setter Property="MinHeight" Value="26" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, Courier New" />
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, Courier New" />
+            <Setter Property="Padding" Value="4" />
+        </Style>
+        <Style Selector="ListBox">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, Courier New" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="MinHeight" Value="22" />
+        </Style>
+        <Style Selector="DragPreviewControl">
+            <Setter Property="ShowContent" Value="False" />
+        </Style>
+    </Window.Styles>
+
+    <DockControl x:Name="DockControl_Workspace"
+                 InitializeLayout="True"
+                 InitializeFactory="True"
+                 Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        <DockControl.Factory>
+            <Factory />
+        </DockControl.Factory>
+    </DockControl>
+</Window>

@@ -7,8 +7,8 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class YoloObbNmsFP32StdExtractor : YoloObbNmsFP32ExtractorBase<IDetectionResult<YoloObb>>
 {
-    public override IDetectionResult<YoloObb> Extract()
+    public override IDetectionResult<YoloObb> Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutputStd();
+        return GetOutputStd(outputs);
     }
 }

@@ -14,8 +14,8 @@ public class YoloClsFP32SingleExtractor : YoloClsFP32ExtractorBase<YoloCls>
             throw new InvalidOperationException($"Invalid BatchCount for {nameof(YoloClsFP32SingleExtractor)}: BatchCount={BatchCount}");
     }
 
-    public override YoloCls Extract()
+    public override YoloCls Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutput();
+        return GetOutput(outputs);
     }
 }

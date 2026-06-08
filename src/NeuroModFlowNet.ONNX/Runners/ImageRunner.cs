@@ -10,7 +10,7 @@ public class ImageRunner<TIn, TOut, TAdapter, TExtractor> :
     where TAdapter : IImageConverter<TIn>, new()
     where TExtractor : IResultExtractor<TOut>, new()
 {
-    public ImageRunner(OnnxRuntimeContext context) : base(context)
+    public ImageRunner(OnnxExecutionContext context) : base(context)
     {
         // Init is handled by StrategyRunner base constructor
     }

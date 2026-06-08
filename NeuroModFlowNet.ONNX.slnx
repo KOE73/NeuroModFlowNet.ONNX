@@ -29,6 +29,8 @@
     <Project Path="labs/NeuroModFlowNet.ONNX.Avalonia/NeuroModFlowNet.ONNX.Avalonia.csproj" />
     <Project Path="labs/NeuroModFlowNet.ONNX.Lab.Algorithms/NeuroModFlowNet.ONNX.Lab.Algorithms.csproj" />
     <Project Path="labs/NeuroModFlowNet.ONNX.Lab/NeuroModFlowNet.ONNX.Lab.csproj" />
+    <Project Path="labs/NeuroModFlowNet.Pipeline.Avalonia.VMDebug/NeuroModFlowNet.Pipeline.Avalonia.VMDebug.csproj" />
+    <Project Path="labs/NeuroModFlowNet.Pipeline.VMDebug/NeuroModFlowNet.Pipeline.VMDebug.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/NeuroModFlowNet.ONNX.Demo.Assets/NeuroModFlowNet.ONNX.Demo.Assets.csproj" Id="2b26f4ef-084f-4786-b973-a5132130eb48">
@@ -45,10 +47,13 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/NeuroModFlowNet.ONNX.Diagnostics/NeuroModFlowNet.ONNX.Diagnostics.csproj" />
+    <Project Path="src/NeuroModFlowNet.ONNX.Graph/NeuroModFlowNet.ONNX.Graph.csproj" />
     <Project Path="src/NeuroModFlowNet.ONNX.Visualizer/NeuroModFlowNet.ONNX.Visualizer.csproj">
       <BuildType Solution="Publish|*" Project="Release" />
     </Project>
     <Project Path="src/NeuroModFlowNet.ONNX/NeuroModFlowNet.ONNX.csproj" />
+    <Project Path="src/NeuroModFlowNet.Pipeline.ONNX/NeuroModFlowNet.Pipeline.ONNX.csproj" />
+    <Project Path="src/NeuroModFlowNet.Pipeline/NeuroModFlowNet.Pipeline.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/NeuroModFlowNet.ONNX.Tests/NeuroModFlowNet.ONNX.Tests.csproj" Id="088445c2-813e-48a9-b2f5-2dc114bd6478">

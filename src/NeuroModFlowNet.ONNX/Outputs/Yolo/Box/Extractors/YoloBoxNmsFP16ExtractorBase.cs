@@ -13,17 +13,17 @@ public abstract class YoloBoxNmsFP16ExtractorBase<TOut> : YoloBoxNmsExtractorBas
 {
     protected override void Check()
     {
-        var meta = Model.Session.OutputMetadata[Model.PrimaryOutputName];
-        if(meta.ElementDataType != TensorElementType.Float16)
-            throw new InvalidOperationException($"Model produces {meta.ElementDataType}, but FP16 extractor requires Float16 (Half).");
+        var elementType = Model.GetOutputElementType(Model.PrimaryOutputName);
+        if(elementType != TensorElementType.Float16)
+            throw new InvalidOperationException($"Model produces {elementType}, but FP16 extractor requires Float16 (Half).");
     }
 
 
 
 
-    public IDetectionResult<YoloBox_FP16_XYWHSC> GetOutput()
+    public IDetectionResult<YoloBox_FP16_XYWHSC> GetOutput(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<Float16>();
+        var data = outputs.GetTensorDataAsSpan<Float16>();
         var allDetections = MemoryMarshal.Cast<Float16, YoloBox_FP16_XYWHSC>(data);
 
         var result = BatchedResultPooledFactory.Create<YoloBox_FP16_XYWHSC>(BatchCount, BatchCount * ItemCount);
@@ -43,9 +43,9 @@ public abstract class YoloBoxNmsFP16ExtractorBase<TOut> : YoloBoxNmsExtractorBas
         return result;
     }
 
-    public IDetectionResult<YoloBox> GetOutputStd()
+    public IDetectionResult<YoloBox> GetOutputStd(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<Float16>();
+        var data = outputs.GetTensorDataAsSpan<Float16>();
         var allDetections = MemoryMarshal.Cast<Float16, YoloBox_FP16_XYWHSC>(data);
 
         var result = BatchedResultPooledFactory.Create<YoloBox>(BatchCount, BatchCount * ItemCount);

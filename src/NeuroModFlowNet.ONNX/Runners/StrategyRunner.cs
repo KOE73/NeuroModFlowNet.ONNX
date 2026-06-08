@@ -6,10 +6,10 @@ public abstract class StrategyRunner<TIn, TOut, TAdapter, TExtractor> : Runner,
     where TAdapter : IInputConverter<TIn>, new()
     where TExtractor : IResultExtractor<TOut>, new()
 {
-    protected StrategyRunner(OnnxRuntimeContext context) : base(context)
+    protected StrategyRunner(OnnxExecutionContext context) : base(context)
     {
         Adapter.SetModel(context);
-        Extractor.SetModel(context);
+        Extractor.SetModel(context.Model);
     }
 
 
@@ -26,7 +26,7 @@ public abstract class StrategyRunner<TIn, TOut, TAdapter, TExtractor> : Runner,
         {
             Adapter.Prepare(input);
             Context.Run();
-            return Extractor.Extract();
+            return Extractor.Extract(Context);
 
         }
         finally

@@ -7,14 +7,14 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public class YoloPoseFP32Keypoint17Extractor : YoloPoseFP32ExtractorBase<IDetectionResult<YoloPose_FP32_Size57_Keypoint17>>
 {
-    public override IDetectionResult<YoloPose_FP32_Size57_Keypoint17> Extract()
+    public override IDetectionResult<YoloPose_FP32_Size57_Keypoint17> Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutput();
+        return GetOutput(outputs);
     }
 
-    public IDetectionResult<YoloPose_FP32_Size57_Keypoint17> GetOutput()
+    public IDetectionResult<YoloPose_FP32_Size57_Keypoint17> GetOutput(IOnnxModelOutputs outputs)
     {
-        var data = Model.GetTensorDataAsSpan<float>();
+        var data = outputs.GetTensorDataAsSpan<float>();
         var allDetections = MemoryMarshal.Cast<float, YoloPose_FP32_Size57_Keypoint17>(data);
 
         var result = new BatchedResult<YoloPose_FP32_Size57_Keypoint17>(BatchCount, BatchCount * ItemCount);

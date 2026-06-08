@@ -59,6 +59,6 @@ public class ConverterMatSingleBgrDirectU8 : ConverterBase<Mat>,
             (nint)image.DataPointer,
             (int)(image.Total() * image.Channels()));
 
-        Model.SetInput(Model.InputNames[0], value);
+        Context.SetInput(Model.InputNames[0], value);
     }
 }

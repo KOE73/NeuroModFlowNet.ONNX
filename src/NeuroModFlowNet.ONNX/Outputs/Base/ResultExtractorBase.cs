@@ -6,14 +6,14 @@ namespace NeuroModFlowNet.ONNX;
 /// </summary>
 public abstract class ResultExtractorBase<TOut> : IResultExtractor<TOut>
 {
-    public OnnxRuntimeContext Model { get; private set; } = default!;
+    public IModelMetadataProvider Model { get; private set; } = default!;
 
     /// <summary>
     /// EN: Main entrance for initialization. RU: Основной вход для инициализации.
     /// </summary>
-    public void SetModel(OnnxRuntimeContext context)
+    public void SetModel(IModelMetadataProvider metadata)
     {
-        Model = context;
+        Model = metadata;
         Init();
         Check();
     }
@@ -30,5 +30,5 @@ public abstract class ResultExtractorBase<TOut> : IResultExtractor<TOut>
     /// </summary>
     protected virtual void Check() { }
 
-    public abstract TOut Extract();
+    public abstract TOut Extract(IOnnxModelOutputs outputs);
 }

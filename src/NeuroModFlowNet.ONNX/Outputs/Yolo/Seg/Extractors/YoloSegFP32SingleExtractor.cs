@@ -14,8 +14,8 @@ public class YoloSegFP32SingleExtractor : YoloSegFP32ExtractorBase<YoloSegResult
             throw new InvalidOperationException($"Invalid BatchCount for {nameof(YoloSegFP32SingleExtractor)}: BatchCount={BatchCount}. Expected 1.");
     }
 
-    public override YoloSegResult_FP32_Mask32 Extract()
+    public override YoloSegResult_FP32_Mask32 Extract(IOnnxModelOutputs outputs)
     {
-        return GetOutput();
+        return GetOutput(outputs);
     }
 }

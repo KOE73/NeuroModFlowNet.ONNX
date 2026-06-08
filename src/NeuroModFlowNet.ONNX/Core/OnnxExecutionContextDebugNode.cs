@@ -3,12 +3,12 @@ using System.Diagnostics;
 namespace NeuroModFlowNet.ONNX;
 
 /// <summary>
-/// Single input or output row shown by the debugger proxy for <see cref="OnnxRuntimeContext"/>.
+/// Single input or output row shown by the debugger proxy for <see cref="OnnxExecutionContext"/>.
 /// </summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-internal sealed class OnnxRuntimeContextDebugNode
+internal sealed class OnnxExecutionContextDebugNode
 {
-    public OnnxRuntimeContextDebugNode(
+    public OnnxExecutionContextDebugNode(
         string direction,
         string name,
         string elementType,

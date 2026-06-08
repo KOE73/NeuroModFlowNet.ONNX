@@ -14,59 +14,59 @@ public static class YoloBoxFactory
 {
     // ──────────────────────────────── Single Mat, FP32 ────────────────────────────────
 
-    public static ImageRunner<Mat, IDetectionResult<YoloBox>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloBoxNmsFP32StdExtractor> Single_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+    public static ImageRunner<Mat, IDetectionResult<YoloBox>, ConverterMatSingleNchw<float, PosCvdnnFP32>, YoloBoxNmsFP32StdExtractor> Single_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     public static ImageRunner<Mat, IDetectionResult<YoloBox>,
         ConverterMatSingleNchw<float, SymCvdnnFP32>,
         YoloBoxNmsFP32StdExtractor>
-        Single_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+        Single_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     public static ImageRunner<Mat, IDetectionResult<YoloBox>,
         ConverterMatSingleBgrDirectU8,
         YoloBoxNmsFP32StdExtractor>
-        Single_BgrDirect_FP32(OnnxRuntimeContext context) => new(context);
+        Single_BgrDirect_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────────── Single Mat, FP16 ────────────────────────────────
 
     public static ImageRunner<Mat, IDetectionResult<YoloBox>,
         ConverterMatSingleNchw<Float16, PosCvdnnFP16>,
         YoloBoxNmsFP16StdExtractor>
-        Single_PosCvdnn_FP16(OnnxRuntimeContext context) => new(context);
+        Single_PosCvdnn_FP16(OnnxExecutionContext context) => new(context);
 
     public static ImageRunner<Mat, IDetectionResult<YoloBox>,
         ConverterMatSingleNchw<Float16, SymCvdnnFP16>,
         YoloBoxNmsFP16StdExtractor>
-        Single_SymCvdnn_FP16(OnnxRuntimeContext context) => new(context);
+        Single_SymCvdnn_FP16(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────── List<Mat> Batch, FP32 ──────────────────────────────
 
     public static ImageRunner<List<Mat>, IDetectionResult<YoloBox>,
         ConverterMatListNchw<float, PosCvdnnFP32>,
         YoloBoxNmsFP32StdExtractor>
-        List_PosCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+        List_PosCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     public static ImageRunner<List<Mat>, IDetectionResult<YoloBox>,
         ConverterMatListNchw<float, SymCvdnnFP32>,
         YoloBoxNmsFP32StdExtractor>
-        List_SymCvdnn_FP32(OnnxRuntimeContext context) => new(context);
+        List_SymCvdnn_FP32(OnnxExecutionContext context) => new(context);
 
     // ──────────────────────────── List<Mat> Batch, FP16 ──────────────────────────────
 
     public static ImageRunner<List<Mat>, IDetectionResult<YoloBox>,
         ConverterMatListNchw<Float16, PosCvdnnFP16>,
         YoloBoxNmsFP16StdExtractor>
-        List_PosCvdnn_FP16(OnnxRuntimeContext context) => new(context);
+        List_PosCvdnn_FP16(OnnxExecutionContext context) => new(context);
 
     public static ImageRunner<List<Mat>, IDetectionResult<YoloBox>,
         ConverterMatListNchw<Float16, SymCvdnnFP16>,
         YoloBoxNmsFP16StdExtractor>
-        List_SymCvdnn_FP16(OnnxRuntimeContext context) => new(context);
+        List_SymCvdnn_FP16(OnnxExecutionContext context) => new(context);
 
 
 
 
     // Новый обобщенный метод, который заменит все старые
-    public static IRunner<Mat, TOut> CreateRunner<TOut>(OnnxRuntimeContext context, bool isByteBgr)
+    public static IRunner<Mat, TOut> CreateRunner<TOut>(OnnxExecutionContext context, bool isByteBgr)
          where TOut : IBatchedResult
     {
         // 1. Определяем типы, которые подставим в генерик
@@ -93,11 +93,11 @@ public static class YoloBoxFactory
     /// EN: Automatically selects converter and extractor based on model metadata (Single Mat).
     /// RU: Автоматически выбирает конвертер и экстрактор по метаданным модели (Single Mat).
     /// </summary>
-    public static IRunner<Mat, TOut> CreateRunner<TOut>(OnnxRuntimeContext context)
+    public static IRunner<Mat, TOut> CreateRunner<TOut>(OnnxExecutionContext context)
          where TOut : IBatchedResult
     {
-        var inputMeta = context.Session.InputMetadata[context.PrimaryInputName];
-        var outputMeta = context.Session.OutputMetadata[context.PrimaryOutputName];
+        var inputMeta = context.Model.Session.InputMetadata[context.Model.PrimaryInputName];
+        var outputMeta = context.Model.Session.OutputMetadata[context.Model.PrimaryOutputName];
 
         bool isFp16 = outputMeta.ElementDataType == TensorElementType.Float16;
 

@@ -227,8 +227,8 @@ public class RealTimeView2 : IDisposable
 
     private void InitRecognitionModelBatch(int batchSize)
     {
-        modelRec_!.InitInputPersistentValue(modelRec_.PrimaryInputName, [batchSize, 3, RecognitionInputHeight, RecognitionInputWidth]);
-        modelRec_.InitOutputPersistentValue(modelRec_.PrimaryOutputName, [batchSize, RecognitionOutputItemCount, 438]);
+        modelRec_!.InitInputPersistentValue(modelRec_.Model.PrimaryInputName, [batchSize, 3, RecognitionInputHeight, RecognitionInputWidth]);
+        modelRec_.InitOutputPersistentValue(modelRec_.Model.PrimaryOutputName, [batchSize, RecognitionOutputItemCount, 438]);
     }
 
     private void SetRecognitionBatchSize(int batchSize)
@@ -610,16 +610,16 @@ public class RealTimeView2 : IDisposable
 
     private void InitDetModels(Mat letterboxed)
     {
-        if(!modelDv3_!.IsInputPersistentValueInitialized(modelDv3_.PrimaryInputName))
+        if(!modelDv3_!.IsInputPersistentValueInitialized(modelDv3_.Model.PrimaryInputName))
         {
-            modelDv3_.InitInputPersistentValue(modelDv3_.PrimaryInputName, [1, 3, letterboxed.Width, letterboxed.Height]);
-            modelDv3_.InitOutputPersistentValue(modelDv3_.PrimaryOutputName, [1, 1, letterboxed.Width, letterboxed.Height]);
+            modelDv3_.InitInputPersistentValue(modelDv3_.Model.PrimaryInputName, [1, 3, letterboxed.Width, letterboxed.Height]);
+            modelDv3_.InitOutputPersistentValue(modelDv3_.Model.PrimaryOutputName, [1, 1, letterboxed.Width, letterboxed.Height]);
         }
 
-        if(!modelDv5_!.IsInputPersistentValueInitialized(modelDv5_.PrimaryInputName))
+        if(!modelDv5_!.IsInputPersistentValueInitialized(modelDv5_.Model.PrimaryInputName))
         {
-            modelDv5_.InitInputPersistentValue(modelDv5_.PrimaryInputName, [1, 3, letterboxed.Width, letterboxed.Height]);
-            modelDv5_.InitOutputPersistentValue(modelDv5_.PrimaryOutputName, [1, 1, letterboxed.Width, letterboxed.Height]);
+            modelDv5_.InitInputPersistentValue(modelDv5_.Model.PrimaryInputName, [1, 3, letterboxed.Width, letterboxed.Height]);
+            modelDv5_.InitOutputPersistentValue(modelDv5_.Model.PrimaryOutputName, [1, 1, letterboxed.Width, letterboxed.Height]);
         }
     }
 

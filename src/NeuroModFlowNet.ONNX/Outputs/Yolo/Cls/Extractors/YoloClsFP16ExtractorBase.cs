@@ -14,14 +14,14 @@ public abstract class YoloClsFP16ExtractorBase<TOut> : YoloClsExtractorBase<TOut
 {
     protected override void Check()
     {
-        var meta = Model.Session.OutputMetadata[Model.PrimaryOutputName];
-        if(meta.ElementDataType != TensorElementType.Float16)
-            throw new InvalidOperationException($"Model produces {meta.ElementDataType}, but FP16 extractor requires Float16.");
+        var elementType = Model.GetOutputElementType(Model.PrimaryOutputName);
+        if(elementType != TensorElementType.Float16)
+            throw new InvalidOperationException($"Model produces {elementType}, but FP16 extractor requires Float16.");
     }
 
-    public YoloCls GetOutput()
+    public YoloCls GetOutput(IOnnxModelOutputs outputs)
     {
-        var dataFloat16 = Model.GetTensorDataAsSpan<Float16>();
+        var dataFloat16 = outputs.GetTensorDataAsSpan<Float16>();
         var data = MemoryMarshal.Cast<Float16, Half>(dataFloat16);
         int offset = 0;
 

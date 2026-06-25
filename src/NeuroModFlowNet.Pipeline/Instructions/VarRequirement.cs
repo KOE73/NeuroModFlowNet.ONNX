@@ -1,5 +1,11 @@
 ﻿namespace NeuroModFlowNet.Pipeline;
 
+public enum VarRequirementDirection
+{
+    Read,
+    Write,
+}
+
 /// <summary>
 /// EN: Declares one named transaction variable used by an instruction.
 /// RU: Объявление именованной переменной транзакции, используемой инструкцией.
@@ -30,7 +36,8 @@
 public sealed record VarRequirement(
     string Key,
     Type ValueType,
-    bool Required = true)
+    bool Required = true,
+    VarRequirementDirection Direction = VarRequirementDirection.Read)
 {
     /// <summary>
     /// EN: Creates a requirement for reading a variable of type <typeparamref name="T"/> from the pipeline context.
@@ -52,7 +59,8 @@ public sealed record VarRequirement(
     /// EN: A new <see cref="VarRequirement"/> instance.
     /// RU: Новый экземпляр <see cref="VarRequirement"/>.
     /// </returns>
-    public static VarRequirement Read<T>(string key, bool required = true) => new(key, typeof(T), required);
+    public static VarRequirement Read<T>(string key, bool required = true) =>
+        new(key, typeof(T), required, VarRequirementDirection.Read);
 
     /// <summary>
     /// EN: Creates a requirement for writing a variable of type <typeparamref name="T"/> to the pipeline context.
@@ -74,6 +82,7 @@ public sealed record VarRequirement(
     /// EN: A new <see cref="VarRequirement"/> instance.
     /// RU: Новый экземпляр <see cref="VarRequirement"/>.
     /// </returns>
-    public static VarRequirement Write<T>(string key, bool required = true) => new(key, typeof(T), required);
+    public static VarRequirement Write<T>(string key, bool required = true) =>
+        new(key, typeof(T), required, VarRequirementDirection.Write);
 }
 

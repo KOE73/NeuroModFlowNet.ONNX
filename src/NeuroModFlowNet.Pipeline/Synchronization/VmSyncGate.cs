@@ -93,7 +93,7 @@ public sealed class VmSyncGate
             if(closedBeforeGate.Remove(nextRunIdToRelease))
             {
                 if(waiters.Remove(nextRunIdToRelease, out TaskCompletionSource? waiter))
-                    waiter.TrySetCanceled();
+                    waiter.TrySetException(new PrecedingRunFailedException(nextRunIdToRelease));
 
                 nextRunIdToRelease++;
                 continue;

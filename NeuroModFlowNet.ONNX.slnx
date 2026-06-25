@@ -59,6 +59,12 @@
     <Project Path="tests/NeuroModFlowNet.ONNX.Tests/NeuroModFlowNet.ONNX.Tests.csproj" Id="088445c2-813e-48a9-b2f5-2dc114bd6478">
       <BuildType Solution="Publish|*" Project="Release" />
     </Project>
+    <Project Path="tests/NeuroModFlowNet.Pipeline.Tests/NeuroModFlowNet.Pipeline.Tests.csproj">
+      <BuildType Solution="Publish|*" Project="Release" />
+    </Project>
+    <Project Path="tests/NeuroModFlowNet.Pipeline.ONNX.Tests/NeuroModFlowNet.Pipeline.ONNX.Tests.csproj">
+      <BuildType Solution="Publish|*" Project="Release" />
+    </Project>
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/NeuroModFlowNet.ONNX.Tools/NeuroModFlowNet.ONNX.Tools.csproj" Id="13c4e774-df91-46f2-ab54-46defd6185fa">

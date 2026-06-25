@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using NeuroModFlowNet.ONNX;
 using NeuroModFlowNet.ONNX.Graph.Builders;
 using NeuroModFlowNet.Pipeline;
 
@@ -15,7 +16,11 @@ namespace NeuroModFlowNet.Pipeline.ONNX;
 /// </remarks>
 public sealed class Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255 : Op_Onnx_BgrU8Hwc_To_RgbNchw_Div255Base
 {
-    public Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255(string inputKey, string outputKey, bool isFinal = false)
+    public Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255(
+        string inputKey,
+        string outputKey,
+        bool isFinal = false,
+        InferenceBackend? executionBackend = null)
         : base(
             OpDescriptor.Create(
                 "Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255",
@@ -24,7 +29,8 @@ public sealed class Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255 : Op_Onnx_BgrU8Hwc_To
                 writes: [VarRequirement.Write<OrtValue>(outputKey)]),
             inputKey,
             outputKey,
-            isFinal)
+            isFinal,
+            executionBackend)
     {
     }
 

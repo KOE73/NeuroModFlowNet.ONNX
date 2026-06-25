@@ -1,12 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="NeuroModFlowNet.Pipeline.CoordinateTransformGraph">
-    <Position X="28.75" Y="1.75" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAIAg=</HashCode>
-      <FileName>Coordinates\CoordinateTransformGraph.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="NeuroModFlowNet.Pipeline.PipelineRunTrace">
     <Position X="25.25" Y="1.75" Width="2.5" />
     <TypeIdentifier>
@@ -198,17 +191,16 @@
     <ShowAsAssociation>
       <Property Name="GlobalMemory" />
       <Property Name="Resources" />
-      <Property Name="Coordinates" />
       <Property Name="Trace" />
       <Property Name="DebugGate" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="NeuroModFlowNet.Pipeline.ICoordinateTransform">
+  <Interface Name="NeuroModFlowNet.Pipeline.ICoordinateBackTransform">
     <Position X="32.25" Y="1.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAEAAg=</HashCode>
-      <FileName>Coordinates\ICoordinateTransform.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Coordinates\ICoordinateBackTransform.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="NeuroModFlowNet.Pipeline.IPipelineInstructionDebugGate">

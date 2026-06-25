@@ -26,27 +26,67 @@ public static class ResizeBuilder
             TensorProto.Types.DataType.Uint8,
             1, outputHeight, outputWidth, channels));
 
-        graph.Initializer.Add(FloatTensor("roi", [0, 0, 0, 0, 1, 1, 1, 1]));
-        graph.Initializer.Add(FloatTensor(
-            "scales",
-            [
-                1,
-                (float)outputHeight / sourceHeight,
-                (float)outputWidth / sourceWidth,
-                1
-            ]));
+        graph.Initializer.Add(Int64Tensor("sizes", [1, channels, outputHeight, outputWidth]));
+
+        graph.Node.Add(new NodeProto
+        {
+            Name = "cast_input_to_float",
+            OpType = "Cast",
+            Input = { InputName },
+            Output = { "image_float" },
+            Attribute =
+            {
+                IntAttribute("to", (long)TensorProto.Types.DataType.Float)
+            }
+        });
+
+        graph.Node.Add(new NodeProto
+        {
+            Name = "transpose_input_to_nchw",
+            OpType = "Transpose",
+            Input = { "image_float" },
+            Output = { "image_nchw" },
+            Attribute =
+            {
+                IntsAttribute("perm", [0, 3, 1, 2])
+            }
+        });
 
         graph.Node.Add(new NodeProto
         {
             Name = "resize",
             OpType = "Resize",
-            Input = { InputName, "roi", "scales" },
-            Output = { OutputName },
+            Input = { "image_nchw", "", "", "sizes" },
+            Output = { "resized_nchw" },
             Attribute =
             {
                 StringAttribute("mode", "linear"),
-                StringAttribute("coordinate_transformation_mode", "half_pixel"),
+                StringAttribute("coordinate_transformation_mode", "asymmetric"),
                 StringAttribute("nearest_mode", "round_prefer_floor")
+            }
+        });
+
+        graph.Node.Add(new NodeProto
+        {
+            Name = "transpose_output_to_nhwc",
+            OpType = "Transpose",
+            Input = { "resized_nchw" },
+            Output = { "resized_float" },
+            Attribute =
+            {
+                IntsAttribute("perm", [0, 2, 3, 1])
+            }
+        });
+
+        graph.Node.Add(new NodeProto
+        {
+            Name = "cast_output_to_uint8",
+            OpType = "Cast",
+            Input = { "resized_float" },
+            Output = { OutputName },
+            Attribute =
+            {
+                IntAttribute("to", (long)TensorProto.Types.DataType.Uint8)
             }
         });
 

@@ -10,7 +10,7 @@ The project intentionally has no dependency on ONNX Runtime. It owns only the or
 - `Continue`, `Jump`, `Stop`, and controlled failure results;
 - ordered sync gates for stateful instructions;
 - global memory and named resources;
-- coordinate-space transform graph.
+- named coordinate back-transform registers.
 - neutral VM run inputs/outputs and instruction trace diagnostics.
 
 The key design rule is: one accepted run executes one program from start to finish, while slow or stateful resources are called through explicit instructions.
@@ -37,7 +37,7 @@ Model and auxiliary asset lookup is outside the VM. ONNX-related assets should b
 - `Instructions/` - VM instruction contracts, program builder, conditional steps, jumps and ordered sync instruction.
 - `Synchronization/` - reusable ordered gates for stateful external services such as trackers.
 - `Memory/` and `Resources/` - global per-source memory and named shared resources.
-- `Coordinates/` - transform graph for reversible coordinate mapping without fixed `scale/pad` metadata.
+- `Coordinates/` - small back-transform contracts stored as normal named VM registers.
 
 ## Current Constraints
 

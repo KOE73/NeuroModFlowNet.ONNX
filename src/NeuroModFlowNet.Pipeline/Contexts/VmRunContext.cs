@@ -24,7 +24,6 @@ public sealed class VmRunContext : IDisposable, IAsyncDisposable
         GlobalMemory = globalMemory ?? throw new ArgumentNullException(nameof(globalMemory));
         SyncGates = syncGates ?? throw new ArgumentNullException(nameof(syncGates));
         DebugGate = debugGate;
-        Coordinates = new CoordinateTransformGraph();
         Trace = new VmRunTrace();
     }
 
@@ -35,8 +34,6 @@ public sealed class VmRunContext : IDisposable, IAsyncDisposable
     public VmSyncGateRegistry SyncGates { get; }
 
     public VmResourceRegistry Resources => GlobalMemory.Resources;
-
-    public CoordinateTransformGraph Coordinates { get; }
 
     public VmRunTrace Trace { get; }
 

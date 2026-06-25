@@ -1,4 +1,5 @@
 ﻿using Microsoft.ML.OnnxRuntime.Tensors;
+using NeuroModFlowNet.ONNX;
 using NeuroModFlowNet.ONNX.Graph.Builders;
 using NeuroModFlowNet.Pipeline;
 
@@ -18,8 +19,9 @@ public abstract class Op_Onnx_BgrU8Hwc_To_RgbNchw_Div255Base : Op_Onnx_TensorTra
         OpDescriptor descriptor,
         string inputKey,
         string outputKey,
-        bool isFinal)
-        : base(descriptor, inputKey, outputKey, isFinal)
+        bool isFinal,
+        InferenceBackend? executionBackend = null)
+        : base(descriptor, inputKey, outputKey, isFinal, executionBackend)
     {
     }
 

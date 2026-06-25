@@ -14,11 +14,12 @@ namespace NeuroModFlowNet.Pipeline.ONNX;
 /// following model. The base owns the repetitive ONNX Runtime mechanics so derived commands describe only the operation
 /// contract: input validation, graph construction, output shape and output element type.
 /// </remarks>
-public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable
+public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExecutionDevice
 {
     readonly string inputKey;
     readonly string outputKey;
     readonly bool isFinal;
+    readonly InferenceBackend? executionBackend;
     long[]? initializedInputShape;
     TensorElementType? initializedInputElementType;
     OnnxExecutionContext? onnxContext;
@@ -29,7 +30,8 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable
         OpDescriptor descriptor,
         string inputKey,
         string outputKey,
-        bool isFinal)
+        bool isFinal,
+        InferenceBackend? executionBackend = null)
         : base(descriptor)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(inputKey);
@@ -38,7 +40,14 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable
         this.inputKey = inputKey;
         this.outputKey = outputKey;
         this.isFinal = isFinal;
+        this.executionBackend = executionBackend;
     }
+
+    bool IHasExecutionDevice.IsGpuExecution =>
+        onnxContext?.Model.InferenceBackend is { } backend && backend != InferenceBackend.Cpu;
+
+    string IHasExecutionDevice.ExecutionDeviceName =>
+        onnxContext?.Model.InferenceBackend.ToString() ?? "Uninitialized";
 
     protected abstract string GraphInputName { get; }
 
@@ -73,6 +82,7 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable
         RunWithFreshBinding(inputOrtValue, outputOrtValue);
 
         context.Set(outputKey, outputOrtValue, disposeWithContext: true);
+        WriteAdditionalOutputs(context, inputShape, outputShape);
 
         return ValueTask.FromResult(OpResult.Continue);
     }
@@ -84,6 +94,10 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable
     protected abstract long[] CreateOutputShape(long[] inputShape, TensorElementType inputElementType);
 
     protected virtual TensorElementType GetOutputElementType(TensorElementType inputElementType) => inputElementType;
+
+    protected virtual void WriteAdditionalOutputs(VmRunContext context, long[] inputShape, long[] outputShape)
+    {
+    }
 
     protected static string? ValidateNhwcImageShape(long[] inputShape, int expectedChannels)
     {
@@ -113,14 +127,9 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable
 
         byte[] modelBytes = BuildModel(inputShape, inputElementType);
 
-        try
-        {
-            onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cuda, displayName: DisplayName), ownsModel: true);
-        }
-        catch
-        {
-            onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cpu, displayName: DisplayName), ownsModel: true);
-        }
+        onnxContext = executionBackend.HasValue
+            ? new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend.Value, ConfigureRuntimeOperatorExecutionProvider, DisplayName), ownsModel: true)
+            : CreateContextWithLegacyFallback(modelBytes);
 
         initializedInputShape = [.. inputShape];
         initializedInputElementType = inputElementType;
@@ -134,6 +143,24 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable
                 OrtMemType.Default);
             cudaAllocator = new OrtAllocator(onnxContext.Model.Session, cudaMemoryInfo);
         }
+    }
+
+    OnnxExecutionContext CreateContextWithLegacyFallback(byte[] modelBytes)
+    {
+        try
+        {
+            return new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cuda, displayName: DisplayName), ownsModel: true);
+        }
+        catch
+        {
+            return new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cpu, displayName: DisplayName), ownsModel: true);
+        }
+    }
+
+    static void ConfigureRuntimeOperatorExecutionProvider(ExecutionProviderConfig config)
+    {
+        if(config is TrtConfig trtConfig)
+            trtConfig.EnableEngineCache = false;
     }
 
     OrtValue CreateOutputOrtTensor(TensorElementType outputElementType, long[] outputShape)

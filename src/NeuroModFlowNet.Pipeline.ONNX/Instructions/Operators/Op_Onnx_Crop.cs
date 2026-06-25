@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using NeuroModFlowNet.ONNX;
 using NeuroModFlowNet.ONNX.Graph.Builders;
 using NeuroModFlowNet.Pipeline;
 using CvRect = OpenCvSharp.Rect;
@@ -16,22 +17,37 @@ namespace NeuroModFlowNet.Pipeline.ONNX;
 public sealed class Op_Onnx_Crop : Op_Onnx_TensorTransformBase
 {
     readonly CvRect cropRect;
+    readonly string? outputTransformKey;
 
-    public Op_Onnx_Crop(string inputKey, string outputKey, CvRect cropRect, bool isFinal = false)
+    public Op_Onnx_Crop(
+        string inputKey,
+        string outputKey,
+        CvRect cropRect,
+        bool isFinal = false,
+        InferenceBackend? executionBackend = null)
+        : this(inputKey, outputKey, cropRect, outputTransformKey: null, isFinal, executionBackend)
+    {
+    }
+
+    public Op_Onnx_Crop(
+        string inputKey,
+        string outputKey,
+        CvRect cropRect,
+        string? outputTransformKey,
+        bool isFinal = false,
+        InferenceBackend? executionBackend = null)
         : base(
-            OpDescriptor.Create(
-                "Op_Onnx_Crop",
-                "op.onnx.crop",
-                reads: [VarRequirement.Read<OrtValue>(inputKey)],
-                writes: [VarRequirement.Write<OrtValue>(outputKey)]),
+            CreateDescriptor(inputKey, outputKey, outputTransformKey),
             inputKey,
             outputKey,
-            isFinal)
+            isFinal,
+            executionBackend)
     {
         if(cropRect.Width <= 0 || cropRect.Height <= 0)
             throw new ArgumentOutOfRangeException(nameof(cropRect), "Crop width and height must be positive.");
 
         this.cropRect = cropRect;
+        this.outputTransformKey = outputTransformKey;
     }
 
     protected override string GraphInputName => CropBuilder.InputName;
@@ -75,4 +91,25 @@ public sealed class Op_Onnx_Crop : Op_Onnx_TensorTransformBase
 
     protected override long[] CreateOutputShape(long[] inputShape, TensorElementType inputElementType) =>
         [1, cropRect.Height, cropRect.Width, inputShape[3]];
+
+    protected override void WriteAdditionalOutputs(VmRunContext context, long[] inputShape, long[] outputShape)
+    {
+        if(outputTransformKey is null)
+            return;
+
+        context.Set(outputTransformKey, new CropCoordinateBackTransform(cropRect.X, cropRect.Y));
+    }
+
+    static OpDescriptor CreateDescriptor(string inputKey, string outputKey, string? outputTransformKey)
+    {
+        VarRequirement[] writes = outputTransformKey is null
+            ? [VarRequirement.Write<OrtValue>(outputKey)]
+            : [VarRequirement.Write<OrtValue>(outputKey), VarRequirement.Write<ICoordinateBackTransform>(outputTransformKey)];
+
+        return OpDescriptor.Create(
+            "Op_Onnx_Crop",
+            "op.onnx.crop",
+            reads: [VarRequirement.Read<OrtValue>(inputKey)],
+            writes: writes);
+    }
 }

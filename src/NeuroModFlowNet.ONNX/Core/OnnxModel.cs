@@ -108,6 +108,7 @@ public sealed class OnnxModel : IDisposable, IModelMetadataProvider
         {
             case InferenceBackend.Rocm:
                 sessionOptions = SessionOptions.MakeSessionOptionWithRocmProvider(0);
+                DisableCpuEpFallback(sessionOptions);
                 break;
             case InferenceBackend.Cuda:
                 {
@@ -116,6 +117,7 @@ public sealed class OnnxModel : IDisposable, IModelMetadataProvider
                     configure?.Invoke(cudaConfig);
                     cudaOptions.UpdateOptions(cudaConfig);
                     sessionOptions = SessionOptions.MakeSessionOptionWithCudaProvider(cudaOptions);
+                    ApplyExecutionProviderSessionOptions(sessionOptions, cudaConfig);
                     break;
                 }
             case InferenceBackend.TensorRt:
@@ -134,16 +136,29 @@ public sealed class OnnxModel : IDisposable, IModelMetadataProvider
                     }
                     trtOptions.UpdateOptions(trtConfig);
                     sessionOptions = SessionOptions.MakeSessionOptionWithTensorrtProvider(trtOptions);
+                    ApplyExecutionProviderSessionOptions(sessionOptions, trtConfig);
                     break;
                 }
             case InferenceBackend.DML:
                 sessionOptions = new SessionOptions();
                 sessionOptions.AppendExecutionProvider_DML(0);
+                DisableCpuEpFallback(sessionOptions);
                 break;
             default:
                 sessionOptions = new SessionOptions();
                 break;
         }
         return sessionOptions;
+    }
+
+    static void ApplyExecutionProviderSessionOptions(SessionOptions sessionOptions, ExecutionProviderConfig config)
+    {
+        if(config.DisableCpuEpFallback)
+            DisableCpuEpFallback(sessionOptions);
+    }
+
+    static void DisableCpuEpFallback(SessionOptions sessionOptions)
+    {
+        sessionOptions.AddSessionConfigEntry("session.disable_cpu_ep_fallback", "1");
     }
 }

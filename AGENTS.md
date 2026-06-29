@@ -52,13 +52,22 @@ CreateRunner - static method for automatic selection of converter and extractor 
 ## VM / Pipeline решения
 - **Ops работают с готовыми значениями**: `Op_*` инструкции не должны знать внутренности конкретной нейросети, batching service, ONNX output names или decode layout. Они читают и пишут именованные VM-регистры и преобразуют уже готовые типизированные значения.
 - **Вызов внешнего сервиса отделен от Ops**: inference, MPEG, OCR recognition, batching, native output access и decode должны жить в service/endpoint слое. VM-инструкция вызова сервиса должна быть тонкой: взять входные регистры, вызвать service, положить typed results в выходные регистры.
+- **OrtValue inference endpoint для GPU pipeline**: новый сервисный путь не должен впихиваться в старый `RunnerResource<Mat,...>`. VM передает в сервис один уже подготовленный `OrtValue` из регистра; сервис сам собирает batch из заявок разных VM через ONNX-операции, запускает модель, декодирует native outputs и возвращает typed результат только для этой заявки.
+- **Результат сервиса как массив**: даже если конкретная сеть обычно возвращает один объект, VM-регистр сервисного результата должен быть рассчитан на `T[]`/массив typed значений. Это убирает частные случаи для детекторов, OCR, classification/top-k и будущих моделей с несколькими результатами.
+- **Batch assembly без CPU round-trip**: если входные `OrtValue` уже находятся на GPU, объединение в batch должно выполняться ONNX Runtime graph-ом на выбранном backend/provider и отдавать tensor в provider memory для следующего model run. CPU/device fallback или скрытое копирование вместо выбранного backend недопустимы.
+- **Fixed batch padding в сервисе**: если модель собрана на фиксированный batch больше числа реальных VM-заявок, padding-слоты не должны быть видимы VM. Для hot path допустимо привязать padding-слот к уже существующему реальному input `OrtValue`, потому что создание отдельного black/zero tensor является дополнительной подготовительной операцией; decoder обязан возвращать только результаты реальных заявок.
 - **Frontend один, kernel/backend выбирается строго на init**: для ONNX-операций допустимы разные реализации под opset/backend/provider, но выбор делается при создании/инициализации операции и фиксируется. Во время `ExecuteAsync` нельзя пробовать другие реализации или provider-ы.
 - **Обратные координаты через именованные регистры**: графические операции над `OrtValue` пишут результат `OrtValue` и, если запрошено, отдельный регистр с данными обратного преобразования (`ICoordinateBackTransform`). В регистр кладутся данные/тип transform, а не delegate/замыкание.
 - **Одна команда применения обратного преобразования**: `Op_Map_Coordinates` применяет один named back-transform к одному payload-регистру и пишет новый payload-регистр. Разный код crop/resize/rotate/perspective живет в типах `ICoordinateBackTransform`; знание структуры `YoloBox`, `YoloObb`, `OcrQuadRegion`, `List<T>`, массивов и batch-result живет в payload mapper-ах.
 - **ONNX-типы не загрязнять VM-интерфейсами**: типы из `NeuroModFlowNet.ONNX` используются как payload напрямую. VM/coordinate mapping знания размещаются в `NeuroModFlowNet.Pipeline` и `NeuroModFlowNet.Pipeline.ONNX`, а не добавляются в модельные структуры без отдельной необходимости.
 - **Политика формы должна быть явной**: если transform может изменить геометрический класс фигуры, нельзя молча врать исходным типом. Для будущих shape policy использовать явные режимы вроде `PreserveShape`, `BoundingBox`, `BoundingOBB`, `Quad`, `RejectIfShapeChanges`.
 - **Runtime-generated ONNX operators**: операции вроде Crop/Resize строят маленькие ONNX-графы под конкретный контракт. Для TensorRT у таких runtime operator graphs нельзя использовать общий engine cache, если cache identity не включает точную форму/семантику графа.
-- **Resize contract**: внешний tensor-контракт Resize остается NHWC `UInt8`, но backend-friendly graph может внутри выполнять `Cast`, `Transpose NHWC->NCHW`, `Resize`, `Transpose NCHW->NHWC`, `Cast`. Это деталь реализации, а не изменение VM-регистрового контракта.
+- **Geometry tensor ops именуются по типу и layout**: для операций, которые двигают элементы/плоскости и не интерпретируют цвет (`Crop`, `Resize`, `PadResize`, `Rotate90`, `Perspective`, `Undistort`), публичное имя должно включать element type и layout, например `Op_Onnx_Crop_FP16_NCHW`, `Op_Onnx_PadResize_U8_NHWC`. `RGB/BGR` в такие имена не включать, потому что geometry не меняет и не читает цветовую семантику.
+- **Color/normalize macro-ops именуются полным форматом**: если операция меняет цветовой порядок, layout, element type или диапазон значений, это должно быть видно в имени, например `Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255`. Такие комплексные hot-path операции допустимы рядом с RISC-инструкциями, потому что уменьшают количество ORT calls, промежуточных tensor-ов и синхронизаций.
+- **Основной внутренний image tensor target**: OpenCV `BGR U8 HWC/NHWC` считать bridge-форматом на границе с `Mat`. Для model pipeline в первую очередь развивать `NCHW` варианты (`FP16`, `FP32`) и только затем дополнительные layout/type варианты по реальной необходимости.
+- **BF16 отложен**: `BF16` достаточно узкий для текущего этапа и пока не реализуется в geometry/preprocess ops. Если позже появится реальная модель/backend-необходимость, добавлять отдельные `BF16` инструкции и тесты только после доказанной поддержки ONNX Runtime Execution Provider, без fallback.
+- **Backend kernel cache**: runtime-generated ONNX operator kernels готовить lazy для операций реально используемой VM-программы, но кэшировать глобально между программами по полному ключу: operation kind, input/output shape, element type, layout, interpolation/mode/pad values, backend, opset/backend variant и provider options. Не готовить все комбинации заранее.
+- **Почему так**: VM рассматривается как assembler. Формат в имени geometry-команд нужен, чтобы в trace сразу видеть смешение `FP16`/`FP32` и `NCHW`/`NHWC`. `RGB/BGR` исключен из geometry-имен, потому что `Crop/Resize/PadResize/Rotate/Perspective` работают с осями и элементами, а не с цветом. Fused macro-ops оставлены для типичных hot path, где один ONNX graph быстрее цепочки мелких VM-инструкций. Lazy cache выбран потому, что полная матрица `operation * type * layout * backend * shape` взрывается комбинаторно, но одинаковые kernels между программами должны переиспользоваться.
 - **Lifetime GPU intermediates**: если инструкция выделяет intermediate `OrtValue` через provider allocator/session, VM run context с этими значениями должен освобождаться раньше долгоживущей инструкции и ее allocator/session. Тесты обязаны повторять этот порядок владения.
 
 ## Код-стайл и Оформление
@@ -85,6 +94,7 @@ CreateRunner - static method for automatic selection of converter and extractor 
 Типы для классов и структур связанных с инференсом
   - FP32 - большими буквами. для float
   - FP16 - большими буквами. для System.Half
+  - BF16 - большими буквами. для BFloat16/bfloat16 tensor element type
 
 Для классов и структур связанных с инференсом на вход. 
   - Single - для одного элемента
@@ -123,6 +133,7 @@ CreateRunner - static method for automatic selection of converter and extractor 
 - После изменений проверяй всё решение целиком.
 - Если изменено ядро, проверь `samples`, `labs` и `tests`.
 - При изменениях в hot path отдельно обращай внимание на аллокации и layout данных.
+- В visual/operation tests генерируемые изображения должны быть достаточно крупными для ручной проверки: ориентир 500-1000 px по основной стороне. Не добавлять новые "микро-картинки" 2x3, 8x6 и т.п. как единственный visual artifact; маленькие tensors допустимы только для чисто численных unit-тестов без визуального вывода.
 
 # Модели для программы
 Код надо согласовывать между собой

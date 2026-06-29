@@ -6,8 +6,13 @@ namespace NeuroModFlowNet.Pipeline.ONNX;
 
 public readonly struct YoloObbCoordinatePayloadMapper : ICoordinatePayloadMapper<YoloObb>
 {
-    public YoloObb Map(YoloObb payload, ICoordinateBackTransform transform)
+    public YoloObb Map(
+        YoloObb payload,
+        ICoordinateBackTransform transform,
+        CoordinateMappingShapePolicy shapePolicy)
     {
+        EnsureSupportedShapePolicy(shapePolicy);
+
         Span<Point2f> sourcePoints = stackalloc Point2f[4];
         Span<Point2f> mappedPoints = stackalloc Point2f[4];
 
@@ -34,6 +39,14 @@ public readonly struct YoloObbCoordinatePayloadMapper : ICoordinatePayloadMapper
         payload.H = height;
         payload.Angle = angle;
         return payload;
+    }
+
+    static void EnsureSupportedShapePolicy(CoordinateMappingShapePolicy shapePolicy)
+    {
+        if(shapePolicy is CoordinateMappingShapePolicy.PreserveShape or CoordinateMappingShapePolicy.BoundingOBB)
+            return;
+
+        throw new NotSupportedException($"Shape policy '{shapePolicy}' is not supported for {nameof(YoloObb)} payloads yet.");
     }
 
     static Point2f GetCenter(ReadOnlySpan<Point2f> points) =>

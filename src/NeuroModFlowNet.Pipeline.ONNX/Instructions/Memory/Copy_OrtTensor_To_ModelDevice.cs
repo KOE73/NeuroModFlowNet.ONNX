@@ -17,11 +17,12 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
 {
     readonly string inputKey;
     readonly string outputKey;
+    readonly InferenceBackend executionBackend;
     OnnxExecutionContext? onnxContext;
     OrtMemoryInfo? cudaMemoryInfo;
     OrtAllocator? cudaAllocator;
 
-    public Copy_OrtTensor_To_ModelDevice(string inputKey, string outputKey)
+    public Copy_OrtTensor_To_ModelDevice(string inputKey, string outputKey, InferenceBackend executionBackend = InferenceBackend.Cuda)
         : base(OpDescriptor.Create(
             "Copy_OrtTensor_To_ModelDevice",
             "copy.ortTensor.toModelDevice",
@@ -33,6 +34,7 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
 
         this.inputKey = inputKey;
         this.outputKey = outputKey;
+        this.executionBackend = executionBackend;
     }
 
     public override ValueTask<OpResult> ExecuteAsync(
@@ -66,16 +68,7 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
     {
         byte[] modelBytes = IdentityBuilder.Build(ToTensorProtoDataType(elementType), inputShape);
 
-        try
-        {
-            onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cuda, displayName: "dynamic-identity.onnx"), ownsModel: true);
-        }
-        catch
-        {
-            // The command remains usable on machines without CUDA. A CPU fallback still gives an explicit copy command
-            // in the VM program, only without device placement.
-            onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cpu, displayName: "dynamic-identity.onnx"), ownsModel: true);
-        }
+        onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend, displayName: "dynamic-identity.onnx"), ownsModel: true);
 
         if(onnxContext.Model.InferenceBackend == InferenceBackend.Cuda)
         {

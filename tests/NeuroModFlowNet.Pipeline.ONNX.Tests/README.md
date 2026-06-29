@@ -97,6 +97,21 @@ Tests can save input and output images as PNG files for manual inspection after 
 
 `Op_Onnx_Crop` already uses this path: when saving is enabled it writes `source` and `actual` PNG files.
 
+## Real-Image Visual Test Matrix
+
+In addition to synthetic deterministic cases, some visual tests use images from `images/`. The base manual-inspection
+image `for_tests.png` should stay attached to every graphical operation except `Perspective`: `Perspective` has its own
+images because meaningful quad points and a visible perspective plane are part of the case.
+
+| Ops | Images | Configuration location |
+| --- | --- | --- |
+| `Op_Onnx_Crop_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.CropU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Resize_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.ResizeU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_PadResize_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.PadResizeU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Rotate90_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.Rotate90U8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Undistort_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.UndistortU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Perspective_U8_NHWC`, `Op_Onnx_Perspective_FP32_NCHW`, `Op_Onnx_Perspective_FP16_NCHW` | `images/for_tests_perspective.png`, `images/for_tests_perspective_real_0.png` | `ConveyorDrawingPerspective`, `ConveyorReal0Perspective` in `Op_Onnx_RealImageVisualTests` |
+
 General artifact structure:
 
 ```text

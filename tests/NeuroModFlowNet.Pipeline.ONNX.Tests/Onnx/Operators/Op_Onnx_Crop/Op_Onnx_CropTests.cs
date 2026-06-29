@@ -22,7 +22,7 @@ public sealed class Op_Onnx_CropTests
         using var ownedTestCase = testCase;
         using OrtValue input = OrtTestTensorFactory.CreateBgrU8NhwcTensor(testCase.Source);
         await using var context = VmRunContextFactory.Create();
-        using var instruction = new global::NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Crop(
+        using var instruction = new global::NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Crop_U8_NHWC(
             "input",
             "output",
             testCase.CropRect,

@@ -33,7 +33,7 @@ internal sealed class PipelineOnnxTestEnvironment
 
     public string CreateOperationArtifactsDirectory(string domain, string operationName)
     {
-        string[] operationPathParts = operationName
+        string[] operationPathParts = CreateOperationPathParts(domain, operationName)
             .Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries)
             .Select(MakePathSafe)
             .ToArray();
@@ -63,6 +63,38 @@ internal sealed class PipelineOnnxTestEnvironment
         string fileName =
             $"{MakePathSafe(operationName)}-{MakePathSafe(backendName)}-{MakePathSafe(caseName)}-{MakePathSafe(artifactKind)}{safeExtension}";
         return Path.Combine(artifactsDirectory, fileName);
+    }
+
+    static string CreateOperationPathParts(string domain, string operationName)
+    {
+        if(!string.Equals(domain, "Onnx", StringComparison.OrdinalIgnoreCase))
+            return operationName;
+
+        string typeFolder = InferOnnxTypeFolder(operationName);
+        return Path.Combine(typeFolder, operationName);
+    }
+
+    static string InferOnnxTypeFolder(string operationName)
+    {
+        if(operationName.Contains("FP16_NCHW", StringComparison.OrdinalIgnoreCase) ||
+           operationName.Contains("FP16Nchw", StringComparison.OrdinalIgnoreCase))
+        {
+            return "FP16_NCHW";
+        }
+
+        if(operationName.Contains("FP32_NCHW", StringComparison.OrdinalIgnoreCase) ||
+           operationName.Contains("FP32Nchw", StringComparison.OrdinalIgnoreCase))
+        {
+            return "FP32_NCHW";
+        }
+
+        if(operationName.Contains("U8_NHWC", StringComparison.OrdinalIgnoreCase))
+            return "U8_NHWC";
+
+        if(operationName.Contains("U8Hwc", StringComparison.OrdinalIgnoreCase))
+            return "U8_HWC";
+
+        return "UnknownType";
     }
 
     static PipelineOnnxTestEnvironment Create()

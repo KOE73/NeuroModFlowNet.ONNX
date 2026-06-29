@@ -60,7 +60,7 @@ internal static class OpOnnxResizePattern
             testCase.Source,
             environment.CreateOperationArtifactPath(
                 "Onnx",
-                "Op_Onnx_Resize",
+                "Op_Onnx_Resize_U8_NHWC",
                 executionBackend.ToString(),
                 testCase.Name,
                 "source"));
@@ -70,7 +70,7 @@ internal static class OpOnnxResizePattern
             actual,
             environment.CreateOperationArtifactPath(
                 "Onnx",
-                "Op_Onnx_Resize",
+                "Op_Onnx_Resize_U8_NHWC",
                 executionBackend.ToString(),
                 testCase.Name,
                 "actual"));

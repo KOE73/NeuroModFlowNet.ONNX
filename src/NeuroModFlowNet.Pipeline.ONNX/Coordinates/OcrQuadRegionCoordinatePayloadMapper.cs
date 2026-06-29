@@ -7,14 +7,27 @@ namespace NeuroModFlowNet.Pipeline.ONNX;
 
 public readonly struct OcrQuadRegionCoordinatePayloadMapper : ICoordinatePayloadMapper<OcrQuadRegion>
 {
-    public OcrQuadRegion Map(OcrQuadRegion payload, ICoordinateBackTransform transform)
+    public OcrQuadRegion Map(
+        OcrQuadRegion payload,
+        ICoordinateBackTransform transform,
+        CoordinateMappingShapePolicy shapePolicy)
     {
+        EnsureSupportedShapePolicy(shapePolicy);
+
         Span<Point2f> sourcePoints = stackalloc Point2f[4];
         Span<Point2f> mappedPoints = stackalloc Point2f[4];
 
         payload.CopyTo(sourcePoints);
         MapPoints(sourcePoints, mappedPoints, transform);
         return OcrQuadRegion.FromPoints(mappedPoints);
+    }
+
+    static void EnsureSupportedShapePolicy(CoordinateMappingShapePolicy shapePolicy)
+    {
+        if(shapePolicy is CoordinateMappingShapePolicy.PreserveShape or CoordinateMappingShapePolicy.Quad)
+            return;
+
+        throw new NotSupportedException($"Shape policy '{shapePolicy}' is not supported for {nameof(OcrQuadRegion)} payloads yet.");
     }
 
     internal static void MapPoints(

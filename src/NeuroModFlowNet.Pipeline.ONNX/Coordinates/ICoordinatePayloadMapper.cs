@@ -7,5 +7,8 @@ namespace NeuroModFlowNet.Pipeline.ONNX;
 /// </summary>
 public interface ICoordinatePayloadMapper<TPayload>
 {
-    TPayload Map(TPayload payload, ICoordinateBackTransform transform);
+    TPayload Map(
+        TPayload payload,
+        ICoordinateBackTransform transform,
+        CoordinateMappingShapePolicy shapePolicy);
 }

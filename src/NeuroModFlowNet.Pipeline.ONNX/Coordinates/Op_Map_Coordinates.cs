@@ -10,10 +10,20 @@ public sealed class Op_Map_Coordinates : OpBase
     readonly string inputKey;
     readonly string transformKey;
     readonly string outputKey;
+    readonly CoordinateMappingShapePolicy shapePolicy;
     Type? executorInputType;
     IMapCoordinatesExecutor? executor;
 
     public Op_Map_Coordinates(string inputKey, string transformKey, string outputKey)
+        : this(inputKey, transformKey, outputKey, CoordinateMappingShapePolicy.PreserveShape)
+    {
+    }
+
+    public Op_Map_Coordinates(
+        string inputKey,
+        string transformKey,
+        string outputKey,
+        CoordinateMappingShapePolicy shapePolicy)
         : base(OpDescriptor.Create(
             "Op_Map_Coordinates",
             "op.map.coordinates",
@@ -27,6 +37,7 @@ public sealed class Op_Map_Coordinates : OpBase
         this.inputKey = inputKey;
         this.transformKey = transformKey;
         this.outputKey = outputKey;
+        this.shapePolicy = shapePolicy;
     }
 
     public override ValueTask<OpResult> ExecuteAsync(VmRunContext context, CancellationToken cancellationToken)
@@ -49,9 +60,21 @@ public sealed class Op_Map_Coordinates : OpBase
             executorInputType = inputType;
         }
 
-        object output = executor.Map(input, transform);
+        object output;
+        try
+        {
+            output = executor.Map(input, transform, shapePolicy);
+        }
+        catch(NotSupportedException exception)
+        {
+            return ValueTask.FromResult(OpResult.Fail(exception.Message, exception));
+        }
+        catch(InvalidOperationException exception)
+        {
+            return ValueTask.FromResult(OpResult.Fail(exception.Message, exception));
+        }
+
         context.Set(outputKey, output);
         return ValueTask.FromResult(OpResult.Continue);
     }
 }
-

@@ -141,7 +141,7 @@ internal static class OpOnnxCropPattern
             testCase.Source,
             environment.CreateOperationArtifactPath(
                 "Onnx",
-                "Op_Onnx_Crop",
+                "Op_Onnx_Crop_U8_NHWC",
                 executionBackend.ToString(),
                 testCase.Name,
                 "source"));
@@ -151,7 +151,7 @@ internal static class OpOnnxCropPattern
             actual,
             environment.CreateOperationArtifactPath(
                 "Onnx",
-                "Op_Onnx_Crop",
+                "Op_Onnx_Crop_U8_NHWC",
                 executionBackend.ToString(),
                 testCase.Name,
                 "actual"));

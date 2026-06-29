@@ -19,7 +19,7 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
     readonly string inputKey;
     readonly string outputKey;
     readonly bool isFinal;
-    readonly InferenceBackend? executionBackend;
+    readonly InferenceBackend executionBackend;
     long[]? initializedInputShape;
     TensorElementType? initializedInputElementType;
     OnnxExecutionContext? onnxContext;
@@ -40,7 +40,7 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
         this.inputKey = inputKey;
         this.outputKey = outputKey;
         this.isFinal = isFinal;
-        this.executionBackend = executionBackend;
+        this.executionBackend = executionBackend ?? InferenceBackend.Cuda;
     }
 
     bool IHasExecutionDevice.IsGpuExecution =>
@@ -127,9 +127,7 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
 
         byte[] modelBytes = BuildModel(inputShape, inputElementType);
 
-        onnxContext = executionBackend.HasValue
-            ? new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend.Value, ConfigureRuntimeOperatorExecutionProvider, DisplayName), ownsModel: true)
-            : CreateContextWithLegacyFallback(modelBytes);
+        onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend, ConfigureRuntimeOperatorExecutionProvider, DisplayName), ownsModel: true);
 
         initializedInputShape = [.. inputShape];
         initializedInputElementType = inputElementType;
@@ -145,18 +143,6 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
         }
     }
 
-    OnnxExecutionContext CreateContextWithLegacyFallback(byte[] modelBytes)
-    {
-        try
-        {
-            return new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cuda, displayName: DisplayName), ownsModel: true);
-        }
-        catch
-        {
-            return new OnnxExecutionContext(new OnnxModel(modelBytes, InferenceBackend.Cpu, displayName: DisplayName), ownsModel: true);
-        }
-    }
-
     static void ConfigureRuntimeOperatorExecutionProvider(ExecutionProviderConfig config)
     {
         if(config is TrtConfig trtConfig)
@@ -168,7 +154,7 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
         if(!isFinal && onnxContext!.Model.InferenceBackend == InferenceBackend.Cuda)
             return OrtValue.CreateAllocatedTensorValue(cudaAllocator!, outputElementType, outputShape);
 
-        // Final operator outputs and CPU fallback outputs are host-readable. Intermediate CUDA outputs stay in provider
+        // Final operator outputs and explicit CPU outputs are host-readable. Intermediate CUDA outputs stay in provider
         // memory so the following ONNX operator/model can consume them without an implicit upload.
         return OrtValue.CreateAllocatedTensorValue(OrtAllocator.DefaultInstance, outputElementType, outputShape);
     }

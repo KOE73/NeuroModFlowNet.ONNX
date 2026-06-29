@@ -22,7 +22,7 @@ public sealed class Op_Onnx_ResizeTests
         using var ownedTestCase = testCase;
         using OrtValue input = OrtTestTensorFactory.CreateBgrU8NhwcTensor(testCase.Source);
         await using var context = VmRunContextFactory.Create();
-        using var instruction = new global::NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize(
+        using var instruction = new global::NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize_U8_NHWC(
             "input",
             "output",
             testCase.TargetSize,
@@ -51,7 +51,7 @@ public sealed class Op_Onnx_ResizeTests
     [Fact]
     public void Descriptor_DeclaresTransformOutputWhenRequested()
     {
-        using var instruction = new global::NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize(
+        using var instruction = new global::NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize_U8_NHWC(
             "input",
             "output",
             new Size(8, 6),

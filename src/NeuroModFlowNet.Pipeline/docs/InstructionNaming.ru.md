@@ -20,12 +20,12 @@ zero-copy обертку `OpenCvSharp.Mat` в `OrtValue` поверх неупр
 Пример:
 
 ```csharp
-public sealed class Op_Onnx_Resize : PipelineInstructionBase
+public sealed class Op_Onnx_Resize_U8_NHWC : PipelineInstructionBase
 {
-    public Op_Onnx_Resize(string inputKey, string outputKey)
+    public Op_Onnx_Resize_U8_NHWC(string inputKey, string outputKey)
         : base(PipelineInstructionDescriptor.Create(
-            "Op_Onnx_Resize",
-            "op.onnx.resize",
+            "Op_Onnx_Resize_U8_NHWC",
+            "op.onnx.resize.u8.nhwc",
             ...))
     {
     }
@@ -75,14 +75,25 @@ Model_PaddleRec_ReloadableBatch;
 ### Op_
 
 `Op_` - вычислительные операции над уже внутренними данными pipeline. После `Op_` указывается движок/механизм выполнения:
-`Onnx`, `Cv`, `Cuda`, `Halide`, `Simd` и т.п. Тип входного объекта и placement в имени `Op_` не указываются: это видно
-из descriptor requirements и контролируется глобальной диагностикой/валидацией pipeline.
+`Onnx`, `Cv`, `Cuda`, `Halide`, `Simd` и т.п.
+
+Для tensor geometry ops element type и layout являются частью имени. Это assembler-style правило: в pipeline program и
+trace должно быть сразу видно, что геометрия выполняется над `FP16_NCHW`, `FP32_NCHW` или `U8_NHWC`.
+Color order (`RGB`/`BGR`) в имена geometry ops не включается, потому что такие операции двигают элементы/плоскости и не
+интерпретируют цвет.
+
+Причина решения: в VM-программе формат должен читаться без раскрытия параметров объекта. Если в цепочке почти все
+команды `FP16_NCHW`, случайная команда `FP32_NCHW` должна бросаться в глаза в trace. При этом `RGB/BGR` для geometry
+создал бы ложные разные классы с одинаковой реализацией: crop/resize/rotate/perspective не знают цветовой порядок и не
+должны умножать количество инструкций только из-за источника изображения.
 
 Примеры:
 
 ```text
-Op_Onnx_Resize;
-Op_Onnx_Crop;
+Op_Onnx_Resize_U8_NHWC;
+Op_Onnx_Crop_FP16_NCHW;
+Op_Onnx_Crop_FP16_NCHW;
+Op_Onnx_PadResize_FP32_NCHW;
 Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255;
 Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255;
 Op_Cv_Resize;
@@ -162,6 +173,8 @@ memory, для CPU backend - CPU memory. В имени не использова
 является частью контракта и должен быть виден в имени команды.
 
 `U8`, `FP32`, `FP16` - тип элементов tensor. `U8` означает byte/uint8 image data, `FP32` - float, `FP16` - half.
+`BF16` пока отложен: добавлять его в имена, контракты и тестовую матрицу только при реальной необходимости модели или
+backend и только после доказанной поддержки конкретным ONNX Runtime Execution Provider.
 
 `Hwc`, `Nchw` - layout image tensor. `Hwc` означает height/width/channels, `Nchw` - batch/channels/height/width.
 Для одиночного кадра batch все равно остается частью tensor shape, но в имени layout пишется без отдельного `N`, если
@@ -225,11 +238,31 @@ Op_<Engine>_<Operator>;
 Примеры:
 
 ```text
-Op_Onnx_Resize;
-Op_Onnx_Crop;
+Op_Onnx_Resize_U8_NHWC;
+Op_Onnx_Crop_FP16_NCHW;
 Op_Cv_Resize;
 Op_Simd_Normalize;
 ```
+
+Для tensor geometry ops, которые не меняют цветовой порядок и value range, используется расширенная форма:
+
+```text
+Op_<Engine>_<Operator>_<ElementType>_<Layout>;
+```
+
+Примеры:
+
+```text
+Op_Onnx_Crop_FP16_NCHW;
+Op_Onnx_Crop_FP32_NCHW;
+Op_Onnx_PadResize_FP16_NCHW;
+Op_Onnx_PadResize_U8_NHWC;
+Op_Onnx_Rotate90_FP16_NCHW;
+```
+
+В эти имена не добавлять `Rgb`/`Bgr`, если операция не интерпретирует каналы. `Crop`, `PadResize`, `Rotate90`,
+`Perspective`, `Undistort`, `Transpose`, `Slice`, `Concat` работают с элементами и осями; цветовой порядок важен только
+для convert/normalize/render/debug-save операций.
 
 Для image tensor preprocessing, где сама операция состоит в смене формата, layout, типа и диапазона, используется
 расширенная форма:
@@ -241,6 +274,11 @@ Op_<Engine>_<SourceColor><SourceType><SourceLayout>_To_<TargetColor><TargetType>
 Такие команды не должны превращаться в одну CISC-инструкцию с большим набором параметров. Если меняется публичный
 контракт данных, лучше добавить отдельную элементарную команду, чтобы trace и pipeline program читались как
 последовательность конкретных преобразований.
+
+Причина решения: это не отход от RISC-модели, а hot-path macro-op. Типовая подготовка `BGR U8 HWC -> RGB FP16 NCHW
+Div255` в виде одной ONNX-модели обычно быстрее, чем несколько VM-инструкций: меньше session calls, меньше
+промежуточных tensor-ов, меньше binding/synchronization overhead. Поэтому fused-команды допустимы, но только когда их
+имя полностью раскрывает входной формат, выходной формат и математику диапазона.
 
 Примеры:
 
@@ -254,6 +292,39 @@ Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Sub127p5Div127p5;
 В имени не писать `Tensor`, `OrtTensor`, `ModelDeviceMem` и похожие слова, если речь идет об `Op_`: для операторов
 тип register value и placement проверяются descriptor-ами и общей диагностикой pipeline. В имени остается то, что
 меняет смысл вычисления: engine, color order, element type, layout и range transform.
+
+### Runtime-generated ONNX kernel cache
+
+Runtime-generated ONNX graph builder может иметь короткое имя по операции (`CropBuilder`, `PadResizeBuilder`), но
+prepared kernel/session cache key обязан быть полным. В ключ входят:
+
+```text
+operation kind;
+input/output shape;
+element type;
+layout;
+interpolation/mode/pad values;
+backend;
+opset/backend variant;
+provider options that affect execution.
+```
+
+Кэш создается lazy для операций реально используемой VM-программы и переиспользуется между программами при полном
+совпадении ключа. Заранее готовить все комбинации `operation * type * layout * backend * shape` нельзя.
+
+Причина решения: runtime-generated ONNX graphs зависят не только от operation name, но и от формы, типа, layout,
+backend/provider options и режима операции. Для TensorRT особенно опасно переиспользовать engine/session с неполным
+identity. Одновременно заранее построить все варианты невозможно: комбинации типов, layout, backend, target sizes и
+opsets быстро становятся слишком многочисленными. Поэтому kernel создается при init/compile конкретной программы, но
+попадает в общий cache и может быть переиспользован другой программой с тем же полным ключом.
+
+## Почему BF16 пока отложен
+
+`BF16` не входит в текущую обязательную матрицу, потому что для этих операций типично достаточно `FP16`/`FP32`, а
+поддержка bfloat16 в ONNX Runtime Execution Provider уже и backend-зависима. Поэтому сейчас не плодим `BF16` классы и
+визуальные тесты. Если появится реальная модель/backend-необходимость, добавлять `BF16` как отдельные явные инструкции
+и отдельный validation/test path; если поддержка не доказана, программа должна падать на init/program validation, без
+fallback на `FP32`, `FP16`, CPU или другой provider.
 
 ### Управление VM
 

@@ -20,7 +20,11 @@ public sealed class PipelineOnnxPreparationInstructionTests
             ]);
 
         await using var context = CreateContext(input);
-        using var instruction = new Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255("input", "output", isFinal: true);
+        using var instruction = new Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255(
+            "input",
+            "output",
+            isFinal: true,
+            executionBackend: InferenceBackend.Cpu);
 
         OpResult result = await instruction.ExecuteAsync(context, CancellationToken.None);
 
@@ -55,7 +59,11 @@ public sealed class PipelineOnnxPreparationInstructionTests
             ]);
 
         await using var context = CreateContext(input);
-        using var instruction = new Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255("input", "output", isFinal: true);
+        using var instruction = new Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255(
+            "input",
+            "output",
+            isFinal: true,
+            executionBackend: InferenceBackend.Cpu);
 
         OpResult result = await instruction.ExecuteAsync(context, CancellationToken.None);
 

@@ -98,6 +98,21 @@ set NMFN_ONNX_TEST_CPU=0
 
 `Op_Onnx_Crop` уже использует этот механизм: при включенном сохранении он пишет PNG-файлы `source` и `actual`.
 
+## Матрица real-image visual tests
+
+Кроме синтетических deterministic cases, часть visual tests использует изображения из `images/`. Базовая проверочная
+картинка `for_tests.png` должна оставаться у всех графических операций, кроме `Perspective`: у `Perspective` отдельные
+картинки, потому что там важны осмысленные quad-точки и видимая перспективная плоскость.
+
+| Ops | Images | Где настраивать |
+| --- | --- | --- |
+| `Op_Onnx_Crop_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.CropU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Resize_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.ResizeU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_PadResize_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.PadResizeU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Rotate90_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.Rotate90U8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Undistort_U8_NHWC` | `images/for_tests.png` | `Op_Onnx_RealImageVisualTests.UndistortU8NHWC_SavesRealImageVisualArtifact` |
+| `Op_Onnx_Perspective_U8_NHWC`, `Op_Onnx_Perspective_FP32_NCHW`, `Op_Onnx_Perspective_FP16_NCHW` | `images/for_tests_perspective.png`, `images/for_tests_perspective_real_0.png` | `ConveyorDrawingPerspective`, `ConveyorReal0Perspective` в `Op_Onnx_RealImageVisualTests` |
+
 Общая структура artifacts:
 
 ```text

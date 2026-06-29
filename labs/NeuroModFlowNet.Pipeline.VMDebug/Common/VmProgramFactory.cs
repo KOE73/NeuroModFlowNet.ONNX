@@ -34,14 +34,14 @@ internal static class VmProgramFactory
 
         // Step 2. Run crop as an ONNX operator, not as OpenCV CPU code.
         // isFinal=false keeps the intermediate tensor in model device placement for the next ONNX operator.
-        programBuilder.Step(new Op_Onnx_Crop(
+        programBuilder.Step(new Op_Onnx_Crop_U8_NHWC(
             inputKey: VmLabKeys.ModelDeviceTensor,
             outputKey: VmLabKeys.CroppedTensor,
             cropRect: new CvRect(100, 100, 300, 300),
             isFinal: false));
 
         // Step 3. Resize the cropped 300x300 tensor to 640x640 to match the expected input of the YOLO model.
-        programBuilder.Step(new Op_Onnx_Resize(
+        programBuilder.Step(new Op_Onnx_Resize_U8_NHWC(
             inputKey: VmLabKeys.CroppedTensor,
             outputKey: VmLabKeys.ResizedTensor,
             targetSize: new CvSize(640, 640),

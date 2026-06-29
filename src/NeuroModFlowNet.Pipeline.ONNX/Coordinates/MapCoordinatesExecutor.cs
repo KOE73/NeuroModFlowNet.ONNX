@@ -5,9 +5,12 @@ namespace NeuroModFlowNet.Pipeline.ONNX;
 internal sealed class MapCoordinatesExecutor<TPayload, TMapper> : IMapCoordinatesExecutor
     where TMapper : struct, ICoordinatePayloadMapper<TPayload>
 {
-    public object Map(object input, ICoordinateBackTransform transform)
+    public object Map(
+        object input,
+        ICoordinateBackTransform transform,
+        CoordinateMappingShapePolicy shapePolicy)
     {
         TPayload payload = (TPayload)input;
-        return default(TMapper).Map(payload, transform)!;
+        return default(TMapper).Map(payload, transform, shapePolicy)!;
     }
 }

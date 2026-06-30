@@ -14,11 +14,15 @@ public static class BatchConcatBuilder
 
     public static byte[] Build(
         int batchSize,
+        int boundInputCount,
         IReadOnlyList<long> singleInputShape,
         TensorProto.Types.DataType elementType)
     {
         if(batchSize < 2)
             throw new ArgumentOutOfRangeException(nameof(batchSize), "Batch size must be at least 2.");
+
+        if(boundInputCount <= 0 || boundInputCount > batchSize)
+            throw new ArgumentOutOfRangeException(nameof(boundInputCount), "Bound input count must be positive and not greater than batch size.");
 
         ArgumentNullException.ThrowIfNull(singleInputShape);
 
@@ -31,7 +35,7 @@ public static class BatchConcatBuilder
         long[] outputShape = [batchSize, .. singleInputShape.Skip(1)];
         var graph = new GraphProto { Name = "batch_concat" };
 
-        for(int slotIndex = 0; slotIndex < batchSize; slotIndex++)
+        for(int slotIndex = 0; slotIndex < boundInputCount; slotIndex++)
             graph.Input.Add(TensorInfo(InputName(slotIndex), elementType, [.. singleInputShape]));
 
         graph.Output.Add(TensorInfo(OutputName, elementType, outputShape));
@@ -45,7 +49,7 @@ public static class BatchConcatBuilder
         concatNode.Attribute.Add(IntAttribute("axis", 0));
 
         for(int slotIndex = 0; slotIndex < batchSize; slotIndex++)
-            concatNode.Input.Add(InputName(slotIndex));
+            concatNode.Input.Add(InputName(slotIndex % boundInputCount));
 
         graph.Node.Add(concatNode);
 

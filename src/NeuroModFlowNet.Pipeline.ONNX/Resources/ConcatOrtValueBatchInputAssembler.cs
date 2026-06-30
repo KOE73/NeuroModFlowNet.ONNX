@@ -14,6 +14,7 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
     TensorElementType? initializedElementType;
     long[]? initializedSingleInputShape;
     int initializedBatchSize;
+    int initializedBoundInputCount;
     OrtMemoryInfo? cudaMemoryInfo;
     OrtAllocator? cudaAllocator;
 
@@ -48,12 +49,12 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         TensorElementType elementType = firstInputInfo.ElementDataType;
 
         ValidateInputs(inputs, singleInputShape, elementType);
-        EnsureContext(effectiveBatchSize, singleInputShape, elementType, executionBackend);
+        EnsureContext(effectiveBatchSize, inputs.Count, singleInputShape, elementType, executionBackend);
 
         long[] outputShape = [effectiveBatchSize, .. singleInputShape.Skip(1)];
         OrtValue batchValue = CreateOutputOrtTensor(elementType, outputShape);
 
-        RunWithFreshBinding(inputs, effectiveBatchSize, batchValue);
+        RunWithFreshBinding(inputs, batchValue);
         return new OrtValueBatchInput(batchValue, BatchSize: effectiveBatchSize, OwnsValue: true);
     }
 
@@ -75,6 +76,7 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
 
     void EnsureContext(
         int batchSize,
+        int boundInputCount,
         long[] singleInputShape,
         TensorElementType elementType,
         InferenceBackend executionBackend)
@@ -82,6 +84,7 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         if(concatContext is not null &&
             initializedBackend == executionBackend &&
             initializedBatchSize == batchSize &&
+            initializedBoundInputCount == boundInputCount &&
             initializedElementType == elementType &&
             initializedSingleInputShape is not null &&
             initializedSingleInputShape.SequenceEqual(singleInputShape))
@@ -91,10 +94,11 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
 
         DisposeContext();
 
-        byte[] modelBytes = BatchConcatBuilder.Build(batchSize, singleInputShape, ToOnnxDataType(elementType));
+        byte[] modelBytes = BatchConcatBuilder.Build(batchSize, boundInputCount, singleInputShape, ToOnnxDataType(elementType));
         concatContext = new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend, ConfigureRuntimeOperatorExecutionProvider, "BatchConcat"), ownsModel: true);
         initializedBackend = executionBackend;
         initializedBatchSize = batchSize;
+        initializedBoundInputCount = boundInputCount;
         initializedElementType = elementType;
         initializedSingleInputShape = [.. singleInputShape];
 
@@ -136,7 +140,7 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         };
     }
 
-    void RunWithFreshBinding(IReadOnlyList<OrtValue> inputs, int effectiveBatchSize, OrtValue batchValue)
+    void RunWithFreshBinding(IReadOnlyList<OrtValue> inputs, OrtValue batchValue)
     {
         ArgumentNullException.ThrowIfNull(concatContext);
 
@@ -145,11 +149,8 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
 
         try
         {
-            for(int slotIndex = 0; slotIndex < effectiveBatchSize; slotIndex++)
-            {
-                OrtValue input = slotIndex < inputs.Count ? inputs[slotIndex] : inputs[0];
-                concatContext.IoBinding.BindInput(BatchConcatBuilder.InputName(slotIndex), input);
-            }
+            for(int slotIndex = 0; slotIndex < inputs.Count; slotIndex++)
+                concatContext.IoBinding.BindInput(BatchConcatBuilder.InputName(slotIndex), inputs[slotIndex]);
 
             concatContext.IoBinding.BindOutput(BatchConcatBuilder.OutputName, batchValue);
             concatContext.Model.Session.RunWithBinding(concatContext.RunOptions, concatContext.IoBinding);
@@ -181,5 +182,7 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         initializedElementType = null;
         initializedSingleInputShape = null;
         initializedBatchSize = 0;
+        initializedBoundInputCount = 0;
     }
+
 }

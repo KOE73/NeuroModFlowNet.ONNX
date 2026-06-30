@@ -44,9 +44,9 @@ public sealed class OrtValueBatchedInferenceEndpoint<TOutput> :
         EnsureContext();
 
         using OrtValueBatchInput modelInput = batchInputAssembler.Assemble(inputs, executionBackend, cancellationToken);
-        using OrtValue modelOutput = CreateOutputOrtTensor(modelInput.BatchSize);
-
-        RunWithFreshBinding(modelInput.Value, modelOutput);
+        using IDisposableReadOnlyCollection<OrtValue> modelOutputs = RunWithFreshBinding(modelInput.Value);
+        OrtValue modelOutput = modelOutputs.Single();
+        ValidateOutputShape(modelOutput, modelInput.BatchSize);
 
         IReadOnlyList<TOutput[]> outputs = outputDecoder.Decode(
             modelOutput,
@@ -68,18 +68,19 @@ public sealed class OrtValueBatchedInferenceEndpoint<TOutput> :
         modelContext = new OnnxExecutionContext(new OnnxModel(modelPath, executionBackend, configureExecutionProvider), ownsModel: true);
     }
 
-    OrtValue CreateOutputOrtTensor(int requestCount)
+    void ValidateOutputShape(OrtValue outputOrtValue, int batchSize)
     {
         ArgumentNullException.ThrowIfNull(modelContext);
 
         string outputName = modelContext.Model.PrimaryOutputName;
-        TensorElementType outputElementType = modelContext.Model.GetOutputElementType(outputName);
-        long[] outputShape = outputShapeResolver.ResolveOutputShape(modelContext.Model, outputName, requestCount);
+        long[] expectedShape = outputShapeResolver.ResolveOutputShape(modelContext.Model, outputName, batchSize);
+        long[] actualShape = outputOrtValue.GetTensorTypeAndShape().Shape;
 
-        return OrtValue.CreateAllocatedTensorValue(OrtAllocator.DefaultInstance, outputElementType, outputShape);
+        if(!actualShape.SequenceEqual(expectedShape))
+            throw new InvalidOperationException($"Model output '{outputName}' shape [{string.Join(", ", actualShape)}] differs from expected [{string.Join(", ", expectedShape)}].");
     }
 
-    void RunWithFreshBinding(OrtValue inputOrtValue, OrtValue outputOrtValue)
+    IDisposableReadOnlyCollection<OrtValue> RunWithFreshBinding(OrtValue inputOrtValue)
     {
         ArgumentNullException.ThrowIfNull(modelContext);
 
@@ -89,9 +90,10 @@ public sealed class OrtValueBatchedInferenceEndpoint<TOutput> :
         try
         {
             modelContext.IoBinding.BindInput(modelContext.Model.PrimaryInputName, inputOrtValue);
-            modelContext.IoBinding.BindOutput(modelContext.Model.PrimaryOutputName, outputOrtValue);
+            modelContext.IoBinding.BindOutputToDevice(modelContext.Model.PrimaryOutputName, OrtMemoryInfo.DefaultInstance);
             modelContext.Model.Session.RunWithBinding(modelContext.RunOptions, modelContext.IoBinding);
             modelContext.IoBinding.SynchronizeBoundOutputs();
+            return modelContext.IoBinding.GetOutputValues();
         }
         finally
         {

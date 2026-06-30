@@ -6,25 +6,14 @@ using OnnxDataType = Onnx.TensorProto.Types.DataType;
 
 namespace NeuroModFlowNet.Pipeline.ONNX;
 
-public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssembler
+public sealed class ConcatOrtValueRequestBatchInputAssembler : IOrtValueBatchInputAssembler
 {
-    readonly int? fixedBatchSize;
     OnnxExecutionContext? concatContext;
     InferenceBackend? initializedBackend;
     TensorElementType? initializedElementType;
-    long[]? initializedSingleInputShape;
-    int initializedBatchSize;
-    int initializedBoundInputCount;
+    string? initializedShapeKey;
     OrtMemoryInfo? cudaMemoryInfo;
     OrtAllocator? cudaAllocator;
-
-    public ConcatOrtValueBatchInputAssembler(int? fixedBatchSize = null)
-    {
-        if(fixedBatchSize is <= 1)
-            throw new ArgumentOutOfRangeException(nameof(fixedBatchSize), "Fixed batch size must be greater than 1.");
-
-        this.fixedBatchSize = fixedBatchSize;
-    }
 
     public OrtValueBatchInput Assemble(
         IReadOnlyList<OrtValue> inputs,
@@ -35,60 +24,65 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         cancellationToken.ThrowIfCancellationRequested();
 
         if(inputs.Count == 0)
-            throw new InvalidOperationException("Batch assembler received no inputs.");
-
-        int effectiveBatchSize = fixedBatchSize ?? inputs.Count;
-        if(effectiveBatchSize < inputs.Count)
-            throw new InvalidOperationException($"Fixed batch size {effectiveBatchSize} is smaller than request count {inputs.Count}.");
-
-        if(effectiveBatchSize == 1)
-            return new OrtValueBatchInput(inputs[0], BatchSize: 1, OwnsValue: false);
+            throw new InvalidOperationException("Request-batch assembler received no inputs.");
 
         var firstInputInfo = inputs[0].GetTensorTypeAndShape();
-        long[] singleInputShape = firstInputInfo.Shape;
         TensorElementType elementType = firstInputInfo.ElementDataType;
+        long[][] inputShapes = new long[inputs.Count][];
+        inputShapes[0] = firstInputInfo.Shape;
+        int[] requestItemCounts = new int[inputs.Count];
+        requestItemCounts[0] = ValidateInputShape(inputShapes[0], 0);
 
-        ValidateInputs(inputs, singleInputShape, elementType);
-        EnsureContext(effectiveBatchSize, inputs.Count, singleInputShape, elementType, executionBackend);
+        for(int inputIndex = 1; inputIndex < inputs.Count; inputIndex++)
+        {
+            var inputInfo = inputs[inputIndex].GetTensorTypeAndShape();
+            if(inputInfo.ElementDataType != elementType)
+                throw new InvalidOperationException($"Input {inputIndex} element type differs from input 0: {inputInfo.ElementDataType} != {elementType}.");
 
-        long[] outputShape = [effectiveBatchSize, .. singleInputShape.Skip(1)];
+            inputShapes[inputIndex] = inputInfo.Shape;
+            requestItemCounts[inputIndex] = ValidateInputShape(inputShapes[inputIndex], inputIndex);
+            ValidateTailShape(inputShapes[0], inputShapes[inputIndex], inputIndex);
+        }
+
+        int batchSize = requestItemCounts.Sum();
+        if(inputs.Count == 1)
+            return new OrtValueBatchInput(inputs[0], batchSize, OwnsValue: false, requestItemCounts);
+
+        EnsureContext(inputShapes, elementType, executionBackend);
+
+        long[] outputShape = [batchSize, .. inputShapes[0].Skip(1)];
         OrtValue batchValue = CreateOutputOrtTensor(elementType, outputShape);
-
         RunWithFreshBinding(inputs, batchValue);
-        int[] requestItemCounts = Enumerable.Repeat(1, inputs.Count).ToArray();
-        return new OrtValueBatchInput(batchValue, BatchSize: effectiveBatchSize, OwnsValue: true, requestItemCounts);
+        return new OrtValueBatchInput(batchValue, batchSize, OwnsValue: true, requestItemCounts);
     }
 
-    static void ValidateInputs(IReadOnlyList<OrtValue> inputs, long[] expectedShape, TensorElementType expectedElementType)
+    static int ValidateInputShape(long[] inputShape, int inputIndex)
     {
-        if(expectedShape.Length == 0 || expectedShape[0] != 1)
-            throw new InvalidOperationException($"Each batch item must have batch dimension 1, actual shape: [{string.Join(", ", expectedShape)}].");
+        if(inputShape.Length == 0 || inputShape[0] <= 0)
+            throw new InvalidOperationException($"Input {inputIndex} must have a positive batch dimension, actual shape: [{string.Join(", ", inputShape)}].");
 
-        for(int index = 1; index < inputs.Count; index++)
+        return checked((int)inputShape[0]);
+    }
+
+    static void ValidateTailShape(long[] expectedShape, long[] actualShape, int inputIndex)
+    {
+        if(actualShape.Length != expectedShape.Length)
+            throw new InvalidOperationException($"Input {inputIndex} rank differs from input 0: {actualShape.Length} != {expectedShape.Length}.");
+
+        for(int dimensionIndex = 1; dimensionIndex < expectedShape.Length; dimensionIndex++)
         {
-            var inputInfo = inputs[index].GetTensorTypeAndShape();
-            if(inputInfo.ElementDataType != expectedElementType)
-                throw new InvalidOperationException($"Batch item {index} element type differs from item 0: {inputInfo.ElementDataType} != {expectedElementType}.");
-
-            if(!inputInfo.Shape.SequenceEqual(expectedShape))
-                throw new InvalidOperationException($"Batch item {index} shape differs from item 0: [{string.Join(", ", inputInfo.Shape)}] != [{string.Join(", ", expectedShape)}].");
+            if(actualShape[dimensionIndex] != expectedShape[dimensionIndex])
+                throw new InvalidOperationException($"Input {inputIndex} dimension {dimensionIndex} differs from input 0: {actualShape[dimensionIndex]} != {expectedShape[dimensionIndex]}.");
         }
     }
 
-    void EnsureContext(
-        int batchSize,
-        int boundInputCount,
-        long[] singleInputShape,
-        TensorElementType elementType,
-        InferenceBackend executionBackend)
+    void EnsureContext(long[][] inputShapes, TensorElementType elementType, InferenceBackend executionBackend)
     {
+        string shapeKey = FormatShapes(inputShapes);
         if(concatContext is not null &&
             initializedBackend == executionBackend &&
-            initializedBatchSize == batchSize &&
-            initializedBoundInputCount == boundInputCount &&
             initializedElementType == elementType &&
-            initializedSingleInputShape is not null &&
-            initializedSingleInputShape.SequenceEqual(singleInputShape))
+            initializedShapeKey == shapeKey)
         {
             return;
         }
@@ -96,21 +90,20 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         DisposeContext();
 
         RuntimeOnnxOperatorKernelKey kernelKey = new(
-            "BatchConcat",
-            $"batch={batchSize};bound={boundInputCount};shape={FormatShape(singleInputShape)};type={elementType}",
+            "RequestBatchConcat",
+            $"shapes={shapeKey};type={elementType}",
             executionBackend,
             RuntimeOperatorProviderOptionsKey);
 
         concatContext = RuntimeOnnxOperatorKernelCache.CreateContext(
             kernelKey,
-            () => BatchConcatBuilder.Build(batchSize, boundInputCount, singleInputShape, ToOnnxDataType(elementType)),
+            () => BatchConcatBuilder.BuildVariableBatch(inputShapes, ToOnnxDataType(elementType)),
             ConfigureRuntimeOperatorExecutionProvider,
-            "BatchConcat");
+            "RequestBatchConcat");
+
         initializedBackend = executionBackend;
-        initializedBatchSize = batchSize;
-        initializedBoundInputCount = boundInputCount;
         initializedElementType = elementType;
-        initializedSingleInputShape = [.. singleInputShape];
+        initializedShapeKey = shapeKey;
 
         if(executionBackend is InferenceBackend.Cuda or InferenceBackend.TensorRt)
         {
@@ -131,7 +124,8 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
 
     const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false";
 
-    static string FormatShape(long[] shape) => string.Join('x', shape);
+    static string FormatShapes(IReadOnlyList<long[]> shapes) =>
+        string.Join('|', shapes.Select(static shape => string.Join('x', shape)));
 
     static OnnxDataType ToOnnxDataType(TensorElementType elementType) =>
         elementType switch
@@ -139,7 +133,7 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
             TensorElementType.UInt8 => OnnxDataType.Uint8,
             TensorElementType.Float => OnnxDataType.Float,
             TensorElementType.Float16 => OnnxDataType.Float16,
-            _ => throw new NotSupportedException($"Batch concat does not support tensor element type: {elementType}.")
+            _ => throw new NotSupportedException($"Request-batch concat does not support tensor element type: {elementType}.")
         };
 
     OrtValue CreateOutputOrtTensor(TensorElementType elementType, long[] outputShape)
@@ -150,7 +144,7 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         {
             InferenceBackend.Cpu => OrtValue.CreateAllocatedTensorValue(OrtAllocator.DefaultInstance, elementType, outputShape),
             InferenceBackend.Cuda or InferenceBackend.TensorRt => OrtValue.CreateAllocatedTensorValue(cudaAllocator!, elementType, outputShape),
-            _ => throw new NotSupportedException($"Batch concat device output is not implemented for backend: {concatContext.Model.InferenceBackend}.")
+            _ => throw new NotSupportedException($"Request-batch concat device output is not implemented for backend: {concatContext.Model.InferenceBackend}.")
         };
     }
 
@@ -194,9 +188,6 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         DisposeContext();
         initializedBackend = null;
         initializedElementType = null;
-        initializedSingleInputShape = null;
-        initializedBatchSize = 0;
-        initializedBoundInputCount = 0;
+        initializedShapeKey = null;
     }
-
 }

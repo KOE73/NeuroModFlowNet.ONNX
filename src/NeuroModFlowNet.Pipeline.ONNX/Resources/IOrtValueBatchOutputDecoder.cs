@@ -9,5 +9,6 @@ public interface IOrtValueBatchOutputDecoder<TOutput>
         OrtValue output,
         OnnxModel model,
         string outputName,
-        int requestCount);
+        int requestCount,
+        IReadOnlyList<int>? requestItemCounts);
 }

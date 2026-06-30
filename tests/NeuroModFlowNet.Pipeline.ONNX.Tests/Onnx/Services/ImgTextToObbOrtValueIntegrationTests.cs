@@ -10,7 +10,10 @@ namespace NeuroModFlowNet.Pipeline.ONNX.Tests.Onnx.Services;
 public sealed class ImgTextToObbOrtValueIntegrationTests
 {
     const string ModelPath = "models/img-text-to-obb/img-text-to-obb__640_b4_fp32.onnx";
+    const string RecModelPath = "models/paddleocr/languages/english/rec.onnx";
     const int ModelInputSize = 640;
+    const int RecognitionInputHeight = 48;
+    const int RecognitionInputWidth = 640;
     const float ScoreThreshold = 0.25f;
     const string CatImageFileName = "for_tests.png";
     const string ConveyorImageFileName = "for_tests_perspective_real_0.png";
@@ -46,11 +49,34 @@ public sealed class ImgTextToObbOrtValueIntegrationTests
             outputShapeResolver: new YoloNmsOutputShapeResolver(defaultItemCount: 300, fieldCount: 7),
             outputDecoder: new YoloObbOrtValueOutputDecoder(scoreThreshold: ScoreThreshold));
 
+        string recModelPath = ResolveRepositoryPath(RecModelPath);
+        Assert.True(File.Exists(recModelPath), $"Required recognition model was not found: {recModelPath}");
+
+        InferenceBackend recognitionBackend = executionBackend == InferenceBackend.Cpu
+            ? InferenceBackend.Cpu
+            : InferenceBackend.TensorRt;
+        OnnxExecutionBackendAvailability.AssertAvailable(recognitionBackend);
+
+        await using var recEndpoint = new OrtValueBatchedInferenceEndpoint<PaddleOCRRecExtractor.OcrResult>(
+            name: "paddle-rec.fp32.dynamic",
+            modelPath: recModelPath,
+            executionBackend: recognitionBackend,
+            options: new OnnxBatchedResourceOptions(MaxBatchSize: 2, MaxWaitTime: TimeSpan.FromMilliseconds(500), MaxPendingRequests: 4),
+            batchInputAssembler: new ConcatOrtValueRequestBatchInputAssembler(),
+            outputShapeResolver: new PaddleOCRRecOutputShapeResolver(RecognitionInputWidth),
+            outputDecoder: new PaddleOCRRecOrtValueOutputDecoder());
+
         var inference = new Model_OrtValueInference<YoloObb>(
             name: "Model_ImgTextToObb_OrtValue_FP32_B4",
             inputKey: "image.modelInput",
             outputKey: "obb.results",
             endpoint: endpoint);
+
+        var recognition = new Model_OrtValueInference<PaddleOCRRecExtractor.OcrResult>(
+            name: "Model_PaddleRec_OrtValue_FP32",
+            inputKey: "ocr.recInput",
+            outputKey: "ocr.recognition",
+            endpoint: recEndpoint);
 
         var mapToCropImageCoordinates = new Op_Map_Coordinates(
             inputKey: "obb.results",
@@ -77,10 +103,39 @@ public sealed class ImgTextToObbOrtValueIntegrationTests
         Assert.Equal(OpResult.Continue, await mapToCropImageCoordinates.ExecuteAsync(firstContext, CancellationToken.None));
         Assert.Equal(OpResult.Continue, await mapToCropImageCoordinates.ExecuteAsync(secondContext, CancellationToken.None));
 
+        using var firstRoiPrepare = new Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW(
+            imageInputKey: "image.cropImage.rgb",
+            obbInputKey: "obb.cropImage",
+            outputKey: "ocr.recInput",
+            targetSize: new CvSize(RecognitionInputWidth, RecognitionInputHeight),
+            paddingPixels: 2,
+            paddingScale: 0.10f,
+            executionBackend: executionBackend);
+
+        using var secondRoiPrepare = new Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW(
+            imageInputKey: "image.cropImage.rgb",
+            obbInputKey: "obb.cropImage",
+            outputKey: "ocr.recInput",
+            targetSize: new CvSize(RecognitionInputWidth, RecognitionInputHeight),
+            paddingPixels: 2,
+            paddingScale: 0.10f,
+            executionBackend: executionBackend);
+
+        Assert.Equal(OpResult.Continue, await firstRoiPrepare.ExecuteAsync(firstContext, CancellationToken.None));
+        Assert.Equal(OpResult.Continue, await secondRoiPrepare.ExecuteAsync(secondContext, CancellationToken.None));
+
+        ValueTask<OpResult> firstRecognitionTask = recognition.ExecuteAsync(firstContext, CancellationToken.None);
+        ValueTask<OpResult> secondRecognitionTask = recognition.ExecuteAsync(secondContext, CancellationToken.None);
+
+        Assert.Equal(OpResult.Continue, await firstRecognitionTask);
+        Assert.Equal(OpResult.Continue, await secondRecognitionTask);
+
         YoloObb[] firstResult = firstContext.Get<YoloObb[]>("obb.results");
         YoloObb[] secondResult = secondContext.Get<YoloObb[]>("obb.results");
         YoloObb[] firstCropImageResult = firstContext.Get<YoloObb[]>("obb.cropImage");
         YoloObb[] secondCropImageResult = secondContext.Get<YoloObb[]>("obb.cropImage");
+        PaddleOCRRecExtractor.OcrResult[] firstRecognition = firstContext.Get<PaddleOCRRecExtractor.OcrResult[]>("ocr.recognition");
+        PaddleOCRRecExtractor.OcrResult[] secondRecognition = secondContext.Get<PaddleOCRRecExtractor.OcrResult[]>("ocr.recognition");
 
         Assert.NotNull(firstResult);
         Assert.NotNull(secondResult);
@@ -94,12 +149,23 @@ public sealed class ImgTextToObbOrtValueIntegrationTests
         Assert.All(secondResult, static box => Assert.InRange(box.Score, ScoreThreshold, 1f));
         Assert.All(firstCropImageResult, static box => Assert.InRange(box.Score, ScoreThreshold, 1f));
         Assert.All(secondCropImageResult, static box => Assert.InRange(box.Score, ScoreThreshold, 1f));
+        Assert.Equal(firstCropImageResult.Length, firstRecognition.Length);
+        Assert.Equal(secondCropImageResult.Length, secondRecognition.Length);
+        Assert.Contains(firstRecognition, static item => !item.IsEmpty);
+        Assert.Contains(secondRecognition, static item => !item.IsEmpty);
 
         SaveArtifacts(CatImageFileName, firstResult, firstCropImageResult, executionBackend, perspective: null);
+        SaveRecognitionArtifacts(CatImageFileName, firstCropImageResult, firstRecognition, executionBackend, perspective: null);
         SaveArtifacts(
             ConveyorImageFileName,
             secondResult,
             secondCropImageResult,
+            executionBackend,
+            new PerspectivePreparation(ConveyorPerspectiveSourceQuad, ConveyorPerspectiveOutputSize));
+        SaveRecognitionArtifacts(
+            ConveyorImageFileName,
+            secondCropImageResult,
+            secondRecognition,
             executionBackend,
             new PerspectivePreparation(ConveyorPerspectiveSourceQuad, ConveyorPerspectiveOutputSize));
     }
@@ -119,6 +185,7 @@ public sealed class ImgTextToObbOrtValueIntegrationTests
         context.Set("image.input", input, disposeWithContext: true);
 
         string padResizeInputKey = "image.input";
+        string cropImageRgbInputKey = "image.input";
         var disposables = new List<IDisposable>();
 
         if(perspective is not null)
@@ -135,7 +202,15 @@ public sealed class ImgTextToObbOrtValueIntegrationTests
             Assert.Equal(OpResult.Continue, await perspectiveOp.ExecuteAsync(context, CancellationToken.None));
             disposables.Add(perspectiveOp);
             padResizeInputKey = "image.cropImage";
+            cropImageRgbInputKey = "image.cropImage";
         }
+
+        var prepareCropImage = new Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255(
+            inputKey: cropImageRgbInputKey,
+            outputKey: "image.cropImage.rgb",
+            isFinal: false,
+            executionBackend: executionBackend);
+        disposables.Add(prepareCropImage);
 
         var padResize = new Op_Onnx_PadResize_U8_NHWC(
             inputKey: padResizeInputKey,
@@ -155,6 +230,7 @@ public sealed class ImgTextToObbOrtValueIntegrationTests
             executionBackend: executionBackend);
         disposables.Add(prepare);
 
+        Assert.Equal(OpResult.Continue, await prepareCropImage.ExecuteAsync(context, CancellationToken.None));
         Assert.Equal(OpResult.Continue, await padResize.ExecuteAsync(context, CancellationToken.None));
         Assert.Equal(OpResult.Continue, await prepare.ExecuteAsync(context, CancellationToken.None));
 
@@ -182,6 +258,36 @@ public sealed class ImgTextToObbOrtValueIntegrationTests
         SaveArtifact(executionBackend, caseName, "model_640_padresize_obb", modelOverlay);
         SaveObbCrops(executionBackend, caseName, perspective is null ? "source_obb_crop" : "perspective_obb_crop", cropImage, cropImageBoxes);
         SaveObbCrops(executionBackend, caseName, "model_obb_crop", modelPreview, modelBoxes);
+    }
+
+    static void SaveRecognitionArtifacts(
+        string imageFileName,
+        YoloObb[] cropImageBoxes,
+        PaddleOCRRecExtractor.OcrResult[] recognitionResults,
+        InferenceBackend executionBackend,
+        PerspectivePreparation? perspective)
+    {
+        if(!PipelineOnnxTestEnvironment.Current.SaveVisualArtifacts)
+            return;
+
+        string caseName = Path.GetFileNameWithoutExtension(imageFileName);
+        string path = PipelineOnnxTestEnvironment.Current.CreateOperationArtifactPath(
+            "Onnx",
+            "ImgTextToObbOrtValueIntegration",
+            executionBackend.ToString(),
+            caseName,
+            perspective is null ? "source_recognition" : "perspective_recognition",
+            ".txt");
+
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        string[] lines = recognitionResults
+            .Select((result, index) =>
+            {
+                YoloObb box = cropImageBoxes[index];
+                return $"{index:D3}\tscore={box.Score:0.000}\tx={box.X:0.0}\ty={box.Y:0.0}\tw={box.W:0.0}\th={box.H:0.0}\tangle={box.Angle:0.000}\tstandard={result.Standard}\twithSpaces={result.WithSpaces}\tfull={result.FullCandidates}";
+            })
+            .ToArray();
+        File.WriteAllLines(path, lines);
     }
 
     static Mat CreatePerspectivePreview(Mat source, PerspectivePreparation perspective)

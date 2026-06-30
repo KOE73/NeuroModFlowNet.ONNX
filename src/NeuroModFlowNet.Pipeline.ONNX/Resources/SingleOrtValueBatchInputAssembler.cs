@@ -16,7 +16,12 @@ public sealed class SingleOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         if(inputs.Count != 1)
             throw new InvalidOperationException($"Single-input service received {inputs.Count} inputs. Use a batch assembler for batched execution.");
 
-        return new OrtValueBatchInput(inputs[0], BatchSize: 1, OwnsValue: false);
+        long[] inputShape = inputs[0].GetTensorTypeAndShape().Shape;
+        if(inputShape.Length == 0 || inputShape[0] <= 0)
+            throw new InvalidOperationException($"Single-input service input must have a positive batch dimension, actual shape: [{string.Join(", ", inputShape)}].");
+
+        int batchSize = checked((int)inputShape[0]);
+        return new OrtValueBatchInput(inputs[0], batchSize, OwnsValue: false, RequestItemCounts: [batchSize]);
     }
 
     public void Dispose()

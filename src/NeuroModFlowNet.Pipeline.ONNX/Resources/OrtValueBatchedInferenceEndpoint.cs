@@ -52,7 +52,8 @@ public sealed class OrtValueBatchedInferenceEndpoint<TOutput> :
             modelOutput,
             modelContext!.Model,
             modelContext.Model.PrimaryOutputName,
-            inputs.Count);
+            inputs.Count,
+            modelInput.RequestItemCounts);
 
         if(outputs.Count != inputs.Count)
             throw new InvalidOperationException($"Decoder returned {outputs.Count} outputs for {inputs.Count} requests.");

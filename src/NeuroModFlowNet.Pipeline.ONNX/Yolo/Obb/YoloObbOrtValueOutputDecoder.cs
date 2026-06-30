@@ -29,7 +29,8 @@ public sealed class YoloObbOrtValueOutputDecoder : IOrtValueBatchOutputDecoder<Y
         OrtValue output,
         OnnxModel model,
         string outputName,
-        int requestCount)
+        int requestCount,
+        IReadOnlyList<int>? requestItemCounts)
     {
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(model);

@@ -34,6 +34,9 @@ public sealed class Op_Onnx_Resize_U8_NHWC : Op_Onnx_TensorTransformBase
 
     protected override string DisplayName => "resize-u8-nhwc.onnx";
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"target={targetSize.Width}x{targetSize.Height}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != TensorElementType.UInt8)

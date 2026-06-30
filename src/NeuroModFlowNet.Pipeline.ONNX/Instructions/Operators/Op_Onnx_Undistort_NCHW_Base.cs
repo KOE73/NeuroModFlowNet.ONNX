@@ -45,6 +45,12 @@ public abstract class Op_Onnx_Undistort_NCHW_Base : Op_Onnx_TensorTransformBase
 
     protected override string GraphOutputName => UndistortGridBuilder.OutputName;
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType)
+    {
+        (int outputWidth, int outputHeight) = ResolveOutputSize(inputShape);
+        return $"output={outputWidth}x{outputHeight};distortion={FormatDistortion(distortion)};graphType={graphElementType}";
+    }
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != expectedElementType)
@@ -118,4 +124,7 @@ public abstract class Op_Onnx_Undistort_NCHW_Base : Op_Onnx_TensorTransformBase
         destination[7] = distortion.P2;
         destination[8] = distortion.K3;
     }
+
+    static string FormatDistortion(RadialTangentialDistortionParameters value) =>
+        $"{value.Fx},{value.Fy},{value.Cx},{value.Cy},{value.K1},{value.K2},{value.P1},{value.P2},{value.K3}";
 }

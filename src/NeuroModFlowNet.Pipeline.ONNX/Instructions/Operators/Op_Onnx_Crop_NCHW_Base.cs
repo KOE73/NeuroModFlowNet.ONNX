@@ -40,6 +40,9 @@ public abstract class Op_Onnx_Crop_NCHW_Base : Op_Onnx_TensorTransformBase
 
     protected override string GraphOutputName => CropNchwBuilder.OutputName;
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"crop={cropRect.X},{cropRect.Y},{cropRect.Width},{cropRect.Height};graphType={graphElementType}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != expectedElementType)

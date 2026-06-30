@@ -34,6 +34,9 @@ public sealed class Op_Onnx_Crop_U8_NHWC : Op_Onnx_TensorTransformBase
 
     protected override string DisplayName => "crop-u8-nhwc.onnx";
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"crop={cropRect.X},{cropRect.Y},{cropRect.Width},{cropRect.Height}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != TensorElementType.UInt8)

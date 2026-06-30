@@ -19,6 +19,8 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
     readonly string outputKey;
     readonly InferenceBackend executionBackend;
     OnnxExecutionContext? onnxContext;
+    TensorElementType? initializedElementType;
+    long[]? initializedInputShape;
     OrtMemoryInfo? cudaMemoryInfo;
     OrtAllocator? cudaAllocator;
 
@@ -50,8 +52,7 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
         TensorElementType elementType = inputOrtValue.GetTensorTypeAndShape().ElementDataType;
         long[] inputShape = inputOrtValue.GetTensorTypeAndShape().Shape;
 
-        if(onnxContext is null)
-            InitializeContext(elementType, inputShape);
+        EnsureContext(elementType, inputShape);
 
         OrtValue outputOrtValue = CreateOutputOrtTensor(elementType, inputShape);
 
@@ -64,11 +65,32 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
         return ValueTask.FromResult(OpResult.Continue);
     }
 
-    void InitializeContext(TensorElementType elementType, long[] inputShape)
+    void EnsureContext(TensorElementType elementType, long[] inputShape)
     {
-        byte[] modelBytes = IdentityBuilder.Build(ToTensorProtoDataType(elementType), inputShape);
+        if(onnxContext is not null &&
+            initializedElementType == elementType &&
+            initializedInputShape is not null &&
+            initializedInputShape.SequenceEqual(inputShape))
+        {
+            return;
+        }
 
-        onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend, displayName: "dynamic-identity.onnx"), ownsModel: true);
+        DisposeRuntimeState();
+
+        RuntimeOnnxOperatorKernelKey kernelKey = new(
+            "Copy_OrtTensor_To_ModelDevice",
+            $"shape={FormatShape(inputShape)};type={elementType}",
+            executionBackend,
+            "runtime-operator;identity-upload");
+
+        onnxContext = RuntimeOnnxOperatorKernelCache.CreateContext(
+            kernelKey,
+            () => IdentityBuilder.Build(ToTensorProtoDataType(elementType), inputShape),
+            configure: null,
+            "dynamic-identity.onnx");
+
+        initializedElementType = elementType;
+        initializedInputShape = [.. inputShape];
 
         if(onnxContext.Model.InferenceBackend == InferenceBackend.Cuda)
         {
@@ -122,10 +144,24 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
             _ => throw new NotSupportedException($"Unsupported tensor element type for dynamic Identity model: {elementType}")
         };
 
+    static string FormatShape(long[] shape) => string.Join('x', shape);
+
     public void Dispose()
     {
+        DisposeRuntimeState();
+        initializedElementType = null;
+        initializedInputShape = null;
+    }
+
+    void DisposeRuntimeState()
+    {
         cudaAllocator?.Dispose();
+        cudaAllocator = null;
+
         cudaMemoryInfo?.Dispose();
+        cudaMemoryInfo = null;
+
         onnxContext?.Dispose();
+        onnxContext = null;
     }
 }

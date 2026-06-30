@@ -47,6 +47,9 @@ public abstract class Op_Onnx_Perspective_NCHW_Base : Op_Onnx_TensorTransformBas
 
     protected override string GraphOutputName => PerspectiveGridBuilder.OutputName;
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"output={outputSize.Width}x{outputSize.Height};points={FormatPoints(sourcePoints)};graphType={graphElementType}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != expectedElementType)
@@ -89,4 +92,7 @@ public abstract class Op_Onnx_Perspective_NCHW_Base : Op_Onnx_TensorTransformBas
 
         return OpDescriptor.Create(descriptorName, opcode, [VarRequirement.Read<OrtValue>(inputKey)], writes);
     }
+
+    static string FormatPoints(ReadOnlySpan<Point2f> points) =>
+        string.Join(';', points.ToArray().Select(static point => $"{point.X},{point.Y}"));
 }

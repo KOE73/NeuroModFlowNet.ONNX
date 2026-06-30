@@ -52,6 +52,9 @@ public abstract class Op_Onnx_PadResize_NCHW_Base : Op_Onnx_TensorTransformBase
 
     protected override string GraphOutputName => PadResizeNchwBuilder.OutputName;
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"target={targetSize.Width}x{targetSize.Height};stride={stride};mode={mode};pad={padValue};graphType={graphElementType}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != expectedElementType)

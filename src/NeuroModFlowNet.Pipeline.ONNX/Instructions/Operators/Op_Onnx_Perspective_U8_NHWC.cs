@@ -41,6 +41,9 @@ public sealed class Op_Onnx_Perspective_U8_NHWC : Op_Onnx_TensorTransformBase
 
     protected override string DisplayName => "perspective-u8-nhwc.onnx";
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"output={outputSize.Width}x{outputSize.Height};points={FormatPoints(sourcePoints)}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != TensorElementType.UInt8)
@@ -82,4 +85,7 @@ public sealed class Op_Onnx_Perspective_U8_NHWC : Op_Onnx_TensorTransformBase
 
         return OpDescriptor.Create("Op_Onnx_Perspective_U8_NHWC", "op.onnx.perspective.u8.nhwc", [VarRequirement.Read<OrtValue>(inputKey)], writes);
     }
+
+    static string FormatPoints(ReadOnlySpan<Point2f> points) =>
+        string.Join(';', points.ToArray().Select(static point => $"{point.X},{point.Y}"));
 }

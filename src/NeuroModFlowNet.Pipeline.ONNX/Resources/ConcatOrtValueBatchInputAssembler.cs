@@ -94,8 +94,17 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
 
         DisposeContext();
 
-        byte[] modelBytes = BatchConcatBuilder.Build(batchSize, boundInputCount, singleInputShape, ToOnnxDataType(elementType));
-        concatContext = new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend, ConfigureRuntimeOperatorExecutionProvider, "BatchConcat"), ownsModel: true);
+        RuntimeOnnxOperatorKernelKey kernelKey = new(
+            "BatchConcat",
+            $"batch={batchSize};bound={boundInputCount};shape={FormatShape(singleInputShape)};type={elementType}",
+            executionBackend,
+            RuntimeOperatorProviderOptionsKey);
+
+        concatContext = RuntimeOnnxOperatorKernelCache.CreateContext(
+            kernelKey,
+            () => BatchConcatBuilder.Build(batchSize, boundInputCount, singleInputShape, ToOnnxDataType(elementType)),
+            ConfigureRuntimeOperatorExecutionProvider,
+            "BatchConcat");
         initializedBackend = executionBackend;
         initializedBatchSize = batchSize;
         initializedBoundInputCount = boundInputCount;
@@ -118,6 +127,10 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
         if(config is TrtConfig trtConfig)
             trtConfig.EnableEngineCache = false;
     }
+
+    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false";
+
+    static string FormatShape(long[] shape) => string.Join('x', shape);
 
     static OnnxDataType ToOnnxDataType(TensorElementType elementType) =>
         elementType switch

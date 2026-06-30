@@ -36,6 +36,9 @@ public abstract class Op_Onnx_Rotate90_NCHW_Base : Op_Onnx_TensorTransformBase
 
     protected override string GraphOutputName => Rotate90NchwBuilder.OutputName;
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"mode={mode};graphType={graphElementType}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != expectedElementType)

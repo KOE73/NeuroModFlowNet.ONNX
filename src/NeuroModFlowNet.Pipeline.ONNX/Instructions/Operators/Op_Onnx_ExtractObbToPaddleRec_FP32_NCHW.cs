@@ -202,19 +202,27 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
 
         DisposeRuntimeState();
 
-        byte[] modelBytes = PaddleRecRoiPrepareBuilder.BuildBatchedGridSampleFromMatricesFP32Nchw(
-            checked((int)imageShape[3]),
-            checked((int)imageShape[2]),
-            checked((int)imageShape[1]),
-            targetSize.Width,
-            targetSize.Height,
-            regionCount);
+        int sourceWidth = checked((int)imageShape[3]);
+        int sourceHeight = checked((int)imageShape[2]);
+        int sourceChannels = checked((int)imageShape[1]);
 
-        prepareContext = new OnnxExecutionContext(new OnnxModel(
-            modelBytes,
+        RuntimeOnnxOperatorKernelKey prepareKernelKey = new(
+            nameof(Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW),
+            $"algorithm={algorithm};image={FormatShape(imageShape)};target={targetSize.Width}x{targetSize.Height};regions={regionCount}",
             executionBackend,
+            RuntimeOperatorProviderOptionsKey);
+
+        prepareContext = RuntimeOnnxOperatorKernelCache.CreateContext(
+            prepareKernelKey,
+            () => PaddleRecRoiPrepareBuilder.BuildBatchedGridSampleFromMatricesFP32Nchw(
+                sourceWidth,
+                sourceHeight,
+                sourceChannels,
+                targetSize.Width,
+                targetSize.Height,
+                regionCount),
             ConfigureRuntimeOperatorProvider,
-            $"{algorithm}.extract-obb-to-paddle-rec-fp32-nchw.onnx"), ownsModel: true);
+            $"{algorithm}.extract-obb-to-paddle-rec-fp32-nchw.onnx");
 
         initializedImageShape = [.. imageShape];
         initializedRegionCount = regionCount;
@@ -228,12 +236,17 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
                 OrtMemType.Default);
             outputCudaAllocator = new OrtAllocator(prepareContext.Model.Session, outputCudaMemoryInfo);
 
-            byte[] matrixUploadModelBytes = IdentityBuilder.Build(OnnxDataType.Float, regionCount, 9);
-            matrixUploadContext = new OnnxExecutionContext(new OnnxModel(
-                matrixUploadModelBytes,
+            RuntimeOnnxOperatorKernelKey matrixUploadKernelKey = new(
+                "ExtractObbToPaddleRec.MatrixUpload",
+                $"shape={regionCount}x9;type=Float",
                 executionBackend,
+                RuntimeOperatorProviderOptionsKey);
+
+            matrixUploadContext = RuntimeOnnxOperatorKernelCache.CreateContext(
+                matrixUploadKernelKey,
+                () => IdentityBuilder.Build(OnnxDataType.Float, regionCount, 9),
                 ConfigureRuntimeOperatorProvider,
-                "extract-obb-to-paddle-rec-matrix-upload.onnx"), ownsModel: true);
+                "extract-obb-to-paddle-rec-matrix-upload.onnx");
 
             matrixCudaMemoryInfo = new OrtMemoryInfo(
                 OrtMemoryInfo.allocatorCUDA,
@@ -259,6 +272,11 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
                 break;
         }
     }
+
+    const string RuntimeOperatorProviderOptionsKey =
+        "runtime-operator;trtEngineCache=false;trtFp16=false;trtBf16=false;trtBuilderOptimizationLevel=2;cudaGraph=false";
+
+    static string FormatShape(long[] shape) => string.Join('x', shape);
 
     OrtValue CreateMatrixTensor(
         ReadOnlySpan<YoloObb> boxes,

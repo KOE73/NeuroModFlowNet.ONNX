@@ -30,6 +30,9 @@ public sealed class Op_Onnx_Rotate90_U8_NHWC : Op_Onnx_TensorTransformBase
 
     protected override string DisplayName => "rotate90-u8-nhwc.onnx";
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"mode={mode}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != TensorElementType.UInt8)

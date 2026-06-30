@@ -40,6 +40,9 @@ public abstract class Op_Onnx_Resize_NCHW_Base : Op_Onnx_TensorTransformBase
 
     protected override string GraphOutputName => ResizeNchwBuilder.OutputName;
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) =>
+        $"target={targetSize.Width}x{targetSize.Height};graphType={graphElementType}";
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != expectedElementType)

@@ -95,6 +95,8 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
 
     protected virtual TensorElementType GetOutputElementType(TensorElementType inputElementType) => inputElementType;
 
+    protected virtual string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType) => string.Empty;
+
     protected virtual void WriteAdditionalOutputs(VmRunContext context, long[] inputShape, long[] outputShape)
     {
     }
@@ -125,9 +127,17 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
 
         DisposeRuntimeState();
 
-        byte[] modelBytes = BuildModel(inputShape, inputElementType);
+        RuntimeOnnxOperatorKernelKey kernelKey = new(
+            DisplayName,
+            $"input={FormatShape(inputShape)};inputType={inputElementType};output={FormatShape(CreateOutputShape(inputShape, inputElementType))};outputType={GetOutputElementType(inputElementType)};op={GetCacheSemanticKey(inputShape, inputElementType)}",
+            executionBackend,
+            RuntimeOperatorProviderOptionsKey);
 
-        onnxContext = new OnnxExecutionContext(new OnnxModel(modelBytes, executionBackend, ConfigureRuntimeOperatorExecutionProvider, DisplayName), ownsModel: true);
+        onnxContext = RuntimeOnnxOperatorKernelCache.CreateContext(
+            kernelKey,
+            () => BuildModel(inputShape, inputElementType),
+            ConfigureRuntimeOperatorExecutionProvider,
+            DisplayName);
 
         initializedInputShape = [.. inputShape];
         initializedInputElementType = inputElementType;
@@ -148,6 +158,10 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
         if(config is TrtConfig trtConfig)
             trtConfig.EnableEngineCache = false;
     }
+
+    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false";
+
+    static string FormatShape(long[] shape) => string.Join('x', shape);
 
     OrtValue CreateOutputOrtTensor(TensorElementType outputElementType, long[] outputShape)
     {

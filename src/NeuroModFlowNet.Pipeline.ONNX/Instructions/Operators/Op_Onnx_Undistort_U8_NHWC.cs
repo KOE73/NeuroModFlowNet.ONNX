@@ -39,6 +39,12 @@ public sealed class Op_Onnx_Undistort_U8_NHWC : Op_Onnx_TensorTransformBase
 
     protected override string DisplayName => "undistort-u8-nhwc.onnx";
 
+    protected override string GetCacheSemanticKey(long[] inputShape, TensorElementType inputElementType)
+    {
+        (int outputWidth, int outputHeight) = ResolveOutputSize(inputShape);
+        return $"output={outputWidth}x{outputHeight};distortion={FormatDistortion(distortion)}";
+    }
+
     protected override string? ValidateInput(long[] inputShape, TensorElementType inputElementType)
     {
         if(inputElementType != TensorElementType.UInt8)
@@ -111,4 +117,7 @@ public sealed class Op_Onnx_Undistort_U8_NHWC : Op_Onnx_TensorTransformBase
 
         return OpDescriptor.Create("Op_Onnx_Undistort_U8_NHWC", "op.onnx.undistort.u8.nhwc", [VarRequirement.Read<OrtValue>(inputKey)], writes);
     }
+
+    static string FormatDistortion(RadialTangentialDistortionParameters value) =>
+        $"{value.Fx},{value.Fy},{value.Cx},{value.Cy},{value.K1},{value.K2},{value.P1},{value.P2},{value.K3}";
 }

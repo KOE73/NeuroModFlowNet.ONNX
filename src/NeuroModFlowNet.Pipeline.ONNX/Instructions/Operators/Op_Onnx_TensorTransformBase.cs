@@ -20,11 +20,13 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
     readonly string outputKey;
     readonly bool isFinal;
     readonly InferenceBackend executionBackend;
+    readonly SemaphoreSlim executionLock = new(1, 1);
     long[]? initializedInputShape;
     TensorElementType? initializedInputElementType;
     OnnxExecutionContext? onnxContext;
     OrtMemoryInfo? cudaMemoryInfo;
     OrtAllocator? cudaAllocator;
+    bool disposed;
 
     protected Op_Onnx_TensorTransformBase(
         OpDescriptor descriptor,
@@ -55,36 +57,56 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
 
     protected abstract string DisplayName { get; }
 
-    public override ValueTask<OpResult> ExecuteAsync(
+    public override async ValueTask<OpResult> ExecuteAsync(
         VmRunContext context,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(context);
         cancellationToken.ThrowIfCancellationRequested();
 
-        if(!context.TryGet(inputKey, out OrtValue inputOrtValue))
-            return ValueTask.FromResult(OpResult.Fail($"Input key '{inputKey}' was not found in the pipeline context."));
+        ThrowIfDisposed();
+        await executionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-        var inputInfo = inputOrtValue.GetTensorTypeAndShape();
-        long[] inputShape = inputInfo.Shape;
-        TensorElementType inputElementType = inputInfo.ElementDataType;
+        try
+        {
+            ThrowIfDisposed();
 
-        string? validationError = ValidateInput(inputShape, inputElementType);
-        if(validationError is not null)
-            return ValueTask.FromResult(OpResult.Fail(validationError));
+            if(!context.TryGet(inputKey, out OrtValue inputOrtValue))
+                return OpResult.Fail($"Input key '{inputKey}' was not found in the pipeline context.");
 
-        EnsureContext(inputShape, inputElementType);
+            var inputInfo = inputOrtValue.GetTensorTypeAndShape();
+            long[] inputShape = inputInfo.Shape;
+            TensorElementType inputElementType = inputInfo.ElementDataType;
 
-        TensorElementType outputElementType = GetOutputElementType(inputElementType);
-        long[] outputShape = CreateOutputShape(inputShape, inputElementType);
-        OrtValue outputOrtValue = CreateOutputOrtTensor(outputElementType, outputShape);
+            string? validationError = ValidateInput(inputShape, inputElementType);
+            if(validationError is not null)
+                return OpResult.Fail(validationError);
 
-        RunWithFreshBinding(inputOrtValue, outputOrtValue);
+            EnsureContext(inputShape, inputElementType);
 
-        context.Set(outputKey, outputOrtValue, disposeWithContext: true);
-        WriteAdditionalOutputs(context, inputShape, outputShape);
+            TensorElementType outputElementType = GetOutputElementType(inputElementType);
+            long[] outputShape = CreateOutputShape(inputShape, inputElementType);
+            OrtValue outputOrtValue = CreateOutputOrtTensor(outputElementType, outputShape);
+            try
+            {
+                RunWithFreshBinding(inputOrtValue, outputOrtValue);
 
-        return ValueTask.FromResult(OpResult.Continue);
+                context.Set(outputKey, outputOrtValue, disposeWithContext: true);
+                outputOrtValue = null!;
+            }
+            finally
+            {
+                outputOrtValue?.Dispose();
+            }
+
+            WriteAdditionalOutputs(context, inputShape, outputShape);
+
+            return OpResult.Continue;
+        }
+        finally
+        {
+            executionLock.Release();
+        }
     }
 
     protected virtual string? ValidateInput(long[] inputShape, TensorElementType inputElementType) => null;
@@ -142,7 +164,7 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
         initializedInputShape = [.. inputShape];
         initializedInputElementType = inputElementType;
 
-        if(onnxContext.Model.InferenceBackend == InferenceBackend.Cuda)
+        if(onnxContext.Model.InferenceBackend is InferenceBackend.Cuda or InferenceBackend.TensorRt)
         {
             cudaMemoryInfo = new OrtMemoryInfo(
                 OrtMemoryInfo.allocatorCUDA,
@@ -156,19 +178,22 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
     static void ConfigureRuntimeOperatorExecutionProvider(ExecutionProviderConfig config)
     {
         if(config is TrtConfig trtConfig)
+        {
             trtConfig.EnableEngineCache = false;
+            trtConfig.EnableBf16 = false;
+        }
     }
 
-    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false";
+    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false;trtBf16=false";
 
     static string FormatShape(long[] shape) => string.Join('x', shape);
 
     OrtValue CreateOutputOrtTensor(TensorElementType outputElementType, long[] outputShape)
     {
-        if(!isFinal && onnxContext!.Model.InferenceBackend == InferenceBackend.Cuda)
+        if(!isFinal && onnxContext!.Model.InferenceBackend is InferenceBackend.Cuda or InferenceBackend.TensorRt)
             return OrtValue.CreateAllocatedTensorValue(cudaAllocator!, outputElementType, outputShape);
 
-        // Final operator outputs and explicit CPU outputs are host-readable. Intermediate CUDA outputs stay in provider
+        // Final operator outputs and explicit CPU outputs are host-readable. Intermediate GPU outputs stay in provider
         // memory so the following ONNX operator/model can consume them without an implicit upload.
         return OrtValue.CreateAllocatedTensorValue(OrtAllocator.DefaultInstance, outputElementType, outputShape);
     }
@@ -210,8 +235,19 @@ public abstract class Op_Onnx_TensorTransformBase : OpBase, IDisposable, IHasExe
 
     public void Dispose()
     {
+        if(disposed)
+            return;
+
+        disposed = true;
         DisposeRuntimeState();
+        executionLock.Dispose();
         initializedInputShape = null;
         initializedInputElementType = null;
+    }
+
+    void ThrowIfDisposed()
+    {
+        if(disposed)
+            throw new ObjectDisposedException(GetType().Name);
     }
 }

@@ -20,8 +20,14 @@ PipelineRunContext
   -> владеет временными ресурсами
 
 PipelineGlobalMemory
-  -> tracker state, resource registry, sinks, общие сервисы
+  -> per-source config (калибровка, зоны, пороги), tracker state, resource registry, sinks, общие сервисы
 ```
+
+Per-source config и per-source state (например состояние трекера) живут в `PipelineGlobalMemory`, потому что она
+принадлежит контроллеру источника, а не одному run. Инструкции держат только ключи и читают значения на исполнении;
+это позволяет держать набор инструкций (рецепт) одинаковым для всех камер, а различия физического мира (перспектива,
+дисторсия, `StartZone`/`EndZone`, пороги) хранить как данные. Детали контракта и синхронизации последовательного
+трекера: `docs/architecture/tracker_and_source_config.ru.md`.
 
 VM не владеет источником кадров. Для видео host кладет `source.frame`, `source.id`, timing и другие входы в
 `PipelineRunInputs`. Для другой предметной области набор входов может быть вообще не связан с изображениями.

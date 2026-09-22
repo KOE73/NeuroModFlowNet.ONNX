@@ -35,7 +35,7 @@ Model and auxiliary asset lookup is outside the VM. ONNX-related assets should b
 - `Diagnostics/` - per-instruction timing and conservative variable memory placement snapshots.
 - `Transactions/` - per-run local memory with string keys and owned resource cleanup.
 - `Instructions/` - VM instruction contracts, program builder, conditional steps, jumps and ordered sync instruction.
-- `Synchronization/` - reusable ordered gates for stateful external services such as trackers.
+- `Synchronization/` - reusable ordered gates that release runs in dense `RunId` order for stateful stages such as trackers. Ordering only: a stage that also needs per-frame mutual exclusion must serialize itself or be run inside an ordered critical section (see docs/architecture/tracker_and_source_config.ru.md).
 - `Memory/` and `Resources/` - global per-source memory and named shared resources.
 - `Coordinates/` - small back-transform contracts stored as normal named VM registers.
 

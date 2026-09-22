@@ -68,6 +68,34 @@ public sealed class Op_Onnx_PrepareTests
             MemoryMarshal.Cast<Float16, Half>(output.GetTensorDataAsSpan<Float16>()).ToArray());
     }
 
+    [Fact]
+    public async Task BgrU8HwcToRgbFP32NchwDiv255_NonFinalGpuOutputStaysOnModelDevice()
+    {
+        foreach(InferenceBackend executionBackend in OnnxExecutionBackendMatrix.EnabledBackends.Where(static backend => backend != InferenceBackend.Cpu))
+        {
+            OnnxExecutionBackendAvailability.AssertAvailable(executionBackend);
+
+            using OrtValue input = CreateBgrU8HwcInput(width: 2, height: 1, [10, 20, 30, 40, 50, 60]);
+            await using var context = VmRunContextFactory.Create();
+            using var instruction = new global::NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255(
+                "input",
+                "output",
+                isFinal: false,
+                executionBackend: executionBackend);
+
+            context.Set("input", input);
+
+            OpResult result = await instruction.ExecuteAsync(context, CancellationToken.None);
+
+            Assert.Equal(OpResultKind.Continue, result.Kind);
+
+            OrtValue output = context.Get<OrtValue>("output");
+            Assert.Equal(TensorElementType.Float, output.GetTensorTypeAndShape().ElementDataType);
+            Assert.Equal([1, 3, 1, 2], output.GetTensorTypeAndShape().Shape);
+            OrtValueMemoryAssert.AssertGpuTensor(output, executionBackend);
+        }
+    }
+
     static OrtValue CreateBgrU8HwcInput(int width, int height, ReadOnlySpan<byte> bgrData)
     {
         OrtValue input = OrtValue.CreateAllocatedTensorValue(OrtAllocator.DefaultInstance, TensorElementType.UInt8, [1, height, width, 3]);

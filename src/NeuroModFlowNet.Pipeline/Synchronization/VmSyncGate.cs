@@ -13,7 +13,12 @@ public sealed class VmSyncGate
     readonly Dictionary<long, TaskCompletionSource> waiters = [];
     readonly HashSet<long> arrived = [];
     readonly HashSet<long> closedBeforeGate = [];
+    readonly Dictionary<long, TaskCompletionSource> criticalWaiters = [];
+    readonly HashSet<long> criticalWaiting = [];
+    readonly HashSet<long> closedBeforeCriticalSection = [];
     long nextRunIdToRelease;
+    long nextRunIdToEnterCriticalSection;
+    long? criticalSectionOwnerRunId;
 
     public VmSyncGate(string name, long initialRunId = 0)
     {
@@ -24,6 +29,7 @@ public sealed class VmSyncGate
 
         Name = name;
         nextRunIdToRelease = initialRunId;
+        nextRunIdToEnterCriticalSection = initialRunId;
     }
 
     public string Name { get; }
@@ -51,6 +57,55 @@ public sealed class VmSyncGate
             : new ValueTask(waitTask.WaitAsync(cancellationToken));
     }
 
+    public ValueTask AcquireInOrderAsync(long runId, CancellationToken cancellationToken)
+    {
+        if(runId < 0)
+            throw new ArgumentOutOfRangeException(nameof(runId), "Run id must be non-negative.");
+
+        Task waitTask;
+
+        lock(syncRoot)
+        {
+            if(runId < nextRunIdToEnterCriticalSection)
+                return ValueTask.CompletedTask;
+
+            if(runId == nextRunIdToEnterCriticalSection && criticalSectionOwnerRunId is null)
+            {
+                criticalSectionOwnerRunId = runId;
+                return ValueTask.CompletedTask;
+            }
+
+            criticalWaiting.Add(runId);
+            TaskCompletionSource waiter = GetCriticalWaiter(runId);
+            TryReleaseReadyCriticalSectionOwner();
+            waitTask = waiter.Task;
+        }
+
+        return waitTask.IsCompletedSuccessfully
+            ? ValueTask.CompletedTask
+            : new ValueTask(waitTask.WaitAsync(cancellationToken));
+    }
+
+    public void Release(long runId)
+    {
+        if(runId < 0)
+            throw new ArgumentOutOfRangeException(nameof(runId), "Run id must be non-negative.");
+
+        lock(syncRoot)
+        {
+            if(runId < nextRunIdToEnterCriticalSection)
+                return;
+
+            if(criticalSectionOwnerRunId != runId)
+                throw new InvalidOperationException($"Run {runId} cannot release critical section '{Name}' because it does not own it.");
+
+            criticalSectionOwnerRunId = null;
+            nextRunIdToEnterCriticalSection++;
+            closedBeforeCriticalSection.Remove(runId);
+            TryReleaseReadyCriticalSectionOwner();
+        }
+    }
+
     public void NotifyRunClosed(long runId)
     {
         if(runId < 0)
@@ -59,10 +114,14 @@ public sealed class VmSyncGate
         lock(syncRoot)
         {
             if(runId < nextRunIdToRelease)
+            {
+                NotifyRunClosedBeforeCriticalSection(runId);
                 return;
+            }
 
             closedBeforeGate.Add(runId);
             TryReleaseReadyRuns();
+            NotifyRunClosedBeforeCriticalSection(runId);
         }
     }
 
@@ -73,6 +132,16 @@ public sealed class VmSyncGate
 
         waiter = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         waiters.Add(runId, waiter);
+        return waiter;
+    }
+
+    TaskCompletionSource GetCriticalWaiter(long runId)
+    {
+        if(criticalWaiters.TryGetValue(runId, out TaskCompletionSource? waiter))
+            return waiter;
+
+        waiter = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        criticalWaiters.Add(runId, waiter);
         return waiter;
     }
 
@@ -102,5 +171,48 @@ public sealed class VmSyncGate
             break;
         }
     }
-}
 
+    void NotifyRunClosedBeforeCriticalSection(long runId)
+    {
+        if(runId < nextRunIdToEnterCriticalSection)
+            return;
+
+        if(criticalSectionOwnerRunId == runId)
+        {
+            criticalSectionOwnerRunId = null;
+            nextRunIdToEnterCriticalSection++;
+            TryReleaseReadyCriticalSectionOwner();
+            return;
+        }
+
+        closedBeforeCriticalSection.Add(runId);
+        TryReleaseReadyCriticalSectionOwner();
+    }
+
+    void TryReleaseReadyCriticalSectionOwner()
+    {
+        while(criticalSectionOwnerRunId is null)
+        {
+            if(closedBeforeCriticalSection.Remove(nextRunIdToEnterCriticalSection))
+            {
+                if(criticalWaiters.Remove(nextRunIdToEnterCriticalSection, out TaskCompletionSource? waiter))
+                    waiter.TrySetException(new PrecedingRunFailedException(nextRunIdToEnterCriticalSection));
+
+                criticalWaiting.Remove(nextRunIdToEnterCriticalSection);
+                nextRunIdToEnterCriticalSection++;
+                continue;
+            }
+
+            if(criticalWaiting.Remove(nextRunIdToEnterCriticalSection))
+            {
+                if(criticalWaiters.Remove(nextRunIdToEnterCriticalSection, out TaskCompletionSource? waiter))
+                    waiter.TrySetResult();
+
+                criticalSectionOwnerRunId = nextRunIdToEnterCriticalSection;
+                return;
+            }
+
+            break;
+        }
+    }
+}

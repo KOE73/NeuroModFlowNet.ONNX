@@ -10,7 +10,6 @@ public sealed class Op_Onnx_ExtractObbToPaddleRecTests
 {
     public static IEnumerable<object[]> SupportedBackends =>
         OnnxExecutionBackendMatrix.EnabledBackends
-            .Where(static backend => backend is InferenceBackend.Cpu or InferenceBackend.Cuda)
             .Select(static backend => new object[] { backend });
 
     [Theory]
@@ -65,6 +64,33 @@ public sealed class Op_Onnx_ExtractObbToPaddleRecTests
         {
             Assert.Equal(boxes.Length, actualCount);
             Assert.Equal([maxRoiCount, channels, sourceHeight, sourceWidth], output.GetTensorTypeAndShape().Shape);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractObbToPaddleRecFP32NCHW_NonFinalGpuOutputStaysOnModelDevice()
+    {
+        foreach(InferenceBackend executionBackend in OnnxExecutionBackendMatrix.EnabledBackends.Where(static backend => backend != InferenceBackend.Cpu))
+        {
+            OnnxExecutionBackendAvailability.AssertAvailable(executionBackend);
+
+            const int sourceWidth = 16;
+            const int sourceHeight = 8;
+            const int channels = 3;
+            YoloObb[] boxes =
+            [
+                CreateWholeImageObb(sourceWidth, sourceHeight),
+                CreateWholeImageObb(sourceWidth, sourceHeight)
+            ];
+
+            (OrtValue output, int? actualCount, VmRunContext context) =
+                await ExecuteExtractAsync(executionBackend, sourceWidth, sourceHeight, boxes, isFinal: false);
+            await using(context)
+            {
+                Assert.Null(actualCount);
+                Assert.Equal([boxes.Length, channels, sourceHeight, sourceWidth], output.GetTensorTypeAndShape().Shape);
+                OrtValueMemoryAssert.AssertGpuTensor(output, executionBackend);
+            }
         }
     }
 
@@ -163,14 +189,15 @@ public sealed class Op_Onnx_ExtractObbToPaddleRecTests
         YoloObb[] boxes,
         int? maxRoiCount = null,
         PaddleRecRoiOverflowPolicy overflowPolicy = PaddleRecRoiOverflowPolicy.Fail,
-        string? actualCountOutputKey = null)
+        string? actualCountOutputKey = null,
+        bool isFinal = true)
     {
         const int channels = 3;
         OrtValue source = CreateFP32NchwTensor(channels, sourceHeight, sourceWidth, 0.5f);
         var context = VmRunContextFactory.Create();
         context.Set("image.host", source, disposeWithContext: true);
 
-        if(executionBackend == InferenceBackend.Cuda)
+        if(executionBackend != InferenceBackend.Cpu)
         {
             var upload = new Copy_OrtTensor_To_ModelDevice("image.host", "image.gpu", executionBackend);
             context.AddOwnedResource(upload);
@@ -194,7 +221,7 @@ public sealed class Op_Onnx_ExtractObbToPaddleRecTests
             maxRoiCount: maxRoiCount,
             overflowPolicy: overflowPolicy,
             actualCountOutputKey: actualCountOutputKey,
-            isFinal: true,
+            isFinal: isFinal,
             executionBackend: executionBackend);
 
         OpResult result = await instruction.ExecuteAsync(context, CancellationToken.None);

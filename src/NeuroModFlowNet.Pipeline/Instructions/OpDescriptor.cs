@@ -8,14 +8,15 @@ public sealed record OpDescriptor(
     string Operation,
     IReadOnlyList<VarRequirement> Reads,
     IReadOnlyList<VarRequirement> Writes,
-    bool HasSideEffects = false)
+    bool HasSideEffects = false,
+    string? SyncGate = null)
 {
     public static OpDescriptor Create(
         string name,
         string operation,
         IReadOnlyList<VarRequirement>? reads = null,
         IReadOnlyList<VarRequirement>? writes = null,
-        bool hasSideEffects = false) =>
-        new(name, operation, reads ?? [], writes ?? [], hasSideEffects);
+        bool hasSideEffects = false,
+        string? syncGate = null) =>
+        new(name, operation, reads ?? [], writes ?? [], hasSideEffects, syncGate);
 }
-

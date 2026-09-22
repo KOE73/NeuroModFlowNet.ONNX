@@ -267,8 +267,60 @@ Environment variables удобнее для разового локальног�
 | `NMFN_ONNX_TEST_CPU=0/1` | Выключить или включить CPU backend cases. |
 | `NMFN_ONNX_TEST_CUDA=0/1` | Выключить или включить CUDA backend cases. |
 | `NMFN_ONNX_TEST_TENSORRT=0/1` | Выключить или включить TensorRT backend cases. |
+| `NMFN_PRIVATE_TRACKING_CONFIG_JSON=<path>` | Включить приватный tracking integration test через один внешний config. |
+| `NMFN_PRIVATE_TRACKING_SEQUENCE_JSON=<path>` | Включить приватный tracking integration test на внешнем JSON fixture. |
+| `NMFN_PRIVATE_TRACKING_VIDEO_PATH=<path>` | Опциональная проверяемая ссылка на приватное видео, из которого получен fixture. |
+| `NMFN_PRIVATE_TRACKING_MODEL_PATH=<path>` | Опциональная проверяемая ссылка на приватную модель/сеть, из которой получен fixture. |
 
 Значения `1` и `true` считаются включенным режимом.
+
+## Private tracking sequence
+
+`PrivateTrackingSequenceIntegrationTests` не хранит приватное видео или модель в репозитории. По умолчанию тест
+пропускается. Для локального прогона нужно один раз получить JSON с детекциями из приватного видео/сети и указать путь:
+
+```powershell
+$env:NMFN_PRIVATE_TRACKING_CONFIG_JSON = "C:\GitKOE\NeuroModFlowNet.ONNX.Private\tracking\tracking-private-config.json"
+dotnet test .\tests\NeuroModFlowNet.Pipeline.ONNX.Tests\NeuroModFlowNet.Pipeline.ONNX.Tests.csproj --filter FullyQualifiedName~PrivateTrackingSequenceIntegrationTests
+```
+
+Или напрямую:
+
+```powershell
+$env:NMFN_PRIVATE_TRACKING_SEQUENCE_JSON = "R:\PrivateTracking\sequence.json"
+$env:NMFN_PRIVATE_TRACKING_VIDEO_PATH = "R:\PrivateTracking\source.mp4"
+$env:NMFN_PRIVATE_TRACKING_MODEL_PATH = "R:\PrivateTracking\model.onnx"
+dotnet test .\tests\NeuroModFlowNet.Pipeline.ONNX.Tests\NeuroModFlowNet.Pipeline.ONNX.Tests.csproj --filter FullyQualifiedName~PrivateTrackingSequenceIntegrationTests
+```
+
+Минимальный формат:
+
+```json
+{
+  "maxInFlight": 1,
+  "trackerOptions": {
+    "iouThreshold": 0.5,
+    "minAge": 3,
+    "maxMissedFrames": 10,
+    "maxTrailLength": 50,
+    "startZoneContainmentThreshold": 1.0
+  },
+  "startZone": { "x": 0, "y": 0, "width": 1920, "height": 1080 },
+  "expect": {
+    "minProducedTrackFrames": 1,
+    "minConfirmedTracks": 1,
+    "maxTrackId": 20
+  },
+  "frames": [
+    {
+      "frameIndex": 0,
+      "detections": [
+        { "x": 100, "y": 120, "w": 40, "h": 30, "angle": 0, "classId": 0, "score": 0.91 }
+      ]
+    }
+  ]
+}
+```
 
 ## Почему картинки не сохраняются всегда
 

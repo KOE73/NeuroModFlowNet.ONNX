@@ -4,8 +4,12 @@
 /// Synchronizes one program point by accepted run id.
 /// </summary>
 /// <remarks>
-/// Use this before stateful resources such as trackers. The tracker stays focused on tracking; the instruction handles
-/// ordering and unblocks later runs when an earlier accepted execution failed before reaching this point.
+/// This instruction orders the point of release by accepted <c>RunId</c>: runs are released here in dense RunId order,
+/// and later runs are unblocked when an earlier accepted execution failed before reaching this point. It does NOT create
+/// a critical section around the following instructions, so by itself it does not serialize a stateful resource — two
+/// runs can enter the next instruction concurrently. A stage that needs per-frame mutual exclusion (for example a
+/// sequential tracker) must additionally serialize its own execution, or be driven through an ordered critical section
+/// that holds the gate across the resource call. See docs/architecture/tracker_and_source_config.ru.md.
 /// </remarks>
 public sealed class OrderedSyncInstruction : OpBase
 {

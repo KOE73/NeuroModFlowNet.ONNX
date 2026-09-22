@@ -20,6 +20,8 @@ public sealed class VmGlobalMemory
 
     public VmResourceRegistry Resources { get; }
 
+    public IReadOnlyCollection<string> Keys => values.Keys.ToArray();
+
     public void Set<T>(string key, T value) where T : notnull
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
@@ -58,5 +60,7 @@ public sealed class VmGlobalMemory
             ? typedValue
             : throw new InvalidOperationException($"Global value '{key}' already exists with type {value.GetType().Name}.");
     }
-}
 
+    public IReadOnlyDictionary<string, object> Snapshot() =>
+        new Dictionary<string, object>(values, StringComparer.Ordinal);
+}

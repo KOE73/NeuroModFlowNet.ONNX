@@ -39,6 +39,7 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
     readonly string? actualCountOutputKey;
     readonly bool isFinal;
     readonly InferenceBackend executionBackend;
+    readonly SemaphoreSlim executionLock = new(1, 1);
 
     OnnxExecutionContext? prepareContext;
     OnnxExecutionContext? matrixUploadContext;
@@ -48,6 +49,7 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
     OrtAllocator? outputCudaAllocator;
     OrtMemoryInfo? matrixCudaMemoryInfo;
     OrtAllocator? matrixCudaAllocator;
+    bool disposed;
 
     public Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW(
         string imageInputKey,
@@ -109,28 +111,30 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
     string IHasExecutionDevice.ExecutionDeviceName =>
         prepareContext?.Model.InferenceBackend.ToString() ?? "Uninitialized";
 
-    public override ValueTask<OpResult> ExecuteAsync(
+    public override async ValueTask<OpResult> ExecuteAsync(
         VmRunContext context,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(context);
         cancellationToken.ThrowIfCancellationRequested();
 
+        ThrowIfDisposed();
+
         if(!context.TryGet(imageInputKey, out OrtValue image))
-            return ValueTask.FromResult(OpResult.Fail($"Input key '{imageInputKey}' was not found in the pipeline context."));
+            return OpResult.Fail($"Input key '{imageInputKey}' was not found in the pipeline context.");
 
         if(!context.TryGet(obbInputKey, out YoloObb[] boxes))
-            return ValueTask.FromResult(OpResult.Fail($"Input key '{obbInputKey}' was not found in the pipeline context or is not a YoloObb array."));
+            return OpResult.Fail($"Input key '{obbInputKey}' was not found in the pipeline context or is not a YoloObb array.");
 
         if(boxes.Length == 0 && maxRoiCount is null)
-            return ValueTask.FromResult(OpResult.Fail("Paddle Rec ROI preparation requires at least one OBB."));
+            return OpResult.Fail("Paddle Rec ROI preparation requires at least one OBB.");
 
         int outputRegionCount = maxRoiCount ?? boxes.Length;
         int actualRegionCount = boxes.Length;
         if(actualRegionCount > outputRegionCount)
         {
             if(overflowPolicy == PaddleRecRoiOverflowPolicy.Fail)
-                return ValueTask.FromResult(OpResult.Fail($"Actual ROI count {actualRegionCount} exceeds fixed max ROI count {outputRegionCount}."));
+                return OpResult.Fail($"Actual ROI count {actualRegionCount} exceeds fixed max ROI count {outputRegionCount}.");
 
             actualRegionCount = outputRegionCount;
         }
@@ -138,36 +142,47 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
         var imageInfo = image.GetTensorTypeAndShape();
         string? validationError = ValidateImage(imageInfo.Shape, imageInfo.ElementDataType);
         if(validationError is not null)
-            return ValueTask.FromResult(OpResult.Fail(validationError));
+            return OpResult.Fail(validationError);
 
-        EnsureRuntime(imageInfo.Shape, outputRegionCount);
+        await executionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-        using OrtValue matrixHost = CreateMatrixTensor(
-            boxes,
-            actualRegionCount,
-            outputRegionCount,
-            checked((int)imageInfo.Shape[3]),
-            checked((int)imageInfo.Shape[2]));
-        using OrtValue? matrixDevice = executionBackend == InferenceBackend.Cpu
-            ? null
-            : UploadMatricesToDevice(matrixHost);
-
-        OrtValue output = CreateOutputTensor(outputRegionCount);
         try
         {
-            RunWithFreshBinding(image, matrixDevice ?? matrixHost, output);
-            context.Set(outputKey, output, disposeWithContext: true);
-            output = null!;
+            ThrowIfDisposed();
+
+            EnsureRuntime(imageInfo.Shape, outputRegionCount);
+
+            using OrtValue matrixHost = CreateMatrixTensor(
+                boxes,
+                actualRegionCount,
+                outputRegionCount,
+                checked((int)imageInfo.Shape[3]),
+                checked((int)imageInfo.Shape[2]));
+            using OrtValue? matrixDevice = executionBackend == InferenceBackend.Cpu
+                ? null
+                : UploadMatricesToDevice(matrixHost);
+
+            OrtValue output = CreateOutputTensor(outputRegionCount);
+            try
+            {
+                RunWithFreshBinding(image, matrixDevice ?? matrixHost, output);
+                context.Set(outputKey, output, disposeWithContext: true);
+                output = null!;
+            }
+            finally
+            {
+                output?.Dispose();
+            }
+
+            if(actualCountOutputKey is not null)
+                context.Set(actualCountOutputKey, actualRegionCount);
+
+            return OpResult.Continue;
         }
         finally
         {
-            output?.Dispose();
+            executionLock.Release();
         }
-
-        if(actualCountOutputKey is not null)
-            context.Set(actualCountOutputKey, actualRegionCount);
-
-        return ValueTask.FromResult(OpResult.Continue);
     }
 
     static string? ValidateImage(long[] imageShape, TensorElementType imageElementType)
@@ -439,8 +454,19 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
 
     public void Dispose()
     {
+        if(disposed)
+            return;
+
+        disposed = true;
         DisposeRuntimeState();
+        executionLock.Dispose();
         initializedImageShape = null;
         initializedRegionCount = 0;
+    }
+
+    void ThrowIfDisposed()
+    {
+        if(disposed)
+            throw new ObjectDisposedException(nameof(Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW));
     }
 }

@@ -52,8 +52,16 @@ public sealed class ConcatOrtValueRequestBatchInputAssembler : IOrtValueBatchInp
 
         long[] outputShape = [batchSize, .. inputShapes[0].Skip(1)];
         OrtValue batchValue = CreateOutputOrtTensor(elementType, outputShape);
-        RunWithFreshBinding(inputs, batchValue);
-        return new OrtValueBatchInput(batchValue, batchSize, OwnsValue: true, requestItemCounts);
+        try
+        {
+            RunWithFreshBinding(inputs, batchValue);
+            return new OrtValueBatchInput(batchValue, batchSize, OwnsValue: true, requestItemCounts);
+        }
+        catch
+        {
+            batchValue.Dispose();
+            throw;
+        }
     }
 
     static int ValidateInputShape(long[] inputShape, int inputIndex)
@@ -119,10 +127,13 @@ public sealed class ConcatOrtValueRequestBatchInputAssembler : IOrtValueBatchInp
     static void ConfigureRuntimeOperatorExecutionProvider(ExecutionProviderConfig config)
     {
         if(config is TrtConfig trtConfig)
+        {
             trtConfig.EnableEngineCache = false;
+            trtConfig.EnableBf16 = false;
+        }
     }
 
-    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false";
+    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false;trtBf16=false";
 
     static string FormatShapes(IReadOnlyList<long[]> shapes) =>
         string.Join('|', shapes.Select(static shape => string.Join('x', shape)));

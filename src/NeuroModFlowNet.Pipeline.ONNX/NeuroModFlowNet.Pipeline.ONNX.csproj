@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NeuroModFlowNet.CV\NeuroModFlowNet.CV.csproj" />
     <ProjectReference Include="..\NeuroModFlowNet.Pipeline\NeuroModFlowNet.Pipeline.csproj" />
     <ProjectReference Include="..\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
     <ProjectReference Include="..\NeuroModFlowNet.ONNX.Graph\NeuroModFlowNet.ONNX.Graph.csproj" />

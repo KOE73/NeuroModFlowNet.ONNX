@@ -18,11 +18,13 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
     readonly string inputKey;
     readonly string outputKey;
     readonly InferenceBackend executionBackend;
+    readonly SemaphoreSlim executionLock = new(1, 1);
     OnnxExecutionContext? onnxContext;
     TensorElementType? initializedElementType;
     long[]? initializedInputShape;
     OrtMemoryInfo? cudaMemoryInfo;
     OrtAllocator? cudaAllocator;
+    bool disposed;
 
     public Copy_OrtTensor_To_ModelDevice(string inputKey, string outputKey, InferenceBackend executionBackend = InferenceBackend.Cuda)
         : base(OpDescriptor.Create(
@@ -39,30 +41,51 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
         this.executionBackend = executionBackend;
     }
 
-    public override ValueTask<OpResult> ExecuteAsync(
+    public override async ValueTask<OpResult> ExecuteAsync(
         VmRunContext context,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(context);
         cancellationToken.ThrowIfCancellationRequested();
 
+        ThrowIfDisposed();
+
         if(!context.TryGet(inputKey, out OrtValue inputOrtValue))
-            return ValueTask.FromResult(OpResult.Fail($"Input key '{inputKey}' was not found in the pipeline context."));
+            return OpResult.Fail($"Input key '{inputKey}' was not found in the pipeline context.");
 
-        TensorElementType elementType = inputOrtValue.GetTensorTypeAndShape().ElementDataType;
-        long[] inputShape = inputOrtValue.GetTensorTypeAndShape().Shape;
+        await executionLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-        EnsureContext(elementType, inputShape);
+        try
+        {
+            ThrowIfDisposed();
 
-        OrtValue outputOrtValue = CreateOutputOrtTensor(elementType, inputShape);
+            var inputInfo = inputOrtValue.GetTensorTypeAndShape();
+            TensorElementType elementType = inputInfo.ElementDataType;
+            long[] inputShape = inputInfo.Shape;
 
-        // Binding a preallocated output is the important part: the Identity model computes nothing useful, but ORT must
-        // materialize the result in the allocator selected by CreateOutputOrtTensor.
-        RunWithFreshBinding(inputOrtValue, outputOrtValue);
+            EnsureContext(elementType, inputShape);
 
-        context.Set(outputKey, outputOrtValue, disposeWithContext: true);
+            OrtValue outputOrtValue = CreateOutputOrtTensor(elementType, inputShape);
+            try
+            {
+                // Binding a preallocated output is the important part: the Identity model computes nothing useful, but ORT
+                // must materialize the result in the allocator selected by CreateOutputOrtTensor.
+                RunWithFreshBinding(inputOrtValue, outputOrtValue);
 
-        return ValueTask.FromResult(OpResult.Continue);
+                context.Set(outputKey, outputOrtValue, disposeWithContext: true);
+                outputOrtValue = null!;
+            }
+            finally
+            {
+                outputOrtValue?.Dispose();
+            }
+
+            return OpResult.Continue;
+        }
+        finally
+        {
+            executionLock.Release();
+        }
     }
 
     void EnsureContext(TensorElementType elementType, long[] inputShape)
@@ -81,18 +104,18 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
             "Copy_OrtTensor_To_ModelDevice",
             $"shape={FormatShape(inputShape)};type={elementType}",
             executionBackend,
-            "runtime-operator;identity-upload");
+            RuntimeOperatorProviderOptionsKey);
 
         onnxContext = RuntimeOnnxOperatorKernelCache.CreateContext(
             kernelKey,
             () => IdentityBuilder.Build(ToTensorProtoDataType(elementType), inputShape),
-            configure: null,
+            ConfigureRuntimeOperatorExecutionProvider,
             "dynamic-identity.onnx");
 
         initializedElementType = elementType;
         initializedInputShape = [.. inputShape];
 
-        if(onnxContext.Model.InferenceBackend == InferenceBackend.Cuda)
+        if(onnxContext.Model.InferenceBackend is InferenceBackend.Cuda or InferenceBackend.TensorRt)
         {
             cudaMemoryInfo = new OrtMemoryInfo(
                 OrtMemoryInfo.allocatorCUDA,
@@ -103,9 +126,20 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
         }
     }
 
+    static void ConfigureRuntimeOperatorExecutionProvider(ExecutionProviderConfig config)
+    {
+        if(config is TrtConfig trtConfig)
+        {
+            trtConfig.EnableEngineCache = false;
+            trtConfig.EnableBf16 = false;
+        }
+    }
+
+    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;identity-upload;trtEngineCache=false;trtBf16=false";
+
     OrtValue CreateOutputOrtTensor(TensorElementType elementType, long[] shape)
     {
-        if(onnxContext!.Model.InferenceBackend == InferenceBackend.Cuda)
+        if(onnxContext!.Model.InferenceBackend is InferenceBackend.Cuda or InferenceBackend.TensorRt)
             return OrtValue.CreateAllocatedTensorValue(cudaAllocator!, elementType, shape);
 
         // CPU output is still allocated explicitly so the pipeline owns the destination OrtValue lifetime uniformly.
@@ -148,9 +182,20 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
 
     public void Dispose()
     {
+        if(disposed)
+            return;
+
+        disposed = true;
         DisposeRuntimeState();
+        executionLock.Dispose();
         initializedElementType = null;
         initializedInputShape = null;
+    }
+
+    void ThrowIfDisposed()
+    {
+        if(disposed)
+            throw new ObjectDisposedException(nameof(Copy_OrtTensor_To_ModelDevice));
     }
 
     void DisposeRuntimeState()

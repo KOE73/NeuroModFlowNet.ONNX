@@ -143,11 +143,15 @@ CreateRunner - static method for automatic selection of converter and extractor 
 
 ## ONNX visual/integration artifacts
 
+Default visual artifact root is resolved by tests: `NMFN_VISUAL_ROOT`, then `visualArtifactsRoot` from
+`appsettings.test.json`, otherwise `%TEMP%\NeuroModFlowNet.Pipeline.ONNX.Tests\VisualTestResults\`. Set
+`NMFN_VISUAL_ROOT=R:\Tests` when the physical `R:\Tests` root is required.
+
 | Test / Ops | Test images | Artifact folder | Outputs to inspect | Purpose |
 | --- | --- | --- | --- | --- |
-| `Op_Onnx_RealImageVisualTests` for Crop / Resize / PadResize / Rotate90 / Perspective / Undistort | `images/for_tests.png`, `images/for_tests_perspective.png`, `images/for_tests_perspective_real_0.png` | `R:\Tests\Onnx\<TypeFolder>\<OperationName>\` by default when visual save is enabled | `*-actual.png`, perspective quad previews where applicable | Manual visual validation for individual ONNX image operators on real images. |
-| `ImgTextToObbOrtValueIntegrationTests` | `images/for_tests.png`, `images/for_tests_perspective_real_0.png` | `R:\Tests\Onnx\UnknownType\ImgTextToObbOrtValueIntegration\` by default when visual save is enabled | `*_source_obb.png`, `*_perspective_obb.png`, `*_model_640_padresize_obb.png`, `*_source_obb_crop_###.png`, `*_perspective_obb_crop_###.png`, `*_model_obb_crop_###.png`, `*_source_recognition.txt`, `*_perspective_recognition.txt` | Full integration path: source image -> optional perspective -> PadResize -> img-text-to-obb service -> coordinate remap -> OBB ROI prepare -> PaddleOCR Rec OrtValue service -> typed text results. |
-| `Op_Onnx_ExtractObbToPaddleRecTests` | generated large visual test tensors, plus real-image integration through `ImgTextToObbOrtValueIntegrationTests` | `R:\Tests\Onnx\FP32_NCHW\Op_Onnx_PaddleRecRoiPrepare\` or integration folder depending on test | prepared Paddle Rec ROI batch images / numerical asserts | Validate OBB/ROI extraction, padding, target size, fixed capacity and Paddle Rec normalization. |
+| `Op_Onnx_RealImageVisualTests` for Crop / Resize / PadResize / Rotate90 / Perspective / Undistort | `images/for_tests.png`, `images/for_tests_perspective.png`, `images/for_tests_perspective_real_0.png` | `<artifactRoot>\Onnx\<TypeFolder>\<OperationName>\` | `*-actual.png`, perspective quad previews where applicable | Manual visual validation for individual ONNX image operators on real images. |
+| `ImgTextToObbOrtValueIntegrationTests` | `images/for_tests.png`, `images/for_tests_perspective_real_0.png` | `<artifactRoot>\Onnx\UnknownType\ImgTextToObbOrtValueIntegration\` | `*_source_obb.png`, `*_perspective_obb.png`, `*_model_640_padresize_obb.png`, `*_source_obb_crop_###.png`, `*_perspective_obb_crop_###.png`, `*_model_obb_crop_###.png`, `*_source_recognition.txt`, `*_perspective_recognition.txt` | Full integration path: source image -> optional perspective -> PadResize -> img-text-to-obb service -> coordinate remap -> OBB ROI prepare -> PaddleOCR Rec OrtValue service -> typed text results. |
+| `Op_Onnx_ExtractObbToPaddleRecTests` | generated large visual test tensors, plus real-image integration through `ImgTextToObbOrtValueIntegrationTests` | `<artifactRoot>\Onnx\FP32_NCHW\Op_Onnx_PaddleRecRoiPrepare\` or integration folder depending on test | prepared Paddle Rec ROI batch images / numerical asserts | Validate OBB/ROI extraction, padding, target size, fixed capacity and Paddle Rec normalization. |
 
 # Модели для программы
 Код надо согласовывать между собой

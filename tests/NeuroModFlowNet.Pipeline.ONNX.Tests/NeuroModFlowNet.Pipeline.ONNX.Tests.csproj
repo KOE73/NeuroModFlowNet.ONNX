@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\NeuroModFlowNet.CV\NeuroModFlowNet.CV.csproj" />
     <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX.Graph\NeuroModFlowNet.ONNX.Graph.csproj" />
     <ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />
     <ProjectReference Include="..\..\src\NeuroModFlowNet.Pipeline.ONNX\NeuroModFlowNet.Pipeline.ONNX.csproj" />

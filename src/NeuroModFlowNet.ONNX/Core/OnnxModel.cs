@@ -129,7 +129,7 @@ public sealed class OnnxModel : IDisposable, IModelMetadataProvider
                     {
                         trtConfig.MaxWorkspaceSizeGb = 4;
                         trtConfig.EnableFp16 = true;
-                        trtConfig.EnableBf16 = true;
+                        trtConfig.EnableBf16 = false;
                         trtConfig.EnableEngineCache = true;
                         trtConfig.EngineCachePath = TrtConfigDefaults.GetEngineCachePath();
                         trtConfig.BuilderOptimizationLevel = 2;

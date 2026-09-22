@@ -19,7 +19,7 @@ namespace NeuroModFlowNet.Pipeline;
 /// disposable-результаты принадлежат <see cref="VmRunContext"/>.
 /// </remarks>
 [DebuggerTypeProxy(typeof(VmProgramDebugView))]
-[DebuggerDisplay("Instructions = {Instructions.Count}, Labels = {Labels.Count}")]
+[DebuggerDisplay("Name = {Name}, Instructions = {Instructions.Count}, Labels = {Labels.Count}")]
 public sealed class VmProgram
 {
     readonly IReadOnlyList<IOp> instructions;
@@ -32,10 +32,16 @@ public sealed class VmProgram
     /// RU:
     /// Создает скомпилированную VM-программу из упорядоченных операций и карты метка -> индекс инструкции.
     /// </summary>
-    public VmProgram(IReadOnlyList<IOp> instructions, IReadOnlyDictionary<string, int> labels)
+    /// <param name="name">
+    /// EN: Optional program name shown in trace entries; useful when a controller executes a chain of programs.
+    ///
+    /// RU: Необязательное имя программы для trace; полезно, когда контроллер выполняет цепочку программ.
+    /// </param>
+    public VmProgram(IReadOnlyList<IOp> instructions, IReadOnlyDictionary<string, int> labels, string? name = null)
     {
         this.instructions = instructions ?? throw new ArgumentNullException(nameof(instructions));
         this.labels = labels ?? throw new ArgumentNullException(nameof(labels));
+        Name = name;
     }
 
     /// <summary>
@@ -45,7 +51,18 @@ public sealed class VmProgram
     /// RU:
     /// Пустая программа, которая завершается без изменения контекста запуска.
     /// </summary>
-    public static VmProgram Empty { get; } = new([], new Dictionary<string, int>(StringComparer.Ordinal));
+    public static VmProgram Empty { get; } = new([], new Dictionary<string, int>(StringComparer.Ordinal), "empty");
+
+    /// <summary>
+    /// EN:
+    /// Optional program name. Labels stay local to the program; the name only identifies the program in trace and
+    /// diagnostics when a controller runs several programs for one accepted run.
+    ///
+    /// RU:
+    /// Необязательное имя программы. Метки остаются локальными для программы; имя только идентифицирует программу в
+    /// trace и диагностике, когда контроллер выполняет несколько программ для одного принятого запуска.
+    /// </summary>
+    public string? Name { get; }
 
     /// <summary>
     /// EN:
@@ -68,11 +85,15 @@ public sealed class VmProgram
     /// <summary>
     /// EN:
     /// Executes the program with the normal step contract: one VM step is one operation execution.
+    /// Returns <see cref="VmProgramExit.Stopped"/> when an instruction ended the whole run with
+    /// <see cref="OpResultKind.Stop"/>, so a controller can skip the remaining programs of a chain.
     ///
     /// RU:
     /// Выполняет программу с обычным контрактом шага: один VM-шаг равен одному выполнению операции.
+    /// Возвращает <see cref="VmProgramExit.Stopped"/>, если инструкция завершила весь запуск через
+    /// <see cref="OpResultKind.Stop"/>, чтобы контроллер мог пропустить оставшиеся программы цепочки.
     /// </summary>
-    public ValueTask ExecuteAsync(
+    public ValueTask<VmProgramExit> ExecuteAsync(
         VmRunContext context,
         CancellationToken cancellationToken,
         bool captureVariablesInTrace = true)
@@ -91,7 +112,7 @@ public sealed class VmProgram
     /// RU:
     /// Выполняет программу как warmup-проход и проверяет размещение данных после каждой успешной операции.
     /// </summary>
-    public ValueTask ExecuteWarmupAsync(
+    public ValueTask<VmProgramExit> ExecuteWarmupAsync(
         VmRunContext context,
         CancellationToken cancellationToken,
         bool captureVariablesInTrace = true)
@@ -143,7 +164,7 @@ public sealed class VmProgram
     ///
     /// RU: Токен отмены, используемый ожиданиями debug gate и выполнением операций.
     /// </param>
-    private async ValueTask ExecuteLoopInternalAsync(
+    private async ValueTask<VmProgramExit> ExecuteLoopInternalAsync(
         VmRunContext context,
         Func<IOp, VmRunContext, CancellationToken, ValueTask<OpResult>> stepExecutor,
         bool captureVariablesInTrace,
@@ -151,6 +172,7 @@ public sealed class VmProgram
     {
         ArgumentNullException.ThrowIfNull(context);
 
+        VmProgramExit exit = VmProgramExit.Completed;
         int instructionIndex = 0;
         while(instructionIndex < instructions.Count)
         {
@@ -169,7 +191,11 @@ public sealed class VmProgram
             }
 
             long startTimestamp = Stopwatch.GetTimestamp();
-            OpResult result = await stepExecutor(instruction, context, cancellationToken).ConfigureAwait(false);
+            OpResult result = await ExecuteStepWithOptionalSyncGateAsync(
+                instruction,
+                context,
+                stepExecutor,
+                cancellationToken).ConfigureAwait(false);
             long elapsedTicks = Stopwatch.GetTimestamp() - startTimestamp;
             context.Trace.Add(new OpTraceEntry(
                 instructionIndex,
@@ -179,7 +205,11 @@ public sealed class VmProgram
                 elapsedTicks * 1000.0 / Stopwatch.Frequency,
                 result.Kind,
                 result.Label,
-                captureVariablesInTrace ? context.SnapshotVariables() : []));
+                captureVariablesInTrace ? context.SnapshotVariables() : [],
+                Name));
+
+            if(result.Kind == OpResultKind.Stop)
+                exit = VmProgramExit.Stopped;
 
             instructionIndex = result.Kind switch
             {
@@ -192,6 +222,33 @@ public sealed class VmProgram
                     result.Exception),
                 _ => throw new InvalidOperationException($"Unsupported instruction result: {result.Kind}.")
             };
+        }
+
+        return exit;
+    }
+
+    static async ValueTask<OpResult> ExecuteStepWithOptionalSyncGateAsync(
+        IOp instruction,
+        VmRunContext context,
+        Func<IOp, VmRunContext, CancellationToken, ValueTask<OpResult>> stepExecutor,
+        CancellationToken cancellationToken)
+    {
+        string? syncGateName = instruction.Descriptor.SyncGate;
+        if(string.IsNullOrWhiteSpace(syncGateName))
+            return await stepExecutor(instruction, context, cancellationToken).ConfigureAwait(false);
+
+        VmSyncGate gate = context.SyncGates.GetOrCreate(syncGateName);
+        bool acquired = false;
+        try
+        {
+            await gate.AcquireInOrderAsync(context.Identity.RunId, cancellationToken).ConfigureAwait(false);
+            acquired = true;
+            return await stepExecutor(instruction, context, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            if(acquired)
+                gate.Release(context.Identity.RunId);
         }
     }
 

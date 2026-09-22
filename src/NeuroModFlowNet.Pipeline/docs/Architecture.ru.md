@@ -7,13 +7,13 @@ Host loop / event-system module
   -> решает, принимать ли работу
   -> передает named inputs в VM
 
-PipelineVmController
+PipelineVmController (один на источник)
   -> выдает плотный RunId
-  -> запускает VM execution
+  -> запускает цепочку программ одним run context
 
-PipelineProgram
+PipelineProgram (одна или цепочка [prepare, common])
   -> линейный timeline инструкций
-  -> labels и jumps
+  -> labels и jumps, локальные для программы
 
 PipelineRunContext
   -> локальные именованные регистры одного accepted run
@@ -31,6 +31,16 @@ Per-source config и per-source state (например состояние тр�
 
 VM не владеет источником кадров. Для видео host кладет `source.frame`, `source.id`, timing и другие входы в
 `PipelineRunInputs`. Для другой предметной области набор входов может быть вообще не связан с изображениями.
+
+## Почему цепочка программ, а не вторая VM и не switch по камере
+
+Контроллер может исполнять несколько программ для одного принятого запуска одним и тем же `VmRunContext`. Регистровому
+файлу не нужно «переходить» к другому исполнителю: тот же `RunId`, та же `GlobalMemory`, те же sync gates и
+disposable-выходы. Это позволяет собрать `[prepare_camera, common]`, где подготовка своя у каждой камеры, а общая часть
+одинакова как код. Вторая VM или один контроллер со switch по `SourceId` ломают изоляцию по источнику (общая память,
+общий порядок `RunId`, общий `MaxInFlight`). Экземпляры программ между контроллерами не разделяются, потому что инструкции
+могут владеть mutable native-состоянием; дорогое разделяется через ресурсы и кэш kernels. Подробно:
+`docs/architecture/ADR-001_program_chain_per_controller.ru.md`.
 
 ## Почему RunId, а не frame number
 

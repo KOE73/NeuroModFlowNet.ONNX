@@ -13,7 +13,21 @@ The project intentionally has no dependency on ONNX Runtime. It owns only the or
 - named coordinate back-transform registers.
 - neutral VM run inputs/outputs and instruction trace diagnostics.
 
-The key design rule is: one accepted run executes one program from start to finish, while slow or stateful resources are called through explicit instructions.
+The key design rule is: one accepted run executes one program chain from start to finish with one shared run context, while slow or stateful resources are called through explicit instructions.
+
+## Program chain
+
+`VmController` accepts one program or an ordered list of programs. Every accepted run executes the programs in order
+with the same `VmRunContext`, so the chain is semantically one concatenated program: same `RunId`, same global memory,
+same sync gates, same disposable outputs. Typical use is `[prepare, common]`: a source-specific preparation program
+(perspective, undistort, resize with per-camera parameters) followed by a program that is identical code for every
+source. Labels stay local to each program, `Stop` ends the whole run, a failure in any program fails the run, and
+`OpTraceEntry.Program` tells which program a trace sample belongs to.
+
+The chain never crosses controllers, and program instances are not shared between controllers: instructions may own
+mutable native state, so "identical for every source" means the same builder output, not the same object. Expensive
+state (sessions, model endpoints) is already shared through resources and the kernel cache. Rationale:
+`docs/architecture/ADR-001_program_chain_per_controller.ru.md`.
 
 ## Boundaries
 

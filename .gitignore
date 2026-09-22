@@ -524,3 +524,6 @@ appsettings.*.Local.json
 **/VideoSource.local.txt
 **/*.local.txt
 **/*.secrets.config
+
+# Claude Code local session settings
+.claude/

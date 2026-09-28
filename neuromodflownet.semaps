@@ -1,0 +1,14 @@
+version: 1
+name: NeuroModFlowNet.ONNX
+workspace: docs/diagrams
+source_root: .
+port: 32905
+
+# What semaps reads from the code (`semaps doctor`, `semaps sync`, page «Экстракторы»).
+extractors:
+  - id: nmfn
+    language: csharp
+    project: nmfn        # docs/diagrams/projects/nmfn
+    root: .
+    include: [src]
+    edges: [holds, injects]

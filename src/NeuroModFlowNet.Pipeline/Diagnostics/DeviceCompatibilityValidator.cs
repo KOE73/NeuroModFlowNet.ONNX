@@ -1,4 +1,4 @@
-﻿namespace NeuroModFlowNet.Pipeline;
+namespace NeuroModFlowNet.Pipeline;
 
 /// <summary>
 /// Validates memory location compatibility of instruction inputs and outputs during the warmup run.
@@ -21,7 +21,7 @@ public static class DeviceCompatibilityValidator
 
         foreach(VarRequirement read in descriptor.Reads)
         {
-            if(!context.TryGetObject(read.Key, out object? value) || value is null)
+            if(!context.TryGetObject(read.Key, out object? value) || value is null || !IsTensorLike(value))
                 continue;
 
             VarMemoryLocation actual = VarDebugInspector.DetectMemoryLocation(value, value.GetType());
@@ -41,7 +41,7 @@ public static class DeviceCompatibilityValidator
 
         foreach(VarRequirement write in descriptor.Writes)
         {
-            if(!context.TryGetObject(write.Key, out object? value) || value is null)
+            if(!context.TryGetObject(write.Key, out object? value) || value is null || !IsTensorLike(value))
                 continue;
 
             VarMemoryLocation actual = VarDebugInspector.DetectMemoryLocation(value, value.GetType());
@@ -57,5 +57,18 @@ public static class DeviceCompatibilityValidator
                     $"[COMPATIBILITY ERROR] Инструкция '{descriptor.Name}' ({descriptor.Operation}) выполняется на CPU, " +
                     $"но создала выходной тензор '{write.Key}' на GPU.");
         }
+    }
+
+    /// <summary>
+    /// EN: Placement is validated for tensor payloads only. Scalars, typed results, back transforms and other metadata
+    /// written by a GPU instruction legitimately live in managed memory and do not indicate an implicit copy.
+    ///
+    /// RU: Размещение проверяется только у тензорных значений. Скаляры, typed результаты, обратные преобразования и
+    /// прочие метаданные, записанные GPU-инструкцией, законно живут в managed-памяти и не означают неявного копирования.
+    /// </summary>
+    static bool IsTensorLike(object value)
+    {
+        string fullName = value.GetType().FullName ?? string.Empty;
+        return fullName == "Microsoft.ML.OnnxRuntime.OrtValue" || fullName == "OpenCvSharp.Mat";
     }
 }

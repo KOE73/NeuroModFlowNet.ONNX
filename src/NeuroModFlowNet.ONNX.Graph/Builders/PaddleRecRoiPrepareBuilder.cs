@@ -109,13 +109,23 @@ public static class PaddleRecRoiPrepareBuilder
         return CreateModel("neuromodflownet-paddle-rec-roi-prepare-batched-grid-sample", graph).ToByteArray();
     }
 
+    /// <summary>
+    /// EN: Batched ROI sampling driven by runtime target-to-source 3x3 matrices. With
+    /// <paramref name="applyPaddleNormalization"/> the batch is mapped from 0..1 to -1..1 (PaddleOCR Rec input); without
+    /// it the sampled 0..1 values are returned as is (YOLO-style input, for example text detection on bag crops).
+    ///
+    /// RU: Батчевая выборка ROI по runtime-матрицам target-to-source 3x3. С <paramref name="applyPaddleNormalization"/>
+    /// батч переводится из 0..1 в -1..1 (вход PaddleOCR Rec); без него значения 0..1 возвращаются как есть (вход в
+    /// стиле YOLO, например детекция текста на вырезках мешков).
+    /// </summary>
     public static byte[] BuildBatchedGridSampleFromMatricesFP32Nchw(
         int sourceWidth,
         int sourceHeight,
         int channels,
         int targetWidth,
         int targetHeight,
-        int regionCount)
+        int regionCount,
+        bool applyPaddleNormalization = true)
     {
         ValidateStaticArguments(sourceWidth, sourceHeight, channels, targetWidth, targetHeight, regionCount);
 
@@ -211,8 +221,15 @@ public static class PaddleRecRoiPrepareBuilder
             Output = { "source_batch" }
         });
 
-        AddGridSample(graph, "source_batch", "runtime_grid", "roi_batch", regionIndex: null);
-        AddPaddleNormalization(graph, "roi_batch", OutputName);
+        if(applyPaddleNormalization)
+        {
+            AddGridSample(graph, "source_batch", "runtime_grid", "roi_batch", regionIndex: null);
+            AddPaddleNormalization(graph, "roi_batch", OutputName);
+        }
+        else
+        {
+            AddGridSample(graph, "source_batch", "runtime_grid", OutputName, regionIndex: null);
+        }
 
         return CreateModel("neuromodflownet-paddle-rec-roi-prepare-batched-grid-sample-from-matrices", graph).ToByteArray();
     }

@@ -30,7 +30,10 @@
     <Project Path="labs/NeuroModFlowNet.ONNX.Lab.Algorithms/NeuroModFlowNet.ONNX.Lab.Algorithms.csproj" />
     <Project Path="labs/NeuroModFlowNet.ONNX.Lab/NeuroModFlowNet.ONNX.Lab.csproj" />
     <Project Path="labs/NeuroModFlowNet.Pipeline.Avalonia.VMDebug/NeuroModFlowNet.Pipeline.Avalonia.VMDebug.csproj" />
+    <Project Path="labs/NeuroModFlowNet.Pipeline.MultiCamera/NeuroModFlowNet.Pipeline.MultiCamera.csproj" />
     <Project Path="labs/NeuroModFlowNet.Pipeline.VMDebug/NeuroModFlowNet.Pipeline.VMDebug.csproj" />
+    <Project Path="labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NeuroModFlowNet.Pipeline.Video.Nvdec.csproj" />
+    <Project Path="labs/NeuroModFlowNet.Pipeline.VideoOrt/NeuroModFlowNet.Pipeline.VideoOrt.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/NeuroModFlowNet.ONNX.Demo.Assets/NeuroModFlowNet.ONNX.Demo.Assets.csproj" Id="2b26f4ef-084f-4786-b973-a5132130eb48">

@@ -130,12 +130,11 @@ public sealed class Copy_OrtTensor_To_ModelDevice : OpBase, IDisposable
     {
         if(config is TrtConfig trtConfig)
         {
-            trtConfig.EnableEngineCache = false;
             trtConfig.EnableBf16 = false;
         }
     }
 
-    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;identity-upload;trtEngineCache=false;trtBf16=false";
+    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;identity-upload;trtEngineCache=keyed;trtBf16=false";
 
     OrtValue CreateOutputOrtTensor(TensorElementType elementType, long[] shape)
     {

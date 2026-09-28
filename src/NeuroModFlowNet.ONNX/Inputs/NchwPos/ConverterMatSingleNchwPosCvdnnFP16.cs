@@ -3,10 +3,10 @@ using Microsoft.ML.OnnxRuntime;
 namespace NeuroModFlowNet.ONNX.Converters.Images;
 
 /// <summary>
-/// EN: NCHW converter for a single Mat input utilizing <c>CvDnn.BlobFromImage</c> (Float16).
+/// EN: NCHW converter for a single Mat input utilizing <c>Cv2.Dnn.BlobFromImage</c> (Float16).
 /// This implementation represents the reference standard for correctness, but is not the most performant due to allocation and copy overhead.
 /// <para/>
-/// RU: NCHW-конвертер для одного изображения Mat с использованием <c>CvDnn.BlobFromImage</c> (Float16).
+/// RU: NCHW-конвертер для одного изображения Mat с использованием <c>Cv2.Dnn.BlobFromImage</c> (Float16).
 /// Использование данного подхода считается образцовым по правильности, но не лучшим по быстродействию из-за аллокаций и копирования данных.
 /// </summary>
 public class ConverterMatSingleNchwPosCvdnnFP16 : ConverterNchwBase<Mat>
@@ -21,7 +21,7 @@ public class ConverterMatSingleNchwPosCvdnnFP16 : ConverterNchwBase<Mat>
         if(image.Empty()) { buffer.Clear(); return; }
 
         double scale = 1.0 / 255.0;
-        using var blob = CvDnn.BlobFromImage(image, scale, swapRB: true, crop: false);
+        using var blob = Cv2.Dnn.BlobFromImage(image, scale, swapRB: true, crop: false);
 
         var sourceData = new ReadOnlySpan<float>((float*)blob.DataPointer, (int)blob.Total());
         

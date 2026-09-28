@@ -1,0 +1,2881 @@
+{
+  "contractVersion": 3,
+  "language": "en",
+  "entries": {
+    "c_onnx": {
+      "name": {
+        "v": "NeuroModFlowNet.ONNX",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "91ea1834"
+      },
+      "description": {
+        "v": "Core: runners, inputs, YOLO/PaddleOCR models, result extractors.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "5f82bcc3"
+      }
+    },
+    "c_graph": {
+      "name": {
+        "v": "NeuroModFlowNet.ONNX.Graph",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2c513e96"
+      },
+      "description": {
+        "v": "Builders of runtime ONNX graphs (Crop, Resize, Undistort, ROI prepare).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "70ad7f16"
+      }
+    },
+    "c_diag": {
+      "name": {
+        "v": "NeuroModFlowNet.ONNX.Diagnostics",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "864eefa6"
+      },
+      "description": {
+        "v": "Inference diagnostics.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "25cecb75"
+      }
+    },
+    "c_vis": {
+      "name": {
+        "v": "NeuroModFlowNet.ONNX.Visualizer",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "48f93f9a"
+      },
+      "description": {
+        "v": "Rendering of inference results; all visualization lives here.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7d86e283"
+      }
+    },
+    "c_cv": {
+      "name": {
+        "v": "NeuroModFlowNet.CV",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9fd2ab8e"
+      },
+      "description": {
+        "v": "CV algorithms without ONNX, including the tracker.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6ebd3f79"
+      }
+    },
+    "c_pipe": {
+      "name": {
+        "v": "NeuroModFlowNet.Pipeline",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "8bfd85c1"
+      },
+      "description": {
+        "v": "VM: controller, programs, registers, synchronization, coordinate back-transforms.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b75b0925"
+      }
+    },
+    "c_pipeonnx": {
+      "name": {
+        "v": "NeuroModFlowNet.Pipeline.ONNX",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "750eedfe"
+      },
+      "description": {
+        "v": "VM ONNX instructions, inference services, output decoders, kernel cache.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "27cbd83c"
+      }
+    },
+    "c_cv_tracking": {
+      "name": {
+        "v": "Tracking",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "be7c829c"
+      }
+    },
+    "c_onnx_core": {
+      "name": {
+        "v": "Core",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "5d8aac9e"
+      }
+    },
+    "c_onnx_inputs": {
+      "name": {
+        "v": "Inputs",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9dcbd6b8"
+      }
+    },
+    "c_onnx_outputs": {
+      "name": {
+        "v": "Outputs",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "bb2c01f5"
+      }
+    },
+    "c_onnx_runners": {
+      "name": {
+        "v": "Runners",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "15a6a318"
+      }
+    },
+    "c_graph_builders": {
+      "name": {
+        "v": "Builders",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c1a58269"
+      }
+    },
+    "c_pipe_contexts": {
+      "name": {
+        "v": "Contexts",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "43eb9bbd"
+      }
+    },
+    "c_pipe_coordinates": {
+      "name": {
+        "v": "Coordinates",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "edc91ac8"
+      }
+    },
+    "c_pipe_diagnostics": {
+      "name": {
+        "v": "Diagnostics",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e9a81397"
+      }
+    },
+    "c_pipe_execution": {
+      "name": {
+        "v": "Execution",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d991a0f5"
+      }
+    },
+    "c_pipe_instructions": {
+      "name": {
+        "v": "Instructions",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "48d33564"
+      }
+    },
+    "c_pipe_memory": {
+      "name": {
+        "v": "Memory",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "58f879ce"
+      }
+    },
+    "c_pipe_resources": {
+      "name": {
+        "v": "Resources",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9564a892"
+      }
+    },
+    "c_pipe_synchronization": {
+      "name": {
+        "v": "Synchronization",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "fa8a5e9b"
+      }
+    },
+    "c_pipeonnx_coordinates": {
+      "name": {
+        "v": "Coordinates",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "edc91ac8"
+      }
+    },
+    "c_pipeonnx_instructions": {
+      "name": {
+        "v": "Instructions",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "48d33564"
+      }
+    },
+    "c_pipeonnx_paddleocr": {
+      "name": {
+        "v": "PaddleOCR",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "58b5ddff"
+      }
+    },
+    "c_pipeonnx_resources": {
+      "name": {
+        "v": "Resources",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9564a892"
+      }
+    },
+    "c_pipeonnx_runtime": {
+      "name": {
+        "v": "Runtime",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "756aa7cb"
+      }
+    },
+    "c_pipeonnx_tracking": {
+      "name": {
+        "v": "Tracking",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "be7c829c"
+      }
+    },
+    "c_pipeonnx_yolo": {
+      "name": {
+        "v": "Yolo",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6cbf3c88"
+      }
+    },
+    "e_asm_onnx": {
+      "description": {
+        "v": "Core: runners, inputs, YOLO/PaddleOCR models, result extractors.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "5f82bcc3"
+      }
+    },
+    "e_asm_graph": {
+      "description": {
+        "v": "Builders of runtime ONNX graphs (Crop, Resize, Undistort, ROI prepare).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "70ad7f16"
+      }
+    },
+    "e_asm_diag": {
+      "description": {
+        "v": "Inference diagnostics.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "25cecb75"
+      }
+    },
+    "e_asm_vis": {
+      "description": {
+        "v": "Rendering of inference results; all visualization lives here.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7d86e283"
+      }
+    },
+    "e_asm_cv": {
+      "description": {
+        "v": "CV algorithms without ONNX, including the tracker.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6ebd3f79"
+      }
+    },
+    "e_asm_pipe": {
+      "description": {
+        "v": "VM: controller, programs, registers, synchronization, coordinate back-transforms.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b75b0925"
+      }
+    },
+    "e_asm_pipeonnx": {
+      "description": {
+        "v": "VM ONNX instructions, inference services, output decoders, kernel cache.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "27cbd83c"
+      }
+    },
+    "e_framecontext": {
+      "description": {
+        "v": "Neutral frame identity passed from the VM into tracking algorithms.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ioutracker": {
+      "description": {
+        "v": "Simple deterministic IoU tracker ported as neutral CPU geometry.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_trackdetection": {
+      "description": {
+        "v": "Neutral CPU detection consumed by trackers.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_trackedobject": {
+      "description": {
+        "v": "Neutral tracking result. Domain annotations such as OCR rows belong in separate pipeline registers.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_trackerframeoptions": {
+      "description": {
+        "v": "Hot-reloadable per-frame tracker options read by the VM from per-source memory.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_trackpoint": {
+      "description": {
+        "v": "CPU-only point used by tracking paths without binding the CV core to UI, OpenCV, or ONNX types.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_trackrect": {
+      "description": {
+        "v": "Axis-aligned rectangle used by tracker math and per-source zones.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxexecutioncontext": {
+      "description": {
+        "v": "Mutable execution state for one OnnxModel.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxexecutioncontextdebugnode": {
+      "description": {
+        "v": "Single input or output row shown by the debugger proxy for OnnxExecutionContext.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxexecutioncontextdebugview": {
+      "description": {
+        "v": "Debugger proxy for OnnxExecutionContext.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxmodel": {
+      "description": {
+        "v": "Long-lived ONNX model container.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxruntimecontext": {
+      "description": {
+        "v": "Legacy constructor facade over OnnxExecutionContext.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxruntimemodelsource": {
+      "description": {
+        "v": "Describes where an ONNX Runtime session should load its model from.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ionnxassetresolver": {
+      "description": {
+        "v": "Resolves logical ONNX-related assets into concrete file or byte sources.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxassetrequest": {
+      "description": {
+        "v": "Logical request for an ONNX-related asset.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxassetsource": {
+      "description": {
+        "v": "Resolved ONNX-related asset source.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_cudaconfig": {
+      "description": {
+        "v": "CUDA Execution Provider configuration tuned for maximum performance on RTX 5090 (Blackwell). TODO: generated by Gemini, needs checking.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6ae1e583"
+      }
+    },
+    "e_executionproviderconfig": {
+      "description": {
+        "v": "Common base for execution provider settings. TODO: analyze and extract shared properties.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0a204ff9"
+      }
+    },
+    "e_onnxruntimepathhelper": {
+      "description": {
+        "v": "Helper for configuring system environment paths for ONNX dependencies (CUDA, cuDNN, TensorRT) via App.config or AppSettings.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_trtconfig": {
+      "description": {
+        "v": "Full TensorRT Execution Provider configuration. Properties are grouped by purpose; null means the option is not passed and the ORT default applies.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c8fd3c56"
+      }
+    },
+    "e_imatfillalgorithm": {
+      "description": {
+        "v": "Policy interface for single-image fill algorithms (Mat → buffer).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_imatlistfillalgorithm": {
+      "description": {
+        "v": "Policy interface for batch fill algorithms (List of Mat → buffer).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_poscvdnnfp16": {
+      "description": {
+        "v": "Positive [0,1] via CvDnn.BlobFromImage → Float16 buffer (CvDnn float → ConvertToHalf).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_poscvdnnfp32": {
+      "description": {
+        "v": "Positive [0,1] via CvDnn.BlobFromImage → float buffer.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_posdivhalftensorreorderptrfp16": {
+      "description": {
+        "v": "Positive [0,1]: byte→float (TensorPrimitives) → Multiply(1/255) → ConvertToHalf → Reorder HWC→CHW (pointer). Migrated from TranslatorsPositiveNormalized.ToFloat16.Positive_DivHalfTensor_ReorderPtr",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_posreorderdivhalfptrfp16": {
+      "description": {
+        "v": "Positive [0,1]: pointer reorder + normalize + direct Half write (no intermediate float buffer). Migrated from TranslatorsPositiveNormalized.ToFloat16.Positive_ReorderDivHalfPtr",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_posreorderdivptrhalftensorfp16": {
+      "description": {
+        "v": "Positive [0,1]: pointer reorder BGR→RGB + normalize (x * 1/255) → ConvertToHalf. Migrated from TranslatorsPositiveNormalized.ToFloat16.Positive_ReorderDivPtr_HalfTensor",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_posreorderptrdivhalftensorfp16": {
+      "description": {
+        "v": "Positive [0,1]: pointer reorder BGR→RGB (no normalize) → Multiply(1/255) → ConvertToHalf. Migrated from TranslatorsPositiveNormalized.ToFloat16.Positive_ReorderPtr_DivHalfTensor",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_symcvdnnfp16": {
+      "description": {
+        "v": "Symmetric [-1,1] via CvDnn.BlobFromImage → Float16 buffer (CvDnn → ConvertToHalf).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_symcvdnnfp32": {
+      "description": {
+        "v": "Symmetric [-1,1] via CvDnn.BlobFromImage → float buffer.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_symreordernormptrfp32": {
+      "description": {
+        "v": "Symmetric [-1,1]: pointer reorder BGR→RGB + normalize ((x - 127.5) / 127.5) → float buffer. Migrated from TranslatorsSymmetric.ToFloat.Symmetric_ReorderNormPtr",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_symreordernormptrhalftensorfp16": {
+      "description": {
+        "v": "Symmetric [-1,1]: pointer reorder + normalize → float → ConvertToHalf. Migrated from TranslatorsSymmetric.ToFloat16.Symmetric_ReorderNormPtr_HalfTensor",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_converterbase": {
+      "description": {
+        "v": "Base class for input adapters with model storage and initialization flow.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_converternchwbase": {
+      "description": {
+        "v": "Base class for input adapters with NCHW shape (Batch, Channels, Height, Width). Note: While using OpenCvSharp's CvDnn.BlobFromImage is considered the gold standard (reference implementation) for accuracy and correctness, it is not the most optimal in terms of performance and execution speed due to extra allocations and data copying.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_convertermatsinglebgrdirectu8": {
+      "description": {
+        "v": "Input adapter for models expecting BGR-bytes (uint8) with direct zero-copy usage of Mat memory. This adapter leverages a key project feature: support for a modified model head that accepts native Mat pointer data directly. This achieves zero allocation and zero copying by pinning the Mat memory buffer. Expects a 4D input tensor with shape [1, H, W, 3] and uint8 data type.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_iconverterinfo": {
+      "description": {
+        "v": "Interface providing metadata about the adapter implementation and expected input type.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_iimageconverter": {
+      "description": {
+        "v": "Interface for input adapters that provide information about the image geometry (Width, Height, etc.).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_iimageinfo": {
+      "description": {
+        "v": "Interface providing basic image dimensions of the model input.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_iinputconverter": {
+      "description": {
+        "v": "General interface for input adapters.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_convertermatlistnchw": {
+      "description": {
+        "v": "Generic NCHW converter for batch input (List of Mat). Algorithm is injected via TAlgo struct policy. Designed as a high-performance, low-allocation alternative to CvDnn.BlobFromImages (which is accurate but slower).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_convertermatsinglenchw": {
+      "description": {
+        "v": "Generic NCHW converter for single Mat input. Algorithm is injected via TAlgo struct policy. Designed as a high-performance, low-allocation alternative to CvDnn.BlobFromImage (which is accurate but slower).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_convertermatlistnchwposcvdnnfp16": {
+      "description": {
+        "v": "NCHW converter for a batch of Mat inputs utilizing CvDnn.BlobFromImages (Float16). This implementation represents the reference standard for correctness, but is not the most performant due to allocation and copy overhead.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_convertermatlistnchwposcvdnnfp32": {
+      "description": {
+        "v": "NCHW converter for a batch of Mat inputs utilizing CvDnn.BlobFromImages (Float32). This implementation represents the reference standard for correctness, but is not the most performant due to allocation and copy overhead.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_convertermatsinglenchwposcvdnnfp16": {
+      "description": {
+        "v": "NCHW converter for a single Mat input utilizing CvDnn.BlobFromImage (Float16). This implementation represents the reference standard for correctness, but is not the most performant due to allocation and copy overhead.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_convertermatsinglenchwposcvdnnfp32": {
+      "description": {
+        "v": "NCHW converter for a single Mat input utilizing CvDnn.BlobFromImage (Float32). This implementation represents the reference standard for correctness, but is not the most performant due to allocation and copy overhead.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_batchedresult": {
+      "description": {
+        "v": "Stores batched results in a regular managed array allocated with new. This is the simplest implementation, but each instance allocates its own _data array and this memory is later handled by GC.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_batchedresultfactory": {
+      "description": {
+        "v": "Result storage policy that creates BatchedResult{T}. The result object and its _data array are allocated with new and handled by GC.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_batchedresultbase": {
+      "description": {
+        "v": "Stores results for all batch items in one dense array. Each batch stores only its range in the shared array: Offset + Length. This avoids many small per-batch arrays and reduces GC pressure.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_batchedresultpooled": {
+      "description": {
+        "v": "Stores batched results in an array rented from ArrayPool instead of allocating _data with new. This reduces managed allocations and GC pressure for large or frequently created result buffers. The rented array must be returned to the pool through Dispose.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_batchedresultpooledfactory": {
+      "description": {
+        "v": "Result storage policy that creates BatchedResultPooled{T}. The result object is allocated with new, but its _data array is rented from ArrayPool.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ibatchedresultfactorypolicy": {
+      "description": {
+        "v": "Defines a result storage policy for creating batched detection result containers.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_resultextractorbase": {
+      "description": {
+        "v": "Base class for result extractors with tiered initialization flow.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_imodelmetadataprovider": {
+      "description": {
+        "v": "Provides a read-only facade for accessing static model metadata (shapes, data types, names).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ioutast": {
+      "description": {
+        "v": "Интерфейс",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrpostprocessingoptions": {
+      "description": {
+        "v": "JSON-friendly postprocessing block for PaddleOCR detection, OCR region analysis, and recognition ROI preparation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetextractorbase": {
+      "description": {
+        "v": "Base class for PaddleOCR Detection extractors.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_16fc1_safeextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP16 (Single Mat).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_16fc1_safelistextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP16 to list of 16FC1 Mats.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_16fc1_unsafeextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP16 to 16FC1 Mat without cloning.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_8uc1_extractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP16 to 8UC1 Mat.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_8uc1_safelistextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP16 to list of 8UC1 Mats.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_8uc3_rgbextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP16 to 8UC3 RGB Mat.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_8uc3_rgb_safelistextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP16 to list of 8UC3 RGB Mats.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp16_extractorbase": {
+      "description": {
+        "v": "Base class for PaddleOCR Detection extractors specialized for FP16.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_32fc1_safeextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP32 to 32FC1 Mat with cloning.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_32fc1_safelistextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP32 to list of 32FC1 Mats.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_32fc1_unsafeextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP32 to 32FC1 Mat without cloning.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_8uc1_extractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP32 to 8UC1 Mat.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_8uc1_safelistextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP32 to list of 8UC1 Mats.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_8uc3_rgbextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP32 to 8UC3 RGB Mat.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_8uc3_rgb_safelistextractor": {
+      "description": {
+        "v": "PaddleOCR Detection extractor for FP32 to list of 8UC3 RGB Mats.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfp32_extractorbase": {
+      "description": {
+        "v": "Base class for PaddleOCR Detection extractors specialized for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetfactory": {
+      "description": {
+        "v": "Factory for PaddleOCR Detection runners.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetmaskregionextractor": {
+      "description": {
+        "v": "Converts PaddleOCR detection score maps into OCR quadrilateral regions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddleocrdetmaskregionextractoroptions": {
+      "description": {
+        "v": "DB-style PaddleOCR detection mask postprocessing options.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregionextractor": {
+      "description": {
+        "v": "Extracts OCR-ready image crops from text regions already expressed in source-image coordinates.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_naivetextregionextractor": {
+      "description": {
+        "v": "CPU implementation for extracting OCR recognition crops from quadrilateral text regions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocrrecognitionroioptions": {
+      "description": {
+        "v": "JSON-friendly OCR recognition ROI size, height expansion, and image-processing options.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionextractionoptions": {
+      "description": {
+        "v": "Per-call extraction options for the OCR recognition crop size and optional post-processing.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_iimagecoordinatemapper": {
+      "description": {
+        "v": "Maps points from the current processing coordinate space back to the original source image.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_letterboxcoordinatemapper": {
+      "description": {
+        "v": "Maps coordinates from a letterboxed model input image back to the source image.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobbocrregionmapper": {
+      "description": {
+        "v": "Converts YOLO OBB detector output into source-image text regions for OCR extraction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocrlinemergeoptions": {
+      "description": {
+        "v": "JSON-friendly options for merging nearby OCR components into line-like regions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocroverlapsuppressionoptions": {
+      "description": {
+        "v": "JSON-friendly overlap suppression options for OCR text regions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocrregionpostprocessor": {
+      "description": {
+        "v": "Realtime-oriented geometry postprocessor for OCR quadrilateral regions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocrregionpostprocessorjsonoptions": {
+      "description": {
+        "v": "JSON-friendly domain and geometry options for OCR text-region postprocessing.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocrregionpostprocessoroptions": {
+      "description": {
+        "v": "Domain and geometry options for OCR text-region postprocessing.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregionprocessingstage": {
+      "description": {
+        "v": "Optional image normalization step applied after geometry extraction and before OCR recognition.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionprocessingpipeline": {
+      "description": {
+        "v": "Ordered post-processing chain for OCR text-region crops.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionprocessingpipelineoptions": {
+      "description": {
+        "v": "JSON-friendly OCR ROI processing pipeline definition.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionprocessingstagefactory": {
+      "description": {
+        "v": "Builds runtime OCR ROI processing stages from configuration DTOs.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionprocessingstagekind": {
+      "description": {
+        "v": "Stable configuration discriminator for OCR ROI image-processing stages.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionprocessingstageoptions": {
+      "description": {
+        "v": "One JSON-friendly OCR ROI processing stage definition.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionautocontraststage": {
+      "description": {
+        "v": "Fast automatic contrast stretch for OCR text-region crops.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregionbrightnesscontrastsettings": {
+      "description": {
+        "v": "Mutable brightness/contrast settings exposed separately from the processing implementation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionbrightnesscontrastoptions": {
+      "description": {
+        "v": "JSON-friendly parameters for brightness/contrast ROI normalization.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionbrightnesscontraststage": {
+      "description": {
+        "v": "Simple brightness/contrast normalization stage for OCR text-region crops.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregiongammacorrectionsettings": {
+      "description": {
+        "v": "Mutable gamma setting exposed separately from the processing implementation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregiongammacorrectionoptions": {
+      "description": {
+        "v": "JSON-friendly parameters for gamma correction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregiongammacorrectionstage": {
+      "description": {
+        "v": "Gamma-correction normalization stage for OCR text-region crops.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregiongaussianblursettings": {
+      "description": {
+        "v": "Mutable Gaussian blur settings exposed separately from the processing implementation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregiongaussianbluroptions": {
+      "description": {
+        "v": "JSON-friendly parameters for Gaussian blur ROI filtering.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregiongaussianblurstage": {
+      "description": {
+        "v": "Applies Gaussian blur to OCR text-region crops.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregiongrayscalesettings": {
+      "description": {
+        "v": "Mutable grayscale channel settings exposed separately from the processing implementation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregiongrayscaleoptions": {
+      "description": {
+        "v": "JSON-friendly channel selection for grayscale ROI conversion.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregiongrayscalestage": {
+      "description": {
+        "v": "Converts OCR text-region crops to grayscale while keeping BGR output for the recognition converter.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregionsharpensettings": {
+      "description": {
+        "v": "Mutable settings for OCR crop sharpening based on an unsharp-mask pass.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionsharpenoptions": {
+      "description": {
+        "v": "JSON-friendly parameters for unsharp-mask ROI sharpening.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionsharpenstage": {
+      "description": {
+        "v": "Sharpens OCR text-region crops with unsharp masking.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_itextregionthresholdsettings": {
+      "description": {
+        "v": "Mutable binary threshold settings exposed separately from the processing implementation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionthresholdoptions": {
+      "description": {
+        "v": "JSON-friendly parameters for binary ROI thresholding.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_textregionthresholdstage": {
+      "description": {
+        "v": "Converts OCR text-region crops to black/white while keeping BGR output for the recognition converter.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocrobbregion": {
+      "description": {
+        "v": "Lightweight oriented text region used before it is expanded to four corner points.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ocrquadregion": {
+      "description": {
+        "v": "Four source-image points describing one text region prepared for OCR recognition extraction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxnmsextractorbase": {
+      "description": {
+        "v": "Base class for YOLO Box NMS extractors with data type validation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxnmsfp16extractor": {
+      "description": {
+        "v": "YOLO Box NMS List extractor for FP16.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxnmsfp16extractorbase": {
+      "description": {
+        "v": "Base class for YOLO Box NMS extractors specialized for FP16.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxnmsfp16stdextractor": {
+      "description": {
+        "v": "YOLO Box NMS Single result extractor for FP16.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxnmsfp32extractor": {
+      "description": {
+        "v": "YOLO Box NMS List extractor for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxnmsfp32extractorbase": {
+      "description": {
+        "v": "Base class for YOLO Box NMS extractors specialized for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxnmsfp32stdextractor": {
+      "description": {
+        "v": "YOLO Box NMS Single result extractor for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxfactory": {
+      "description": {
+        "v": "Factory for YOLO Box detection runners.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolobox_fp16_xywhsc": {
+      "description": {
+        "v": "Packed structure for a single bounding box detection result with NMS (Half version from model output).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolobox_fp32_xywhsc": {
+      "description": {
+        "v": "Packed structure for a single bounding box detection result with NMS (from model output).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolobox": {
+      "description": {
+        "v": "Abstract struct for box. Структура для хранения данных бокса (координаты, размер, класс, оценка) без учета внутренностей нейросети.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloclsextractorbase": {
+      "description": {
+        "v": "Base class for YOLO Classification extractors.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloclsfp16extractorbase": {
+      "description": {
+        "v": "Base class for YOLO Classification extractors specialized for FP16.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloclsfp16singleextractor": {
+      "description": {
+        "v": "YOLO Classification Single result extractor for FP16.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloclsfp32extractorbase": {
+      "description": {
+        "v": "Base class for YOLO Classification extractors specialized for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloclsfp32singleextractor": {
+      "description": {
+        "v": "YOLO Classification Single result extractor for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloclsfactory": {
+      "description": {
+        "v": "Factory for YOLO Classification runners.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolocls": {
+      "description": {
+        "v": "Class for a single YOLO Classification result. Contains the top class index and its confidence score.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobbnmsextractorbase": {
+      "description": {
+        "v": "Base class for YOLO OBB NMS extractors with data type validation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobbnmsfp32extractor": {
+      "description": {
+        "v": "YOLO OBB NMS extractor for FP32 (native output).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobbnmsfp32extractorbase": {
+      "description": {
+        "v": "Base class for YOLO OBB NMS extractors specialized for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobbnmsfp32stdextractor": {
+      "description": {
+        "v": "YOLO OBB NMS Std result extractor for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobbfactory": {
+      "description": {
+        "v": "Factory for YOLO OBB (Oriented Bounding Box) detection runners.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobb_fp32_xywhsca": {
+      "description": {
+        "v": "Структура для представления ориентированного ограничивающего прямоугольника (OBB) с координатами, размерами, углом, классом и оценкой. ВНИМАНИЕ: Последовательность полей и их типы должны строго соответствовать выходу модели, иначе результаты будут некорректными. Проверенно на модели YOLO26 с OBB выходом: [X, Y, W, H, Score, ClassId, Angle] - всего 7 полей.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobb": {
+      "description": {
+        "v": "Abstract struct for oriented box (OBB). Структура для хранения данных ориентированного бокса (координаты, размер, угол, класс, оценка) без учета внутренностей нейросети.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloposeextractorbase": {
+      "description": {
+        "v": "Base class for YOLO Pose extractors with shared properties and initialization.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloposefp32extractorbase": {
+      "description": {
+        "v": "Base class for YOLO Pose extractors specialized for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloposefp32keypoint17extractor": {
+      "description": {
+        "v": "YOLO Pose extractor for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloposefp32universalextractor": {
+      "description": {
+        "v": "YOLO Pose extractor for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloposefactory": {
+      "description": {
+        "v": "Factory for YOLO Pose estimation runners.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolopose_fp32_keypoint_xyv": {
+      "description": {
+        "v": "Represent a single keypoint (x, y, visibility).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolopose_fp32_size57_keypoint17": {
+      "description": {
+        "v": "High-performance YOLO Pose detection structure (exactly 57 floats). Layout: [X, Y, W, H, Score, ClassId, K0.X, K0.Y, K0.V, ..., K16.V]",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegextractorbase": {
+      "description": {
+        "v": "Base class for YOLO Seg extractors with shared properties and initialization.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegfp16extractorbase": {
+      "description": {
+        "v": "Base class for YOLO Segmentation extractors for Float16.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegfp16singleextractor": {
+      "description": {
+        "v": "YOLO Segmentation extractor for Float16 (Single batch).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegfp32extractorbase": {
+      "description": {
+        "v": "Base class for YOLO Segmentation extractors for FP32.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegfp32mixedsingleextractor": {
+      "description": {
+        "v": "YOLO Segmentation extractor for models with FP32 detections and FP16 mask prototypes.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegfp32singleextractor": {
+      "description": {
+        "v": "YOLO Segmentation extractor for FP32 (Single batch).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegfactory": {
+      "description": {
+        "v": "Factory for YOLO Segmentation runners.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloseg_fp16_xywhsc_mask32": {
+      "description": {
+        "v": "Structure for a single YOLO Segmentation detection result (Half version).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloseg_fp32_xywhsc_mask32": {
+      "description": {
+        "v": "Structure for a single YOLO Segmentation detection result. Contains bounding box, score, class id and mask coefficients (used to combine with prototype masks from the second model output).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegresult_fp16_mask32": {
+      "description": {
+        "v": "YOLO Segmentation result for a single image (FP16).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yolosegresult_fp32_mask32": {
+      "description": {
+        "v": "YOLO Segmentation result for a single image (FP32).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_imagerunner": {
+      "description": {
+        "v": "General runner for image-related model inference. Ensures IImageAdapter usage at compile time.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_irunner": {
+      "description": {
+        "v": "General interface for all inference runners.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_batchconcatbuilder": {
+      "description": {
+        "v": "Builds a minimal ONNX graph that concatenates fixed-shape tensors along the batch axis.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_bgru8hwc_to_rgbnchw_div255builder": {
+      "description": {
+        "v": "Builds small ONNX preprocessing graphs from OpenCV-style BGR U8 HWC image tensors to normalized RGB NCHW tensors.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_identitybuilder": {
+      "description": {
+        "v": "Dynamic ONNX model builder for an Identity operator.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxgraphbuilderhelpers": {
+      "description": {
+        "v": "Helper methods for programmatically constructing ONNX model structures (Protobuf representations) at runtime.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddlerecroipreparebuilder": {
+      "description": {
+        "v": "Builds generated ONNX graphs that rectify OCR ROIs from one RGB FP32 NCHW image into a PaddleOCR Rec batch.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_boxpainter": {
+      "description": {
+        "v": "Utility class for visualizing box detection results using OpenCV and SkiaSharp.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_clspainter": {
+      "description": {
+        "v": "Utility class for visualizing Classification results.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_obbpainter": {
+      "description": {
+        "v": "Utility class for visualizing Oriented Bounding Box (OBB) detection results.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_segpainter": {
+      "description": {
+        "v": "Utility class for visualizing Segmentation detection results.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloposepainter": {
+      "description": {
+        "v": "Utility class for visualizing Pose Estimation results (keypoints and skeleton).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmruncontext": {
+      "description": {
+        "v": "Local named register set for one accepted VM execution.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_coordinatemappingshapepolicy": {
+      "description": {
+        "v": "Defines how coordinate payload mappers may handle transforms that can change the geometric shape class.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_cropcoordinatebacktransform": {
+      "description": {
+        "v": "Maps crop-local coordinates back to the source image by adding the crop origin.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_icoordinatebacktransform": {
+      "description": {
+        "v": "Maps one point from the current coordinate space back to the previous coordinate space.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_radialtangentialdistortionparameters": {
+      "description": {
+        "v": "OpenCV-style camera intrinsics and distortion coefficients for undistort operators and back transforms. Fx..Cy describe the source (distorted) camera. OutputFx..OutputCy optionally describe the undistorted output camera (OpenCV newCameraMatrix, for example from getOptimalNewCameraMatrix); when omitted the output uses the source intrinsics, which matches cv::undistort without a new camera matrix.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_resizecoordinatebacktransform": {
+      "description": {
+        "v": "Maps resized-image coordinates back to the image size that entered the resize operation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_devicecompatibilityvalidator": {
+      "description": {
+        "v": "Validates memory location compatibility of instruction inputs and outputs during the warmup run.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ihasexecutiondevice": {
+      "description": {
+        "v": "Implemented by VM instructions that execute on a specific compute device (CPU or GPU). Used by DeviceCompatibilityValidator to verify memory placement without reflection.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_iopdebuggate": {
+      "description": {
+        "v": "Optional execution gate used by debuggers to stop before the next VM instruction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_opdebugpoint": {
+      "description": {
+        "v": "Immutable VM stop point captured immediately before an instruction is executed.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_optraceentry": {
+      "description": {
+        "v": "One instruction execution sample captured by the VM runtime.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vardebuginfo": {
+      "description": {
+        "v": "Lightweight description of one transaction variable for VM debugging.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vardebuginspector": {
+      "description": {
+        "v": "Converts arbitrary transaction values into conservative debug metadata.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_varmemorylocation": {
+      "description": {
+        "v": "Coarse memory placement visible to VM diagnostics.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmruntiming": {
+      "description": {
+        "v": "Coarse lifecycle timing for one controller-managed VM run.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmruntrace": {
+      "description": {
+        "v": "Diagnostics collected for one VM run.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmcontroller": {
+      "description": {
+        "v": "Controller that owns a chain of pipeline programs for one source and manages its bounded concurrent executions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmcontrolleroptions": {
+      "description": {
+        "v": "Configuration options defining runtime policies for a VM controller instance.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vminputvalue": {
+      "description": {
+        "v": "Container for a single named input value passed into the VM.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmrunhandle": {
+      "description": {
+        "v": "Execution handle representing a single started pipeline run.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmrunidentity": {
+      "description": {
+        "v": "Identifies one accepted execution of a pipeline program for one source.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmruninputs": {
+      "description": {
+        "v": "Collection of named input values used to initialize a single pipeline run context.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmrunledger": {
+      "description": {
+        "v": "Assigns dense sequential run IDs and records state changes of pipeline executions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmrunoutcome": {
+      "description": {
+        "v": "Terminal result and metadata captured after a pipeline execution finishes.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmrunoutput": {
+      "description": {
+        "v": "DTO containing selected VM output variables captured before run context disposal.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmrunrecord": {
+      "description": {
+        "v": "Immutable snapshot of the state currently known for one accepted run.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmrunstatus": {
+      "description": {
+        "v": "Describes the lifecycle states of one accepted VM execution.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_branchifinstruction": {
+      "description": {
+        "v": "Conditional branch instruction for timeline-style programs.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c7281b19"
+      }
+    },
+    "e_iop": {
+      "description": {
+        "v": "One executable instruction in the VM timeline.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "fc250b94"
+      }
+    },
+    "e_opbase": {
+      "description": {
+        "v": "Small base class for instructions that only need to provide execution logic and static metadata.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "253ffec7"
+      }
+    },
+    "e_opconditional": {
+      "description": {
+        "v": "Decorates an instruction with a runtime condition.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6ef01a8a"
+      }
+    },
+    "e_opdelegate": {
+      "description": {
+        "v": "Instruction backed by a delegate, useful for tests, labs, and early custom steps.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6ed755c6"
+      }
+    },
+    "e_opdescriptor": {
+      "description": {
+        "v": "Static metadata used for validation, UI, and future JSON compilation.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_opfailureexception": {
+      "description": {
+        "v": "Raised when an instruction reports a controlled failure instead of throwing directly.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_opresult": {
+      "description": {
+        "v": "Control-flow result returned by one VM instruction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_orderedsyncinstruction": {
+      "description": {
+        "v": "Synchronizes one program point by accepted run id.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "bd5b1352"
+      }
+    },
+    "e_varrequirement": {
+      "description": {
+        "v": "Declares one named transaction variable used by an instruction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmprogram": {
+      "description": {
+        "v": "Immutable compiled VM program: ordered operations plus a label table for branch targets.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmprogrambuilder": {
+      "description": {
+        "v": "Fluent builder for small hand-written VM programs.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmprogramexit": {
+      "description": {
+        "v": "How a program finished its instruction loop without failing.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmglobalmemory": {
+      "description": {
+        "v": "Shared memory owned by a source controller rather than by one transaction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_ivmresource": {
+      "description": {
+        "v": "Marker for controller-level resources used by VM instructions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmresourceregistry": {
+      "description": {
+        "v": "Stores named resources resolved while building a pipeline program.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_precedingrunfailedexception": {
+      "description": {
+        "v": "Thrown at a synchronization gate when the run that was supposed to precede this one closed without reaching the gate (failed or canceled before this point).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmsyncgate": {
+      "description": {
+        "v": "Ordered gate for one synchronization point in a VM program.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmsyncgateregistry": {
+      "description": {
+        "v": "Stores ordered sync gates for one source controller.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_icoordinatepayloadmapper": {
+      "description": {
+        "v": "Maps coordinates embedded inside one domain payload value.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_op_map_coordinates": {
+      "description": {
+        "v": "Applies one named back-transform register to one coordinate payload register.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "29f7cb9f"
+      }
+    },
+    "e_model_inference": {
+      "description": {
+        "v": "Executes one ONNX inference endpoint and writes its typed result into the current VM transaction.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1ef4cd20"
+      }
+    },
+    "e_onnxbatchedinference": {
+      "description": {
+        "v": "Executes one typed ONNX batching resource and resumes the current VM transaction with its own result.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "66b334bd"
+      }
+    },
+    "e_onnxrunner": {
+      "description": {
+        "v": "Executes one typed ONNX runner resource with serialized access to the underlying runner instance.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e69273e8"
+      }
+    },
+    "e_reloadableonnxrunner": {
+      "description": {
+        "v": "Executes an ONNX runner resource whose inner runner can be replaced without rebuilding the VM program.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2aa9548d"
+      }
+    },
+    "e_copy_orttensor_to_modeldevice": {
+      "description": {
+        "v": "Copies an ONNX Runtime tensor to the selected model execution provider memory using a dynamic Identity model.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "53ca6533"
+      }
+    },
+    "e_copy_ortvalue_to_matimage": {
+      "description": {
+        "v": "Copies an ONNX Runtime NHWC byte tensor into a CPU OpenCV Mat image.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "dda609d4"
+      }
+    },
+    "e_wrap_matimage_to_orttensor": {
+      "description": {
+        "v": "Wraps CPU-accessible OpenCV Mat image memory as an NHWC ONNX Runtime tensor without copying pixel data.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "08248640"
+      }
+    },
+    "e_wrap_unmanagedmem_to_orttensorbase": {
+      "description": {
+        "v": "Base command for exposing an existing unmanaged memory block as an ONNX Runtime tensor value without copying data.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "32a99d21"
+      }
+    },
+    "e_op_onnx_bgru8hwc_to_rgbfp16nchw_div255": {
+      "description": {
+        "v": "Converts a BGR UInt8 NHWC image tensor into an RGB FP16 NCHW tensor normalized by 1/255.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "13edec1c"
+      }
+    },
+    "e_op_onnx_bgru8hwc_to_rgbfp32nchw_div255": {
+      "description": {
+        "v": "Converts a BGR UInt8 NHWC image tensor into an RGB FP32 NCHW tensor normalized by 1/255.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4114137e"
+      }
+    },
+    "e_op_onnx_bgru8hwc_to_rgbnchw_div255base": {
+      "description": {
+        "v": "Base class for BGR U8 HWC image tensor preparation commands.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b43e7489"
+      }
+    },
+    "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw": {
+      "description": {
+        "v": "CISC hot-path op: cuts N regions out of one RGB FP32 NCHW 0..1 image into a fixed letterbox batch for a YOLO-style model and writes a back-transform for every slot.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "8d658f46"
+      },
+      "doc": {
+        "v": "CISC hot-path op: cuts N regions out of one RGB FP32 NCHW 0..1 image on the model device and letterboxes each into a fixed [N, 3, targetHeight, targetWidth] batch that keeps the 0..1 range, so the batch can be fed directly to a YOLO-style model (for example text OBB detection on bag crops). Regions come as YoloObb (axis-aligned bounds of the padded OBB are used, aspect ratio is preserved, the letterbox margin samples outside the region and is therefore black). For every batch slot a target-to-source ICoordinateBackTransform is written to outputTransformsKey so model results can be mapped back with Op_Map_Coordinates.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3357c2bd"
+      }
+    },
+    "e_op_onnx_extractobbtopaddlerec_fp32_nchw": {
+      "description": {
+        "v": "Extracts YOLO OBB text regions from one RGB FP32 NCHW image into one PaddleOCR Rec FP32 NCHW batch.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6b003606"
+      },
+      "doc": {
+        "v": "Extracts YOLO OBB text regions from one RGB FP32 NCHW image into one PaddleOCR Rec FP32 NCHW batch.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6b003606"
+      }
+    },
+    "e_op_onnx_tensortransformbase": {
+      "description": {
+        "v": "Base class for VM instructions that execute a small generated ONNX graph over one tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "76a14721"
+      }
+    },
+    "e_paddlerecroioverflowpolicy": {
+      "description": {
+        "v": "Policy applied when actual OCR ROI count exceeds the fixed output capacity.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_paddlerecroipreparealgorithm": {
+      "description": {
+        "v": "ONNX graph layout used to prepare OCR recognition ROIs.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_roibatchfitmode": {
+      "description": {
+        "v": "How a region is fitted into a fixed ROI batch canvas: Letterbox keeps the aspect ratio and centers (YOLO letterbox), Stretch maps the region onto the whole canvas (plain resize, as the CGP bag detector was trained). Explicit choice, no automatic switching.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_model_paddledet": {
+      "description": {
+        "v": "Runs the PaddleOCR text-detection model and writes the CPU score map used by region extraction.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "43cc55bf"
+      }
+    },
+    "e_model_paddlerec": {
+      "description": {
+        "v": "Runs the PaddleOCR text-recognition model for a batch of cropped text line images.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3c01519e"
+      }
+    },
+    "e_ionnxinferenceendpoint": {
+      "description": {
+        "v": "Common pipeline-facing endpoint for one ONNX inference step.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxbatchedresourcebase": {
+      "description": {
+        "v": "Base class for ONNX resources that batch requests from parallel VM executions.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxbatchedresourceoptions": {
+      "description": {
+        "v": "Batching policy for one ONNX-backed compute resource.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxresourcebusyexception": {
+      "description": {
+        "v": "Raised when a bounded ONNX batching resource cannot accept another request.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxrunnerresource": {
+      "description": {
+        "v": "Serializes access to one existing IRunner{TIn,TOut} instance.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_reloadableonnxrunnerresource": {
+      "description": {
+        "v": "ONNX runner resource whose inner runner can be replaced while the VM program keeps the same instruction instance.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_runtimeonnxoperatorkernelcache": {
+      "description": {
+        "v": "Global, lazy cache of runtime-generated ONNX operator kernels (Crop, Resize, Undistort, ROI batches, concat, identity upload) keyed by operation kind, exact shape/semantics, backend and provider options. Only the immutable OnnxModel is shared; every caller gets its own OnnxExecutionContext (mutable IoBinding and RunOptions).",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_runtimeonnxoperatorkernelkey": {
+      "description": {
+        "v": "Full identity of a generated ONNX operator session cached across VM programs.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_op_detectionsfromyolobox": {
+      "description": {
+        "v": "Converts typed YOLO boxes into neutral tracker detections.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3350963c"
+      }
+    },
+    "e_op_detectionsfromyoloobb": {
+      "description": {
+        "v": "Converts typed YOLO OBB detections into neutral tracker detections.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "18e431dc"
+      }
+    },
+    "e_op_track": {
+      "description": {
+        "v": "Runs a per-source tracker over neutral detections.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3257f2fd"
+      }
+    },
+    "e_model_yolobox": {
+      "description": {
+        "v": "Runs a YOLO axis-aligned bounding-box model and writes one detection list for the current frame.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1a68b950"
+      }
+    },
+    "e_yoloboxbatchedresource": {
+      "description": {
+        "v": "Batchable YOLO Box resource backed by the existing NeuroModFlowNet.ONNX runner API.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxortvalueoutputdecoder": {
+      "description": {
+        "v": "Decodes a YOLO box NMS output [batch, items, 6] = (x1, y1, x2, y2, score, class) into typed YoloBox arrays, one per request. Field semantics follow the native NMS extractors: X, Y hold the top-left corner and W, H hold the bottom-right corner in model input pixels. Zero-score padding rows are dropped regardless of the threshold.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloboxresourcedefinition": {
+      "description": {
+        "v": "Startup definition for a YOLO Box resource.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_model_yolocls": {
+      "description": {
+        "v": "Runs a YOLO classification model and writes the compact classification result for the current frame.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "ffbf3666"
+      }
+    },
+    "e_yoloclassificationframeresult": {
+      "description": {
+        "v": "Single VM-request YOLO Classification result.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_model_yolosingledetection": {
+      "description": {
+        "v": "Runs a single-image detection runner and writes a compact CPU detection list.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "83befb79"
+      }
+    },
+    "e_yolodetectionbatchresult": {
+      "description": {
+        "v": "Compact CPU-side detection result written back to a VM transaction.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_model_yoloobb": {
+      "description": {
+        "v": "Runs a YOLO oriented-bounding-box model and writes one detection list for the current frame.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "dd8b6ce0"
+      }
+    },
+    "e_yoloobbbatchedresource": {
+      "description": {
+        "v": "Batchable YOLO OBB resource backed by the existing NeuroModFlowNet.ONNX runner API.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_yoloobbresourcedefinition": {
+      "description": {
+        "v": "Startup definition for a YOLO OBB resource.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_model_yolopose": {
+      "description": {
+        "v": "Runs a YOLO pose model and writes the current frame pose detections as a CPU list.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "534b7f3b"
+      }
+    },
+    "e_yoloposeframeresult": {
+      "description": {
+        "v": "Single VM-request YOLO Pose result.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "e_model_yoloseg": {
+      "description": {
+        "v": "Runs a YOLO segmentation model and writes a frame-level result wrapper with the supported mask tensor layout.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a216a550"
+      }
+    },
+    "e_yolosegframeresult": {
+      "description": {
+        "v": "Single VM-request YOLO Segmentation result.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "authored"
+      }
+    },
+    "rt_references": {
+      "name": {
+        "v": "references",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7e8fe368"
+      },
+      "description": {
+        "v": "ProjectReference in csproj.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e356022c"
+      }
+    },
+    "rt_implements": {
+      "name": {
+        "v": "implements",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "f6c27810"
+      },
+      "description": {
+        "v": "The type implements an interface.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "997fe70e"
+      }
+    },
+    "rt_contains": {
+      "name": {
+        "v": "contains",
+        "at": "2026-09-24T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c241d37d"
+      },
+      "description": {
+        "v": "The assembly or type contains the type.",
+        "at": "2026-09-24T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3c2fde08"
+      }
+    },
+    "rt_extends": {
+      "name": {
+        "v": "extends",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0622d961"
+      },
+      "description": {
+        "v": "The type derives from a base class.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7115dfef"
+      }
+    },
+    "v_assemblies": {
+      "name": {
+        "v": "Assemblies",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3b42995b"
+      },
+      "description": {
+        "v": "Dependencies between src/* projects.",
+        "at": "2026-09-23T00:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "df051c25"
+      }
+    },
+    "v_ops": {
+      "name": {
+        "v": "Operations and VM",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c5d7d326"
+      },
+      "description": {
+        "v": "Hierarchy of VM instructions from IOp/OpBase down to concrete ONNX operations and models, grouped by inheritance and purpose.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7f7f1fe1"
+      }
+    },
+    "z_control": {
+      "name": {
+        "v": "Control flow",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d688aff6"
+      },
+      "description": {
+        "v": "Instructions that steer program flow: branching, delegate, ordered synchronization.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0fa47c19"
+      }
+    },
+    "z_memory": {
+      "name": {
+        "v": "Memory and transfer",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "906b1c12"
+      },
+      "description": {
+        "v": "Moving tensors between CPU and the model device, and wrapping existing memory as OrtValue without copying.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "82801c20"
+      }
+    },
+    "z_roi": {
+      "name": {
+        "v": "ROI prepare (CISC)",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "26a59f8f"
+      },
+      "description": {
+        "v": "Compound hot-path commands: cut OBB regions into a fixed batch with one ONNX graph.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7e38a22a"
+      }
+    },
+    "z_post": {
+      "name": {
+        "v": "Coordinates and postprocessing",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "bf52dfb9"
+      },
+      "description": {
+        "v": "Coordinate back-mapping, conversion of detections to a neutral format, and tracking.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7f126731"
+      }
+    },
+    "z_transform": {
+      "name": {
+        "v": "ONNX tensor transforms",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "20d981ec"
+      },
+      "description": {
+        "v": "Descendants of Op_Onnx_TensorTransformBase: a small generated ONNX graph over one tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b01d108d"
+      }
+    },
+    "z_tr_color": {
+      "name": {
+        "v": "Color and normalization",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6df093b2"
+      },
+      "description": {
+        "v": "BGR U8 HWC → RGB NCHW divided by 255, in FP16 or FP32.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4d169450"
+      }
+    },
+    "z_tr_crop": {
+      "name": {
+        "v": "Crop",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1909c537"
+      },
+      "description": {
+        "v": "Rectangle crop: shared NCHW base, FP16/FP32 variants and a separate U8 NHWC.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c3a379fc"
+      }
+    },
+    "z_tr_resize": {
+      "name": {
+        "v": "Resize",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "179033c1"
+      },
+      "description": {
+        "v": "Scaling: shared NCHW base, FP16/FP32 variants and a separate U8 NHWC.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "26ff1853"
+      }
+    },
+    "z_tr_padresize": {
+      "name": {
+        "v": "PadResize",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "fd59806e"
+      },
+      "description": {
+        "v": "Aspect-preserving scaling with padding (letterbox).",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "8c2bfbaa"
+      }
+    },
+    "z_tr_rotate90": {
+      "name": {
+        "v": "Rotate90",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6f11169b"
+      },
+      "description": {
+        "v": "Rotation by a multiple of 90°.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7d1491d8"
+      }
+    },
+    "z_tr_perspective": {
+      "name": {
+        "v": "Perspective",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "df060fb5"
+      },
+      "description": {
+        "v": "Perspective transform of a quadrilateral into a rectangle.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "419211e7"
+      }
+    },
+    "z_tr_undistort": {
+      "name": {
+        "v": "Undistort",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a24ec405"
+      },
+      "description": {
+        "v": "Radial-tangential undistortion with explicit output intrinsics.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "59e96d85"
+      }
+    },
+    "z_inference": {
+      "name": {
+        "v": "Model inference",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4e8bea54"
+      },
+      "description": {
+        "v": "Descendants of Model_Inference: call an ONNX endpoint and write the typed result to a register.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4eef5a98"
+      }
+    },
+    "z_inf_batched": {
+      "name": {
+        "v": "OrtValue batched",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4c5fbbac"
+      },
+      "description": {
+        "v": "Service-side batching of requests from different VMs; input is a prepared OrtValue.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "00f3ff4f"
+      }
+    },
+    "z_inf_runner": {
+      "name": {
+        "v": "Runner",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b9d71ffb"
+      },
+      "description": {
+        "v": "A single runner with serialized access.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "af203f1a"
+      }
+    },
+    "z_inf_reload": {
+      "name": {
+        "v": "Reloadable runner",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a9040666"
+      },
+      "description": {
+        "v": "A runner that can be replaced without rebuilding the VM program.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "efd6aa01"
+      }
+    },
+    "z_inf_yolomat": {
+      "name": {
+        "v": "YOLO on Mat (from OpBase)",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4ac1299a"
+      },
+      "description": {
+        "v": "Older YOLO models inheriting directly from OpBase rather than Model_Inference.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "50c6f010"
+      }
+    },
+    "e_model_ortvalueinference": {
+      "description": {
+        "v": "Sends a prepared OrtValue to the batching service and writes the array of typed results for this request to a register.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "8046dfbe"
+      }
+    },
+    "e_op_onnx_crop_nchw_base": {
+      "description": {
+        "v": "Crops a rectangle: shared base for the NCHW FP16/FP32 variants.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "5e9494d5"
+      }
+    },
+    "e_op_onnx_crop_fp16_nchw": {
+      "description": {
+        "v": "Crops a rectangle in an FP16 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "31d522d0"
+      }
+    },
+    "e_op_onnx_crop_fp32_nchw": {
+      "description": {
+        "v": "Crops a rectangle in an FP32 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "824fe856"
+      }
+    },
+    "e_op_onnx_crop_u8_nhwc": {
+      "description": {
+        "v": "Crops a rectangle in a U8 NHWC tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e431ab06"
+      }
+    },
+    "e_op_onnx_resize_nchw_base": {
+      "description": {
+        "v": "Resizes the image: shared base for the NCHW FP16/FP32 variants.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "82d52c4c"
+      }
+    },
+    "e_op_onnx_resize_fp16_nchw": {
+      "description": {
+        "v": "Resizes the image in an FP16 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d772947f"
+      }
+    },
+    "e_op_onnx_resize_fp32_nchw": {
+      "description": {
+        "v": "Resizes the image in an FP32 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "658584a1"
+      }
+    },
+    "e_op_onnx_resize_u8_nhwc": {
+      "description": {
+        "v": "Resizes the image in a U8 NHWC tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "aa62f039"
+      }
+    },
+    "e_op_onnx_padresize_nchw_base": {
+      "description": {
+        "v": "Aspect-preserving resize with padding: shared base for the NCHW FP16/FP32 variants.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "02ebbe4a"
+      }
+    },
+    "e_op_onnx_padresize_fp16_nchw": {
+      "description": {
+        "v": "Aspect-preserving resize with padding in an FP16 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "93ad99d9"
+      }
+    },
+    "e_op_onnx_padresize_fp32_nchw": {
+      "description": {
+        "v": "Aspect-preserving resize with padding in an FP32 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "ef2603d7"
+      }
+    },
+    "e_op_onnx_padresize_u8_nhwc": {
+      "description": {
+        "v": "Aspect-preserving resize with padding in a U8 NHWC tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7deec253"
+      }
+    },
+    "e_op_onnx_rotate90_nchw_base": {
+      "description": {
+        "v": "Rotates by a multiple of 90°: shared base for the NCHW FP16/FP32 variants.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a7d23e66"
+      }
+    },
+    "e_op_onnx_rotate90_fp16_nchw": {
+      "description": {
+        "v": "Rotates by a multiple of 90° in an FP16 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9ecb6755"
+      }
+    },
+    "e_op_onnx_rotate90_fp32_nchw": {
+      "description": {
+        "v": "Rotates by a multiple of 90° in an FP32 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e688776b"
+      }
+    },
+    "e_op_onnx_rotate90_u8_nhwc": {
+      "description": {
+        "v": "Rotates by a multiple of 90° in a U8 NHWC tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "49add217"
+      }
+    },
+    "e_op_onnx_perspective_nchw_base": {
+      "description": {
+        "v": "Perspective-maps a quadrilateral to a rectangle: shared base for the NCHW FP16/FP32 variants.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e5d80669"
+      }
+    },
+    "e_op_onnx_perspective_fp16_nchw": {
+      "description": {
+        "v": "Perspective-maps a quadrilateral to a rectangle in an FP16 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "f5261484"
+      }
+    },
+    "e_op_onnx_perspective_fp32_nchw": {
+      "description": {
+        "v": "Perspective-maps a quadrilateral to a rectangle in an FP32 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "13e51b12"
+      }
+    },
+    "e_op_onnx_perspective_u8_nhwc": {
+      "description": {
+        "v": "Perspective-maps a quadrilateral to a rectangle in a U8 NHWC tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1b8599b2"
+      }
+    },
+    "e_op_onnx_undistort_nchw_base": {
+      "description": {
+        "v": "Removes radial-tangential distortion: shared base for the NCHW FP16/FP32 variants.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4ec054f8"
+      }
+    },
+    "e_op_onnx_undistort_fp16_nchw": {
+      "description": {
+        "v": "Removes radial-tangential distortion in an FP16 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0131455b"
+      }
+    },
+    "e_op_onnx_undistort_fp32_nchw": {
+      "description": {
+        "v": "Removes radial-tangential distortion in an FP32 NCHW tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0d89d085"
+      }
+    },
+    "e_op_onnx_undistort_u8_nhwc": {
+      "description": {
+        "v": "Removes radial-tangential distortion in a U8 NHWC tensor.",
+        "at": "2026-09-24T12:00:00Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "83d4856d"
+      }
+    }
+  }
+}

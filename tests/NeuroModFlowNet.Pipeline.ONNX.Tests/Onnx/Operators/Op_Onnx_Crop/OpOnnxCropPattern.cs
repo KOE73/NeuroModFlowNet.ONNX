@@ -61,7 +61,7 @@ internal static class OpOnnxCropPattern
     public static OpOnnxCropPatternCase CreateCenteredMarkerCase(int width, int height, Rect cropRect)
     {
         Mat source = CreateCoordinateBackground(width, height);
-        source.Rectangle(cropRect, CenterMarker.ToScalar(), thickness: -1);
+        Cv2.Rectangle(source, cropRect, CenterMarker.ToScalar(), thickness: -1);
 
         return new OpOnnxCropPatternCase
         {

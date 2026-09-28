@@ -135,12 +135,11 @@ public sealed class ConcatOrtValueBatchInputAssembler : IOrtValueBatchInputAssem
     {
         if(config is TrtConfig trtConfig)
         {
-            trtConfig.EnableEngineCache = false;
             trtConfig.EnableBf16 = false;
         }
     }
 
-    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=false;trtBf16=false";
+    const string RuntimeOperatorProviderOptionsKey = "runtime-operator;trtEngineCache=keyed;trtBf16=false";
 
     static string FormatShape(long[] shape) => string.Join('x', shape);
 

@@ -169,8 +169,8 @@ public static class UndistortGridBuilder
         int outputHeight,
         ReadOnlySpan<float> distortion)
     {
-        if(distortion.Length < 9)
-            throw new ArgumentException("Undistort distortion parameters must contain 9 values.", nameof(distortion));
+        if(distortion.Length is not (9 or 13))
+            throw new ArgumentException("Undistort distortion parameters must contain 9 values (source fx, fy, cx, cy, k1, k2, p1, p2, k3) or 13 values (plus output fx, fy, cx, cy).", nameof(distortion));
 
         var bytes = new byte[checked(outputHeight * outputWidth * 2 * sizeof(float))];
         int byteOffset = 0;
@@ -199,10 +199,20 @@ public static class UndistortGridBuilder
         return tensor;
     }
 
+    // Layout: [0..3] source fx, fy, cx, cy; [4..8] k1, k2, p1, p2, k3; optional [9..12] output fx, fy, cx, cy.
+    // Output pixels are normalized with the output camera, distorted, then projected with the source camera.
+    static float OutputFx(ReadOnlySpan<float> distortion) => distortion.Length >= 13 ? distortion[9] : distortion[0];
+
+    static float OutputFy(ReadOnlySpan<float> distortion) => distortion.Length >= 13 ? distortion[10] : distortion[1];
+
+    static float OutputCx(ReadOnlySpan<float> distortion) => distortion.Length >= 13 ? distortion[11] : distortion[2];
+
+    static float OutputCy(ReadOnlySpan<float> distortion) => distortion.Length >= 13 ? distortion[12] : distortion[3];
+
     static float GetDistortedX(int x, int y, ReadOnlySpan<float> distortion)
     {
-        float normalizedX = (x - distortion[2]) / distortion[0];
-        float normalizedY = (y - distortion[3]) / distortion[1];
+        float normalizedX = (x - OutputCx(distortion)) / OutputFx(distortion);
+        float normalizedY = (y - OutputCy(distortion)) / OutputFy(distortion);
         float radius2 = normalizedX * normalizedX + normalizedY * normalizedY;
         float radius4 = radius2 * radius2;
         float radius6 = radius4 * radius2;
@@ -215,8 +225,8 @@ public static class UndistortGridBuilder
 
     static float GetDistortedY(int x, int y, ReadOnlySpan<float> distortion)
     {
-        float normalizedX = (x - distortion[2]) / distortion[0];
-        float normalizedY = (y - distortion[3]) / distortion[1];
+        float normalizedX = (x - OutputCx(distortion)) / OutputFx(distortion);
+        float normalizedY = (y - OutputCy(distortion)) / OutputFy(distortion);
         float radius2 = normalizedX * normalizedX + normalizedY * normalizedY;
         float radius4 = radius2 * radius2;
         float radius6 = radius4 * radius2;

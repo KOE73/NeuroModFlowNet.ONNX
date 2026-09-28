@@ -3,7 +3,7 @@ using Microsoft.ML.OnnxRuntime;
 namespace NeuroModFlowNet.ONNX.Converters.Algorithms;
 
 /// <summary>
-/// Symmetric [-1,1] via CvDnn.BlobFromImage → float buffer.
+/// Symmetric [-1,1] via Cv2.Dnn.BlobFromImage → float buffer.
 /// </summary>
 public readonly struct SymCvdnnFP32 : IMatFillAlgorithm<float>, IMatListFillAlgorithm<float>
 {
@@ -12,7 +12,7 @@ public readonly struct SymCvdnnFP32 : IMatFillAlgorithm<float>, IMatListFillAlgo
 
     public static unsafe void Fill(Mat image, Span<float> buffer, int pixelsCount)
     {
-        using var blob = CvDnn.BlobFromImage(image,
+        using var blob = Cv2.Dnn.BlobFromImage(image,
             scaleFactor: ScaleSymInv,
             mean: new Scalar(ShiftSym, ShiftSym, ShiftSym),
             swapRB: true, crop: false);
@@ -22,7 +22,7 @@ public readonly struct SymCvdnnFP32 : IMatFillAlgorithm<float>, IMatListFillAlgo
     public static unsafe void Fill(List<Mat> mats, Span<float> buffer,
         int matsCount, int sizeOne, int pixelsCount)
     {
-        using var blob = CvDnn.BlobFromImages(mats,
+        using var blob = Cv2.Dnn.BlobFromImages(mats,
             scaleFactor: ScaleSymInv,
             mean: new Scalar(ShiftSym, ShiftSym, ShiftSym),
             swapRB: true, crop: false);

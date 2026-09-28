@@ -52,7 +52,7 @@ public sealed class YoloObbOrtValueOutputDecoder : IOrtValueBatchOutputDecoder<Y
         return outputInfo.ElementDataType switch
         {
             TensorElementType.Float => DecodeFP32(output.GetTensorDataAsSpan<float>(), requestCount, itemCount),
-            TensorElementType.Float16 => DecodeFP16(output.GetTensorDataAsSpan<Half>(), requestCount, itemCount),
+            TensorElementType.Float16 => DecodeFP16(output.GetTensorDataAsSpan<Float16>(), requestCount, itemCount),
             _ => throw new NotSupportedException($"YOLO OBB output element type is not supported: {outputInfo.ElementDataType}.")
         };
     }
@@ -67,7 +67,7 @@ public sealed class YoloObbOrtValueOutputDecoder : IOrtValueBatchOutputDecoder<Y
         return result;
     }
 
-    IReadOnlyList<YoloObb[]> DecodeFP16(ReadOnlySpan<Half> data, int requestCount, int itemCount)
+    IReadOnlyList<YoloObb[]> DecodeFP16(ReadOnlySpan<Float16> data, int requestCount, int itemCount)
     {
         var result = new YoloObb[requestCount][];
 
@@ -91,13 +91,13 @@ public sealed class YoloObbOrtValueOutputDecoder : IOrtValueBatchOutputDecoder<Y
         return boxes.ToArray();
     }
 
-    YoloObb[] DecodeBatchFP16(ReadOnlySpan<Half> batchData, int itemCount)
+    YoloObb[] DecodeBatchFP16(ReadOnlySpan<Float16> batchData, int itemCount)
     {
         var boxes = new List<YoloObb>(itemCount);
 
         for(int itemIndex = 0; itemIndex < itemCount; itemIndex++)
         {
-            ReadOnlySpan<Half> row = batchData.Slice(itemIndex * FieldCount, FieldCount);
+            ReadOnlySpan<Float16> row = batchData.Slice(itemIndex * FieldCount, FieldCount);
             float score = (float)row[ScoreIndex];
             if(score >= scoreThreshold)
                 boxes.Add(CreateBox((float)row[XIndex], (float)row[YIndex], (float)row[WIndex], (float)row[HIndex], score, (float)row[ClassIndex], (float)row[AngleIndex]));

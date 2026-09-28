@@ -30,7 +30,7 @@
 		<PackageReference Include="System.Numerics.Tensors" Version="10.0.7" />
 
 		<!-- Самая обёртка OpenCV (без нативных DLL) -->
-		<PackageReference Include="OpenCvSharp4" Version="4.13.0.20260330" />
+		<PackageReference Include="OpenCvSharp5" Version="5.0.0.20260905" />
 
 		<!-- Базовый CPU-вариант ONNX Runtime как запасной (работает везде) -->
 		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />-->
@@ -40,12 +40,12 @@
 
 	<!-- Нативные рантаймы OpenCV: ставим по RID -->
 	<ItemGroup Condition="'$(RuntimeIdentifier)'=='win-x64'">
-		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260330" />
+		<PackageReference Include="OpenCvSharp5.runtime.win" Version="5.0.0.20260905" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(RuntimeIdentifier)'=='linux-x64'">
 		<!-- Для Ubuntu 22.04 есть официальный runtime; можно заменить на свой дистрибутив при нужде -->
-		<PackageReference Include="OpenCvSharp4.official.runtime.linux-x64" Version="4.13.0.20260330" />
+		<PackageReference Include="OpenCvSharp5.official.runtime.linux-x64" Version="5.0.0.20260905" />
 	</ItemGroup>
 
 

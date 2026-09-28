@@ -7,8 +7,9 @@ public readonly record struct UndistortCoordinateBackTransform(
 {
     public bool TryMapBackward(Vector2 point, out Vector2 mappedPoint)
     {
-        float normalizedX = (point.X - Distortion.Cx) / Distortion.Fx;
-        float normalizedY = (point.Y - Distortion.Cy) / Distortion.Fy;
+        // Output pixels live in the output camera; the distorted source pixel is projected with the source camera.
+        float normalizedX = (point.X - Distortion.EffectiveOutputCx) / Distortion.EffectiveOutputFx;
+        float normalizedY = (point.Y - Distortion.EffectiveOutputCy) / Distortion.EffectiveOutputFy;
         float radius2 = normalizedX * normalizedX + normalizedY * normalizedY;
         float radius4 = radius2 * radius2;
         float radius6 = radius4 * radius2;

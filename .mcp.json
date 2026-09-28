@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "semaps": {
+      "args": [
+        "mcp"
+      ],
+      "command": "semaps"
+    }
+  }
+}

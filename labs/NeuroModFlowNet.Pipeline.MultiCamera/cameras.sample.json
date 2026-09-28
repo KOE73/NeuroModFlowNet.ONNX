@@ -1,0 +1,155 @@
+{
+  // EN: Sample multi-camera config. Copy it, adjust paths and point App.local.config "CamerasConfig" at the copy.
+  // RU: Пример конфигурации. Скопируйте, поправьте пути и укажите копию в App.local.config ("CamerasConfig").
+  //
+  // Coordinate spaces:
+  //   - "transforms" are applied in order to the raw camera frame (source space) on the GPU.
+  //   - Everything after the last transform (detector, tracker zones, OCR) works in the rectified ("rect") space.
+  //   - Tracking zones are therefore given in rect-space pixels, not in raw camera pixels.
+
+  "backend": "TensorRt",
+
+  "detector": {
+    // Bag detector CGP2510_Multi9 (C:/NN/CGP2510_Multi): YOLOv12s, NMS inside, [1,300,6],
+    // classes 0 BagTop / 1 RedPeople / 2 BlackSquare / 3 OM / 4 MultiMark. Model file and input size are per camera.
+    "kind": "box",
+    // Strict CUDA is not a working path for this model (some nodes land on CPU EP); TensorRT is. Omit = global backend.
+    "backend": "TensorRt",
+    // "stretch" = whole strip resized to the camera's model input; "letterbox" = pad-resize keeping the aspect ratio.
+    "inputMode": "stretch",
+    "scoreThreshold": 0.5,
+    "maxItemCount": 300,
+    // Only BagTop reaches the tracker and OCR.
+    "trackedClassId": 0
+  },
+
+  "tracker": {
+    "iouThreshold": 0.5,
+    "minAge": 5,
+    "maxMissedFrames": 25,
+    "maxTrailLength": 50,
+    "startZoneContainmentThreshold": 1.0
+  },
+
+  "ocr": {
+    // Order as in the old pipeline: confirmed bag tracks are cut out of the rect frame (GPU letterbox batch), the text
+    // OBB model runs on the crops, recognition reads the text regions from the full-resolution rect frame.
+    "enabled": true,
+    // Must be an FP32 model whose fixed batch equals "maxCrops" (the crop batch is [maxCrops, 3, size, size]).
+    "textObbModelPath": "img-text-to-obb/img-text-to-obb__640_b4_fp32.onnx",
+    "detectionInputSize": 640,
+    "maxCrops": 4,
+    // Track box is widened by pixels + scale * size before cutting.
+    "cropPaddingPixels": 12,
+    "cropPaddingScale": 0.05,
+    "recognitionModelPath": "paddleocr/languages/english/rec.onnx",
+    // Strict CUDA is not a confirmed path for rec.onnx (some nodes land on CPU EP); TensorRT is the working GPU choice.
+    "recognitionBackend": "TensorRt",
+    "scoreThreshold": 0.25,
+    "recognitionInputWidth": 640,
+    "recognitionInputHeight": 48,
+    "paddingPixels": 2,
+    "paddingScale": 0.10,
+    // Fixed ROI capacity keeps the recognition batch shape stable ([maxRoiCount, 3, 48, W]); extra regions are truncated.
+    "maxRoiCount": 16
+  },
+
+  "preview": {
+    "enabled": true,
+    // Longest edge of the preview image produced by the VM (resized on GPU, downloaded to CPU as a Mat).
+    "maxEdge": 900
+  },
+
+  "cameras": [
+    {
+      "id": "cam_202_01",
+      "source": {
+        // kind: "folder" (loop over all video files), "files" (explicit playlist, see cam_202_02), "file" (one file),
+        //       "rtsp" (url or "@file.local.txt"), "camera" (index).
+        "kind": "folder",
+        "path": "C:\\Video\\cam_202_01",
+        "pattern": "*.ts",
+        "loop": true,
+        // "none" = CPU decode (faster here under GPU load); "d3d11" = D3D11VA decode, fails loudly if not enabled.
+        "hwAcceleration": "none",
+        // realtime: pace file playback to the file FPS; false = as fast as the pipeline accepts frames.
+        "realtime": true
+      },
+      "resolution": { "width": 3840, "height": 2160 },
+      "maxInFlight": 2,
+      "transforms": [
+        {
+          "type": "radialUndistort",
+          "focalLengthFactor": 0.85,
+          "distortionCoefficients": { "k1": -0.66215582, "k2": 0.30792257, "p1": 0.0, "p2": 0.0, "k3": 0.0 },
+          // alpha as in cv::getOptimalNewCameraMatrix; the resulting new camera matrix becomes the operator's output
+          // intrinsics, so the perspective points below are the ones calibrated on the CGPCam2026 tool output.
+          "alpha": 0.0
+        },
+        {
+          "type": "perspective",
+          "sourcePoints": [
+            { "x": 3765, "y": 1380 },
+            { "x": 3860, "y": 2165 },
+            { "x": -15,  "y": 2105 },
+            { "x": 85,   "y": 965 }
+          ],
+          "outputSize": { "width": 1120, "height": 5408 }
+        }
+      ],
+      // Whole strip 1120x5408 -> 224x1024: scale 0.19, a bag (~890x1310 px) becomes ~180x250 px as in training.
+      "detector": { "modelPath": "C:\\GitKOE\\NeuroModFlowNet.ONNX.Private\\models\\cgp2510-multi9\\cgp2510-multi9__224x1024_b1_fp16.onnx", "inputWidth": 224, "inputHeight": 1024 },
+      "tracking": {
+        // rect-space pixels; null = no zone restriction.
+        "startZone": { "x1": 0, "y1": 0, "x2": 1120, "y2": 1200 },
+        "endZone": { "x1": 0, "y1": 4600, "x2": 1120, "y2": 5408 }
+      }
+    },
+    {
+      "id": "cam_202_02",
+      "source": {
+        // Hand-picked segments with bags, played back to back and looped.
+        "kind": "files",
+        "files": [ "C:\\Video\\cam_202_02\\bags_segment_01.mp4", "C:\\Video\\cam_202_02\\bags_segment_02.ts" ],
+        "loop": true,
+        // "none" = CPU decode (faster here under GPU load); "d3d11" = D3D11VA decode, fails loudly if not enabled.
+        "hwAcceleration": "none",
+        "realtime": true
+      },
+      "resolution": { "width": 2688, "height": 1520 },
+      "maxInFlight": 2,
+      "transforms": [
+        {
+          "type": "perspective",
+          "sourcePoints": [
+            { "x": 0,    "y": 930 },
+            { "x": 0,    "y": 250 },
+            { "x": 2687, "y": 300 },
+            { "x": 2687, "y": 2000 }
+          ],
+          "outputSize": { "width": 1472, "height": 4224 }
+        }
+      ],
+      // Whole strip 1472x4224 -> 224x672: scale 0.16, a bag (~1130x1440 px) becomes ~170x230 px as in training.
+      "detector": { "modelPath": "C:\\GitKOE\\NeuroModFlowNet.ONNX.Private\\models\\cgp2510-multi9\\cgp2510-multi9__224x672_b1_fp16.onnx", "inputWidth": 224, "inputHeight": 672 },
+      "tracking": {
+        "startZone": { "x1": 0, "y1": 0, "x2": 1472, "y2": 1000 },
+        "endZone": { "x1": 0, "y1": 3600, "x2": 1472, "y2": 4224 }
+      }
+    },
+    {
+      // Example of a live RTSP camera with an extra crop + rotate. Disabled by default.
+      "id": "cam_rtsp_example",
+      "enabled": false,
+      "source": { "kind": "rtsp", "url": "@CamExample.local.txt", "transport": "tcp" },
+      "resolution": { "width": 1920, "height": 1080 },
+      "maxInFlight": 2,
+      "transforms": [
+        { "type": "crop", "x": 420, "y": 0, "width": 1080, "height": 1080 },
+        { "type": "rotate", "degrees": 90 }
+      ],
+      "detector": { "modelPath": "C:\\Models\\bag-detector__512x512_b1_fp16.onnx", "inputWidth": 512, "inputHeight": 512 },
+      "tracking": { "startZone": null, "endZone": null }
+    }
+  ]
+}

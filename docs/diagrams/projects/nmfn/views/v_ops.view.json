@@ -1,0 +1,2319 @@
+{
+  "id": "v_ops",
+  "project": "nmfn",
+  "axis": "axis_classes",
+  "icon": "🧩",
+  "routing": "orthogonal",
+  "zones": [
+    {
+      "id": "z_control",
+      "container": null,
+      "parent": null,
+      "x": 410,
+      "y": -260,
+      "width": 300,
+      "height": 280,
+      "styleId": "zone.yellow"
+    },
+    {
+      "id": "z_memory",
+      "container": null,
+      "parent": null,
+      "x": 560,
+      "y": 80,
+      "width": 408,
+      "height": 360,
+      "styleId": "zone.blue"
+    },
+    {
+      "id": "z_roi",
+      "container": null,
+      "parent": null,
+      "x": 2810,
+      "y": -120,
+      "width": 360,
+      "height": 200,
+      "styleId": "zone.fuchsia"
+    },
+    {
+      "id": "z_post",
+      "container": null,
+      "parent": null,
+      "x": 2520,
+      "y": -120,
+      "width": 260,
+      "height": 360,
+      "styleId": "zone.red"
+    },
+    {
+      "id": "z_transform",
+      "container": null,
+      "parent": null,
+      "x": 1920,
+      "y": 330,
+      "width": 1190,
+      "height": 1780,
+      "styleId": "zone.green"
+    },
+    {
+      "id": "z_tr_color",
+      "container": "z_transform",
+      "parent": null,
+      "x": 2360,
+      "y": 670,
+      "width": 680,
+      "height": 210
+    },
+    {
+      "id": "z_tr_crop",
+      "container": "z_transform",
+      "parent": null,
+      "x": 2360,
+      "y": 1140,
+      "width": 680,
+      "height": 220
+    },
+    {
+      "id": "z_tr_resize",
+      "container": "z_transform",
+      "parent": null,
+      "x": 2360,
+      "y": 1370,
+      "width": 680,
+      "height": 200
+    },
+    {
+      "id": "z_tr_padresize",
+      "container": "z_transform",
+      "parent": null,
+      "x": 2360,
+      "y": 1590,
+      "width": 680,
+      "height": 210
+    },
+    {
+      "id": "z_tr_rotate90",
+      "container": "z_transform",
+      "parent": null,
+      "x": 2360,
+      "y": 1820,
+      "width": 680,
+      "height": 200
+    },
+    {
+      "id": "z_tr_perspective",
+      "container": "z_transform",
+      "parent": null,
+      "x": 2360,
+      "y": 900,
+      "width": 680,
+      "height": 210
+    },
+    {
+      "id": "z_tr_undistort",
+      "container": "z_transform",
+      "parent": null,
+      "x": 2360,
+      "y": 410,
+      "width": 680,
+      "height": 230
+    },
+    {
+      "id": "z_inference",
+      "container": null,
+      "parent": null,
+      "x": 1010,
+      "y": -350,
+      "width": 780,
+      "height": 910,
+      "styleId": "zone.blue"
+    },
+    {
+      "id": "z_inf_batched",
+      "container": "z_inference",
+      "parent": null,
+      "x": 1360,
+      "y": 170,
+      "width": 410,
+      "height": 370
+    },
+    {
+      "id": "z_inf_runner",
+      "container": "z_inference",
+      "parent": null,
+      "x": 1360,
+      "y": -300,
+      "width": 230,
+      "height": 200
+    },
+    {
+      "id": "z_inf_reload",
+      "container": "z_inference",
+      "parent": null,
+      "x": 1360,
+      "y": -80,
+      "width": 230,
+      "height": 200
+    },
+    {
+      "id": "z_inf_yolomat",
+      "container": null,
+      "parent": null,
+      "x": 2120,
+      "y": -120,
+      "width": 370,
+      "height": 360,
+      "styleId": "zone.yellow"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "e_cudaconfig",
+      "container": null,
+      "x": -150,
+      "y": 450,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_trtconfig",
+      "container": null,
+      "x": 190,
+      "y": 450,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_executionproviderconfig",
+      "container": null,
+      "x": 20,
+      "y": 180,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_crop_fp16_nchw",
+      "container": "z_tr_crop",
+      "x": 2710,
+      "y": 1190,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_crop_nchw_base",
+      "container": "z_tr_crop",
+      "x": 2376,
+      "y": 1190,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_tensortransformbase",
+      "container": "z_transform",
+      "x": 1960,
+      "y": 400,
+      "width": 190,
+      "height": 1690
+    },
+    {
+      "id": "e_opbase",
+      "container": null,
+      "x": 470,
+      "y": -500,
+      "width": 2460,
+      "height": 60,
+      "template": "class"
+    },
+    {
+      "id": "e_iop",
+      "container": null,
+      "x": 250,
+      "y": -660,
+      "width": 1030,
+      "height": 60
+    },
+    {
+      "id": "e_opconditional",
+      "container": null,
+      "x": 250,
+      "y": -500,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_branchifinstruction",
+      "container": "z_control",
+      "x": 430,
+      "y": -200,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_opdelegate",
+      "container": "z_control",
+      "x": 480,
+      "y": -130,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_orderedsyncinstruction",
+      "container": "z_control",
+      "x": 480,
+      "y": -60,
+      "width": 216,
+      "height": 60
+    },
+    {
+      "id": "e_op_map_coordinates",
+      "container": "z_post",
+      "x": 2540,
+      "y": 10,
+      "width": 150,
+      "height": 60
+    },
+    {
+      "id": "e_model_inference",
+      "container": "z_inference",
+      "x": 1026,
+      "y": -306,
+      "width": 230,
+      "height": 840
+    },
+    {
+      "id": "e_copy_orttensor_to_modeldevice",
+      "container": "z_memory",
+      "x": 590,
+      "y": 130,
+      "width": 210,
+      "height": 60
+    },
+    {
+      "id": "e_copy_ortvalue_to_matimage",
+      "container": "z_memory",
+      "x": 670,
+      "y": 210,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_wrap_unmanagedmem_to_orttensorbase",
+      "container": "z_memory",
+      "x": 576,
+      "y": 284,
+      "width": 320,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "container": "z_roi",
+      "x": 2820,
+      "y": 10,
+      "width": 330,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "container": "z_roi",
+      "x": 2850,
+      "y": -70,
+      "width": 290,
+      "height": 60
+    },
+    {
+      "id": "e_op_detectionsfromyolobox",
+      "container": "z_post",
+      "x": 2540,
+      "y": 90,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_op_detectionsfromyoloobb",
+      "container": "z_post",
+      "x": 2580,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_op_track",
+      "container": "z_post",
+      "x": 2540,
+      "y": -70,
+      "width": 100,
+      "height": 60
+    },
+    {
+      "id": "e_model_yolocls",
+      "container": "z_inf_yolomat",
+      "x": 2140,
+      "y": -70,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_model_yolosingledetection",
+      "container": "z_inf_yolomat",
+      "x": 2140,
+      "y": 170,
+      "width": 336,
+      "height": 60
+    },
+    {
+      "id": "e_model_yolopose",
+      "container": "z_inf_yolomat",
+      "x": 2180,
+      "y": 10,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_model_yoloseg",
+      "container": "z_inf_yolomat",
+      "x": 2220,
+      "y": 90,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_onnxbatchedinference",
+      "container": "z_inf_batched",
+      "x": 1376,
+      "y": 214,
+      "width": 360,
+      "height": 60
+    },
+    {
+      "id": "e_onnxrunner",
+      "container": "z_inf_runner",
+      "x": 1376,
+      "y": -256,
+      "width": 200,
+      "height": 60
+    },
+    {
+      "id": "e_reloadableonnxrunner",
+      "container": "z_inf_reload",
+      "x": 1376,
+      "y": -36,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_wrap_matimage_to_orttensor",
+      "container": "z_memory",
+      "x": 576,
+      "y": 364,
+      "width": 250,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_bgru8hwc_to_rgbnchw_div255base",
+      "container": "z_tr_color",
+      "x": 2380,
+      "y": 720,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_crop_u8_nhwc",
+      "container": "z_tr_crop",
+      "x": 2380,
+      "y": 1260,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_padresize_nchw_base",
+      "container": "z_tr_padresize",
+      "x": 2376,
+      "y": 1640,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_padresize_u8_nhwc",
+      "container": "z_tr_padresize",
+      "x": 2376,
+      "y": 1710,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_perspective_nchw_base",
+      "container": "z_tr_perspective",
+      "x": 2380,
+      "y": 950,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_perspective_u8_nhwc",
+      "container": "z_tr_perspective",
+      "x": 2376,
+      "y": 1030,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_resize_nchw_base",
+      "container": "z_tr_resize",
+      "x": 2376,
+      "y": 1414,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_resize_u8_nhwc",
+      "container": "z_tr_resize",
+      "x": 2376,
+      "y": 1490,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_rotate90_nchw_base",
+      "container": "z_tr_rotate90",
+      "x": 2376,
+      "y": 1864,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_rotate90_u8_nhwc",
+      "container": "z_tr_rotate90",
+      "x": 2376,
+      "y": 1940,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_undistort_nchw_base",
+      "container": "z_tr_undistort",
+      "x": 2380,
+      "y": 460,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_undistort_u8_nhwc",
+      "container": "z_tr_undistort",
+      "x": 2380,
+      "y": 540,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_model_ortvalueinference",
+      "container": "z_inf_batched",
+      "x": 1376,
+      "y": 294,
+      "width": 230,
+      "height": 60
+    },
+    {
+      "id": "e_model_yolobox",
+      "container": "z_inf_batched",
+      "x": 1440,
+      "y": 380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_model_yoloobb",
+      "container": "z_inf_batched",
+      "x": 1570,
+      "y": 450,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_model_paddledet",
+      "container": "z_inf_runner",
+      "x": 1376,
+      "y": -176,
+      "width": 200,
+      "height": 60
+    },
+    {
+      "id": "e_model_paddlerec",
+      "container": "z_inf_reload",
+      "x": 1376,
+      "y": 44,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_bgru8hwc_to_rgbfp16nchw_div255",
+      "container": "z_tr_color",
+      "x": 2710,
+      "y": 720,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_bgru8hwc_to_rgbfp32nchw_div255",
+      "container": "z_tr_color",
+      "x": 2710,
+      "y": 800,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_crop_fp32_nchw",
+      "container": "z_tr_crop",
+      "x": 2710,
+      "y": 1260,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_padresize_fp16_nchw",
+      "container": "z_tr_padresize",
+      "x": 2710,
+      "y": 1640,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_padresize_fp32_nchw",
+      "container": "z_tr_padresize",
+      "x": 2710,
+      "y": 1710,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_perspective_fp16_nchw",
+      "container": "z_tr_perspective",
+      "x": 2710,
+      "y": 950,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_perspective_fp32_nchw",
+      "container": "z_tr_perspective",
+      "x": 2710,
+      "y": 1030,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_resize_fp16_nchw",
+      "container": "z_tr_resize",
+      "x": 2710,
+      "y": 1420,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_resize_fp32_nchw",
+      "container": "z_tr_resize",
+      "x": 2710,
+      "y": 1490,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_rotate90_fp16_nchw",
+      "container": "z_tr_rotate90",
+      "x": 2710,
+      "y": 1870,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_rotate90_fp32_nchw",
+      "container": "z_tr_rotate90",
+      "x": 2710,
+      "y": 1940,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_undistort_fp16_nchw",
+      "container": "z_tr_undistort",
+      "x": 2710,
+      "y": 460,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_op_onnx_undistort_fp32_nchw",
+      "container": "z_tr_undistort",
+      "x": 2710,
+      "y": 540,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "id": "e_vmcontroller",
+      "container": null,
+      "x": -810,
+      "y": -1160,
+      "width": 330,
+      "height": 230,
+      "template": "class"
+    },
+    {
+      "id": "e_vmprogram",
+      "container": null,
+      "x": -410,
+      "y": -1160,
+      "width": 350,
+      "height": 230,
+      "template": "class"
+    },
+    {
+      "id": "e_vmprogrambuilder",
+      "container": null,
+      "x": 160,
+      "y": -1140,
+      "width": 220,
+      "height": 99,
+      "template": "class"
+    }
+  ],
+  "edges": [
+    {
+      "id": "r_asm_diag_asm_onnx_references",
+      "from": "e_asm_diag",
+      "to": "e_asm_onnx",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_asm_vis_asm_onnx_references",
+      "from": "e_asm_vis",
+      "to": "e_asm_onnx",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_asm_pipeonnx_asm_cv_references",
+      "from": "e_asm_pipeonnx",
+      "to": "e_asm_cv",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_asm_pipeonnx_asm_pipe_references",
+      "from": "e_asm_pipeonnx",
+      "to": "e_asm_pipe",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_asm_pipeonnx_asm_onnx_references",
+      "from": "e_asm_pipeonnx",
+      "to": "e_asm_onnx",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_asm_pipeonnx_asm_graph_references",
+      "from": "e_asm_pipeonnx",
+      "to": "e_asm_graph",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_ioutracker_itracker_implements",
+      "from": "e_ioutracker",
+      "to": "e_itracker",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_ioutracker_itrackerdebugsnapshot_implements",
+      "from": "e_ioutracker",
+      "to": "e_itrackerdebugsnapshot",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_onnxexecutioncontext_ionnxmodeloutputs_implements",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ionnxmodeloutputs",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_onnxmodel_imodelmetadataprovider_implements",
+      "from": "e_onnxmodel",
+      "to": "e_imodelmetadataprovider",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_onnxruntimecontext_onnxexecutioncontext_extends",
+      "from": "e_onnxruntimecontext",
+      "to": "e_onnxexecutioncontext",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_cudaconfig_executionproviderconfig_extends",
+      "from": "e_cudaconfig",
+      "to": "e_executionproviderconfig",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_trtconfig_executionproviderconfig_extends",
+      "from": "e_trtconfig",
+      "to": "e_executionproviderconfig",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_poscvdnnfp16_imatfillalgorithm_implements",
+      "from": "e_poscvdnnfp16",
+      "to": "e_imatfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_poscvdnnfp16_imatlistfillalgorithm_implements",
+      "from": "e_poscvdnnfp16",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_poscvdnnfp32_imatfillalgorithm_implements",
+      "from": "e_poscvdnnfp32",
+      "to": "e_imatfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_poscvdnnfp32_imatlistfillalgorithm_implements",
+      "from": "e_poscvdnnfp32",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_posdivhalftensorreorderptrfp16_imatlistfillalgorithm_implements",
+      "from": "e_posdivhalftensorreorderptrfp16",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_posreorderdivhalfptrfp16_imatlistfillalgorithm_implements",
+      "from": "e_posreorderdivhalfptrfp16",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_posreorderdivptrhalftensorfp16_imatlistfillalgorithm_implements",
+      "from": "e_posreorderdivptrhalftensorfp16",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_posreorderptrdivhalftensorfp16_imatlistfillalgorithm_implements",
+      "from": "e_posreorderptrdivhalftensorfp16",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_symcvdnnfp16_imatfillalgorithm_implements",
+      "from": "e_symcvdnnfp16",
+      "to": "e_imatfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_symcvdnnfp16_imatlistfillalgorithm_implements",
+      "from": "e_symcvdnnfp16",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_symcvdnnfp32_imatfillalgorithm_implements",
+      "from": "e_symcvdnnfp32",
+      "to": "e_imatfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_symcvdnnfp32_imatlistfillalgorithm_implements",
+      "from": "e_symcvdnnfp32",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_symreordernormptrfp32_imatlistfillalgorithm_implements",
+      "from": "e_symreordernormptrfp32",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_symreordernormptrhalftensorfp16_imatlistfillalgorithm_implements",
+      "from": "e_symreordernormptrhalftensorfp16",
+      "to": "e_imatlistfillalgorithm",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_converterbase_iinputconverter_implements",
+      "from": "e_converterbase",
+      "to": "e_iinputconverter",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_converternchwbase_converterbase_extends",
+      "from": "e_converternchwbase",
+      "to": "e_converterbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_converternchwbase_iimageconverter_implements",
+      "from": "e_converternchwbase",
+      "to": "e_iimageconverter",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_convertermatsinglebgrdirectu8_converterbase_extends",
+      "from": "e_convertermatsinglebgrdirectu8",
+      "to": "e_converterbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_convertermatsinglebgrdirectu8_iimageconverter_implements",
+      "from": "e_convertermatsinglebgrdirectu8",
+      "to": "e_iimageconverter",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_iimageconverter_iinputconverter_implements",
+      "from": "e_iimageconverter",
+      "to": "e_iinputconverter",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_iimageconverter_iimageinfo_implements",
+      "from": "e_iimageconverter",
+      "to": "e_iimageinfo",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_convertermatlistnchw_converternchwbase_extends",
+      "from": "e_convertermatlistnchw",
+      "to": "e_converternchwbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_convertermatsinglenchw_converternchwbase_extends",
+      "from": "e_convertermatsinglenchw",
+      "to": "e_converternchwbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_convertermatlistnchwposcvdnnfp16_converternchwbase_extends",
+      "from": "e_convertermatlistnchwposcvdnnfp16",
+      "to": "e_converternchwbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_convertermatlistnchwposcvdnnfp32_converternchwbase_extends",
+      "from": "e_convertermatlistnchwposcvdnnfp32",
+      "to": "e_converternchwbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_convertermatsinglenchwposcvdnnfp16_converternchwbase_extends",
+      "from": "e_convertermatsinglenchwposcvdnnfp16",
+      "to": "e_converternchwbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_convertermatsinglenchwposcvdnnfp32_converternchwbase_extends",
+      "from": "e_convertermatsinglenchwposcvdnnfp32",
+      "to": "e_converternchwbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrreclistconverter_iimageconverter_implements",
+      "from": "e_paddleocrreclistconverter",
+      "to": "e_iimageconverter",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrrecsingleconverter_iimageconverter_implements",
+      "from": "e_paddleocrrecsingleconverter",
+      "to": "e_iimageconverter",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_paddleuvdocconverter_iimageconverter_implements",
+      "from": "e_paddleuvdocconverter",
+      "to": "e_iimageconverter",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_batchedresult_batchedresultbase_extends",
+      "from": "e_batchedresult",
+      "to": "e_batchedresultbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_batchedresultfactory_ibatchedresultfactorypolicy_implements",
+      "from": "e_batchedresultfactory",
+      "to": "e_ibatchedresultfactorypolicy",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_batchedresultbase_ibatchedresult_implements",
+      "from": "e_batchedresultbase",
+      "to": "e_ibatchedresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_batchedresultbase_idetectionresult_implements",
+      "from": "e_batchedresultbase",
+      "to": "e_idetectionresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_batchedresultpooled_batchedresultbase_extends",
+      "from": "e_batchedresultpooled",
+      "to": "e_batchedresultbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_batchedresultpooledfactory_ibatchedresultfactorypolicy_implements",
+      "from": "e_batchedresultpooledfactory",
+      "to": "e_ibatchedresultfactorypolicy",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_resultextractorbase_iresultextractor_implements",
+      "from": "e_resultextractorbase",
+      "to": "e_iresultextractor",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_idetectionresult_ibatchedresult_implements",
+      "from": "e_idetectionresult",
+      "to": "e_ibatchedresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrmaskextractor_resultextractorbase_extends",
+      "from": "e_paddleocrmaskextractor",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetextractorbase_resultextractorbase_extends",
+      "from": "e_paddleocrdetextractorbase",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_16fc1_safeextractor_paddleocrdetfp16_extractorbase_extends",
+      "from": "e_paddleocrdetfp16_16fc1_safeextractor",
+      "to": "e_paddleocrdetfp16_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_16fc1_safelistextractor_paddleocrdetfp16_extractorbase_extends",
+      "from": "e_paddleocrdetfp16_16fc1_safelistextractor",
+      "to": "e_paddleocrdetfp16_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_16fc1_unsafeextractor_paddleocrdetfp16_extractorbase_extends",
+      "from": "e_paddleocrdetfp16_16fc1_unsafeextractor",
+      "to": "e_paddleocrdetfp16_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_8uc1_extractor_paddleocrdetfp16_extractorbase_extends",
+      "from": "e_paddleocrdetfp16_8uc1_extractor",
+      "to": "e_paddleocrdetfp16_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_8uc1_safelistextractor_paddleocrdetfp16_extractorbase_extends",
+      "from": "e_paddleocrdetfp16_8uc1_safelistextractor",
+      "to": "e_paddleocrdetfp16_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_8uc3_rgbextractor_paddleocrdetfp16_extractorbase_extends",
+      "from": "e_paddleocrdetfp16_8uc3_rgbextractor",
+      "to": "e_paddleocrdetfp16_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_8uc3_rgb_safelistextractor_paddleocrdetfp16_extractorbase_extends",
+      "from": "e_paddleocrdetfp16_8uc3_rgb_safelistextractor",
+      "to": "e_paddleocrdetfp16_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp16_extractorbase_paddleocrdetextractorbase_extends",
+      "from": "e_paddleocrdetfp16_extractorbase",
+      "to": "e_paddleocrdetextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_32fc1_safeextractor_paddleocrdetfp32_extractorbase_extends",
+      "from": "e_paddleocrdetfp32_32fc1_safeextractor",
+      "to": "e_paddleocrdetfp32_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_32fc1_safelistextractor_paddleocrdetfp32_extractorbase_extends",
+      "from": "e_paddleocrdetfp32_32fc1_safelistextractor",
+      "to": "e_paddleocrdetfp32_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_32fc1_unsafeextractor_paddleocrdetfp32_extractorbase_extends",
+      "from": "e_paddleocrdetfp32_32fc1_unsafeextractor",
+      "to": "e_paddleocrdetfp32_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_8uc1_extractor_paddleocrdetfp32_extractorbase_extends",
+      "from": "e_paddleocrdetfp32_8uc1_extractor",
+      "to": "e_paddleocrdetfp32_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_8uc1_safelistextractor_paddleocrdetfp32_extractorbase_extends",
+      "from": "e_paddleocrdetfp32_8uc1_safelistextractor",
+      "to": "e_paddleocrdetfp32_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_8uc3_rgbextractor_paddleocrdetfp32_extractorbase_extends",
+      "from": "e_paddleocrdetfp32_8uc3_rgbextractor",
+      "to": "e_paddleocrdetfp32_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_8uc3_rgb_safelistextractor_paddleocrdetfp32_extractorbase_extends",
+      "from": "e_paddleocrdetfp32_8uc3_rgb_safelistextractor",
+      "to": "e_paddleocrdetfp32_extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrdetfp32_extractorbase_paddleocrdetextractorbase_extends",
+      "from": "e_paddleocrdetfp32_extractorbase",
+      "to": "e_paddleocrdetextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrrecextractor_resultextractorbase_extends",
+      "from": "e_paddleocrrecextractor",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_naivetextregionextractor_itextregionextractor_implements",
+      "from": "e_naivetextregionextractor",
+      "to": "e_itextregionextractor",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_letterboxcoordinatemapper_iimagecoordinatemapper_implements",
+      "from": "e_letterboxcoordinatemapper",
+      "to": "e_iimagecoordinatemapper",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionprocessingpipeline_itextregionprocessingstage_implements",
+      "from": "e_textregionprocessingpipeline",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionautocontraststage_itextregionprocessingstage_implements",
+      "from": "e_textregionautocontraststage",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionbrightnesscontrastoptions_itextregionbrightnesscontrastsettings_implements",
+      "from": "e_textregionbrightnesscontrastoptions",
+      "to": "e_itextregionbrightnesscontrastsettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionbrightnesscontraststage_itextregionprocessingstage_implements",
+      "from": "e_textregionbrightnesscontraststage",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionbrightnesscontraststage_itextregionbrightnesscontrastsettings_implements",
+      "from": "e_textregionbrightnesscontraststage",
+      "to": "e_itextregionbrightnesscontrastsettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongammacorrectionoptions_itextregiongammacorrectionsettings_implements",
+      "from": "e_textregiongammacorrectionoptions",
+      "to": "e_itextregiongammacorrectionsettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongammacorrectionstage_itextregionprocessingstage_implements",
+      "from": "e_textregiongammacorrectionstage",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongammacorrectionstage_itextregiongammacorrectionsettings_implements",
+      "from": "e_textregiongammacorrectionstage",
+      "to": "e_itextregiongammacorrectionsettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongaussianbluroptions_itextregiongaussianblursettings_implements",
+      "from": "e_textregiongaussianbluroptions",
+      "to": "e_itextregiongaussianblursettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongaussianblurstage_itextregionprocessingstage_implements",
+      "from": "e_textregiongaussianblurstage",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongaussianblurstage_itextregiongaussianblursettings_implements",
+      "from": "e_textregiongaussianblurstage",
+      "to": "e_itextregiongaussianblursettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongrayscaleoptions_itextregiongrayscalesettings_implements",
+      "from": "e_textregiongrayscaleoptions",
+      "to": "e_itextregiongrayscalesettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongrayscalestage_itextregionprocessingstage_implements",
+      "from": "e_textregiongrayscalestage",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregiongrayscalestage_itextregiongrayscalesettings_implements",
+      "from": "e_textregiongrayscalestage",
+      "to": "e_itextregiongrayscalesettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionsharpenoptions_itextregionsharpensettings_implements",
+      "from": "e_textregionsharpenoptions",
+      "to": "e_itextregionsharpensettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionsharpenstage_itextregionprocessingstage_implements",
+      "from": "e_textregionsharpenstage",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionsharpenstage_itextregionsharpensettings_implements",
+      "from": "e_textregionsharpenstage",
+      "to": "e_itextregionsharpensettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionthresholdoptions_itextregionthresholdsettings_implements",
+      "from": "e_textregionthresholdoptions",
+      "to": "e_itextregionthresholdsettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionthresholdstage_itextregionprocessingstage_implements",
+      "from": "e_textregionthresholdstage",
+      "to": "e_itextregionprocessingstage",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_textregionthresholdstage_itextregionthresholdsettings_implements",
+      "from": "e_textregionthresholdstage",
+      "to": "e_itextregionthresholdsettings",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_paddleuvdocextractor_resultextractorbase_extends",
+      "from": "e_paddleuvdocextractor",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxnmsextractorbase_resultextractorbase_extends",
+      "from": "e_yoloboxnmsextractorbase",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxnmsfp16extractor_yoloboxnmsfp16extractorbase_extends",
+      "from": "e_yoloboxnmsfp16extractor",
+      "to": "e_yoloboxnmsfp16extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxnmsfp16extractorbase_yoloboxnmsextractorbase_extends",
+      "from": "e_yoloboxnmsfp16extractorbase",
+      "to": "e_yoloboxnmsextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxnmsfp16stdextractor_yoloboxnmsfp16extractorbase_extends",
+      "from": "e_yoloboxnmsfp16stdextractor",
+      "to": "e_yoloboxnmsfp16extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxnmsfp32extractor_yoloboxnmsfp32extractorbase_extends",
+      "from": "e_yoloboxnmsfp32extractor",
+      "to": "e_yoloboxnmsfp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxnmsfp32extractorbase_yoloboxnmsextractorbase_extends",
+      "from": "e_yoloboxnmsfp32extractorbase",
+      "to": "e_yoloboxnmsextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxnmsfp32stdextractor_yoloboxnmsfp32extractorbase_extends",
+      "from": "e_yoloboxnmsfp32stdextractor",
+      "to": "e_yoloboxnmsfp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolobox_fp16_xywhsc_ioutast_implements",
+      "from": "e_yolobox_fp16_xywhsc",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolobox_fp32_xywhsc_ioutast_implements",
+      "from": "e_yolobox_fp32_xywhsc",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolobox_ioutast_implements",
+      "from": "e_yolobox",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxresultsfp16_idetectionresult_implements",
+      "from": "e_yoloboxresultsfp16",
+      "to": "e_idetectionresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxresultsfp32_idetectionresult_implements",
+      "from": "e_yoloboxresultsfp32",
+      "to": "e_idetectionresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloclsextractorbase_resultextractorbase_extends",
+      "from": "e_yoloclsextractorbase",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloclsfp16extractorbase_yoloclsextractorbase_extends",
+      "from": "e_yoloclsfp16extractorbase",
+      "to": "e_yoloclsextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloclsfp16singleextractor_yoloclsfp16extractorbase_extends",
+      "from": "e_yoloclsfp16singleextractor",
+      "to": "e_yoloclsfp16extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloclsfp32extractorbase_yoloclsextractorbase_extends",
+      "from": "e_yoloclsfp32extractorbase",
+      "to": "e_yoloclsextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloclsfp32singleextractor_yoloclsfp32extractorbase_extends",
+      "from": "e_yoloclsfp32singleextractor",
+      "to": "e_yoloclsfp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolocls_iyolocls_implements",
+      "from": "e_yolocls",
+      "to": "e_iyolocls",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolocls_ibatchedresult_implements",
+      "from": "e_yolocls",
+      "to": "e_ibatchedresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbnmsextractorbase_resultextractorbase_extends",
+      "from": "e_yoloobbnmsextractorbase",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbnmsextractorbase_iextractorthreshold_implements",
+      "from": "e_yoloobbnmsextractorbase",
+      "to": "e_iextractorthreshold",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbnmsfp32extractor_yoloobbnmsfp32extractorbase_extends",
+      "from": "e_yoloobbnmsfp32extractor",
+      "to": "e_yoloobbnmsfp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbnmsfp32extractorbase_yoloobbnmsextractorbase_extends",
+      "from": "e_yoloobbnmsfp32extractorbase",
+      "to": "e_yoloobbnmsextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbnmsfp32stdextractor_yoloobbnmsfp32extractorbase_extends",
+      "from": "e_yoloobbnmsfp32stdextractor",
+      "to": "e_yoloobbnmsfp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloobb_fp32_xywhsca_ioutast_implements",
+      "from": "e_yoloobb_fp32_xywhsca",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloobb_ioutast_implements",
+      "from": "e_yoloobb",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbresultsfp32_idetectionresult_implements",
+      "from": "e_yoloobbresultsfp32",
+      "to": "e_idetectionresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloposeextractorbase_resultextractorbase_extends",
+      "from": "e_yoloposeextractorbase",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloposefp32extractorbase_yoloposeextractorbase_extends",
+      "from": "e_yoloposefp32extractorbase",
+      "to": "e_yoloposeextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloposefp32keypoint17extractor_yoloposefp32extractorbase_extends",
+      "from": "e_yoloposefp32keypoint17extractor",
+      "to": "e_yoloposefp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloposefp32universalextractor_yoloposefp32extractorbase_extends",
+      "from": "e_yoloposefp32universalextractor",
+      "to": "e_yoloposefp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolopose_fp32_keypoint_xyv_ioutast_implements",
+      "from": "e_yolopose_fp32_keypoint_xyv",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolopose_fp32_size57_keypoint17_ioutast_implements",
+      "from": "e_yolopose_fp32_size57_keypoint17",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolopose_ioutast_implements",
+      "from": "e_yolopose",
+      "to": "e_ioutast",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolosegextractorbase_resultextractorbase_extends",
+      "from": "e_yolosegextractorbase",
+      "to": "e_resultextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolosegfp16extractorbase_yolosegextractorbase_extends",
+      "from": "e_yolosegfp16extractorbase",
+      "to": "e_yolosegextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolosegfp16singleextractor_yolosegfp16extractorbase_extends",
+      "from": "e_yolosegfp16singleextractor",
+      "to": "e_yolosegfp16extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolosegfp32extractorbase_yolosegextractorbase_extends",
+      "from": "e_yolosegfp32extractorbase",
+      "to": "e_yolosegextractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolosegfp32mixedsingleextractor_yolosegfp32extractorbase_extends",
+      "from": "e_yolosegfp32mixedsingleextractor",
+      "to": "e_yolosegfp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yolosegfp32singleextractor_yolosegfp32extractorbase_extends",
+      "from": "e_yolosegfp32singleextractor",
+      "to": "e_yolosegfp32extractorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloseg_fp16_xywhsc_mask32_iyoloseg_xywhsc_mask_implements",
+      "from": "e_yoloseg_fp16_xywhsc_mask32",
+      "to": "e_iyoloseg_xywhsc_mask",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloseg_fp32_xywhsc_mask32_iyoloseg_xywhsc_mask_implements",
+      "from": "e_yoloseg_fp32_xywhsc_mask32",
+      "to": "e_iyoloseg_xywhsc_mask",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolosegresult_fp16_mask32_ibatchedresult_implements",
+      "from": "e_yolosegresult_fp16_mask32",
+      "to": "e_ibatchedresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolosegresult_fp32_mask32_ibatchedresult_implements",
+      "from": "e_yolosegresult_fp32_mask32",
+      "to": "e_ibatchedresult",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_imagerunner_strategyrunner_extends",
+      "from": "e_imagerunner",
+      "to": "e_strategyrunner",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_imagerunner_iimageinfo_implements",
+      "from": "e_imagerunner",
+      "to": "e_iimageinfo",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_strategyrunner_runner_extends",
+      "from": "e_strategyrunner",
+      "to": "e_runner",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_strategyrunner_irunner_implements",
+      "from": "e_strategyrunner",
+      "to": "e_irunner",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_cropcoordinatebacktransform_icoordinatebacktransform_implements",
+      "from": "e_cropcoordinatebacktransform",
+      "to": "e_icoordinatebacktransform",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_padresizecoordinatebacktransform_icoordinatebacktransform_implements",
+      "from": "e_padresizecoordinatebacktransform",
+      "to": "e_icoordinatebacktransform",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_perspectivecoordinatebacktransform_icoordinatebacktransform_implements",
+      "from": "e_perspectivecoordinatebacktransform",
+      "to": "e_icoordinatebacktransform",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_resizecoordinatebacktransform_icoordinatebacktransform_implements",
+      "from": "e_resizecoordinatebacktransform",
+      "to": "e_icoordinatebacktransform",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_rotate90coordinatebacktransform_icoordinatebacktransform_implements",
+      "from": "e_rotate90coordinatebacktransform",
+      "to": "e_icoordinatebacktransform",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_undistortcoordinatebacktransform_icoordinatebacktransform_implements",
+      "from": "e_undistortcoordinatebacktransform",
+      "to": "e_icoordinatebacktransform",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_branchifinstruction_opbase_extends",
+      "from": "e_branchifinstruction",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_opbase_iop_implements",
+      "from": "e_opbase",
+      "to": "e_iop",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_opconditional_iop_implements",
+      "from": "e_opconditional",
+      "to": "e_iop",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_opdelegate_opbase_extends",
+      "from": "e_opdelegate",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_orderedsyncinstruction_opbase_extends",
+      "from": "e_orderedsyncinstruction",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_arraymapcoordinatesexecutor_imapcoordinatesexecutor_implements",
+      "from": "e_arraymapcoordinatesexecutor",
+      "to": "e_imapcoordinatesexecutor",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_listmapcoordinatesexecutor_imapcoordinatesexecutor_implements",
+      "from": "e_listmapcoordinatesexecutor",
+      "to": "e_imapcoordinatesexecutor",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_mapcoordinatesexecutor_imapcoordinatesexecutor_implements",
+      "from": "e_mapcoordinatesexecutor",
+      "to": "e_imapcoordinatesexecutor",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_ocrquadregioncoordinatepayloadmapper_icoordinatepayloadmapper_implements",
+      "from": "e_ocrquadregioncoordinatepayloadmapper",
+      "to": "e_icoordinatepayloadmapper",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_op_map_coordinates_opbase_extends",
+      "from": "e_op_map_coordinates",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxcoordinatepayloadmapper_icoordinatepayloadmapper_implements",
+      "from": "e_yoloboxcoordinatepayloadmapper",
+      "to": "e_icoordinatepayloadmapper",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolodetectionbatchresultmapcoordinatesexecutor_imapcoordinatesexecutor_implements",
+      "from": "e_yolodetectionbatchresultmapcoordinatesexecutor",
+      "to": "e_imapcoordinatesexecutor",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbcoordinatepayloadmapper_icoordinatepayloadmapper_implements",
+      "from": "e_yoloobbcoordinatepayloadmapper",
+      "to": "e_icoordinatepayloadmapper",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_model_inference_opbase_extends",
+      "from": "e_model_inference",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_model_ortvalueinference_onnxbatchedinference_extends",
+      "from": "e_model_ortvalueinference",
+      "to": "e_onnxbatchedinference",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_onnxbatchedinference_model_inference_extends",
+      "from": "e_onnxbatchedinference",
+      "to": "e_model_inference",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_onnxrunner_model_inference_extends",
+      "from": "e_onnxrunner",
+      "to": "e_model_inference",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_reloadableonnxrunner_model_inference_extends",
+      "from": "e_reloadableonnxrunner",
+      "to": "e_model_inference",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_opbase_extends",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_copy_ortvalue_to_matimage_opbase_extends",
+      "from": "e_copy_ortvalue_to_matimage",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_wrap_matimage_to_orttensor_wrap_unmanagedmem_to_orttensorbase_extends",
+      "from": "e_wrap_matimage_to_orttensor",
+      "to": "e_wrap_unmanagedmem_to_orttensorbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_wrap_unmanagedmem_to_orttensorbase_opbase_extends",
+      "from": "e_wrap_unmanagedmem_to_orttensorbase",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbfp16nchw_div255_op_onnx_bgru8hwc_to_rgbnchw_div255base_extends",
+      "from": "e_op_onnx_bgru8hwc_to_rgbfp16nchw_div255",
+      "to": "e_op_onnx_bgru8hwc_to_rgbnchw_div255base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbfp32nchw_div255_op_onnx_bgru8hwc_to_rgbnchw_div255base_extends",
+      "from": "e_op_onnx_bgru8hwc_to_rgbfp32nchw_div255",
+      "to": "e_op_onnx_bgru8hwc_to_rgbnchw_div255base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbnchw_div255base_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_bgru8hwc_to_rgbnchw_div255base",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_crop_fp16_nchw_op_onnx_crop_nchw_base_extends",
+      "from": "e_op_onnx_crop_fp16_nchw",
+      "to": "e_op_onnx_crop_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_crop_fp32_nchw_op_onnx_crop_nchw_base_extends",
+      "from": "e_op_onnx_crop_fp32_nchw",
+      "to": "e_op_onnx_crop_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_crop_nchw_base_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_crop_nchw_base",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_crop_u8_nhwc_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_crop_u8_nhwc",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_opbase_extends",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ihasexecutiondevice_implements",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ihasexecutiondevice",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_opbase_extends",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ihasexecutiondevice_implements",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ihasexecutiondevice",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_padresize_fp16_nchw_op_onnx_padresize_nchw_base_extends",
+      "from": "e_op_onnx_padresize_fp16_nchw",
+      "to": "e_op_onnx_padresize_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_padresize_fp32_nchw_op_onnx_padresize_nchw_base_extends",
+      "from": "e_op_onnx_padresize_fp32_nchw",
+      "to": "e_op_onnx_padresize_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_padresize_nchw_base_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_padresize_nchw_base",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_padresize_u8_nhwc_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_padresize_u8_nhwc",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_perspective_fp16_nchw_op_onnx_perspective_nchw_base_extends",
+      "from": "e_op_onnx_perspective_fp16_nchw",
+      "to": "e_op_onnx_perspective_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_perspective_fp32_nchw_op_onnx_perspective_nchw_base_extends",
+      "from": "e_op_onnx_perspective_fp32_nchw",
+      "to": "e_op_onnx_perspective_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_perspective_nchw_base_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_perspective_nchw_base",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_perspective_u8_nhwc_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_perspective_u8_nhwc",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_resize_fp16_nchw_op_onnx_resize_nchw_base_extends",
+      "from": "e_op_onnx_resize_fp16_nchw",
+      "to": "e_op_onnx_resize_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_resize_fp32_nchw_op_onnx_resize_nchw_base_extends",
+      "from": "e_op_onnx_resize_fp32_nchw",
+      "to": "e_op_onnx_resize_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_resize_nchw_base_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_resize_nchw_base",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_resize_u8_nhwc_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_resize_u8_nhwc",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_rotate90_fp16_nchw_op_onnx_rotate90_nchw_base_extends",
+      "from": "e_op_onnx_rotate90_fp16_nchw",
+      "to": "e_op_onnx_rotate90_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_rotate90_fp32_nchw_op_onnx_rotate90_nchw_base_extends",
+      "from": "e_op_onnx_rotate90_fp32_nchw",
+      "to": "e_op_onnx_rotate90_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_rotate90_nchw_base_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_rotate90_nchw_base",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_rotate90_u8_nhwc_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_rotate90_u8_nhwc",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_opbase_extends",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_ihasexecutiondevice_implements",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_ihasexecutiondevice",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_undistort_fp16_nchw_op_onnx_undistort_nchw_base_extends",
+      "from": "e_op_onnx_undistort_fp16_nchw",
+      "to": "e_op_onnx_undistort_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_undistort_fp32_nchw_op_onnx_undistort_nchw_base_extends",
+      "from": "e_op_onnx_undistort_fp32_nchw",
+      "to": "e_op_onnx_undistort_nchw_base",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_undistort_nchw_base_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_undistort_nchw_base",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_onnx_undistort_u8_nhwc_op_onnx_tensortransformbase_extends",
+      "from": "e_op_onnx_undistort_u8_nhwc",
+      "to": "e_op_onnx_tensortransformbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_model_paddledet_onnxrunner_extends",
+      "from": "e_model_paddledet",
+      "to": "e_onnxrunner",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_model_paddlerec_reloadableonnxrunner_extends",
+      "from": "e_model_paddlerec",
+      "to": "e_reloadableonnxrunner",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrrecortvalueoutputdecoder_iortvaluebatchoutputdecoder_implements",
+      "from": "e_paddleocrrecortvalueoutputdecoder",
+      "to": "e_iortvaluebatchoutputdecoder",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_paddleocrrecoutputshaperesolver_iortvalueoutputshaperesolver_implements",
+      "from": "e_paddleocrrecoutputshaperesolver",
+      "to": "e_iortvalueoutputshaperesolver",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_iortvaluebatchinputassembler_implements",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_iortvaluebatchinputassembler",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_iortvaluebatchinputassembler_implements",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_iortvaluebatchinputassembler",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_onnxbatchedresourcebase_ivmresource_implements",
+      "from": "e_onnxbatchedresourcebase",
+      "to": "e_ivmresource",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_onnxbatchedresourcebase_ionnxinferenceendpoint_implements",
+      "from": "e_onnxbatchedresourcebase",
+      "to": "e_ionnxinferenceendpoint",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_onnxrunnerresource_ivmresource_implements",
+      "from": "e_onnxrunnerresource",
+      "to": "e_ivmresource",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_onnxrunnerresource_ionnxinferenceendpoint_implements",
+      "from": "e_onnxrunnerresource",
+      "to": "e_ionnxinferenceendpoint",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_ortvaluebatchedinferenceendpoint_onnxbatchedresourcebase_extends",
+      "from": "e_ortvaluebatchedinferenceendpoint",
+      "to": "e_onnxbatchedresourcebase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_primaryoutputshaperesolver_iortvalueoutputshaperesolver_implements",
+      "from": "e_primaryoutputshaperesolver",
+      "to": "e_iortvalueoutputshaperesolver",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_reloadableonnxrunnerresource_ivmresource_implements",
+      "from": "e_reloadableonnxrunnerresource",
+      "to": "e_ivmresource",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_reloadableonnxrunnerresource_ionnxinferenceendpoint_implements",
+      "from": "e_reloadableonnxrunnerresource",
+      "to": "e_ionnxinferenceendpoint",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_singleortvaluebatchinputassembler_iortvaluebatchinputassembler_implements",
+      "from": "e_singleortvaluebatchinputassembler",
+      "to": "e_iortvaluebatchinputassembler",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_yolonmsoutputshaperesolver_iortvalueoutputshaperesolver_implements",
+      "from": "e_yolonmsoutputshaperesolver",
+      "to": "e_iortvalueoutputshaperesolver",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_op_detectionsfromyolobox_opbase_extends",
+      "from": "e_op_detectionsfromyolobox",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_detectionsfromyoloobb_opbase_extends",
+      "from": "e_op_detectionsfromyoloobb",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_op_track_opbase_extends",
+      "from": "e_op_track",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_model_yolobox_onnxbatchedinference_extends",
+      "from": "e_model_yolobox",
+      "to": "e_onnxbatchedinference",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxbatchedresource_onnxbatchedresourcebase_extends",
+      "from": "e_yoloboxbatchedresource",
+      "to": "e_onnxbatchedresourcebase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloboxortvalueoutputdecoder_iortvaluebatchoutputdecoder_implements",
+      "from": "e_yoloboxortvalueoutputdecoder",
+      "to": "e_iortvaluebatchoutputdecoder",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_model_yolocls_opbase_extends",
+      "from": "e_model_yolocls",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_model_yolosingledetection_opbase_extends",
+      "from": "e_model_yolosingledetection",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_model_yoloobb_onnxbatchedinference_extends",
+      "from": "e_model_yoloobb",
+      "to": "e_onnxbatchedinference",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbbatchedresource_onnxbatchedresourcebase_extends",
+      "from": "e_yoloobbbatchedresource",
+      "to": "e_onnxbatchedresourcebase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_yoloobbortvalueoutputdecoder_iortvaluebatchoutputdecoder_implements",
+      "from": "e_yoloobbortvalueoutputdecoder",
+      "to": "e_iortvaluebatchoutputdecoder",
+      "type": "implements",
+      "points": []
+    },
+    {
+      "id": "r_model_yolopose_opbase_extends",
+      "from": "e_model_yolopose",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_model_yoloseg_opbase_extends",
+      "from": "e_model_yoloseg",
+      "to": "e_opbase",
+      "type": "extends",
+      "points": []
+    },
+    {
+      "id": "r_vmprogram_iop_references",
+      "from": "e_vmprogram",
+      "to": "e_iop",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_vmprogrambuilder_iop_references",
+      "from": "e_vmprogrambuilder",
+      "to": "e_iop",
+      "type": "references",
+      "points": []
+    },
+    {
+      "id": "r_vmprogrambuilder_vmprogram_references",
+      "from": "e_vmprogrambuilder",
+      "to": "e_vmprogram",
+      "type": "references",
+      "points": []
+    }
+  ]
+}

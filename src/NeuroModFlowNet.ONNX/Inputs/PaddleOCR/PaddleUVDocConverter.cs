@@ -33,7 +33,7 @@ public class PaddleUVDocConverter : IImageConverter<Mat>
         double scale = 1.0 / 255.0;
         Scalar mean = new Scalar(0, 0, 0);
 
-        using var blob = CvDnn.BlobFromImage(
+        using var blob = Cv2.Dnn.BlobFromImage(
             input,
             scale,
             new Size(Width, Height),

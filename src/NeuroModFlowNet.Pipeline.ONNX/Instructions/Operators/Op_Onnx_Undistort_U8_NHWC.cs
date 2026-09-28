@@ -56,7 +56,7 @@ public sealed class Op_Onnx_Undistort_U8_NHWC : Op_Onnx_TensorTransformBase
     protected override byte[] BuildModel(long[] inputShape, TensorElementType inputElementType)
     {
         (int outputWidth, int outputHeight) = ResolveOutputSize(inputShape);
-        Span<float> distortionValues = stackalloc float[9];
+        Span<float> distortionValues = stackalloc float[13];
         WriteDistortionValues(distortion, distortionValues);
 
         return UndistortGridBuilder.BuildU8Nhwc(
@@ -94,6 +94,9 @@ public sealed class Op_Onnx_Undistort_U8_NHWC : Op_Onnx_TensorTransformBase
 
         if(distortion.Fy == 0f)
             throw new ArgumentOutOfRangeException(nameof(distortion), "Fy must be non-zero.");
+
+        if(distortion.EffectiveOutputFx == 0f || distortion.EffectiveOutputFy == 0f)
+            throw new ArgumentOutOfRangeException(nameof(distortion), "Output Fx and Fy must be non-zero.");
     }
 
     static void WriteDistortionValues(RadialTangentialDistortionParameters distortion, Span<float> destination)
@@ -107,6 +110,10 @@ public sealed class Op_Onnx_Undistort_U8_NHWC : Op_Onnx_TensorTransformBase
         destination[6] = distortion.P1;
         destination[7] = distortion.P2;
         destination[8] = distortion.K3;
+        destination[9] = distortion.EffectiveOutputFx;
+        destination[10] = distortion.EffectiveOutputFy;
+        destination[11] = distortion.EffectiveOutputCx;
+        destination[12] = distortion.EffectiveOutputCy;
     }
 
     static OpDescriptor CreateDescriptor(string inputKey, string outputKey, string? outputTransformKey)
@@ -119,5 +126,5 @@ public sealed class Op_Onnx_Undistort_U8_NHWC : Op_Onnx_TensorTransformBase
     }
 
     static string FormatDistortion(RadialTangentialDistortionParameters value) =>
-        $"{value.Fx},{value.Fy},{value.Cx},{value.Cy},{value.K1},{value.K2},{value.P1},{value.P2},{value.K3}";
+        $"{value.Fx},{value.Fy},{value.Cx},{value.Cy},{value.K1},{value.K2},{value.P1},{value.P2},{value.K3};output={value.EffectiveOutputFx},{value.EffectiveOutputFy},{value.EffectiveOutputCx},{value.EffectiveOutputCy}";
 }

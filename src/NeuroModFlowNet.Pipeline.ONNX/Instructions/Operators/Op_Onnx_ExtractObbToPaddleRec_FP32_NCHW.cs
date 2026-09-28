@@ -277,7 +277,6 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
         switch(config)
         {
             case TrtConfig trtConfig:
-                trtConfig.EnableEngineCache = false;
                 trtConfig.EnableFp16 = false;
                 trtConfig.EnableBf16 = false;
                 trtConfig.BuilderOptimizationLevel = 2;
@@ -289,7 +288,7 @@ public sealed class Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW : OpBase, IDisposabl
     }
 
     const string RuntimeOperatorProviderOptionsKey =
-        "runtime-operator;trtEngineCache=false;trtFp16=false;trtBf16=false;trtBuilderOptimizationLevel=2;cudaGraph=false";
+        "runtime-operator;trtEngineCache=keyed;trtFp16=false;trtBf16=false;trtBuilderOptimizationLevel=2;cudaGraph=false";
 
     static string FormatShape(long[] shape) => string.Join('x', shape);
 

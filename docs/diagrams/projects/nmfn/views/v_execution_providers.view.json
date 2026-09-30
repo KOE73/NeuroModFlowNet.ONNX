@@ -1,0 +1,177 @@
+{
+  "id": "v_execution_providers",
+  "project": "nmfn",
+  "axis": "axis_classes",
+  "zones": [
+    {
+      "id": "z_onnx_config",
+      "container": null,
+      "x": -90,
+      "y": 0,
+      "width": 852,
+      "height": 369,
+      "parent": "z_static"
+    },
+    {
+      "id": "z_static",
+      "container": null,
+      "x": -120,
+      "y": -50,
+      "width": 1338,
+      "height": 510
+    },
+    {
+      "id": "z_runtime",
+      "container": null,
+      "x": -110,
+      "y": 690,
+      "width": 1612,
+      "height": 440
+    }
+  ],
+  "nodes": [
+    {
+      "entity": "e_executionproviderconfig",
+      "zone": "z_onnx_config",
+      "x": -54,
+      "y": 54,
+      "height": 290,
+      "template": "class"
+    },
+    {
+      "entity": "e_onnxmodel",
+      "zone": "z_runtime",
+      "x": -70,
+      "y": 780
+    },
+    {
+      "entity": "e_onnxruntimecontext",
+      "zone": "z_runtime",
+      "x": 166,
+      "y": 894
+    },
+    {
+      "entity": "e_ortvaluebatchedinferenceendpoint",
+      "zone": "z_runtime",
+      "x": 1000,
+      "y": 780,
+      "width": 300
+    },
+    {
+      "entity": "e_inferencebackend",
+      "zone": "z_onnx_config",
+      "x": 270,
+      "y": 220,
+      "height": 129,
+      "template": "class",
+      "width": 270
+    },
+    {
+      "entity": "e_cudaconfig",
+      "zone": "z_onnx_config",
+      "x": 160,
+      "y": 130,
+      "height": 54
+    },
+    {
+      "entity": "e_trtconfig",
+      "zone": "z_onnx_config",
+      "x": 330,
+      "y": 60,
+      "height": 50,
+      "width": 160
+    },
+    {
+      "entity": "e_trtconfigdefaults",
+      "zone": "z_onnx_config",
+      "x": 526,
+      "y": 44,
+      "height": 70,
+      "template": "class",
+      "width": 210
+    },
+    {
+      "entity": "e_onnxexecutioncontext",
+      "zone": "z_runtime",
+      "x": 166,
+      "y": 734,
+      "width": 200
+    },
+    {
+      "entity": "e_onnxruntimemodelsource",
+      "zone": "z_static",
+      "x": 940,
+      "y": 370,
+      "width": 220
+    },
+    {
+      "entity": "e_onnxruntimemodelsourcekind",
+      "zone": "z_static",
+      "x": 940,
+      "y": 230,
+      "width": 220,
+      "height": 85,
+      "template": "class"
+    },
+    {
+      "entity": "e_onnxruntimepathhelper",
+      "zone": "z_static",
+      "x": 800,
+      "y": 10,
+      "width": 220
+    },
+    {
+      "entity": "e_irunner",
+      "zone": "z_runtime",
+      "x": 1260,
+      "y": 890
+    },
+    {
+      "entity": "e_runner",
+      "zone": "z_runtime",
+      "x": 766,
+      "y": 734
+    },
+    {
+      "entity": "e_strategyrunner",
+      "zone": "z_runtime",
+      "x": 766,
+      "y": 894,
+      "width": 360
+    },
+    {
+      "entity": "e_iinputconverter",
+      "zone": "z_runtime",
+      "x": 446,
+      "y": 734,
+      "height": 102,
+      "width": 224,
+      "template": "class"
+    },
+    {
+      "entity": "e_iresultextractor",
+      "zone": "z_runtime",
+      "x": 446,
+      "y": 894,
+      "width": 260,
+      "height": 85,
+      "template": "class"
+    }
+  ],
+  "routing": "orthogonal",
+  "relations": {
+    "except": [
+      "r_cudaconfig_inferencebackend_references",
+      "r_trtconfig_inferencebackend_references",
+      "r_executionproviderconfig_inferencebackend_references",
+      "r_onnxexecutioncontext_onnxmodel_references",
+      "r_onnxmodel_inferencebackend_references",
+      "r_onnxmodel_onnxruntimemodelsource_references",
+      "r_onnxruntimemodelsource_onnxruntimemodelsourcekind_references",
+      "r_onnxruntimecontext_inferencebackend_references",
+      "r_onnxruntimecontext_onnxmodel_references",
+      "r_strategyrunner_onnxexecutioncontext_references",
+      "r_ortvaluebatchedinferenceendpoint_inferencebackend_references"
+    ]
+  }
+}

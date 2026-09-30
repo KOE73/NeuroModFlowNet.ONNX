@@ -2876,6 +2876,13 @@
         "from": "ru",
         "fromHash": "83d4856d"
       }
+    },
+    "v_execution_providers": {
+      "name": {
+        "v": "Execution Providers",
+        "at": "2026-09-29T14:18:26Z",
+        "origin": "authored"
+      }
     }
   }
 }

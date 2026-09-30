@@ -3069,6 +3069,34 @@
         "at": "2026-09-24T10:52:25Z",
         "origin": "authored"
       }
+    },
+    "v_execution_providers": {
+      "name": {
+        "v": "Execution Providers",
+        "at": "2026-09-29T14:18:26Z",
+        "origin": "authored"
+      }
+    },
+    "z_onnx_config": {
+      "name": {
+        "v": "Конфигурация ONNX",
+        "at": "2026-09-30T02:22:39Z",
+        "origin": "authored"
+      }
+    },
+    "z_static": {
+      "name": {
+        "v": "Описание и настройка",
+        "at": "2026-09-30T02:30:17Z",
+        "origin": "authored"
+      }
+    },
+    "z_runtime": {
+      "name": {
+        "v": "Рабочие инструменты",
+        "at": "2026-09-30T02:30:17Z",
+        "origin": "authored"
+      }
     }
   }
 }

@@ -2,7 +2,7 @@
   "id": "nmfn",
   "title": "NeuroModFlowNet.ONNX",
   "subtitle": "Сборки src/*",
-  "contractVersion": 3,
+  "contractVersion": 5,
   "defaultView": "v_assemblies",
   "defaultAxis": "axis_assembly",
   "languages": [

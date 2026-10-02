@@ -1,244 +1,8 @@
 {
-  "contractVersion": 3,
+  "contractVersion": 5,
   "language": "ru",
   "entries": {
-    "c_onnx": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "Ядро: раннеры, входы, модели YOLO/PaddleOCR, экстракторы результатов.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_graph": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Graph",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "Построители runtime ONNX-графов (Crop, Resize, Undistort, ROI prepare).",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_diag": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Diagnostics",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "Диагностика инференса.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_vis": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Visualizer",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "Отрисовка результатов инференса; вся визуализация только здесь.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_cv": {
-      "name": {
-        "v": "NeuroModFlowNet.CV",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "CV-алгоритмы без ONNX, в т.ч. трекер.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe": {
-      "name": {
-        "v": "NeuroModFlowNet.Pipeline",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "VM: контроллер, программы, регистры, синхронизация, обратные координаты.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx": {
-      "name": {
-        "v": "NeuroModFlowNet.Pipeline.ONNX",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "ONNX-инструкции VM, сервисы инференса, декодеры выходов, kernel cache.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_cv_tracking": {
-      "name": {
-        "v": "Tracking",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_onnx_core": {
-      "name": {
-        "v": "Core",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_onnx_inputs": {
-      "name": {
-        "v": "Inputs",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_onnx_outputs": {
-      "name": {
-        "v": "Outputs",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_onnx_runners": {
-      "name": {
-        "v": "Runners",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_graph_builders": {
-      "name": {
-        "v": "Builders",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_contexts": {
-      "name": {
-        "v": "Contexts",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_coordinates": {
-      "name": {
-        "v": "Coordinates",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_diagnostics": {
-      "name": {
-        "v": "Diagnostics",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_execution": {
-      "name": {
-        "v": "Execution",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_instructions": {
-      "name": {
-        "v": "Instructions",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_memory": {
-      "name": {
-        "v": "Memory",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_resources": {
-      "name": {
-        "v": "Resources",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipe_synchronization": {
-      "name": {
-        "v": "Synchronization",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx_coordinates": {
-      "name": {
-        "v": "Coordinates",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx_instructions": {
-      "name": {
-        "v": "Instructions",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx_paddleocr": {
-      "name": {
-        "v": "PaddleOCR",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx_resources": {
-      "name": {
-        "v": "Resources",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx_runtime": {
-      "name": {
-        "v": "Runtime",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx_tracking": {
-      "name": {
-        "v": "Tracking",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "c_pipeonnx_yolo": {
-      "name": {
-        "v": "Yolo",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
     "e_asm_onnx": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX",
-        "at": "2026-09-23T06:05:16Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Ядро: раннеры, входы, модели YOLO/PaddleOCR, экстракторы результатов.",
         "at": "2026-09-23T00:00:00Z",
@@ -251,11 +15,6 @@
       }
     },
     "e_asm_graph": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Graph",
-        "at": "2026-09-23T06:05:16Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Построители runtime ONNX-графов (Crop, Resize, Undistort, ROI prepare).",
         "at": "2026-09-23T00:00:00Z",
@@ -268,11 +27,6 @@
       }
     },
     "e_asm_diag": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Diagnostics",
-        "at": "2026-09-23T06:05:16Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Диагностика инференса.",
         "at": "2026-09-23T00:00:00Z",
@@ -285,11 +39,6 @@
       }
     },
     "e_asm_vis": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Visualizer",
-        "at": "2026-09-23T06:05:16Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Отрисовка результатов инференса; вся визуализация только здесь.",
         "at": "2026-09-23T00:00:00Z",
@@ -302,11 +51,6 @@
       }
     },
     "e_asm_cv": {
-      "name": {
-        "v": "NeuroModFlowNet.CV",
-        "at": "2026-09-23T06:05:16Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "CV-алгоритмы без ONNX, в т.ч. трекер.",
         "at": "2026-09-23T00:00:00Z",
@@ -319,11 +63,6 @@
       }
     },
     "e_asm_pipe": {
-      "name": {
-        "v": "NeuroModFlowNet.Pipeline",
-        "at": "2026-09-23T06:05:16Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "VM: контроллер, программы, регистры, синхронизация, обратные координаты.",
         "at": "2026-09-23T00:00:00Z",
@@ -336,11 +75,6 @@
       }
     },
     "e_asm_pipeonnx": {
-      "name": {
-        "v": "NeuroModFlowNet.Pipeline.ONNX",
-        "at": "2026-09-23T06:05:16Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "ONNX-инструкции VM, сервисы инференса, декодеры выходов, kernel cache.",
         "at": "2026-09-23T00:00:00Z",
@@ -1568,11 +1302,6 @@
       }
     },
     "e_vmcontroller": {
-      "name": {
-        "v": "VmController",
-        "at": "2026-09-24T10:52:25Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Контроллер, владеющий цепочкой программ пайплайна одного источника и управляющий её параллельным выполнением в заданных границах.",
         "at": "2026-09-23T00:00:00Z",
@@ -1686,11 +1415,6 @@
       }
     },
     "e_vmprogram": {
-      "name": {
-        "v": "VmProgram",
-        "at": "2026-09-24T10:52:25Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Неизменяемая скомпилированная VM-программа: упорядоченные операции и таблица меток для переходов.",
         "at": "2026-09-23T00:00:00Z",
@@ -1714,11 +1438,6 @@
       }
     },
     "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "CISC-операция hot path: вырезает N регионов из одного RGB FP32 NCHW 0..1 изображения в фиксированный letterbox-батч для YOLO-подобной модели и пишет обратное преобразование на каждый слот.",
         "at": "2026-09-24T12:00:00Z",
@@ -1731,11 +1450,6 @@
       }
     },
     "e_op_onnx_extractobbtopaddlerec_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Вырезает текстовые YOLO OBB области из одного RGB FP32 NCHW изображения в один FP32 NCHW batch для PaddleOCR Rec.",
         "at": "2026-09-24T12:00:00Z",
@@ -1776,20 +1490,26 @@
     },
     "e_runtimeonnxoperatorkernelcache": {
       "description": {
-        "v": "Глобальный lazy-кэш runtime-generated ONNX kernels (Crop, Resize, Undistort, ROI-батчи, concat, identity upload) по ключу: тип операции, точная форма/семантика, backend и provider options. Общим является только immutable OnnxModel; каждый вызывающий получает свой OnnxExecutionContext (mutable IoBinding и RunOptions).",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "en",
-        "fromHash": "cda4e850"
+        "v": "Глобальный lazy-кэш маленьких ONNX-графов (kernels), которые операции строят во время выполнения: Crop, Resize, PadResize и т.д.",
+        "at": "2026-10-02T09:10:48Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Операция при инициализации описывает нужный граф ключом RuntimeOnnxOperatorKernelKey и получает из кэша готовый OnnxModel; граф собирается и сессия создаётся только при первом запросе этого ключа (Lazy), полную матрицу «операция × тип × layout × backend × форма» заранее не готовят. Кэш статический и общий для всех программ и контроллеров. Хранит только immutable OnnxModel/InferenceSession; RunOptions и IoBinding остаются у каждого OnnxExecutionContext. Здесь же живёт политика TensorRT engine cache: trt_engine_cache_prefix — хэш полного ключа, операции сами её не включают и не выключают. SessionSharing задаёт, общая ли сессия на ключ или своя у каждого вызывающего.",
+        "at": "2026-10-02T09:10:48Z",
+        "origin": "authored"
       }
     },
     "e_runtimeonnxoperatorkernelkey": {
       "description": {
-        "v": "Полная идентичность сгенерированной ONNX operator session, кэшируемой между VM-программами.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "en",
-        "fromHash": "ef06248d"
+        "v": "Ключ kernel cache: всё, что влияет на байты графа и семантику выхода, плюс backend и provider options.",
+        "at": "2026-10-02T09:10:48Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "OperationKind — тип операции; SemanticKey — форма входа/выхода, element type, layout и каждый параметр конструктора, меняющий граф (cropRect, targetSize, rotate mode, quad points, коэффициенты дисторсии, padding, stride, нормализация); Backend и ProviderOptionsKey — выбранный execution provider и его настройки. Если параметр, влияющий на граф, не попал в ключ, две разные операции получат один kernel — это ошибка контракта. Хэш ключа служит префиксом TensorRT engine cache, поэтому engine не переиспользуется для графа другой формы.",
+        "at": "2026-10-02T09:10:48Z",
+        "origin": "authored"
       }
     },
     "e_yoloboxortvalueoutputdecoder": {
@@ -1799,54 +1519,6 @@
         "origin": "translated",
         "from": "en",
         "fromHash": "2d5c921c"
-      }
-    },
-    "rt_references": {
-      "name": {
-        "v": "ссылается",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "ProjectReference в csproj.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "rt_implements": {
-      "name": {
-        "v": "реализует",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "Тип реализует интерфейс.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "rt_contains": {
-      "name": {
-        "v": "содержит",
-        "at": "2026-09-24T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "Сборка или тип содержит тип.",
-        "at": "2026-09-24T00:00:00Z",
-        "origin": "authored"
-      }
-    },
-    "rt_extends": {
-      "name": {
-        "v": "наследует",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
-      },
-      "description": {
-        "v": "Тип наследует базовый класс.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
       }
     },
     "v_assemblies": {
@@ -1874,11 +1546,6 @@
       }
     },
     "e_cudaconfig": {
-      "name": {
-        "v": "CudaConfig",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Конфигурация CUDA Execution Provider, настроенная на максимальную производительность на RTX 5090 (Blackwell). TODO: сгенерировано Gemini, нужно проверить.",
         "at": "2026-09-24T12:00:00Z",
@@ -1891,11 +1558,6 @@
       }
     },
     "e_trtconfig": {
-      "name": {
-        "v": "TrtConfig",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Полная конфигурация TensorRT Execution Provider. Свойства сгруппированы по назначению; null означает, что параметр не передаётся и действует значение ORT по умолчанию.",
         "at": "2026-09-24T12:00:00Z",
@@ -1908,11 +1570,6 @@
       }
     },
     "e_executionproviderconfig": {
-      "name": {
-        "v": "ExecutionProviderConfig",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Общая база настроек execution provider-ов. TODO: проанализировать и вынести общие свойства.",
         "at": "2026-09-24T12:00:00Z",
@@ -1925,11 +1582,6 @@
       }
     },
     "e_op_onnx_crop_fp16_nchw": {
-      "name": {
-        "v": "Op_Onnx_Crop_FP16_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Вырезает прямоугольник в тензоре FP16 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -1942,11 +1594,6 @@
       }
     },
     "e_op_onnx_crop_nchw_base": {
-      "name": {
-        "v": "Op_Onnx_Crop_NCHW_Base",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Вырезает прямоугольник: общая база для NCHW-вариантов FP16/FP32.",
         "at": "2026-09-24T12:00:00Z",
@@ -1959,11 +1606,6 @@
       }
     },
     "e_op_onnx_tensortransformbase": {
-      "name": {
-        "v": "Op_Onnx_TensorTransformBase",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "База VM-инструкций, исполняющих маленький сгенерированный ONNX-граф над одним тензором.",
         "at": "2026-09-24T12:00:00Z",
@@ -1976,11 +1618,6 @@
       }
     },
     "e_opbase": {
-      "name": {
-        "v": "OpBase",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Небольшая база для инструкций, которым нужны только логика исполнения и статические метаданные.",
         "at": "2026-09-24T12:00:00Z",
@@ -1993,11 +1630,6 @@
       }
     },
     "e_iop": {
-      "name": {
-        "v": "IOp",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Одна исполняемая инструкция на таймлайне VM.",
         "at": "2026-09-24T12:00:00Z",
@@ -2010,11 +1642,6 @@
       }
     },
     "e_opconditional": {
-      "name": {
-        "v": "OpConditional",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Декоратор: выполняет инструкцию только при выполнении условия во время исполнения.",
         "at": "2026-09-24T12:00:00Z",
@@ -2027,11 +1654,6 @@
       }
     },
     "e_branchifinstruction": {
-      "name": {
-        "v": "BranchIfInstruction",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Инструкция условного перехода для программ в стиле таймлайна.",
         "at": "2026-09-24T12:00:00Z",
@@ -2044,11 +1666,6 @@
       }
     },
     "e_opdelegate": {
-      "name": {
-        "v": "OpDelegate",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Инструкция на делегате: для тестов, лабораторий и первых пользовательских шагов.",
         "at": "2026-09-24T12:00:00Z",
@@ -2061,11 +1678,6 @@
       }
     },
     "e_orderedsyncinstruction": {
-      "name": {
-        "v": "OrderedSyncInstruction",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Синхронизирует одну точку программы по принятому run id.",
         "at": "2026-09-24T12:00:00Z",
@@ -2078,11 +1690,6 @@
       }
     },
     "e_op_map_coordinates": {
-      "name": {
-        "v": "Op_Map_Coordinates",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Применяет один именованный регистр обратного преобразования к одному регистру с координатами.",
         "at": "2026-09-24T12:00:00Z",
@@ -2095,11 +1702,6 @@
       }
     },
     "e_model_inference": {
-      "name": {
-        "v": "Model_Inference<TInput, TOutput>",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Вызывает один ONNX inference endpoint и пишет типизированный результат в текущую транзакцию VM.",
         "at": "2026-09-24T12:00:00Z",
@@ -2112,11 +1714,6 @@
       }
     },
     "e_copy_orttensor_to_modeldevice": {
-      "name": {
-        "v": "Copy_OrtTensor_To_ModelDevice",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Копирует тензор ONNX Runtime в память выбранного execution provider модели через динамическую модель Identity.",
         "at": "2026-09-24T12:00:00Z",
@@ -2129,11 +1726,6 @@
       }
     },
     "e_copy_ortvalue_to_matimage": {
-      "name": {
-        "v": "Copy_OrtValue_To_MatImage",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Копирует байтовый NHWC-тензор ONNX Runtime в CPU-изображение OpenCV Mat.",
         "at": "2026-09-24T12:00:00Z",
@@ -2146,11 +1738,6 @@
       }
     },
     "e_wrap_unmanagedmem_to_orttensorbase": {
-      "name": {
-        "v": "Wrap_UnmanagedMem_To_OrtTensorBase<TInput>",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Базовая команда: показывает существующий блок неуправляемой памяти как тензор ONNX Runtime без копирования данных.",
         "at": "2026-09-24T12:00:00Z",
@@ -2163,11 +1750,6 @@
       }
     },
     "e_op_detectionsfromyolobox": {
-      "name": {
-        "v": "Op_DetectionsFromYoloBox",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Преобразует типизированные YOLO box в нейтральные детекции для трекера.",
         "at": "2026-09-24T12:00:00Z",
@@ -2180,11 +1762,6 @@
       }
     },
     "e_op_detectionsfromyoloobb": {
-      "name": {
-        "v": "Op_DetectionsFromYoloObb",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Преобразует типизированные YOLO OBB детекции в нейтральные детекции для трекера.",
         "at": "2026-09-24T12:00:00Z",
@@ -2197,11 +1774,6 @@
       }
     },
     "e_op_track": {
-      "name": {
-        "v": "Op_Track",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает трекер отдельного источника над нейтральными детекциями.",
         "at": "2026-09-24T12:00:00Z",
@@ -2214,11 +1786,6 @@
       }
     },
     "e_model_yolocls": {
-      "name": {
-        "v": "Model_YoloCls",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает модель классификации YOLO и пишет компактный результат классификации текущего кадра.",
         "at": "2026-09-24T12:00:00Z",
@@ -2231,11 +1798,6 @@
       }
     },
     "e_model_yolosingledetection": {
-      "name": {
-        "v": "Model_YoloSingleDetection<TDetection>",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает раннер детекции одного изображения и пишет компактный CPU-список детекций.",
         "at": "2026-09-24T12:00:00Z",
@@ -2248,11 +1810,6 @@
       }
     },
     "e_model_yolopose": {
-      "name": {
-        "v": "Model_YoloPose",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает модель позы YOLO и пишет детекции поз текущего кадра CPU-списком.",
         "at": "2026-09-24T12:00:00Z",
@@ -2265,11 +1822,6 @@
       }
     },
     "e_model_yoloseg": {
-      "name": {
-        "v": "Model_YoloSeg",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает модель сегментации YOLO и пишет обёртку результата кадра с поддерживаемым layout тензора масок.",
         "at": "2026-09-24T12:00:00Z",
@@ -2282,11 +1834,6 @@
       }
     },
     "e_onnxbatchedinference": {
-      "name": {
-        "v": "OnnxBatchedInference<TInput, TOutput>",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Исполняет один типизированный батчинг-ресурс ONNX и возобновляет текущую транзакцию VM со своим результатом.",
         "at": "2026-09-24T12:00:00Z",
@@ -2299,11 +1846,6 @@
       }
     },
     "e_onnxrunner": {
-      "name": {
-        "v": "OnnxRunner<TInput, TOutput>",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Исполняет один типизированный ресурс-раннер ONNX с сериализованным доступом к экземпляру раннера.",
         "at": "2026-09-24T12:00:00Z",
@@ -2316,11 +1858,6 @@
       }
     },
     "e_reloadableonnxrunner": {
-      "name": {
-        "v": "ReloadableOnnxRunner<TInput, TOutput>",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Исполняет ресурс-раннер ONNX, внутренний раннер которого можно заменить без пересборки VM-программы.",
         "at": "2026-09-24T12:00:00Z",
@@ -2333,11 +1870,6 @@
       }
     },
     "e_wrap_matimage_to_orttensor": {
-      "name": {
-        "v": "Wrap_MatImage_To_OrtTensor",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Оборачивает память CPU-изображения OpenCV Mat в NHWC-тензор ONNX Runtime без копирования пикселей.",
         "at": "2026-09-24T12:00:00Z",
@@ -2350,11 +1882,6 @@
       }
     },
     "e_op_onnx_bgru8hwc_to_rgbnchw_div255base": {
-      "name": {
-        "v": "Op_Onnx_BgrU8Hwc_To_RgbNchw_Div255Base",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "База команд подготовки изображения из тензора BGR U8 HWC.",
         "at": "2026-09-24T12:00:00Z",
@@ -2367,11 +1894,6 @@
       }
     },
     "e_op_onnx_crop_u8_nhwc": {
-      "name": {
-        "v": "Op_Onnx_Crop_U8_NHWC",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Вырезает прямоугольник в тензоре U8 NHWC.",
         "at": "2026-09-24T12:00:00Z",
@@ -2384,11 +1906,6 @@
       }
     },
     "e_op_onnx_padresize_nchw_base": {
-      "name": {
-        "v": "Op_Onnx_PadResize_NCHW_Base",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует с сохранением пропорций и добивкой полями: общая база для NCHW-вариантов FP16/FP32.",
         "at": "2026-09-24T12:00:00Z",
@@ -2401,11 +1918,6 @@
       }
     },
     "e_op_onnx_padresize_u8_nhwc": {
-      "name": {
-        "v": "Op_Onnx_PadResize_U8_NHWC",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует с сохранением пропорций и добивкой полями в тензоре U8 NHWC.",
         "at": "2026-09-24T12:00:00Z",
@@ -2418,11 +1930,6 @@
       }
     },
     "e_op_onnx_perspective_nchw_base": {
-      "name": {
-        "v": "Op_Onnx_Perspective_NCHW_Base",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Перспективно переводит четырёхугольник в прямоугольник: общая база для NCHW-вариантов FP16/FP32.",
         "at": "2026-09-24T12:00:00Z",
@@ -2435,11 +1942,6 @@
       }
     },
     "e_op_onnx_perspective_u8_nhwc": {
-      "name": {
-        "v": "Op_Onnx_Perspective_U8_NHWC",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Перспективно переводит четырёхугольник в прямоугольник в тензоре U8 NHWC.",
         "at": "2026-09-24T12:00:00Z",
@@ -2452,11 +1954,6 @@
       }
     },
     "e_op_onnx_resize_nchw_base": {
-      "name": {
-        "v": "Op_Onnx_Resize_NCHW_Base",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует изображение: общая база для NCHW-вариантов FP16/FP32.",
         "at": "2026-09-24T12:00:00Z",
@@ -2469,11 +1966,6 @@
       }
     },
     "e_op_onnx_resize_u8_nhwc": {
-      "name": {
-        "v": "Op_Onnx_Resize_U8_NHWC",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует изображение в тензоре U8 NHWC.",
         "at": "2026-09-24T12:00:00Z",
@@ -2486,11 +1978,6 @@
       }
     },
     "e_op_onnx_rotate90_nchw_base": {
-      "name": {
-        "v": "Op_Onnx_Rotate90_NCHW_Base",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Поворачивает на угол, кратный 90°: общая база для NCHW-вариантов FP16/FP32.",
         "at": "2026-09-24T12:00:00Z",
@@ -2503,11 +1990,6 @@
       }
     },
     "e_op_onnx_rotate90_u8_nhwc": {
-      "name": {
-        "v": "Op_Onnx_Rotate90_U8_NHWC",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Поворачивает на угол, кратный 90° в тензоре U8 NHWC.",
         "at": "2026-09-24T12:00:00Z",
@@ -2520,11 +2002,6 @@
       }
     },
     "e_op_onnx_undistort_nchw_base": {
-      "name": {
-        "v": "Op_Onnx_Undistort_NCHW_Base",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Устраняет радиально-тангенциальную дисторсию: общая база для NCHW-вариантов FP16/FP32.",
         "at": "2026-09-24T12:00:00Z",
@@ -2537,11 +2014,6 @@
       }
     },
     "e_op_onnx_undistort_u8_nhwc": {
-      "name": {
-        "v": "Op_Onnx_Undistort_U8_NHWC",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Устраняет радиально-тангенциальную дисторсию в тензоре U8 NHWC.",
         "at": "2026-09-24T12:00:00Z",
@@ -2554,11 +2026,6 @@
       }
     },
     "e_model_ortvalueinference": {
-      "name": {
-        "v": "Model_OrtValueInference<TOutput>",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Отправляет подготовленный OrtValue в батчинг-сервис и пишет в регистр массив типизированных результатов этой заявки.",
         "at": "2026-09-24T12:00:00Z",
@@ -2571,11 +2038,6 @@
       }
     },
     "e_model_yolobox": {
-      "name": {
-        "v": "Model_YoloBox",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает YOLO-модель с осевыми рамками и пишет один список детекций на текущий кадр.",
         "at": "2026-09-24T12:00:00Z",
@@ -2588,11 +2050,6 @@
       }
     },
     "e_model_yoloobb": {
-      "name": {
-        "v": "Model_YoloObb",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает YOLO-модель с повёрнутыми рамками (OBB) и пишет один список детекций на текущий кадр.",
         "at": "2026-09-24T12:00:00Z",
@@ -2605,11 +2062,6 @@
       }
     },
     "e_model_paddledet": {
-      "name": {
-        "v": "Model_PaddleDet",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает модель детекции текста PaddleOCR и пишет CPU-карту оценок для выделения регионов.",
         "at": "2026-09-24T12:00:00Z",
@@ -2622,11 +2074,6 @@
       }
     },
     "e_model_paddlerec": {
-      "name": {
-        "v": "Model_PaddleRec",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Запускает модель распознавания текста PaddleOCR на батче вырезанных строк.",
         "at": "2026-09-24T12:00:00Z",
@@ -2639,11 +2086,6 @@
       }
     },
     "e_op_onnx_bgru8hwc_to_rgbfp16nchw_div255": {
-      "name": {
-        "v": "Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Переводит тензор BGR UInt8 NHWC в RGB FP16 NCHW с нормализацией 1/255.",
         "at": "2026-09-24T12:00:00Z",
@@ -2656,11 +2098,6 @@
       }
     },
     "e_op_onnx_bgru8hwc_to_rgbfp32nchw_div255": {
-      "name": {
-        "v": "Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Переводит тензор BGR UInt8 NHWC в RGB FP32 NCHW с нормализацией 1/255.",
         "at": "2026-09-24T12:00:00Z",
@@ -2673,11 +2110,6 @@
       }
     },
     "e_op_onnx_crop_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_Crop_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Вырезает прямоугольник в тензоре FP32 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2690,11 +2122,6 @@
       }
     },
     "e_op_onnx_padresize_fp16_nchw": {
-      "name": {
-        "v": "Op_Onnx_PadResize_FP16_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует с сохранением пропорций и добивкой полями в тензоре FP16 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2707,11 +2134,6 @@
       }
     },
     "e_op_onnx_padresize_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_PadResize_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует с сохранением пропорций и добивкой полями в тензоре FP32 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2724,11 +2146,6 @@
       }
     },
     "e_op_onnx_perspective_fp16_nchw": {
-      "name": {
-        "v": "Op_Onnx_Perspective_FP16_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Перспективно переводит четырёхугольник в прямоугольник в тензоре FP16 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2741,11 +2158,6 @@
       }
     },
     "e_op_onnx_perspective_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_Perspective_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Перспективно переводит четырёхугольник в прямоугольник в тензоре FP32 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2758,11 +2170,6 @@
       }
     },
     "e_op_onnx_resize_fp16_nchw": {
-      "name": {
-        "v": "Op_Onnx_Resize_FP16_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует изображение в тензоре FP16 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2775,11 +2182,6 @@
       }
     },
     "e_op_onnx_resize_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_Resize_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Масштабирует изображение в тензоре FP32 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2792,11 +2194,6 @@
       }
     },
     "e_op_onnx_rotate90_fp16_nchw": {
-      "name": {
-        "v": "Op_Onnx_Rotate90_FP16_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Поворачивает на угол, кратный 90° в тензоре FP16 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2809,11 +2206,6 @@
       }
     },
     "e_op_onnx_rotate90_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_Rotate90_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Поворачивает на угол, кратный 90° в тензоре FP32 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2826,11 +2218,6 @@
       }
     },
     "e_op_onnx_undistort_fp16_nchw": {
-      "name": {
-        "v": "Op_Onnx_Undistort_FP16_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Устраняет радиально-тангенциальную дисторсию в тензоре FP16 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2843,11 +2230,6 @@
       }
     },
     "e_op_onnx_undistort_fp32_nchw": {
-      "name": {
-        "v": "Op_Onnx_Undistort_FP32_NCHW",
-        "at": "2026-09-24T07:45:55Z",
-        "origin": "authored"
-      },
       "description": {
         "v": "Устраняет радиально-тангенциальную дисторсию в тензоре FP32 NCHW.",
         "at": "2026-09-24T12:00:00Z",
@@ -2859,7 +2241,7 @@
         "origin": "authored"
       }
     },
-    "z_control": {
+    "e_control": {
       "name": {
         "v": "Управление потоком",
         "at": "2026-09-24T12:00:00Z",
@@ -2871,7 +2253,7 @@
         "origin": "authored"
       }
     },
-    "z_memory": {
+    "e_memory": {
       "name": {
         "v": "Память и перенос",
         "at": "2026-09-24T12:00:00Z",
@@ -2883,7 +2265,7 @@
         "origin": "authored"
       }
     },
-    "z_roi": {
+    "e_roi": {
       "name": {
         "v": "ROI prepare (CISC)",
         "at": "2026-09-24T12:00:00Z",
@@ -2895,7 +2277,7 @@
         "origin": "authored"
       }
     },
-    "z_post": {
+    "e_post": {
       "name": {
         "v": "Координаты и постобработка",
         "at": "2026-09-24T12:00:00Z",
@@ -2907,7 +2289,7 @@
         "origin": "authored"
       }
     },
-    "z_transform": {
+    "e_transform": {
       "name": {
         "v": "ONNX tensor transforms",
         "at": "2026-09-24T12:00:00Z",
@@ -2919,7 +2301,7 @@
         "origin": "authored"
       }
     },
-    "z_tr_color": {
+    "e_tr_color": {
       "name": {
         "v": "Цвет и нормализация",
         "at": "2026-09-24T12:00:00Z",
@@ -2931,7 +2313,7 @@
         "origin": "authored"
       }
     },
-    "z_tr_crop": {
+    "e_tr_crop": {
       "name": {
         "v": "Crop",
         "at": "2026-09-24T12:00:00Z",
@@ -2943,7 +2325,7 @@
         "origin": "authored"
       }
     },
-    "z_tr_resize": {
+    "e_tr_resize": {
       "name": {
         "v": "Resize",
         "at": "2026-09-24T12:00:00Z",
@@ -2955,7 +2337,7 @@
         "origin": "authored"
       }
     },
-    "z_tr_padresize": {
+    "e_tr_padresize": {
       "name": {
         "v": "PadResize",
         "at": "2026-09-24T12:00:00Z",
@@ -2967,7 +2349,7 @@
         "origin": "authored"
       }
     },
-    "z_tr_rotate90": {
+    "e_tr_rotate90": {
       "name": {
         "v": "Rotate90",
         "at": "2026-09-24T12:00:00Z",
@@ -2979,7 +2361,7 @@
         "origin": "authored"
       }
     },
-    "z_tr_perspective": {
+    "e_tr_perspective": {
       "name": {
         "v": "Perspective",
         "at": "2026-09-24T12:00:00Z",
@@ -2991,7 +2373,7 @@
         "origin": "authored"
       }
     },
-    "z_tr_undistort": {
+    "e_tr_undistort": {
       "name": {
         "v": "Undistort",
         "at": "2026-09-24T12:00:00Z",
@@ -3003,7 +2385,7 @@
         "origin": "authored"
       }
     },
-    "z_inference": {
+    "e_inference": {
       "name": {
         "v": "Инференс моделей",
         "at": "2026-09-24T12:00:00Z",
@@ -3015,7 +2397,7 @@
         "origin": "authored"
       }
     },
-    "z_inf_batched": {
+    "e_inf_batched": {
       "name": {
         "v": "OrtValue batched",
         "at": "2026-09-24T12:00:00Z",
@@ -3027,7 +2409,7 @@
         "origin": "authored"
       }
     },
-    "z_inf_runner": {
+    "e_inf_runner": {
       "name": {
         "v": "Runner",
         "at": "2026-09-24T12:00:00Z",
@@ -3039,7 +2421,7 @@
         "origin": "authored"
       }
     },
-    "z_inf_reload": {
+    "e_inf_reload": {
       "name": {
         "v": "Reloadable runner",
         "at": "2026-09-24T12:00:00Z",
@@ -3051,7 +2433,7 @@
         "origin": "authored"
       }
     },
-    "z_inf_yolomat": {
+    "e_inf_yolomat": {
       "name": {
         "v": "YOLO на Mat (от OpBase)",
         "at": "2026-09-24T12:00:00Z",
@@ -3063,13 +2445,6 @@
         "origin": "authored"
       }
     },
-    "e_vmprogrambuilder": {
-      "name": {
-        "v": "VmProgramBuilder",
-        "at": "2026-09-24T10:52:25Z",
-        "origin": "authored"
-      }
-    },
     "v_execution_providers": {
       "name": {
         "v": "Execution Providers",
@@ -3077,24 +2452,226 @@
         "origin": "authored"
       }
     },
-    "z_onnx_config": {
+    "e_onnx_config": {
       "name": {
         "v": "Конфигурация ONNX",
         "at": "2026-09-30T02:22:39Z",
         "origin": "authored"
       }
     },
-    "z_static": {
+    "e_static": {
       "name": {
         "v": "Описание и настройка",
         "at": "2026-09-30T02:30:17Z",
         "origin": "authored"
       }
     },
-    "z_runtime": {
+    "e_runtime": {
       "name": {
         "v": "Рабочие инструменты",
         "at": "2026-09-30T02:30:17Z",
+        "origin": "authored"
+      }
+    },
+    "v_manual": {
+      "name": {
+        "v": "Ручной ввод",
+        "origin": "authored",
+        "at": "2026-10-01T05:05:19Z"
+      }
+    },
+    "e_mup2m3va": {
+      "name": {
+        "v": "Новый блок",
+        "at": "2026-10-01T05:05:25Z",
+        "origin": "authored"
+      }
+    },
+    "e_mup2m52e": {
+      "name": {
+        "v": "Новый блок",
+        "at": "2026-10-01T05:05:26Z",
+        "origin": "authored"
+      }
+    },
+    "e_muqobsoj": {
+      "name": {
+        "v": "Новый контейнер",
+        "at": "2026-10-02T08:01:02Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmruncontext": {
+      "description": {
+        "v": "Контекст одного запуска VM: именованные регистры, идентичность запуска и ресурсы, которые освобождаются вместе с ним.",
+        "at": "2026-10-02T09:07:45Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Создаётся VmController на каждый запуск и проходит через всю цепочку программ [prepare, common] одним экземпляром: тот же RunId, те же регистры. Инструкции IOp читают и пишут в него именованные значения (регистры), здесь же регистрируются disposable-выходы (intermediate OrtValue), которые освобождаются при завершении запуска — раньше долгоживущих инструкций и их allocator/session. Ссылается на общие для контроллера VmGlobalMemory и VmSyncGateRegistry, держит Trace запуска. Между контроллерами не передаётся (ADR-001).",
+        "at": "2026-10-02T09:07:46Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmglobalmemory": {
+      "description": {
+        "v": "Память контроллера, общая для всех его запусков: состояние, которое переживает один кадр.",
+        "at": "2026-10-02T09:07:46Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Потокобезопасный словарь значений, принадлежит VmController и передаётся в каждый VmRunContext. Нужен stateful-стадиям, например трекеру (Op_Track), которым состояние должно жить между кадрами одного источника. Параллельные запуски видят её одновременно, поэтому упорядоченный доступ обеспечивается через VmSyncGateRegistry (ordered critical section). Содержит VmResourceRegistry с ресурсами, разделяемыми запусками.",
+        "at": "2026-10-02T09:07:46Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmsyncgateregistry": {
+      "description": {
+        "v": "Именованные sync gates контроллера: упорядочивают параллельные запуски по RunId.",
+        "at": "2026-10-02T09:07:46Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Принадлежит VmController, доступен каждому VmRunContext. Хранит VmSyncGate по имени; gate пропускает запуски строго в порядке RunId — как барьер или как ordered critical section, где одновременно находится только один запуск. На нём работает OrderedSyncInstruction. Запуск, завершённый раньше gate (Stop, ошибка), закрывается в реестре, чтобы следующие RunId не ждали его вечно.",
+        "at": "2026-10-02T09:07:46Z",
+        "origin": "authored"
+      }
+    },
+    "e_vmprogrambuilder": {
+      "description": {
+        "v": "Изменяемый сборщик VM-программы: накапливает инструкции и метки, на выходе даёт неизменяемый VmProgram.",
+        "at": "2026-10-02T09:10:48Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Единственный способ собрать VmProgram: инструкции IOp добавляются по порядку, метка привязывается к индексу следующей инструкции и служит целью переходов (BranchIfInstruction). Build фиксирует список и таблицу меток в неизменяемом VmProgram; после этого программа не меняется. Сам VmProgram при этом держит инструкции с mutable native state (IoBinding), поэтому один собранный экземпляр не разделяют между контроллерами — для каждой камеры программа собирается заново, общими остаются только ресурсы и kernel cache (ADR-001).",
+        "at": "2026-10-02T09:10:48Z",
+        "origin": "authored"
+      }
+    },
+    "e_icoordinatebacktransform": {
+      "description": {
+        "v": "Данные обратного преобразования координат: переводит точку из системы координат выхода геометрической операции обратно во вход.",
+        "at": "2026-10-02T09:13:36Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Геометрические операции над OrtValue (Crop, Resize, PadResize, Rotate90, Perspective, Undistort) и ROI-команды пишут, кроме тензора, отдельный регистр с ICoordinateBackTransform — по одному на картинку или на ROI-слот. В регистр кладутся данные преобразования (record/struct с параметрами), а не delegate или замыкание: значение можно трассировать, сравнивать и хранить. Вся математика конкретного преобразования живёт в реализациях (CropCoordinateBackTransform, PadResize…, Perspective…, Undistort… и др.), знания о форме payload здесь нет. TryMapBackward возвращает false, если точку обратно отобразить нельзя (например, она попала в padding или за горизонт перспективы). Применяет преобразование Op_Map_Coordinates через ICoordinatePayloadMapper.",
+        "at": "2026-10-02T09:13:36Z",
+        "origin": "authored"
+      }
+    },
+    "e_icoordinatepayloadmapper": {
+      "description": {
+        "v": "Знает структуру конкретного payload (YoloBox, YoloObb, OcrQuadRegion…) и переносит его точки через ICoordinateBackTransform.",
+        "at": "2026-10-02T09:13:37Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Вторая половина разделения в Op_Map_Coordinates: ICoordinateBackTransform знает геометрию, mapper знает, из каких точек состоит результат и как собрать из перенесённых точек новый результат. Реализации по типу payload: YoloBoxCoordinatePayloadMapper, YoloObbCoordinatePayloadMapper, OcrQuadRegionCoordinatePayloadMapper; обход List<T>, массивов и batch-result делают executor-ы (MapCoordinatesExecutor, ListMap…, ArrayMap…, YoloDetectionBatchResult…). Живёт в NeuroModFlowNet.Pipeline.ONNX, поэтому модельные типы NeuroModFlowNet.ONNX не получают VM-интерфейсов. Если преобразование меняет геометрический класс фигуры (например, box после perspective уже не box), mapper не должен молча возвращать исходный тип — политика формы задаётся явно.",
+        "at": "2026-10-02T09:13:37Z",
+        "origin": "authored"
+      }
+    },
+    "e_ionnxinferenceendpoint": {
+      "description": {
+        "v": "Контракт сервиса инференса для VM: одна заявка одного запуска — один typed результат.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Граница между VM и инференсом. Инструкция (Model_Inference) остаётся тонкой: берёт входной регистр, вызывает InferAsync(identity, input) и кладёт результат в выходной регистр; ничего не знает о модели, batching, output names и decode layout. Endpoint — общий ресурс, к нему одновременно обращаются запуски разных контроллеров (камер); VmRunIdentity передаётся, чтобы сервис мог различать заявки. Реализации: OnnxRunnerResource, ReloadableOnnxRunnerResource и batched-ресурсы на OnnxBatchedResourceBase.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      }
+    },
+    "e_onnxbatchedresourcebase": {
+      "description": {
+        "v": "Основа batched endpoint-ов: копит заявки разных VM-запусков и выполняет их одним прогоном модели.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Реализует IOnnxInferenceEndpoint: каждый вызов InferAsync становится заявкой в очереди, ресурс набирает batch по своим опциям (OnnxBatchedResourceOptions — размер, ожидание) и запускает модель один раз на всю пачку, затем возвращает каждой заявке только её часть результата. Как именно собрать вход и разобрать выход, решают наследники; конкретный путь для GPU — OrtValueBatchedInferenceEndpoint.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      }
+    },
+    "e_ortvaluebatchedinferenceendpoint": {
+      "description": {
+        "v": "Batched-сервис для GPU pipeline: принимает уже подготовленный OrtValue, собирает batch из заявок разных VM без CPU round-trip и возвращает typed результат на заявку.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Новый сервисный путь вместо старого RunnerResource<Mat,...>. VM передаёт один OrtValue из регистра (обычно уже на устройстве модели); IOrtValueBatchInputAssembler объединяет заявки ONNX-графом на выбранном provider, модель запускается, IOrtValueOutputShapeResolver задаёт формы выходов, IOrtValueBatchOutputDecoder декодирует native outputs и режет результат обратно по заявкам. Backend (InferenceBackend) и настройка provider задаются на init и не меняются: если путь недоступен — ошибка, а не fallback на CPU или другой provider. Используется инструкцией Model_OrtValueInference; один экземпляр разделяется контроллерами всех камер (ADR-001).",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      }
+    },
+    "e_iortvaluebatchinputassembler": {
+      "description": {
+        "v": "Собирает входы нескольких заявок в один batch-тензор модели средствами ONNX Runtime.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Если входные OrtValue уже на GPU, объединение (concat) выполняется ONNX-графом на том же backend/provider, и результат остаётся в provider memory для следующего model run — без копирования через CPU. Если модель собрана на фиксированный batch больше числа заявок, padding-слоты привязываются к уже существующему реальному входу (без создания отдельного нулевого тензора); VM этих слотов не видит. Скрытое копирование или CPU fallback вместо выбранного backend недопустимы.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      }
+    },
+    "e_iortvaluebatchoutputdecoder": {
+      "description": {
+        "v": "Декодирует native outputs batch-прогона в typed результаты и раздаёт их по заявкам.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      },
+      "doc": {
+        "v": "Здесь живёт знание decode layout конкретной модели, а не в Op-инструкциях. Результат на заявку — массив typed значений (T[]), даже если сеть обычно даёт один объект: так одинаково обрабатываются детекторы, OCR, classification/top-k. Возвращает результаты только реальных заявок, padding-слоты отбрасывает; для OCR режет выход по фактическому числу ROI каждой заявки. Пример: YoloBoxOrtValueOutputDecoder разбирает NMS-выход [B, 300, 6]; FP16-выходы читаются как Microsoft.ML.OnnxRuntime.Float16, не System.Half.",
+        "at": "2026-10-02T10:04:18Z",
+        "origin": "authored"
+      }
+    },
+    "v_pipeline": {
+      "name": {
+        "v": "NeuroModFlowNet.Pipeline",
+        "at": "2026-10-02T10:40:18Z",
+        "origin": "authored"
+      }
+    },
+    "e_pl_run": {
+      "name": {
+        "v": "Запуск",
+        "at": "2026-10-02T11:14:55Z",
+        "origin": "authored"
+      }
+    },
+    "e_pl_program": {
+      "name": {
+        "v": "Программа и инструкции",
+        "at": "2026-10-02T11:15:30Z",
+        "origin": "authored"
+      }
+    },
+    "e_pl_state": {
+      "name": {
+        "v": "Состояние запуска",
+        "at": "2026-10-02T11:15:30Z",
+        "origin": "authored"
+      }
+    },
+    "e_pl_diag": {
+      "name": {
+        "v": "Диагностика и отладка",
+        "at": "2026-10-02T11:15:30Z",
+        "origin": "authored"
+      }
+    },
+    "e_pl_coords": {
+      "name": {
+        "v": "Обратные координаты",
+        "at": "2026-10-02T11:15:30Z",
         "origin": "authored"
       }
     }

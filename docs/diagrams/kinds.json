@@ -1,0 +1,62 @@
+{
+  "contractVersion": 5,
+  "relationGroups": [
+    {
+      "id": "relations.project",
+      "name": {
+        "ru": "Типы связей проектов",
+        "en": "Relation types of the projects"
+      },
+      "description": {
+        "ru": "Типы связей, которые проекты объявляли у себя до того, как типы связей перешли в словарь.",
+        "en": "Relation types the projects declared themselves before relation types moved to the dictionary."
+      },
+      "types": [
+        {
+          "id": "references",
+          "name": {
+            "ru": "ссылается",
+            "en": "references"
+          },
+          "description": {
+            "ru": "ProjectReference в csproj.",
+            "en": "ProjectReference in csproj."
+          }
+        },
+        {
+          "id": "implements",
+          "name": {
+            "ru": "реализует",
+            "en": "implements"
+          },
+          "description": {
+            "ru": "Тип реализует интерфейс.",
+            "en": "The type implements an interface."
+          }
+        },
+        {
+          "id": "extends",
+          "name": {
+            "ru": "наследует",
+            "en": "extends"
+          },
+          "description": {
+            "ru": "Тип наследует базовый класс.",
+            "en": "The type derives from a base class."
+          }
+        },
+        {
+          "id": "contains",
+          "name": {
+            "ru": "содержит",
+            "en": "contains"
+          },
+          "description": {
+            "ru": "Сборка или тип содержит тип.",
+            "en": "The assembly or type contains the type."
+          }
+        }
+      ]
+    }
+  ]
+}

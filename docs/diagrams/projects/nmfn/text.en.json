@@ -1,308 +1,7 @@
 {
-  "contractVersion": 3,
+  "contractVersion": 5,
   "language": "en",
   "entries": {
-    "c_onnx": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "91ea1834"
-      },
-      "description": {
-        "v": "Core: runners, inputs, YOLO/PaddleOCR models, result extractors.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "5f82bcc3"
-      }
-    },
-    "c_graph": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Graph",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "2c513e96"
-      },
-      "description": {
-        "v": "Builders of runtime ONNX graphs (Crop, Resize, Undistort, ROI prepare).",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "70ad7f16"
-      }
-    },
-    "c_diag": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Diagnostics",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "864eefa6"
-      },
-      "description": {
-        "v": "Inference diagnostics.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "25cecb75"
-      }
-    },
-    "c_vis": {
-      "name": {
-        "v": "NeuroModFlowNet.ONNX.Visualizer",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "48f93f9a"
-      },
-      "description": {
-        "v": "Rendering of inference results; all visualization lives here.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "7d86e283"
-      }
-    },
-    "c_cv": {
-      "name": {
-        "v": "NeuroModFlowNet.CV",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "9fd2ab8e"
-      },
-      "description": {
-        "v": "CV algorithms without ONNX, including the tracker.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "6ebd3f79"
-      }
-    },
-    "c_pipe": {
-      "name": {
-        "v": "NeuroModFlowNet.Pipeline",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "8bfd85c1"
-      },
-      "description": {
-        "v": "VM: controller, programs, registers, synchronization, coordinate back-transforms.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "b75b0925"
-      }
-    },
-    "c_pipeonnx": {
-      "name": {
-        "v": "NeuroModFlowNet.Pipeline.ONNX",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "750eedfe"
-      },
-      "description": {
-        "v": "VM ONNX instructions, inference services, output decoders, kernel cache.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "27cbd83c"
-      }
-    },
-    "c_cv_tracking": {
-      "name": {
-        "v": "Tracking",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "be7c829c"
-      }
-    },
-    "c_onnx_core": {
-      "name": {
-        "v": "Core",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "5d8aac9e"
-      }
-    },
-    "c_onnx_inputs": {
-      "name": {
-        "v": "Inputs",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "9dcbd6b8"
-      }
-    },
-    "c_onnx_outputs": {
-      "name": {
-        "v": "Outputs",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "bb2c01f5"
-      }
-    },
-    "c_onnx_runners": {
-      "name": {
-        "v": "Runners",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "15a6a318"
-      }
-    },
-    "c_graph_builders": {
-      "name": {
-        "v": "Builders",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "c1a58269"
-      }
-    },
-    "c_pipe_contexts": {
-      "name": {
-        "v": "Contexts",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "43eb9bbd"
-      }
-    },
-    "c_pipe_coordinates": {
-      "name": {
-        "v": "Coordinates",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "edc91ac8"
-      }
-    },
-    "c_pipe_diagnostics": {
-      "name": {
-        "v": "Diagnostics",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "e9a81397"
-      }
-    },
-    "c_pipe_execution": {
-      "name": {
-        "v": "Execution",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "d991a0f5"
-      }
-    },
-    "c_pipe_instructions": {
-      "name": {
-        "v": "Instructions",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "48d33564"
-      }
-    },
-    "c_pipe_memory": {
-      "name": {
-        "v": "Memory",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "58f879ce"
-      }
-    },
-    "c_pipe_resources": {
-      "name": {
-        "v": "Resources",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "9564a892"
-      }
-    },
-    "c_pipe_synchronization": {
-      "name": {
-        "v": "Synchronization",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "fa8a5e9b"
-      }
-    },
-    "c_pipeonnx_coordinates": {
-      "name": {
-        "v": "Coordinates",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "edc91ac8"
-      }
-    },
-    "c_pipeonnx_instructions": {
-      "name": {
-        "v": "Instructions",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "48d33564"
-      }
-    },
-    "c_pipeonnx_paddleocr": {
-      "name": {
-        "v": "PaddleOCR",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "58b5ddff"
-      }
-    },
-    "c_pipeonnx_resources": {
-      "name": {
-        "v": "Resources",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "9564a892"
-      }
-    },
-    "c_pipeonnx_runtime": {
-      "name": {
-        "v": "Runtime",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "756aa7cb"
-      }
-    },
-    "c_pipeonnx_tracking": {
-      "name": {
-        "v": "Tracking",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "be7c829c"
-      }
-    },
-    "c_pipeonnx_yolo": {
-      "name": {
-        "v": "Yolo",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "6cbf3c88"
-      }
-    },
     "e_asm_onnx": {
       "description": {
         "v": "Core: runners, inputs, YOLO/PaddleOCR models, result extractors.",
@@ -1557,9 +1256,18 @@
     },
     "e_vmruncontext": {
       "description": {
-        "v": "Local named register set for one accepted VM execution.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Context of one VM run: named registers, run identity and the resources released together with it.",
+        "at": "2026-10-02T09:07:59Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "f8b6fbfa"
+      },
+      "doc": {
+        "v": "Created by VmController for every run and passed through the whole program chain [prepare, common] as one instance: same RunId, same registers. IOp instructions read and write named values (registers) in it; disposable outputs (intermediate OrtValue) are registered here and released when the run ends — before the long-lived instructions and their allocator/session. References the controller-wide VmGlobalMemory and VmSyncGateRegistry and holds the run Trace. Never passed between controllers (ADR-001).",
+        "at": "2026-10-02T09:07:59Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0cb26ba4"
       }
     },
     "e_coordinatemappingshapepolicy": {
@@ -1578,9 +1286,18 @@
     },
     "e_icoordinatebacktransform": {
       "description": {
-        "v": "Maps one point from the current coordinate space back to the previous coordinate space.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Coordinate back-transform data: maps a point from the output coordinates of a geometry operation back to its input.",
+        "at": "2026-10-02T09:13:52Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d22210bc"
+      },
+      "doc": {
+        "v": "Geometry operations over OrtValue (Crop, Resize, PadResize, Rotate90, Perspective, Undistort) and the ROI commands write, besides the tensor, a separate register with ICoordinateBackTransform — one per image or per ROI slot. The register holds transform data (a record/struct with parameters), not a delegate or closure, so the value can be traced, compared and stored. All the math of a particular transform lives in the implementations (CropCoordinateBackTransform, PadResize…, Perspective…, Undistort… and others); nothing here knows the payload shape. TryMapBackward returns false when a point cannot be mapped back (for example it fell into padding or beyond the perspective horizon). Op_Map_Coordinates applies the transform through ICoordinatePayloadMapper.",
+        "at": "2026-10-02T09:13:52Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "ad96cc04"
       }
     },
     "e_radialtangentialdistortionparameters": {
@@ -1835,9 +1552,18 @@
     },
     "e_vmprogrambuilder": {
       "description": {
-        "v": "Fluent builder for small hand-written VM programs.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Mutable VM program builder: collects instructions and labels and produces an immutable VmProgram.",
+        "at": "2026-10-02T09:11:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "f3bdb57b"
+      },
+      "doc": {
+        "v": "The only way to assemble a VmProgram: IOp instructions are appended in order, a label is bound to the index of the next instruction and serves as a jump target (BranchIfInstruction). Build freezes the list and the label table into an immutable VmProgram that never changes afterwards. The VmProgram still holds instructions with mutable native state (IoBinding), so one built instance is not shared between controllers — the program is built again for every camera; only resources and the kernel cache are shared (ADR-001).",
+        "at": "2026-10-02T09:11:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "68df7e9b"
       }
     },
     "e_vmprogramexit": {
@@ -1849,9 +1575,18 @@
     },
     "e_vmglobalmemory": {
       "description": {
-        "v": "Shared memory owned by a source controller rather than by one transaction.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Controller memory shared by all its runs: state that outlives a single frame.",
+        "at": "2026-10-02T09:07:59Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a8cfb50a"
+      },
+      "doc": {
+        "v": "Thread-safe value dictionary owned by VmController and handed to every VmRunContext. Needed by stateful stages such as the tracker (Op_Track), whose state must live across frames of one source. Concurrent runs see it at the same time, so ordered access goes through VmSyncGateRegistry (ordered critical section). Holds a VmResourceRegistry with resources shared by runs.",
+        "at": "2026-10-02T09:07:59Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9c71da51"
       }
     },
     "e_ivmresource": {
@@ -1884,16 +1619,34 @@
     },
     "e_vmsyncgateregistry": {
       "description": {
-        "v": "Stores ordered sync gates for one source controller.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Named sync gates of the controller: order concurrent runs by RunId.",
+        "at": "2026-10-02T09:07:59Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e3311cbd"
+      },
+      "doc": {
+        "v": "Owned by VmController, available to every VmRunContext. Keeps VmSyncGate by name; a gate lets runs pass strictly in RunId order — as a barrier or as an ordered critical section holding one run at a time. OrderedSyncInstruction is built on it. A run that ends before reaching a gate (Stop, failure) is closed in the registry so later RunIds do not wait for it forever.",
+        "at": "2026-10-02T09:07:59Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "56abd0cf"
       }
     },
     "e_icoordinatepayloadmapper": {
       "description": {
-        "v": "Maps coordinates embedded inside one domain payload value.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Knows the structure of a particular payload (YoloBox, YoloObb, OcrQuadRegion…) and moves its points through ICoordinateBackTransform.",
+        "at": "2026-10-02T09:13:52Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1d9960fe"
+      },
+      "doc": {
+        "v": "The second half of the split in Op_Map_Coordinates: ICoordinateBackTransform knows the geometry, the mapper knows which points a result consists of and how to build a new result from the mapped points. Implementations per payload type: YoloBoxCoordinatePayloadMapper, YoloObbCoordinatePayloadMapper, OcrQuadRegionCoordinatePayloadMapper; walking List<T>, arrays and batch results is done by executors (MapCoordinatesExecutor, ListMap…, ArrayMap…, YoloDetectionBatchResult…). Lives in NeuroModFlowNet.Pipeline.ONNX, so the NeuroModFlowNet.ONNX model types get no VM interfaces. When a transform changes the geometric class of a shape (a box after perspective is no longer a box), the mapper must not silently return the original type — the shape policy is set explicitly.",
+        "at": "2026-10-02T09:13:52Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2727753a"
       }
     },
     "e_op_map_coordinates": {
@@ -2086,16 +1839,34 @@
     },
     "e_ionnxinferenceendpoint": {
       "description": {
-        "v": "Common pipeline-facing endpoint for one ONNX inference step.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Inference service contract for the VM: one request of one run — one typed result.",
+        "at": "2026-10-02T10:07:42Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c5c02e57"
+      },
+      "doc": {
+        "v": "The boundary between the VM and inference. The instruction (Model_Inference) stays thin: it takes the input register, calls InferAsync(identity, input) and puts the result into the output register; it knows nothing about the model, batching, output names or decode layout. An endpoint is a shared resource used concurrently by runs of different controllers (cameras); VmRunIdentity is passed so the service can tell requests apart. Implementations: OnnxRunnerResource, ReloadableOnnxRunnerResource and batched resources based on OnnxBatchedResourceBase.",
+        "at": "2026-10-02T10:07:49Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6012ce5b"
       }
     },
     "e_onnxbatchedresourcebase": {
       "description": {
-        "v": "Base class for ONNX resources that batch requests from parallel VM executions.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Base of batched endpoints: collects requests from different VM runs and serves them with one model run.",
+        "at": "2026-10-02T10:07:49Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "84e2d1da"
+      },
+      "doc": {
+        "v": "Implements IOnnxInferenceEndpoint: every InferAsync call becomes a queued request, the resource fills a batch according to its options (OnnxBatchedResourceOptions — size, wait) and runs the model once for the whole batch, then returns to each request only its own part of the result. How exactly the input is assembled and the output split is decided by subclasses; the concrete GPU path is OrtValueBatchedInferenceEndpoint.",
+        "at": "2026-10-02T10:07:49Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4c22e3bb"
       }
     },
     "e_onnxbatchedresourceoptions": {
@@ -2128,16 +1899,34 @@
     },
     "e_runtimeonnxoperatorkernelcache": {
       "description": {
-        "v": "Global, lazy cache of runtime-generated ONNX operator kernels (Crop, Resize, Undistort, ROI batches, concat, identity upload) keyed by operation kind, exact shape/semantics, backend and provider options. Only the immutable OnnxModel is shared; every caller gets its own OnnxExecutionContext (mutable IoBinding and RunOptions).",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Global lazy cache of small ONNX graphs (kernels) that operations build at runtime: Crop, Resize, PadResize and so on.",
+        "at": "2026-10-02T09:11:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6557dd1e"
+      },
+      "doc": {
+        "v": "On initialization an operation describes the graph it needs with a RuntimeOnnxOperatorKernelKey and gets a ready OnnxModel from the cache; the graph is built and the session created only on the first request for that key (Lazy) — the full matrix \"operation × type × layout × backend × shape\" is never prepared up front. The cache is static and shared by all programs and controllers. It holds only immutable OnnxModel/InferenceSession; RunOptions and IoBinding stay with each OnnxExecutionContext. The TensorRT engine cache policy lives here too: trt_engine_cache_prefix is the hash of the full key, operations never switch it on or off themselves. SessionSharing selects one session per key or one per caller.",
+        "at": "2026-10-02T09:11:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "95645a4b"
       }
     },
     "e_runtimeonnxoperatorkernelkey": {
       "description": {
-        "v": "Full identity of a generated ONNX operator session cached across VM programs.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "authored"
+        "v": "Kernel cache key: everything that affects the graph bytes and output semantics, plus backend and provider options.",
+        "at": "2026-10-02T09:11:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d5d0af25"
+      },
+      "doc": {
+        "v": "OperationKind is the operation type; SemanticKey covers input/output shape, element type, layout and every constructor parameter that changes the graph (cropRect, targetSize, rotate mode, quad points, distortion coefficients, padding, stride, normalization); Backend and ProviderOptionsKey are the chosen execution provider and its settings. If a graph-affecting parameter is left out of the key, two different operations get one kernel — a contract violation. The key hash is the TensorRT engine cache prefix, so an engine is never reused for a graph of another shape.",
+        "at": "2026-10-02T09:11:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "89ff769c"
       }
     },
     "e_op_detectionsfromyolobox": {
@@ -2284,70 +2073,6 @@
         "origin": "authored"
       }
     },
-    "rt_references": {
-      "name": {
-        "v": "references",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "7e8fe368"
-      },
-      "description": {
-        "v": "ProjectReference in csproj.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "e356022c"
-      }
-    },
-    "rt_implements": {
-      "name": {
-        "v": "implements",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "f6c27810"
-      },
-      "description": {
-        "v": "The type implements an interface.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "997fe70e"
-      }
-    },
-    "rt_contains": {
-      "name": {
-        "v": "contains",
-        "at": "2026-09-24T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "c241d37d"
-      },
-      "description": {
-        "v": "The assembly or type contains the type.",
-        "at": "2026-09-24T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "3c2fde08"
-      }
-    },
-    "rt_extends": {
-      "name": {
-        "v": "extends",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "0622d961"
-      },
-      "description": {
-        "v": "The type derives from a base class.",
-        "at": "2026-09-23T00:00:00Z",
-        "origin": "translated",
-        "from": "ru",
-        "fromHash": "7115dfef"
-      }
-    },
     "v_assemblies": {
       "name": {
         "v": "Assemblies",
@@ -2380,7 +2105,7 @@
         "fromHash": "7f7f1fe1"
       }
     },
-    "z_control": {
+    "e_control": {
       "name": {
         "v": "Control flow",
         "at": "2026-09-24T12:00:00Z",
@@ -2396,7 +2121,7 @@
         "fromHash": "0fa47c19"
       }
     },
-    "z_memory": {
+    "e_memory": {
       "name": {
         "v": "Memory and transfer",
         "at": "2026-09-24T12:00:00Z",
@@ -2412,7 +2137,7 @@
         "fromHash": "82801c20"
       }
     },
-    "z_roi": {
+    "e_roi": {
       "name": {
         "v": "ROI prepare (CISC)",
         "at": "2026-09-24T12:00:00Z",
@@ -2428,7 +2153,7 @@
         "fromHash": "7e38a22a"
       }
     },
-    "z_post": {
+    "e_post": {
       "name": {
         "v": "Coordinates and postprocessing",
         "at": "2026-09-24T12:00:00Z",
@@ -2444,7 +2169,7 @@
         "fromHash": "7f126731"
       }
     },
-    "z_transform": {
+    "e_transform": {
       "name": {
         "v": "ONNX tensor transforms",
         "at": "2026-09-24T12:00:00Z",
@@ -2460,7 +2185,7 @@
         "fromHash": "b01d108d"
       }
     },
-    "z_tr_color": {
+    "e_tr_color": {
       "name": {
         "v": "Color and normalization",
         "at": "2026-09-24T12:00:00Z",
@@ -2476,7 +2201,7 @@
         "fromHash": "4d169450"
       }
     },
-    "z_tr_crop": {
+    "e_tr_crop": {
       "name": {
         "v": "Crop",
         "at": "2026-09-24T12:00:00Z",
@@ -2492,7 +2217,7 @@
         "fromHash": "c3a379fc"
       }
     },
-    "z_tr_resize": {
+    "e_tr_resize": {
       "name": {
         "v": "Resize",
         "at": "2026-09-24T12:00:00Z",
@@ -2508,7 +2233,7 @@
         "fromHash": "26ff1853"
       }
     },
-    "z_tr_padresize": {
+    "e_tr_padresize": {
       "name": {
         "v": "PadResize",
         "at": "2026-09-24T12:00:00Z",
@@ -2524,7 +2249,7 @@
         "fromHash": "8c2bfbaa"
       }
     },
-    "z_tr_rotate90": {
+    "e_tr_rotate90": {
       "name": {
         "v": "Rotate90",
         "at": "2026-09-24T12:00:00Z",
@@ -2540,7 +2265,7 @@
         "fromHash": "7d1491d8"
       }
     },
-    "z_tr_perspective": {
+    "e_tr_perspective": {
       "name": {
         "v": "Perspective",
         "at": "2026-09-24T12:00:00Z",
@@ -2556,7 +2281,7 @@
         "fromHash": "419211e7"
       }
     },
-    "z_tr_undistort": {
+    "e_tr_undistort": {
       "name": {
         "v": "Undistort",
         "at": "2026-09-24T12:00:00Z",
@@ -2572,7 +2297,7 @@
         "fromHash": "59e96d85"
       }
     },
-    "z_inference": {
+    "e_inference": {
       "name": {
         "v": "Model inference",
         "at": "2026-09-24T12:00:00Z",
@@ -2588,7 +2313,7 @@
         "fromHash": "4eef5a98"
       }
     },
-    "z_inf_batched": {
+    "e_inf_batched": {
       "name": {
         "v": "OrtValue batched",
         "at": "2026-09-24T12:00:00Z",
@@ -2604,7 +2329,7 @@
         "fromHash": "00f3ff4f"
       }
     },
-    "z_inf_runner": {
+    "e_inf_runner": {
       "name": {
         "v": "Runner",
         "at": "2026-09-24T12:00:00Z",
@@ -2620,7 +2345,7 @@
         "fromHash": "af203f1a"
       }
     },
-    "z_inf_reload": {
+    "e_inf_reload": {
       "name": {
         "v": "Reloadable runner",
         "at": "2026-09-24T12:00:00Z",
@@ -2636,7 +2361,7 @@
         "fromHash": "efd6aa01"
       }
     },
-    "z_inf_yolomat": {
+    "e_inf_yolomat": {
       "name": {
         "v": "YOLO on Mat (from OpBase)",
         "at": "2026-09-24T12:00:00Z",
@@ -2882,6 +2607,106 @@
         "v": "Execution Providers",
         "at": "2026-09-29T14:18:26Z",
         "origin": "authored"
+      }
+    },
+    "e_ortvaluebatchedinferenceendpoint": {
+      "description": {
+        "v": "Batched service for the GPU pipeline: takes an already prepared OrtValue, assembles a batch from requests of different VMs without a CPU round-trip and returns a typed result per request.",
+        "at": "2026-10-02T10:08:02Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "163a9f56"
+      },
+      "doc": {
+        "v": "The new service path replacing the old RunnerResource<Mat,...>. The VM passes one OrtValue from a register (usually already on the model device); IOrtValueBatchInputAssembler joins the requests with an ONNX graph on the chosen provider, the model runs, IOrtValueOutputShapeResolver sets output shapes, IOrtValueBatchOutputDecoder decodes native outputs and splits the result back per request. The backend (InferenceBackend) and provider setup are fixed at init: an unavailable path is an error, not a fallback to CPU or another provider. Used by the Model_OrtValueInference instruction; one instance is shared by the controllers of all cameras (ADR-001).",
+        "at": "2026-10-02T10:08:02Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "28b07dbe"
+      }
+    },
+    "e_iortvaluebatchinputassembler": {
+      "description": {
+        "v": "Assembles the inputs of several requests into one model batch tensor using ONNX Runtime.",
+        "at": "2026-10-02T10:08:02Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3c9d1226"
+      },
+      "doc": {
+        "v": "If the input OrtValues are already on the GPU, the join (concat) runs as an ONNX graph on the same backend/provider and the result stays in provider memory for the next model run — no copy through the CPU. If the model is built for a fixed batch larger than the number of requests, padding slots are bound to an existing real input (no separate zero tensor is created); the VM never sees these slots. Hidden copies or a CPU fallback instead of the chosen backend are not allowed.",
+        "at": "2026-10-02T10:08:02Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "487d4408"
+      }
+    },
+    "e_iortvaluebatchoutputdecoder": {
+      "description": {
+        "v": "Decodes the native outputs of a batch run into typed results and hands them out per request.",
+        "at": "2026-10-02T10:08:02Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a42f0888"
+      },
+      "doc": {
+        "v": "The decode layout knowledge of a particular model lives here, not in Op instructions. The result per request is an array of typed values (T[]) even if the network usually returns one object: detectors, OCR and classification/top-k are handled the same way. Returns results only for real requests and drops padding slots; for OCR it splits the output by the actual ROI count of each request. Example: YoloBoxOrtValueOutputDecoder parses the NMS output [B, 300, 6]; FP16 outputs are read as Microsoft.ML.OnnxRuntime.Float16, not System.Half.",
+        "at": "2026-10-02T10:08:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "830302a0"
+      }
+    },
+    "v_pipeline": {
+      "name": {
+        "v": "NeuroModFlowNet.Pipeline",
+        "at": "2026-10-02T10:40:18Z",
+        "origin": "authored"
+      }
+    },
+    "e_pl_run": {
+      "name": {
+        "v": "Run",
+        "at": "2026-10-02T11:18:30Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1fce9cc7"
+      }
+    },
+    "e_pl_program": {
+      "name": {
+        "v": "Program and instructions",
+        "at": "2026-10-02T11:18:30Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "989597e4"
+      }
+    },
+    "e_pl_state": {
+      "name": {
+        "v": "Run state",
+        "at": "2026-10-02T11:18:30Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1efb27c0"
+      }
+    },
+    "e_pl_diag": {
+      "name": {
+        "v": "Diagnostics and debugging",
+        "at": "2026-10-02T11:18:30Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "650a5c8d"
+      }
+    },
+    "e_pl_coords": {
+      "name": {
+        "v": "Coordinate back-transforms",
+        "at": "2026-10-02T11:18:30Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d0563c77"
       }
     }
   }

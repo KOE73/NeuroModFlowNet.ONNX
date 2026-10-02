@@ -1,0 +1,510 @@
+{
+  "id": "v_pipeline",
+  "project": "nmfn",
+  "axis": "axis_classes",
+  "placements": [
+    {
+      "entity": "e_vmcontroller",
+      "parent": "e_pl_run",
+      "x": 380,
+      "y": 50,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmcontrolleroptions",
+      "parent": "e_pl_run",
+      "x": 20,
+      "y": 50,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmruninputs",
+      "parent": "e_pl_run",
+      "x": 20,
+      "y": 170,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vminputvalue",
+      "parent": "e_pl_run",
+      "x": 20,
+      "y": 290,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmrunhandle",
+      "parent": "e_pl_run",
+      "x": 20,
+      "y": 410,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmrunoutcome",
+      "parent": "e_pl_run",
+      "x": 20,
+      "y": 530,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmrunoutput",
+      "parent": "e_pl_run",
+      "x": 20,
+      "y": 650,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmrunstatus",
+      "parent": "e_pl_run",
+      "x": 380,
+      "y": 530,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmrunrecord",
+      "parent": "e_pl_run",
+      "x": 380,
+      "y": 290,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmrunledger",
+      "parent": "e_pl_run",
+      "x": 380,
+      "y": 170,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmrunidentity",
+      "parent": "e_pl_run",
+      "x": 380,
+      "y": 410,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmprogram",
+      "parent": "e_pl_program",
+      "x": -480,
+      "y": -300,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmprogrambuilder",
+      "parent": "e_pl_program",
+      "x": -840,
+      "y": -300,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmprogramexit",
+      "parent": "e_pl_program",
+      "x": -840,
+      "y": -180,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmprogramdebugview",
+      "parent": "e_pl_diag",
+      "x": 2420,
+      "y": 650,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_instructiondebugitem",
+      "parent": "e_pl_diag",
+      "x": 2780,
+      "y": 650,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_iop",
+      "parent": "e_pl_program",
+      "x": -480,
+      "y": -180,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_opdescriptor",
+      "parent": "e_pl_program",
+      "x": -480,
+      "y": -60,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_opresult",
+      "parent": "e_pl_program",
+      "x": -840,
+      "y": -60,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_opresultkind",
+      "parent": "e_pl_program",
+      "x": -840,
+      "y": 60,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_opfailureexception",
+      "parent": "e_pl_program",
+      "x": -480,
+      "y": 60,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_precedingrunfailedexception",
+      "parent": "e_pl_program",
+      "x": -480,
+      "y": 180,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmruncontext",
+      "parent": "e_pl_state",
+      "x": 940,
+      "y": 50,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmglobalmemory",
+      "parent": "e_pl_state",
+      "x": 1310,
+      "y": 130,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmresourceregistry",
+      "parent": "e_pl_state",
+      "x": 1300,
+      "y": 290,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_ivmresource",
+      "parent": "e_pl_state",
+      "x": 1910,
+      "y": 410,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmsyncgateregistry",
+      "parent": "e_pl_state",
+      "x": 1380,
+      "y": 450,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmsyncgate",
+      "parent": "e_pl_state",
+      "x": 1890,
+      "y": 230,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmruntrace",
+      "parent": "e_pl_diag",
+      "x": 2420,
+      "y": 50,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vmruntiming",
+      "parent": "e_pl_diag",
+      "x": 2780,
+      "y": 170,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_optraceentry",
+      "parent": "e_pl_diag",
+      "x": 2780,
+      "y": 50,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_iopdebuggate",
+      "parent": "e_pl_diag",
+      "x": 2420,
+      "y": 170,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_opdebugpoint",
+      "parent": "e_pl_diag",
+      "x": 2420,
+      "y": 290,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vardebuginfo",
+      "parent": "e_pl_diag",
+      "x": 2780,
+      "y": 290,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_vardebuginspector",
+      "parent": "e_pl_diag",
+      "x": 2420,
+      "y": 410,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_varmemorylocation",
+      "parent": "e_pl_diag",
+      "x": 2780,
+      "y": 410,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_varrequirement",
+      "parent": "e_pl_diag",
+      "x": 2420,
+      "y": 530,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_varrequirementdirection",
+      "parent": "e_pl_diag",
+      "x": 2780,
+      "y": 530,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_devicecompatibilityvalidator",
+      "parent": "e_pl_diag",
+      "x": 2420,
+      "y": 770,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_ihasexecutiondevice",
+      "parent": "e_pl_diag",
+      "x": 2780,
+      "y": 770,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_icoordinatebacktransform",
+      "parent": "e_pl_coords",
+      "x": 1180,
+      "y": 900,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_cropcoordinatebacktransform",
+      "parent": "e_pl_coords",
+      "x": 820,
+      "y": 1020,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_resizecoordinatebacktransform",
+      "parent": "e_pl_coords",
+      "x": 1180,
+      "y": 1020,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_padresizecoordinatebacktransform",
+      "parent": "e_pl_coords",
+      "x": 1540,
+      "y": 1020,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_perspectivecoordinatebacktransform",
+      "parent": "e_pl_coords",
+      "x": 820,
+      "y": 1140,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_rotate90coordinatebacktransform",
+      "parent": "e_pl_coords",
+      "x": 1180,
+      "y": 1140,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_undistortcoordinatebacktransform",
+      "parent": "e_pl_coords",
+      "x": 1540,
+      "y": 1140,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_coordinatemappingshapepolicy",
+      "parent": "e_pl_coords",
+      "x": 1540,
+      "y": 900,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_padresizelayout",
+      "parent": "e_pl_coords",
+      "x": 1900,
+      "y": 1020,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_padresizemode",
+      "parent": "e_pl_coords",
+      "x": 1900,
+      "y": 1140,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_rotate90mode",
+      "parent": "e_pl_coords",
+      "x": 1180,
+      "y": 1260,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_radialtangentialdistortionparameters",
+      "parent": "e_pl_coords",
+      "x": 1540,
+      "y": 1260,
+      "width": 280,
+      "height": 60
+    },
+    {
+      "entity": "e_pl_run",
+      "parent": null,
+      "x": 0,
+      "y": 0,
+      "width": 680,
+      "height": 730,
+      "override": {
+        "border": {
+          "color": "#93c5fd"
+        },
+        "fill": "#eff6ff",
+        "header": {
+          "fill": "#dbeafe"
+        }
+      }
+    },
+    {
+      "entity": "e_pl_program",
+      "parent": null,
+      "x": -860,
+      "y": -470,
+      "width": 680,
+      "height": 730,
+      "override": {
+        "border": {
+          "color": "#c4b5fd"
+        },
+        "fill": "#f5f3ff",
+        "header": {
+          "fill": "#ede9fe"
+        }
+      }
+    },
+    {
+      "entity": "e_pl_state",
+      "parent": null,
+      "x": 920,
+      "y": 0,
+      "width": 1410,
+      "height": 730,
+      "override": {
+        "border": {
+          "color": "#86efac"
+        },
+        "fill": "#f0fdf4",
+        "header": {
+          "fill": "#dcfce7"
+        }
+      }
+    },
+    {
+      "entity": "e_pl_diag",
+      "parent": null,
+      "x": 2400,
+      "y": 0,
+      "width": 680,
+      "height": 850,
+      "override": {
+        "border": {
+          "color": "#cbd5e1"
+        },
+        "fill": "#f8fafc",
+        "header": {
+          "fill": "#e2e8f0"
+        }
+      }
+    },
+    {
+      "entity": "e_pl_coords",
+      "parent": null,
+      "x": 800,
+      "y": 850,
+      "width": 1400,
+      "height": 490,
+      "override": {
+        "border": {
+          "color": "#fde68a"
+        },
+        "fill": "#fffbeb",
+        "header": {
+          "fill": "#fef3c7"
+        }
+      }
+    }
+  ],
+  "relations": {},
+  "routing": "orthogonal"
+}

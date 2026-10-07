@@ -11,17 +11,17 @@
 
 	<ItemGroup>
 		<!--NVIDIA-->
-		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.22.1" />
+		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.30.0" />
 		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />-->
 
 		<!--CPU-->
 		<!--<PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.25.1" />-->
 
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
-		<PackageReference Include="System.Numerics.Tensors" Version="10.0.7" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.12" />
+		<PackageReference Include="System.Numerics.Tensors" Version="10.0.12" />
 
-		<PackageReference Include="OpenCvSharp5.runtime.win" Version="5.0.0.20260905" />
-		<PackageReference Include="Spectre.Console" Version="0.55.2" />
+		<PackageReference Include="OpenCvSharp5.runtime.win" Version="5.0.0.20261003" />
+		<PackageReference Include="Spectre.Console" Version="0.57.2" />
 	</ItemGroup>
 
 	<ItemGroup>

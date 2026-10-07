@@ -10,7 +10,7 @@ using Spectre.Console.Cli;
 
 public class RegisterCommand : Command<RegisterSettings>
 {
-    protected override int Execute(CommandContext context, RegisterSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, RegisterSettings settings, CancellationToken cancellationToken)
     {
         string alias = settings.Alias;
 

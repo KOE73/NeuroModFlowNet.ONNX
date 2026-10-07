@@ -6,7 +6,7 @@ namespace NeuroModFlowNet.ONNX.Tools.CLI;
 
 public class ViewCommand : Command<ViewSettings>
 {
-    protected override int Execute(CommandContext context, ViewSettings settings, CancellationToken cancellationToken)
+    public override int Execute(CommandContext context, ViewSettings settings, CancellationToken cancellationToken)
     {
         if(!File.Exists(settings.ModelPath))
         {

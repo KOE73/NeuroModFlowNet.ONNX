@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="3.119.2" />
-    <PackageReference Include="OpenCvSharp5" Version="5.0.0.20260905" />
+    <PackageReference Include="SkiaSharp" Version="4.153.1" />
+    <PackageReference Include="OpenCvSharp5" Version="5.0.0.20261003" />
   </ItemGroup>
 
   <ItemGroup>

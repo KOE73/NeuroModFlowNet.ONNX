@@ -7,7 +7,7 @@ namespace NeuroModFlowNet.ONNX.Tools.CLI;
 
 public sealed class InjectCommand : Command<InjectSettings>
 {
-    protected override int Execute([NotNull] CommandContext context, [NotNull] InjectSettings settings, CancellationToken ct)
+    public override int Execute([NotNull] CommandContext context, [NotNull] InjectSettings settings, CancellationToken ct)
     {
         if(ct.IsCancellationRequested) return -1;
         Exception? injectionException = null;

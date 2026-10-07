@@ -10,16 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.2" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.2" />
-    <PackageReference Include="Dock.Avalonia" Version="12.0.0.2" />
-    <PackageReference Include="Dock.Avalonia.Themes.Fluent" Version="12.0.0.2" />
-    <PackageReference Include="Dock.Model.Avalonia" Version="12.0.0.2" />
-    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.25.1" />
-    <PackageReference Include="OpenCvSharp5" Version="5.0.0.20260905" />
-    <PackageReference Include="OpenCvSharp5.runtime.win" Version="5.0.0.20260905" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
+    <PackageReference Include="Avalonia" Version="12.1.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.3" />
+    <PackageReference Include="Dock.Avalonia" Version="12.1.0.7" />
+    <PackageReference Include="Dock.Avalonia.Themes.Fluent" Version="12.1.0.7" />
+    <PackageReference Include="Dock.Model.Avalonia" Version="12.1.0.7" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.30.0" />
+    <PackageReference Include="OpenCvSharp5" Version="5.0.0.20261003" />
+    <PackageReference Include="OpenCvSharp5.runtime.win" Version="5.0.0.20261003" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup>

@@ -14,7 +14,8 @@
   ],
   "sources": {
     "include": [
-      "src"
+      "src",
+      "labs"
     ]
   },
   "icon": "🚀"

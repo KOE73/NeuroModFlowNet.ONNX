@@ -2674,6 +2674,13 @@
         "at": "2026-10-02T11:15:30Z",
         "origin": "authored"
       }
+    },
+    "v_lab_nvdec": {
+      "name": {
+        "v": "Lab NVDec",
+        "at": "2026-10-07T04:10:23Z",
+        "origin": "authored"
+      }
     }
   }
 }

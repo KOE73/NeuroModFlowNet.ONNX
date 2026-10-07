@@ -30,8 +30,8 @@
     {
       "entity": "e_vminputvalue",
       "parent": "e_pl_run",
-      "x": 20,
-      "y": 290,
+      "x": -330,
+      "y": 170,
       "width": 280,
       "height": 60
     },
@@ -46,24 +46,24 @@
     {
       "entity": "e_vmrunoutcome",
       "parent": "e_pl_run",
-      "x": 20,
-      "y": 530,
+      "x": -330,
+      "y": 410,
       "width": 280,
       "height": 60
     },
     {
       "entity": "e_vmrunoutput",
       "parent": "e_pl_run",
-      "x": 20,
-      "y": 650,
+      "x": -330,
+      "y": 520,
       "width": 280,
       "height": 60
     },
     {
       "entity": "e_vmrunstatus",
       "parent": "e_pl_run",
-      "x": 380,
-      "y": 530,
+      "x": 20,
+      "y": 290,
       "width": 280,
       "height": 60
     },
@@ -94,26 +94,28 @@
     {
       "entity": "e_vmprogram",
       "parent": "e_pl_program",
-      "x": -480,
-      "y": -300,
+      "x": 380,
+      "y": -170,
       "width": 280,
       "height": 60
     },
     {
       "entity": "e_vmprogrambuilder",
       "parent": "e_pl_program",
-      "x": -840,
-      "y": -300,
+      "x": 20,
+      "y": -250,
       "width": 280,
-      "height": 60
+      "height": 99,
+      "template": "class"
     },
     {
       "entity": "e_vmprogramexit",
       "parent": "e_pl_program",
-      "x": -840,
-      "y": -180,
+      "x": 20,
+      "y": -660,
       "width": 280,
-      "height": 60
+      "height": 85,
+      "template": "class"
     },
     {
       "entity": "e_vmprogramdebugview",
@@ -134,96 +136,84 @@
     {
       "entity": "e_iop",
       "parent": "e_pl_program",
-      "x": -480,
-      "y": -180,
+      "x": 380,
+      "y": -320,
       "width": 280,
-      "height": 60
+      "height": 108,
+      "template": "class"
     },
     {
       "entity": "e_opdescriptor",
       "parent": "e_pl_program",
-      "x": -480,
-      "y": -60,
+      "x": 380,
+      "y": -510,
       "width": 280,
-      "height": 60
+      "height": 144,
+      "template": "class"
     },
     {
       "entity": "e_opresult",
       "parent": "e_pl_program",
-      "x": -840,
-      "y": -60,
+      "x": 20,
+      "y": -340,
       "width": 280,
       "height": 60
     },
     {
       "entity": "e_opresultkind",
       "parent": "e_pl_program",
-      "x": -840,
-      "y": 60,
+      "x": 20,
+      "y": -520,
       "width": 280,
-      "height": 60
-    },
-    {
-      "entity": "e_opfailureexception",
-      "parent": "e_pl_program",
-      "x": -480,
-      "y": 60,
-      "width": 280,
-      "height": 60
-    },
-    {
-      "entity": "e_precedingrunfailedexception",
-      "parent": "e_pl_program",
-      "x": -480,
-      "y": 180,
-      "width": 280,
-      "height": 60
+      "height": 114,
+      "template": "class"
     },
     {
       "entity": "e_vmruncontext",
       "parent": "e_pl_state",
       "x": 940,
       "y": 50,
-      "width": 280,
+      "width": 580,
       "height": 60
     },
     {
       "entity": "e_vmglobalmemory",
       "parent": "e_pl_state",
-      "x": 1310,
-      "y": 130,
+      "x": 1230,
+      "y": 250,
       "width": 280,
       "height": 60
     },
     {
       "entity": "e_vmresourceregistry",
       "parent": "e_pl_state",
-      "x": 1300,
-      "y": 290,
+      "x": 1150,
+      "y": 350,
       "width": 280,
       "height": 60
     },
     {
       "entity": "e_ivmresource",
       "parent": "e_pl_state",
-      "x": 1910,
-      "y": 410,
+      "x": 1490,
+      "y": 350,
       "width": 280,
-      "height": 60
+      "height": 70,
+      "template": "class"
     },
     {
       "entity": "e_vmsyncgateregistry",
       "parent": "e_pl_state",
-      "x": 1380,
-      "y": 450,
+      "x": 1000,
+      "y": 440,
       "width": 280,
       "height": 60
     },
     {
       "entity": "e_vmsyncgate",
       "parent": "e_pl_state",
-      "x": 1890,
-      "y": 230,
+      "x": 1480,
+      "y": 440,
       "width": 280,
       "height": 60
     },
@@ -422,9 +412,9 @@
     {
       "entity": "e_pl_run",
       "parent": null,
-      "x": 0,
+      "x": -370,
       "y": 0,
-      "width": 680,
+      "width": 1050,
       "height": 730,
       "override": {
         "border": {
@@ -439,10 +429,10 @@
     {
       "entity": "e_pl_program",
       "parent": null,
-      "x": -860,
-      "y": -470,
+      "x": 0,
+      "y": -710,
       "width": 680,
-      "height": 730,
+      "height": 650,
       "override": {
         "border": {
           "color": "#c4b5fd"
@@ -505,6 +495,18 @@
       }
     }
   ],
-  "relations": {},
+  "relations": {
+    "except": [
+      "r_vmprogrambuilder_iop_instructions_item",
+      "r_opresult_opresultkind_kind",
+      "r_iop_opresult_uses",
+      "r_vmsyncgateregistry_vmsyncgate_gates_value",
+      "r_vmresourceregistry_ivmresource_resources_value",
+      "r_vmrunrecord_vmrunidentity_identity",
+      "r_vmrunledger_vmrunrecord_records_value",
+      "r_vmrunrecord_vmrunstatus_status",
+      "r_vmrunoutcome_vmrunoutput_output"
+    ]
+  },
   "routing": "orthogonal"
 }

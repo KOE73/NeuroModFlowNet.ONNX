@@ -9,8 +9,10 @@ extractors:
     language: csharp
     project: nmfn # docs/diagrams/projects/nmfn
     root: .
-    include: [src]
-    edges: [holds, injects, uses, calls]
+    include: [src, labs]
+    edges: [holds, uses, injects, calls]
+    exclude: []
+    watch: false
 mcp:
   tools: one
   description: full

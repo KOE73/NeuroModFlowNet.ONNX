@@ -40,6 +40,8 @@ const words = {
   currentinstruction:['Текущая инструкция','Current instruction'],runtoshort:['До','To'],runto:['Выполнить до','Run to'],
   runtotip:['Продолжить выбранную камеру и остановиться перед этой инструкцией. Постоянные точки останова сохраняются.','Continue this camera and stop before this instruction. Persistent breakpoints remain active.'],
   valueaction:['Показать значение:','Show value:'],imageaction:['Показать изображение:','Show image:'],
+  resizeinstructions:['Ширина панелей инструкций и регистров','Instructions and registers panel widths'],resizeregisters:['Ширина панелей регистров и просмотра','Registers and inspection panel widths'],
+  resizetip:['Потяните разделитель мышью. Стрелки ← → меняют ширину с клавиатуры. Двойной щелчок сбрасывает ширины панелей.','Drag to resize. Use ← → to resize with the keyboard. Double-click to reset panel widths.'],
   registerhelp:['«Значение» (значок списка в строке регистра) показывает число, текст, типизированный массив или данные обратного преобразования в JSON. «Изображение» (значок глаза) явно получает PNG из поддерживаемого Mat/GPU-тензора на паузе. Иконки присутствуют только у доступных действий. «Выполнить до» в строке инструкции продолжает камеру до остановки перед этой командой; текущая команда после остановки ещё не выполнена. Если выбранная строка уже пройдена, цель может быть достигнута в следующем кадре. Обычные точки останова продолжают действовать.','Value (the list icon in a register row) shows a scalar, text, typed array or back-transform data as JSON. Image (the eye icon) explicitly obtains a PNG from a supported Mat/GPU tensor while paused. Icons appear only for available actions. Run to in an instruction row continues this camera and stops before that instruction; it has not executed at that stop. A previously passed target may be reached on the next frame. Regular breakpoints remain active.'],
   helpbody:[
     '<p>Отладчик запускает отдельный экземпляр существующего MultiCamera pipeline: NVDEC → GPU NV12 → BGR → преобразования → детектор → трекинг → OCR. На камеру — один VmController и один кадр в работе. Прогрев выполняется без остановок, первый рабочий кадр останавливается перед первой инструкцией.</p><p>Камеры, программа, регистры и данные доступны в одном обзоре. Выберите камеру строкой таблицы или в меню. Галочка у инструкции задаёт точку останова. «До» — инструкция ещё не выполнена, «после» — её результаты уже в регистрах. F6 — один шаг, F8 — продолжить.</p><p>Просмотр картинки выполняется явно на паузе. Вход можно закрепить над следующим результатом и сравнить этапы преобразования. Нажатие картинки открывает полный PNG. Поддержаны NV12 поверхности, BGR U8 NHWC и одиночные RGB FP16/FP32 NCHW 0..1. Массивы batch показываются как метаданные; интерпретация неподдержанных форматов не подменяется.</p><p>Время инструкции исключает ожидание паузы и отладочный просмотр. Время прогона включает паузы. Захват продолжает читать источник, очередь хранит два последних кадра с вытеснением старых; «следующий кадр» — следующий принятый VM кадр. Это не покадровый проигрыватель всех кадров видео.</p><p>Закрытие вкладки сохраняет паузу. Переподключитесь или используйте API, чтобы продолжить. «Отсоединить» снимает паузу выбранной камеры. «Остановить всё» освобождает ресурсы отладочного запуска. Рабочие службы и другие процессы не управляются этим UI.</p>',
@@ -94,6 +96,103 @@ function translate() {
   document.querySelectorAll('[data-label]').forEach(element => element.setAttribute('aria-label',t(element.dataset.label)));
   document.querySelectorAll('[data-tip]').forEach(element => element.dataset.tooltip = t(element.dataset.tip));
   $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); lastRender = ''; renderSelected();
+}
+
+function initializePanelSizing() {
+  const columns = $('.debug-columns');
+  const panes = [...columns.querySelectorAll('.debug-pane')];
+  const dividers = [...columns.querySelectorAll('.pane-divider')];
+  const minimumWidth = 220, minimumTotal = 935, dividerWidth = 6;
+  let proportions = null, drag = null;
+  try {
+    const stored = JSON.parse(read('panelWidths','null'));
+    if(Array.isArray(stored) && stored.length === 3 && stored.every(value => Number.isFinite(value) && value > 0)) {
+      const total = stored.reduce((sum,value) => sum + value,0);
+      if(Number.isFinite(total)) proportions = stored.map(value => value / total);
+    }
+  } catch { /* Ignore invalid optional preferences. */ }
+
+  const widths = () => panes.map(pane => pane.getBoundingClientRect().width);
+  function updateDividers(values) {
+    dividers.forEach((divider,index) => {
+      divider.setAttribute('aria-valuemin',minimumWidth);
+      divider.setAttribute('aria-valuemax',Math.round(values[index] + values[index + 1] - minimumWidth));
+      divider.setAttribute('aria-valuenow',Math.round(values[index]));
+    });
+  }
+  function apply(values) {
+    columns.style.setProperty('--panel-columns',values.map(value => `${value}px`).join(` ${dividerWidth}px `));
+    updateDividers(values);
+  }
+  function remember() {
+    const values = widths(), total = values.reduce((sum,value) => sum + value,0);
+    proportions = values.map(value => value / total);
+    save('panelWidths',JSON.stringify(proportions));
+  }
+  function fit() {
+    if(drag) return;
+    if(!proportions) { updateDividers(widths()); return; }
+    const total = Math.max(minimumTotal,columns.clientWidth - dividerWidth * dividers.length);
+    const values = new Array(3).fill(0);
+    let available = total, remaining = [0,1,2];
+    // Clamp narrow panels first, then distribute the remaining space proportionally.
+    while(remaining.length) {
+      const weight = remaining.reduce((sum,index) => sum + proportions[index],0);
+      const clamped = remaining.filter(index => available * proportions[index] / weight < minimumWidth);
+      if(!clamped.length) {
+        remaining.forEach(index => values[index] = available * proportions[index] / weight);
+        break;
+      }
+      clamped.forEach(index => { values[index] = minimumWidth; available -= minimumWidth; });
+      remaining = remaining.filter(index => !clamped.includes(index));
+    }
+    apply(values);
+  }
+  function resize(values,index,delta) {
+    const result = [...values], pair = values[index] + values[index + 1];
+    result[index] = Math.max(minimumWidth,Math.min(pair - minimumWidth,values[index] + delta));
+    result[index + 1] = pair - result[index];
+    apply(result);
+  }
+  function finish(cancel = false) {
+    if(!drag) return;
+    const previous = drag; drag = null;
+    previous.divider.classList.remove('dragging');
+    shell.classList.remove('resizing-panels');
+    if(cancel) apply(previous.widths); else remember();
+    if(previous.divider.hasPointerCapture(previous.pointerId)) previous.divider.releasePointerCapture(previous.pointerId);
+    fit();
+  }
+  dividers.forEach((divider,index) => {
+    divider.addEventListener('pointerdown',event => {
+      if(event.button !== 0 || drag) return;
+      event.preventDefault();
+      divider.focus({preventScroll:true});
+      drag = {divider,index,pointerId:event.pointerId,startX:event.clientX,widths:widths()};
+      divider.setPointerCapture(event.pointerId);
+      divider.classList.add('dragging'); shell.classList.add('resizing-panels');
+    });
+    divider.addEventListener('pointermove',event => {
+      if(drag?.divider === divider && event.pointerId === drag.pointerId) resize(drag.widths,index,event.clientX - drag.startX);
+    });
+    divider.addEventListener('pointerup',event => { if(event.pointerId === drag?.pointerId) finish(); });
+    divider.addEventListener('pointercancel',() => finish(true));
+    divider.addEventListener('lostpointercapture',() => finish(true));
+    divider.addEventListener('dblclick',() => {
+      finish(true); proportions = null;
+      try { localStorage.removeItem(storage + 'panelWidths'); } catch { /* Preferences are optional. */ }
+      columns.style.removeProperty('--panel-columns'); fit();
+    });
+    divider.addEventListener('keydown',event => {
+      if(event.key === 'Escape' && drag) { event.preventDefault(); finish(true); return; }
+      if(!['ArrowLeft','ArrowRight'].includes(event.key) || drag) return;
+      event.preventDefault();
+      resize(widths(),index,(event.key === 'ArrowRight' ? 1 : -1) * (event.shiftKey ? 30 : 10)); remember();
+    });
+  });
+  window.addEventListener('blur',() => finish(true));
+  new ResizeObserver(fit).observe(columns);
+  fit();
 }
 function showDialog(title, html) {
   modalReturnFocus = document.activeElement;
@@ -306,4 +405,4 @@ async function poll() {
     showError(error);
   } finally { polling = false; }
 }
-translate(); poll(); setInterval(poll,600);
+translate(); initializePanelSizing(); poll(); setInterval(poll,600);

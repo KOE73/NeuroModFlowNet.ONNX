@@ -21,6 +21,7 @@ const words = {
   heading:['Виртуальные машины · камеры','Virtual machines · cameras'], start:['Запустить','Start'],stop:['Остановить всё','Stop all'],
   cameras:['Камеры','Cameras'],camera:['Камера','Camera'],state:['Состояние','State'],decoder:['Декодер','Decoder'],frames:['Кадры','Frames'],runms:['Прогон, мс','Run, ms'],tracks:['Треки','Tracks'],failures:['Ошибки','Errors'],text:['Распознанный текст','Recognized text'],
   pause:['Пауза','Pause'],continue:['Продолжить','Continue'],step:['Шаг','Step'],nextframe:['Следующий кадр','Next frame'],detach:['Отсоединить','Detach'],
+  debugcontrols:['Управление отладкой выбранной камеры','Selected camera debug controls'],
   instructions:['Программы и инструкции','Programs and instructions'],instruction:['Инструкция','Instruction'],breakpoint:['Т.О.','B.P.'],ms:['мс','ms'],registers:['Регистры','Registers'],register:['Регистр','Register'],memory:['Память','Memory'],shape:['Форма','Shape'],
   inspect:['Значение','Value'],preview:['Изображение','Image'],image:['Просмотр данных','Data inspection'],pin:['Закрепить вход','Pin input'],resultframe:['Кадр результата','Result frame'],
   imageempty:['На паузе выберите изображение или значение значком. Для динамики отметьте регистры галочками и продолжите VM.','On pause, use an icon to inspect an image or value. For live observation, check registers and resume the VM.'],

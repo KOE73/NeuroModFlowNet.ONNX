@@ -40,12 +40,12 @@
       </section>
       <div class="debug-toolbar toolbar">
         <strong id="selected-camera">—</strong><span id="stop-location" class="mono location">—</span>
-        <div class="debug-actions">
-          <button data-command="pause" data-i18n="pause" data-tip="pausetip"></button>
-          <button data-command="continue" data-i18n="continue" data-tip="continuetip"></button>
-          <button data-command="step" data-i18n="step" data-tip="steptip"></button>
-          <button data-command="next-frame" data-i18n="nextframe" data-tip="nextframetip"></button>
-          <button data-command="detach" data-i18n="detach" data-tip="detachtip"></button>
+        <div class="debug-actions" role="group" data-label="debugcontrols">
+          <button class="debug-command" data-command="pause" data-label="pause" data-tip="pausetip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+          <button class="debug-command" data-command="continue" data-label="continue" data-tip="continuetip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 4v16l14-8z"/></svg></button>
+          <button class="debug-command" data-command="step" data-label="step" data-tip="steptip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h8a4 4 0 0 1 4 4v5m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="20" r="1.5" fill="currentColor"/></svg></button>
+          <button class="debug-command" data-command="next-frame" data-label="nextframe" data-tip="nextframetip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="m7 8 7 4-7 4zM16 8h2v8h-2z"/></svg></button>
+          <button class="debug-command" data-command="detach" data-label="detach" data-tip="detachtip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3v5m6-5v5M4 8h10v3a5 5 0 0 1-10 0zM9 16v5m8-13 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
       </div>
       <div class="debug-columns">

@@ -1,0 +1,157 @@
+{
+  "id": "v_multicamera_dataflow",
+  "project": "nmfn",
+  "axis": "axis_dataflow",
+  "placements": [
+    {
+      "entity": "e_df_multicamera_rect",
+      "parent": null,
+      "x": 680,
+      "y": 140,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_det_prepare",
+      "parent": null,
+      "x": 120,
+      "y": 380,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_rgb",
+      "parent": null,
+      "x": 1240,
+      "y": 380,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_detector",
+      "parent": null,
+      "x": 120,
+      "y": 620,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_preview_resize",
+      "parent": null,
+      "x": 680,
+      "y": 620,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_det_map",
+      "parent": null,
+      "x": 120,
+      "y": 860,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_preview_mat",
+      "parent": null,
+      "x": 680,
+      "y": 860,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_tracker",
+      "parent": null,
+      "x": 120,
+      "y": 1100,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_select",
+      "parent": null,
+      "x": 120,
+      "y": 1340,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_crops",
+      "parent": null,
+      "x": 680,
+      "y": 1340,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu"
+    },
+    {
+      "entity": "e_df_multicamera_text_detector",
+      "parent": null,
+      "x": 400,
+      "y": 1580,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_text_map",
+      "parent": null,
+      "x": 680,
+      "y": 1820,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_roi",
+      "parent": null,
+      "x": 1240,
+      "y": 1820,
+      "width": 440,
+      "height": 105,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_recognition",
+      "parent": null,
+      "x": 1240,
+      "y": 2060,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_multicamera_results",
+      "parent": null,
+      "x": 1240,
+      "y": 2300,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    }
+  ],
+  "routing": "orthogonal"
+}

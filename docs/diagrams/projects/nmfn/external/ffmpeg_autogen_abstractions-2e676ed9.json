@@ -1,0 +1,295 @@
+{
+  "library": {
+    "id": "FFmpeg.AutoGen.Abstractions",
+    "name": "FFmpeg.AutoGen.Abstractions",
+    "version": "9.0.1.1"
+  },
+  "entities": [
+    {
+      "id": "e_assembly_ffmpeg_autogen_abstractions",
+      "name": "FFmpeg.AutoGen.Abstractions",
+      "kind": "assembly",
+      "origin": "code",
+      "status": "present",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avbufferref",
+      "name": "AVBufferRef",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVBufferRef",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avcodec",
+      "name": "AVCodec",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVCodec",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avcodeccontext",
+      "name": "AVCodecContext",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVCodecContext",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avcodeccontext_get_format",
+      "name": "AVCodecContext_get_format",
+      "kind": "delegate",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVCodecContext_get_format",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avformatcontext",
+      "name": "AVFormatContext",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVFormatContext",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avframe",
+      "name": "AVFrame",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVFrame",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avpacket",
+      "name": "AVPacket",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVPacket",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avpixelformat",
+      "name": "AVPixelFormat",
+      "kind": "enum",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVPixelFormat",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "e_avrational",
+      "name": "AVRational",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "FFmpeg.AutoGen.Abstractions",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]::FFmpeg.AutoGen.Abstractions.AVRational",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avbufferref_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avbufferref",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avcodec_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avcodec",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avcodeccontext_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avcodeccontext",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avcodeccontext_get_format_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avcodeccontext_get_format",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avformatcontext_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avformatcontext",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avframe_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avframe",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avpacket_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avpacket",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avpixelformat_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avpixelformat",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_ffmpeg_autogen_abstractions_avrational_contains",
+      "from": "e_assembly_ffmpeg_autogen_abstractions",
+      "to": "e_avrational",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[FFmpeg.AutoGen.Abstractions]",
+          "library": "FFmpeg.AutoGen.Abstractions"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1448 @@
+{
+  "version": 1,
+  "description": "Библиотека стилей SeMaps по умолчанию; styles.json рабочего пространства заменяет её целиком. Стиль блока, контейнера или связи принадлежит типам, названным в forKinds (id типа сущности или типа связи из kinds.json); forKinds обязателен и не наследуется через basedOn. Каскад стиля размещения: styleId → базовый стиль типа из kinds.json → стиль с id, равным типу → default.node / default.container; затем override размещения. Для связи то же: styleId → базовый стиль типа связи → стиль с id, равным типу связи → default.edge; затем override записи связи на виде. Цвет одного блока, контейнера или связи — override, а не стиль (CONTRACT §11.5–11.6).",
+  "styles": [
+    {
+      "id": "default.node",
+      "name": "Блок по умолчанию",
+      "appliesTo": "block",
+      "description": "Запасной стиль блока, тип которого стиля не имеет. В выборе стиля его нет.",
+      "fill": "#ffffff",
+      "border": {
+        "color": "#cbd5e1",
+        "width": 1.5
+      },
+      "radius": 8,
+      "shadow": true,
+      "icon": {
+        "glyph": "file-text"
+      }
+    },
+    {
+      "id": "default.container",
+      "name": "Контейнер по умолчанию",
+      "appliesTo": "container",
+      "description": "Запасной стиль контейнера, тип которого стиля не имеет. В выборе стиля его нет.",
+      "fill": "#f8fafc",
+      "border": {
+        "color": "#cbd5e1",
+        "width": 2
+      },
+      "radius": 12,
+      "shadow": false,
+      "header": {
+        "fill": "#e2e8f0",
+        "height": 34
+      },
+      "icon": {
+        "show": false
+      },
+      "subtitle": {
+        "align": "end"
+      }
+    },
+    {
+      "id": "default.edge",
+      "name": "Связь по умолчанию",
+      "appliesTo": "edge",
+      "description": "Запасной стиль связи, тип которой стиля не имеет. В выборе стиля его нет.",
+      "line": {
+        "color": "#cbd5e1",
+        "width": 1.5
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "class",
+      "name": "Класс",
+      "appliesTo": "block",
+      "forKinds": [
+        "class"
+      ],
+      "description": "Обычный класс: поведение, реализация.",
+      "fill": "#ffffff",
+      "border": {
+        "color": "#cbd5e1",
+        "width": 1.5
+      },
+      "radius": 8,
+      "shadow": true,
+      "icon": {
+        "glyph": "class"
+      }
+    },
+    {
+      "id": "record",
+      "name": "Record",
+      "appliesTo": "block",
+      "forKinds": [
+        "record"
+      ],
+      "description": "Неизменяемые данные. Отличается от класса заливкой и иконкой.",
+      "basedOn": "class",
+      "fill": "#f0fdfa",
+      "border": {
+        "color": "#5eead4",
+        "width": 1.5
+      },
+      "radius": 14,
+      "shadow": false,
+      "icon": {
+        "glyph": "record"
+      }
+    },
+    {
+      "id": "struct",
+      "name": "Struct",
+      "appliesTo": "block",
+      "forKinds": [
+        "struct"
+      ],
+      "description": "Значимый тип.",
+      "basedOn": "record",
+      "fill": "#f5f3ff",
+      "border": {
+        "color": "#c4b5fd"
+      },
+      "radius": 4,
+      "icon": {
+        "glyph": "struct"
+      }
+    },
+    {
+      "id": "interface",
+      "name": "Интерфейс",
+      "appliesTo": "block",
+      "forKinds": [
+        "interface"
+      ],
+      "description": "Контракт. Пунктирная рамка — как в UML.",
+      "fill": {
+        "kind": "linear",
+        "angle": 90,
+        "stops": [
+          {
+            "offset": 0,
+            "color": "#e8fecd",
+            "opacity": 1
+          },
+          {
+            "offset": 1,
+            "color": "#b3ffbf",
+            "opacity": 1
+          }
+        ]
+      },
+      "border": {
+        "color": "#60a5fa",
+        "width": 1.6,
+        "dash": "5,3"
+      },
+      "radius": 8,
+      "shadow": true,
+      "icon": {
+        "glyph": "interface"
+      },
+      "title": {
+        "italic": true
+      }
+    },
+    {
+      "id": "enum",
+      "name": "Enum",
+      "appliesTo": "block",
+      "forKinds": [
+        "enum"
+      ],
+      "description": "Перечисление.",
+      "fill": "#fefce8",
+      "border": {
+        "color": "#fde047",
+        "width": 1.6
+      },
+      "radius": 8,
+      "shadow": true,
+      "icon": {
+        "glyph": "enum"
+      }
+    },
+    {
+      "id": "abstract-class",
+      "name": "Абстрактный класс",
+      "appliesTo": "block",
+      "forKinds": [
+        "abstract-class"
+      ],
+      "description": "Класс с модификатором abstract (nativeKind abstract-class): курсивное имя — как в UML.",
+      "basedOn": "class",
+      "fill": "#f8fafc",
+      "title": {
+        "italic": true
+      }
+    },
+    {
+      "id": "static-class",
+      "name": "Статический класс",
+      "appliesTo": "block",
+      "forKinds": [
+        "static-class"
+      ],
+      "description": "Класс с модификатором static (nativeKind static-class): группа функций; рамка толще, углы острее.",
+      "basedOn": "class",
+      "border": {
+        "width": 2.6
+      },
+      "radius": 3
+    },
+    {
+      "id": "sealed-class",
+      "name": "Запечатанный класс",
+      "appliesTo": "block",
+      "forKinds": [
+        "sealed-class"
+      ],
+      "description": "Класс с модификатором sealed (nativeKind sealed-class): выглядит как класс.",
+      "basedOn": "class"
+    },
+    {
+      "id": "abstract-record",
+      "name": "Абстрактный record",
+      "appliesTo": "block",
+      "forKinds": [
+        "abstract-record"
+      ],
+      "description": "Record с модификатором abstract (nativeKind abstract-record): курсивное имя.",
+      "basedOn": "record",
+      "title": {
+        "italic": true
+      }
+    },
+    {
+      "id": "sealed-record",
+      "name": "Запечатанный record",
+      "appliesTo": "block",
+      "forKinds": [
+        "sealed-record"
+      ],
+      "description": "Record с модификатором sealed (nativeKind sealed-record): выглядит как record.",
+      "basedOn": "record"
+    },
+    {
+      "id": "usecase",
+      "name": "Сценарий (use case)",
+      "appliesTo": "block",
+      "forKinds": [
+        "usecase"
+      ],
+      "description": "Эллипс. Форма задана здесь, а не у каждого узла: сценарий — эллипс по тому, что он есть.",
+      "shape": "ellipse",
+      "fill": "#ffffff",
+      "border": {
+        "color": "#94a3b8",
+        "width": 1.5
+      },
+      "icon": {
+        "show": false
+      },
+      "title": {
+        "align": "middle"
+      },
+      "subtitle": {
+        "show": false
+      }
+    },
+    {
+      "id": "actor",
+      "name": "Действующее лицо",
+      "appliesTo": "block",
+      "forKinds": [
+        "actor"
+      ],
+      "description": "Человечек UML: пользователь, внешняя роль. Заливка красит фигуру, не рамку.",
+      "shape": "actor",
+      "fill": "none",
+      "border": {
+        "color": "#475569",
+        "width": 2
+      },
+      "shadow": false,
+      "icon": {
+        "show": false
+      },
+      "title": {
+        "align": "middle"
+      },
+      "subtitle": {
+        "show": false
+      }
+    },
+    {
+      "id": "store",
+      "name": "Хранилище (цилиндр)",
+      "appliesTo": "block",
+      "forKinds": [
+        "store",
+        "database"
+      ],
+      "description": "Хранилище данных, нарисованное цилиндром. Для типа «Хранилище» — его основной стиль, для базы данных — вариант.",
+      "basedOn": "database",
+      "shape": "cylinder"
+    },
+    {
+      "id": "decision",
+      "name": "Развилка",
+      "appliesTo": "block",
+      "forKinds": [
+        "decision"
+      ],
+      "shape": "diamond",
+      "fill": "#fefce8",
+      "border": {
+        "color": "#fde047",
+        "width": 1.6
+      },
+      "icon": {
+        "show": false
+      },
+      "subtitle": {
+        "show": false
+      }
+    },
+    {
+      "id": "stage",
+      "name": "Стадия (шестиугольник)",
+      "appliesTo": "block",
+      "forKinds": [
+        "stage"
+      ],
+      "shape": "hexagon",
+      "fill": "#eff6ff",
+      "border": {
+        "color": "#93c5fd",
+        "width": 1.6
+      },
+      "icon": {
+        "show": false
+      }
+    },
+    {
+      "id": "class.detail",
+      "name": "Класс с полями",
+      "appliesTo": "block",
+      "forKinds": [
+        "class",
+        "record",
+        "struct"
+      ],
+      "description": "Тот же класс, но содержимое рисует шаблон «class»: поля и методы. Отдельный стиль, чтобы включать подробность там, где она нужна, а не везде сразу.",
+      "basedOn": "class",
+      "template": "class"
+    },
+    {
+      "id": "table",
+      "name": "Таблица БД",
+      "appliesTo": "block",
+      "forKinds": [
+        "database"
+      ],
+      "description": "Колонки с типами. От «class.detail» отличается только фильтром в шаблоне.",
+      "basedOn": "database",
+      "template": "table"
+    },
+    {
+      "id": "note",
+      "name": "Заметка",
+      "appliesTo": "block",
+      "forKinds": [
+        "note"
+      ],
+      "fill": "#fef9c3",
+      "border": {
+        "color": "#fde047",
+        "width": 1.5
+      },
+      "radius": 6,
+      "shadow": false,
+      "icon": {
+        "glyph": "notes"
+      },
+      "title": {
+        "weight": 500
+      }
+    },
+    {
+      "id": "security-component",
+      "name": "Безопасность",
+      "appliesTo": "block",
+      "forKinds": [
+        "security"
+      ],
+      "fill": "#fff1f2",
+      "border": {
+        "color": "#fca5a5",
+        "width": 2
+      },
+      "icon": {
+        "glyph": "shield"
+      }
+    },
+    {
+      "id": "tool",
+      "name": "Инструмент",
+      "appliesTo": "block",
+      "forKinds": [
+        "tool"
+      ],
+      "fill": "#ffffff",
+      "border": {
+        "color": "#bfdbfe",
+        "width": 1.5
+      },
+      "icon": {
+        "glyph": "tool"
+      }
+    },
+    {
+      "id": "database",
+      "name": "База данных",
+      "appliesTo": "block",
+      "forKinds": [
+        "database"
+      ],
+      "fill": "#ffffff",
+      "border": {
+        "color": "#d8b4fe",
+        "width": 1.5
+      },
+      "icon": {
+        "glyph": "database"
+      }
+    },
+    {
+      "id": "external-system",
+      "name": "Внешняя система",
+      "appliesTo": "block",
+      "forKinds": [
+        "external"
+      ],
+      "fill": "#fffbeb",
+      "border": {
+        "color": "#fde68a",
+        "width": 1.5
+      },
+      "icon": {
+        "glyph": "world"
+      }
+    },
+    {
+      "id": "boundary",
+      "name": "Граница",
+      "appliesTo": "container",
+      "forKinds": [
+        "boundary"
+      ],
+      "description": "Граница доверия или развёртывания. Пока выглядит как контейнер по умолчанию; цвет — override.",
+      "basedOn": "default.container"
+    },
+    {
+      "id": "subsystem",
+      "name": "Подсистема",
+      "appliesTo": "container",
+      "forKinds": [
+        "subsystem"
+      ],
+      "basedOn": "default.container"
+    },
+    {
+      "id": "implements",
+      "name": "Реализация интерфейса",
+      "appliesTo": "edge",
+      "forKinds": [
+        "implements"
+      ],
+      "description": "Класс реализует контракт. Самая частая связь — держим тихой.",
+      "family": "structure",
+      "line": {
+        "color": "#cbd5e1",
+        "width": 1.5,
+        "dash": "6,4"
+      },
+      "target": {
+        "shape": "triangle-hollow",
+        "size": 10
+      }
+    },
+    {
+      "id": "realizes",
+      "name": "Реализация (realizes)",
+      "appliesTo": "edge",
+      "forKinds": [
+        "realizes"
+      ],
+      "basedOn": "implements"
+    },
+    {
+      "id": "extends",
+      "name": "Наследование класса",
+      "appliesTo": "edge",
+      "forKinds": [
+        "extends"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#94a3b8",
+        "width": 1.5
+      },
+      "target": {
+        "shape": "triangle-hollow",
+        "size": 10
+      }
+    },
+    {
+      "id": "composes",
+      "name": "Владение / композиция",
+      "appliesTo": "edge",
+      "forKinds": [
+        "composes"
+      ],
+      "description": "Ромб на стороне владельца, как в UML.",
+      "family": "structure",
+      "line": {
+        "color": "#0f766e",
+        "width": 2
+      },
+      "source": {
+        "shape": "diamond",
+        "size": 10
+      },
+      "target": {
+        "shape": "none"
+      }
+    },
+    {
+      "id": "call",
+      "name": "Вызов",
+      "appliesTo": "edge",
+      "forKinds": [
+        "call"
+      ],
+      "family": "flow",
+      "line": {
+        "color": "#64748b",
+        "width": 1.5,
+        "dash": "4,4"
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "data-flow",
+      "name": "Поток данных",
+      "appliesTo": "edge",
+      "forKinds": [
+        "data-flow"
+      ],
+      "family": "flow",
+      "line": {
+        "color": "#3b82f6",
+        "width": 2.5
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      },
+      "label": {
+        "color": "#1d4ed8",
+        "weight": 600
+      }
+    },
+    {
+      "id": "event",
+      "name": "Событие / уведомление",
+      "appliesTo": "edge",
+      "forKinds": [
+        "event"
+      ],
+      "family": "flow",
+      "line": {
+        "color": "#ea580c",
+        "width": 2,
+        "dash": "2,3"
+      },
+      "target": {
+        "shape": "arrow-open",
+        "size": 10
+      },
+      "label": {
+        "color": "#c2410c",
+        "weight": 600
+      }
+    },
+    {
+      "id": "security",
+      "name": "Проверка прав / аудит",
+      "appliesTo": "edge",
+      "forKinds": [
+        "security"
+      ],
+      "family": "flow",
+      "line": {
+        "color": "#f43f5e",
+        "width": 2,
+        "dash": "3,3"
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      },
+      "label": {
+        "color": "#be123c",
+        "weight": 600
+      }
+    },
+    {
+      "id": "storage",
+      "name": "Запись / чтение хранилища",
+      "appliesTo": "edge",
+      "forKinds": [
+        "storage"
+      ],
+      "description": "Головки с обеих сторон: чтение и запись — одно ребро.",
+      "family": "flow",
+      "line": {
+        "color": "#a855f7",
+        "width": 2.5
+      },
+      "source": {
+        "shape": "circle-hollow",
+        "size": 10
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      },
+      "label": {
+        "color": "#7e22ce",
+        "weight": 600
+      }
+    },
+    {
+      "id": "runs",
+      "name": "Запуск процесса",
+      "appliesTo": "edge",
+      "forKinds": [
+        "runs"
+      ],
+      "description": "Часть запускает другую отдельным процессом.",
+      "family": "flow",
+      "line": {
+        "color": "#16a34a",
+        "width": 2
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      },
+      "label": {
+        "color": "#15803d",
+        "weight": 600
+      }
+    },
+    {
+      "id": "depends",
+      "name": "Зависимость между модулями",
+      "appliesTo": "edge",
+      "forKinds": [
+        "depends"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#94a3b8",
+        "width": 1.5
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.one",
+      "name": "Поле / свойство · один объект",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.one"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#7c3aed",
+        "width": 1.5
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.optional",
+      "name": "Поле / свойство · опциональный",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.optional"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#7c3aed",
+        "width": 1.5,
+        "dash": "2,2"
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.many",
+      "name": "Поле / свойство · коллекция",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.many"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#7c3aed",
+        "width": 2
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.many.ro",
+      "name": "Поле / свойство · коллекция (чтение)",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.many.ro"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#7c3aed",
+        "width": 1.5,
+        "dash": "4,3"
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.keyed",
+      "name": "Поле / свойство · словарь",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.keyed"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#7c3aed",
+        "width": 2
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.keyed.ro",
+      "name": "Поле / свойство · словарь (чтение)",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.keyed.ro"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#7c3aed",
+        "width": 1.5,
+        "dash": "3,4"
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.one.internal",
+      "name": "Поле / свойство · один объект · внутренний",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.one.internal"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#d8b4fe",
+        "width": 1.5,
+        "opacity": 0.6
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.optional.internal",
+      "name": "Поле / свойство · опциональный · внутренний",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.optional.internal"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#d8b4fe",
+        "width": 1.5,
+        "dash": "2,2",
+        "opacity": 0.6
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.many.internal",
+      "name": "Поле / свойство · коллекция · внутренний",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.many.internal"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#d8b4fe",
+        "width": 1.5,
+        "opacity": 0.6
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.many.ro.internal",
+      "name": "Поле / свойство · коллекция (чтение) · внутренний",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.many.ro.internal"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#d8b4fe",
+        "width": 1.5,
+        "dash": "4,3",
+        "opacity": 0.6
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.keyed.internal",
+      "name": "Поле / свойство · словарь · внутренний",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.keyed.internal"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#d8b4fe",
+        "width": 1.5,
+        "opacity": 0.6
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "holds.keyed.ro.internal",
+      "name": "Поле / свойство · словарь (чтение) · внутренний",
+      "appliesTo": "edge",
+      "forKinds": [
+        "holds.keyed.ro.internal"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#d8b4fe",
+        "width": 1.5,
+        "dash": "3,4",
+        "opacity": 0.6
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "uses",
+      "name": "Параметр / возвращаемое значение",
+      "appliesTo": "edge",
+      "forKinds": [
+        "uses"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#06b6d4",
+        "width": 1.5,
+        "dash": "3,3"
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "id": "injects",
+      "name": "Внедрение зависимости",
+      "appliesTo": "edge",
+      "forKinds": [
+        "injects"
+      ],
+      "family": "structure",
+      "line": {
+        "color": "#f97316",
+        "width": 1.5,
+        "dash": "4,2"
+      },
+      "target": {
+        "shape": "arrow",
+        "size": 10
+      }
+    },
+    {
+      "appliesTo": "block",
+      "basedOn": "stage",
+      "border": {
+        "color": "#3b82f6",
+        "width": 2
+      },
+      "fill": "#eff6ff",
+      "forKinds": [
+        "stage"
+      ],
+      "icon": {
+        "show": false
+      },
+      "name": "Потоки данных · GPU",
+      "radius": 8,
+      "shadow": false,
+      "shape": "rect",
+      "subtitle": {
+        "show": false
+      },
+      "title": {
+        "align": "middle",
+        "size": 18,
+        "weight": 600
+      },
+      "id": "dataflow.stage.gpu"
+    },
+    {
+      "appliesTo": "block",
+      "basedOn": "stage",
+      "border": {
+        "color": "#ea580c",
+        "width": 2
+      },
+      "fill": "#fff7ed",
+      "forKinds": [
+        "stage"
+      ],
+      "icon": {
+        "show": false
+      },
+      "name": "Потоки данных · CPU",
+      "radius": 8,
+      "shadow": false,
+      "shape": "rect",
+      "subtitle": {
+        "show": false
+      },
+      "title": {
+        "align": "middle",
+        "size": 18,
+        "weight": 600
+      },
+      "id": "dataflow.stage.cpu"
+    },
+    {
+      "appliesTo": "block",
+      "basedOn": "stage",
+      "border": {
+        "color": "#16a34a",
+        "width": 2
+      },
+      "fill": "#f0fdf4",
+      "forKinds": [
+        "stage"
+      ],
+      "icon": {
+        "show": false
+      },
+      "name": "Потоки данных · граница",
+      "radius": 8,
+      "shadow": false,
+      "shape": "rect",
+      "subtitle": {
+        "show": false
+      },
+      "title": {
+        "align": "middle",
+        "size": 18,
+        "weight": 600
+      },
+      "id": "dataflow.stage.boundary"
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "VMDebug · розовый",
+      "patches": {
+        "block": {
+          "border": {
+            "color": "#dc2626",
+            "width": 2
+          },
+          "fill": "#fce7f3"
+        },
+        "container": {
+          "border": {
+            "color": "#dc2626",
+            "width": 2
+          },
+          "fill": "#fce7f3"
+        }
+      },
+      "id": "vmdebug.pink"
+    },
+    {
+      "name": "Avalonia.VMDebug · оранжевый",
+      "patches": {
+        "block": {
+          "border": {
+            "color": "#dc2626",
+            "width": 2
+          },
+          "fill": "#ffedd5"
+        },
+        "container": {
+          "border": {
+            "color": "#dc2626",
+            "width": 2
+          },
+          "fill": "#ffedd5",
+          "header": {
+            "fill": "#fed7aa"
+          }
+        }
+      },
+      "id": "avalonia_vmdebug.orange"
+    },
+    {
+      "name": "Video.Nvdec · синий",
+      "patches": {
+        "block": {
+          "border": {
+            "color": "#1d4ed8",
+            "width": 2
+          },
+          "fill": "#dbeafe"
+        },
+        "container": {
+          "border": {
+            "color": "#1d4ed8",
+            "width": 2
+          },
+          "fill": "#dbeafe"
+        }
+      },
+      "id": "video_nvdec.blue"
+    },
+    {
+      "name": "Microsoft.ML.OnnxRuntime · изумрудный",
+      "patches": {
+        "block": {
+          "border": {
+            "color": "#059669",
+            "width": 2
+          },
+          "fill": "#d1fae5"
+        },
+        "container": {
+          "border": {
+            "color": "#059669",
+            "width": 2
+          },
+          "fill": "#d1fae5"
+        }
+      },
+      "id": "onnxruntime.emerald"
+    },
+    {
+      "name": "FFmpeg · фиолетовый",
+      "patches": {
+        "block": {
+          "border": {
+            "color": "#7c3aed",
+            "width": 2
+          },
+          "fill": "#ede9fe"
+        },
+        "container": {
+          "border": {
+            "color": "#7c3aed",
+            "width": 2
+          },
+          "fill": "#ede9fe",
+          "header": {
+            "fill": "#ddd6fe"
+          }
+        }
+      },
+      "id": "ffmpeg.violet"
+    },
+    {
+      "name": "Pipeline.ONNX · базовый слой",
+      "patches": {
+        "block": {
+          "border": {
+            "color": "#0f766e",
+            "width": 2
+          },
+          "fill": "#ccfbf1"
+        },
+        "container": {
+          "border": {
+            "color": "#0f766e",
+            "width": 2
+          },
+          "fill": "#ccfbf1",
+          "header": {
+            "fill": "#99f6e4"
+          }
+        }
+      },
+      "id": "pipeline_onnx.teal"
+    },
+    {
+      "name": "Pipeline · базовый слой VM",
+      "patches": {
+        "block": {
+          "border": {
+            "color": "#b45309",
+            "width": 2
+          },
+          "fill": "#fef3c7"
+        },
+        "container": {
+          "border": {
+            "color": "#b45309",
+            "width": 2
+          },
+          "fill": "#fef3c7",
+          "header": {
+            "fill": "#fde68a"
+          }
+        }
+      },
+      "id": "pipeline.amber"
+    }
+  ],
+  "styleRules": [
+    {
+      "enabled": true,
+      "modifierIds": [
+        "vmdebug.pink"
+      ],
+      "name": "VMDebug · розовый · Lab NVDec",
+      "order": 10,
+      "scope": {
+        "projects": [
+          "nmfn"
+        ],
+        "views": [
+          "v_lab_nvdec",
+          "v_lab_nvdec_top"
+        ]
+      },
+      "selector": {
+        "all": [
+          {
+            "field": "family",
+            "op": "in",
+            "value": [
+              "block",
+              "container"
+            ]
+          },
+          {
+            "field": "assembly",
+            "op": "eq",
+            "value": "e_assembly_neuromodflownet_pipeline_vmdebug"
+          }
+        ]
+      },
+      "selectorVersion": 1,
+      "id": "rule.vmdebug.pink"
+    },
+    {
+      "enabled": true,
+      "modifierIds": [
+        "avalonia_vmdebug.orange"
+      ],
+      "name": "Avalonia.VMDebug · оранжевый · Lab NVDec",
+      "order": 10,
+      "scope": {
+        "projects": [
+          "nmfn"
+        ],
+        "views": [
+          "v_lab_nvdec",
+          "v_lab_nvdec_top"
+        ]
+      },
+      "selector": {
+        "all": [
+          {
+            "field": "family",
+            "op": "in",
+            "value": [
+              "block",
+              "container"
+            ]
+          },
+          {
+            "any": [
+              {
+                "field": "assembly",
+                "op": "eq",
+                "value": "e_assembly_neuromodflownet_pipeline_avalonia_vmdebug"
+              },
+              {
+                "all": [
+                  {
+                    "field": "kind",
+                    "op": "eq",
+                    "value": "namespace"
+                  },
+                  {
+                    "field": "code.ref",
+                    "op": "prefix",
+                    "value": "labs/NeuroModFlowNet.Pipeline.Avalonia.VMDebug/"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "selectorVersion": 1,
+      "id": "rule.avalonia_vmdebug.orange"
+    },
+    {
+      "enabled": true,
+      "modifierIds": [
+        "video_nvdec.blue"
+      ],
+      "name": "Video.Nvdec · синий · Lab NVDec",
+      "order": 10,
+      "scope": {
+        "projects": [
+          "nmfn"
+        ],
+        "views": [
+          "v_lab_nvdec",
+          "v_lab_nvdec_top"
+        ]
+      },
+      "selector": {
+        "all": [
+          {
+            "field": "family",
+            "op": "in",
+            "value": [
+              "block",
+              "container"
+            ]
+          },
+          {
+            "field": "assembly",
+            "op": "eq",
+            "value": "e_assembly_neuromodflownet_pipeline_video_nvdec"
+          }
+        ]
+      },
+      "selectorVersion": 1,
+      "id": "rule.video_nvdec.blue"
+    },
+    {
+      "enabled": true,
+      "modifierIds": [
+        "onnxruntime.emerald"
+      ],
+      "name": "Microsoft.ML.OnnxRuntime · изумрудный · Lab NVDec",
+      "order": 10,
+      "scope": {
+        "projects": [
+          "nmfn"
+        ],
+        "views": [
+          "v_lab_nvdec",
+          "v_lab_nvdec_top"
+        ]
+      },
+      "selector": {
+        "all": [
+          {
+            "field": "family",
+            "op": "in",
+            "value": [
+              "block",
+              "container"
+            ]
+          },
+          {
+            "field": "library",
+            "op": "eq",
+            "value": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+          }
+        ]
+      },
+      "selectorVersion": 1,
+      "id": "rule.onnxruntime.emerald"
+    },
+    {
+      "enabled": true,
+      "modifierIds": [
+        "ffmpeg.violet"
+      ],
+      "name": "Внешний FFmpeg · обе схемы NVDEC",
+      "order": 10,
+      "scope": {
+        "projects": [
+          "nmfn"
+        ],
+        "views": [
+          "v_lab_nvdec",
+          "v_lab_nvdec_top"
+        ]
+      },
+      "selector": {
+        "all": [
+          {
+            "field": "family",
+            "op": "in",
+            "value": [
+              "block",
+              "container"
+            ]
+          },
+          {
+            "any": [
+              {
+                "field": "library",
+                "op": "prefix",
+                "value": "FFmpeg."
+              },
+              {
+                "field": "id",
+                "op": "in",
+                "value": [
+                  "e_assembly_ffmpeg_autogen_bindings_dynamic",
+                  "e_assembly_ffmpeg_native_nvdec"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "selectorVersion": 1,
+      "id": "rule.ffmpeg.violet"
+    },
+    {
+      "enabled": true,
+      "modifierIds": [
+        "pipeline_onnx.teal"
+      ],
+      "name": "Pipeline.ONNX · базовый слой · NVDEC",
+      "order": 10,
+      "scope": {
+        "projects": [
+          "nmfn"
+        ],
+        "views": [
+          "v_lab_nvdec",
+          "v_lab_nvdec_top"
+        ]
+      },
+      "selector": {
+        "all": [
+          {
+            "field": "family",
+            "op": "in",
+            "value": [
+              "block",
+              "container"
+            ]
+          },
+          {
+            "field": "assembly",
+            "op": "eq",
+            "value": "e_asm_pipeonnx"
+          }
+        ]
+      },
+      "selectorVersion": 1,
+      "id": "rule.pipeline_onnx.teal"
+    },
+    {
+      "enabled": true,
+      "modifierIds": [
+        "pipeline.amber"
+      ],
+      "name": "Pipeline · базовый слой VM · NVDEC",
+      "order": 10,
+      "scope": {
+        "projects": [
+          "nmfn"
+        ],
+        "views": [
+          "v_lab_nvdec",
+          "v_lab_nvdec_top"
+        ]
+      },
+      "selector": {
+        "all": [
+          {
+            "field": "family",
+            "op": "in",
+            "value": [
+              "block",
+              "container"
+            ]
+          },
+          {
+            "field": "assembly",
+            "op": "eq",
+            "value": "e_asm_pipe"
+          }
+        ]
+      },
+      "selectorVersion": 1,
+      "id": "rule.pipeline.amber"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "id": "v_lab_nvdec_top",
+  "project": "nmfn",
+  "axis": "manual",
+  "icon": "camera",
+  "theme": "green",
+  "placements": [
+    {
+      "entity": "e_assembly_neuromodflownet_pipeline_multicamera",
+      "parent": null,
+      "x": 400,
+      "y": -520,
+      "width": 480,
+      "height": 100
+    },
+    {
+      "entity": "e_assembly_neuromodflownet_pipeline_videoort",
+      "parent": null,
+      "x": 1000,
+      "y": -200,
+      "width": 530,
+      "height": 100
+    },
+    {
+      "entity": "e_assembly_neuromodflownet_pipeline_video_nvdec",
+      "parent": null,
+      "x": 90,
+      "y": 0,
+      "width": 480,
+      "height": 450
+    },
+    {
+      "entity": "e_asm_pipe",
+      "parent": null,
+      "x": 730,
+      "y": 220,
+      "width": 380,
+      "height": 100
+    },
+    {
+      "entity": "e_asm_pipeonnx",
+      "parent": null,
+      "x": 1410,
+      "y": 340,
+      "width": 530,
+      "height": 100
+    },
+    {
+      "entity": "e_asm_graph",
+      "parent": null,
+      "x": 1120,
+      "y": -520,
+      "width": 430,
+      "height": 100
+    },
+    {
+      "entity": "e_asm_onnx",
+      "parent": null,
+      "x": 430,
+      "y": 720,
+      "width": 880,
+      "height": 100
+    },
+    {
+      "entity": "e_asm_cv",
+      "parent": null,
+      "x": -90,
+      "y": -910,
+      "width": 1810,
+      "height": 100
+    },
+    {
+      "entity": "e_assembly_ffmpeg_autogen_abstractions",
+      "parent": null,
+      "x": -560,
+      "y": 250,
+      "width": 390,
+      "height": 100
+    },
+    {
+      "entity": "e_assembly_ffmpeg_autogen_bindings_dynamic",
+      "parent": null,
+      "x": -560,
+      "y": 370,
+      "width": 390,
+      "height": 100
+    },
+    {
+      "entity": "e_assembly_ffmpeg_native_nvdec",
+      "parent": null,
+      "x": -560,
+      "y": 510,
+      "width": 390,
+      "height": 100
+    },
+    {
+      "entity": "e_assembly_nvcuda_native",
+      "parent": null,
+      "x": -250,
+      "y": 840,
+      "width": 480,
+      "height": 100
+    },
+    {
+      "entity": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "parent": null,
+      "x": 90,
+      "y": 1040,
+      "width": 1460,
+      "height": 100
+    },
+    {
+      "entity": "e_namespace_neuromodflownet_pipeline",
+      "parent": null,
+      "x": 2410,
+      "y": 420,
+      "width": 420,
+      "height": 300
+    }
+  ],
+  "routing": "bezier"
+}

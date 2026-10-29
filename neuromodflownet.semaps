@@ -10,9 +10,12 @@ extractors:
     project: nmfn # docs/diagrams/projects/nmfn
     root: .
     include: [src, labs]
-    edges: [holds, uses, injects, calls]
+    edges: [holds, uses, injects]
     exclude: []
     watch: false
+    external: used
+    libraries: [Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6, FFmpeg.AutoGen.Bindings.DynamicallyLoaded, FFmpeg.AutoGen.Abstractions]
+    external_types: []
 mcp:
   tools: one
   description: full

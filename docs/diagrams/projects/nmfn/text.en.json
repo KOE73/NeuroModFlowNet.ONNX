@@ -2708,6 +2708,928 @@
         "from": "ru",
         "fromHash": "d0563c77"
       }
+    },
+    "v_video_ingest_dataflow": {
+      "name": {
+        "v": "Video to working frame: data flow",
+        "at": "2026-10-08T10:40:39Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0c70fe6c"
+      }
+    },
+    "v_multicamera_dataflow": {
+      "name": {
+        "v": "MultiCamera: data flow",
+        "at": "2026-10-08T10:41:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1fb6b5de"
+      }
+    },
+    "v_videoort_dataflow": {
+      "name": {
+        "v": "VideoOrt: verify / bench data flow",
+        "at": "2026-10-08T10:41:03Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "694b796e"
+      }
+    },
+    "e_df_video_ingest_source": {
+      "name": {
+        "v": "Video file / RTSP",
+        "at": "2026-10-08T10:41:58Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c2afc960"
+      },
+      "description": {
+        "v": "Compressed video. NVDEC accepts files and RTSP; USB capture is available through OpenCV.",
+        "at": "2026-10-08T10:41:58Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "fc47de5e"
+      }
+    },
+    "e_df_video_ingest_nvdec": {
+      "name": {
+        "v": "FFmpeg + NVDEC",
+        "at": "2026-10-08T10:42:10Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3e213581"
+      },
+      "description": {
+        "v": "NvdecVideoDecoder: demux and hardware decode into CUDA NV12, without CPU fallback.",
+        "at": "2026-10-08T10:42:10Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "de7d8c7a"
+      }
+    },
+    "e_df_video_ingest_opencv": {
+      "name": {
+        "v": "OpenCV: decode to Mat",
+        "at": "2026-10-08T10:42:11Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a35321a3"
+      },
+      "description": {
+        "v": "Explicit CPU/Mat input path; also supports USB camera capture.",
+        "at": "2026-10-08T10:42:11Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b03616a2"
+      }
+    },
+    "e_df_video_ingest_ort_nv12": {
+      "name": {
+        "v": "OrtValue over NV12",
+        "at": "2026-10-08T10:42:12Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "cdf3a70d"
+      },
+      "description": {
+        "v": "NvdecFrame.CreateNv12Tensor: zero-copy view [allocatedHeight*3/2, pitch] U8. The surface remains alive until the run completes; CudaDecodeFence ensures data readiness.",
+        "at": "2026-10-08T10:42:12Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1a53ac6d"
+      }
+    },
+    "e_df_video_ingest_ort_cpu": {
+      "name": {
+        "v": "OrtValue over Mat",
+        "at": "2026-10-08T10:42:13Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e64ecae8"
+      },
+      "description": {
+        "v": "Wrap_MatImage_To_OrtTensor wraps the CPU Mat pixels.",
+        "at": "2026-10-08T10:42:13Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b20d089e"
+      }
+    },
+    "e_df_video_ingest_convert": {
+      "name": {
+        "v": "ONNX: NV12 to BGR",
+        "at": "2026-10-08T10:42:14Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "90fb34ea"
+      },
+      "description": {
+        "v": "Op_Onnx_Nv12_To_BgrU8Nhwc uses an explicit BT.601/BT.709 matrix and range; it creates a new BGR tensor on the GPU.",
+        "at": "2026-10-08T10:42:14Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "138e870d"
+      }
+    },
+    "e_df_video_ingest_upload": {
+      "name": {
+        "v": "Explicit upload",
+        "at": "2026-10-08T10:42:15Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "be76c0f8"
+      },
+      "description": {
+        "v": "Copy_OrtTensor_To_ModelDevice explicitly transfers pixels from CPU to the model device.",
+        "at": "2026-10-08T10:42:15Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e55e280e"
+      }
+    },
+    "e_df_video_ingest_prepare": {
+      "name": {
+        "v": "Camera geometry",
+        "at": "2026-10-08T10:42:16Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7fa6776b"
+      },
+      "description": {
+        "v": "CameraPrepareProgramFactory: configured undistort, perspective, rotate, crop and resize in the declared order.",
+        "at": "2026-10-08T10:42:16Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "64ec7e2c"
+      }
+    },
+    "e_df_video_ingest_rect": {
+      "name": {
+        "v": "image.rect",
+        "at": "2026-10-08T10:42:17Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2bf2054a"
+      },
+      "description": {
+        "v": "Working BGR U8 NHWC [1,H,W,3] frame after geometry; the common program uses this coordinate space.",
+        "at": "2026-10-08T10:42:17Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a8df653e"
+      }
+    },
+    "e_df_multicamera_rect": {
+      "name": {
+        "v": "image.rect",
+        "at": "2026-10-08T10:42:18Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2bf2054a"
+      },
+      "description": {
+        "v": "Full-resolution working frame after prepare. All coordinates below are mapped to rect space.",
+        "at": "2026-10-08T10:42:18Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0e06e855"
+      }
+    },
+    "e_df_multicamera_det_prepare": {
+      "name": {
+        "v": "Bag detector input",
+        "at": "2026-10-08T10:42:19Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "80fe5b0f"
+      },
+      "description": {
+        "v": "Resize/letterbox to the camera model size; BGR U8 to RGB FP16/FP32 NCHW /255. Also outputs a back-transform.",
+        "at": "2026-10-08T10:42:19Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b7f8de3e"
+      }
+    },
+    "e_df_multicamera_rgb": {
+      "name": {
+        "v": "Full-resolution RGB",
+        "at": "2026-10-08T10:42:20Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "70add0cc"
+      },
+      "description": {
+        "v": "RGB FP32 NCHW 0..1 from image.rect; the pixel source for bag crops and text ROIs when OCR is enabled.",
+        "at": "2026-10-08T10:42:20Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c393f0d7"
+      }
+    },
+    "e_df_multicamera_detector": {
+      "name": {
+        "v": "Bag detector",
+        "at": "2026-10-08T10:42:21Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b2cd44c6"
+      },
+      "description": {
+        "v": "Model_OrtValueInference<YoloBox/YoloObb>; one endpoint per model file. MaxBatchSize=1, MaxWaitTime=0.",
+        "at": "2026-10-08T10:42:21Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "09919f56"
+      }
+    },
+    "e_df_multicamera_preview_resize": {
+      "name": {
+        "v": "Preview resize",
+        "at": "2026-10-08T10:42:22Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "313afca9"
+      },
+      "description": {
+        "v": "Optional branch: resize on the GPU first; isFinal=true places the output in CPU memory.",
+        "at": "2026-10-08T10:42:22Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "96a62bd4"
+      }
+    },
+    "e_df_multicamera_det_map": {
+      "name": {
+        "v": "Detections to rect",
+        "at": "2026-10-08T10:42:23Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "35a962b5"
+      },
+      "description": {
+        "v": "Op_Map_Coordinates and class filtering turn typed boxes into TrackDetection[].",
+        "at": "2026-10-08T10:42:23Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3643e92c"
+      }
+    },
+    "e_df_multicamera_preview_mat": {
+      "name": {
+        "v": "Mat: annotated preview",
+        "at": "2026-10-08T10:42:24Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0b67760a"
+      },
+      "description": {
+        "v": "Copy_OrtValue_To_MatImage; CPU rendering consumes detections, tracks and OCR results. Optional window and PNG snapshots.",
+        "at": "2026-10-08T10:42:24Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "66d6d717"
+      }
+    },
+    "e_df_multicamera_tracker": {
+      "name": {
+        "v": "Camera tracker",
+        "at": "2026-10-08T10:42:25Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "79e8c10b"
+      },
+      "description": {
+        "v": "Op_Track: state in the camera VmGlobalMemory, updated in an ordered critical section; output TrackedObject[].",
+        "at": "2026-10-08T10:42:26Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e0ba534d"
+      }
+    },
+    "e_df_multicamera_select": {
+      "name": {
+        "v": "Bag regions + track IDs",
+        "at": "2026-10-08T10:42:26Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "4c27569d"
+      },
+      "description": {
+        "v": "Op_TracksToCropBoxes: confirmed tracks with MissedFrames=0, at most maxCrops; YoloObb[] and int[].",
+        "at": "2026-10-08T10:42:27Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1b525765"
+      }
+    },
+    "e_df_multicamera_crops": {
+      "name": {
+        "v": "Bag crops",
+        "at": "2026-10-08T10:42:27Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e64e5f7d"
+      },
+      "description": {
+        "v": "Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW: [maxCrops,3,S,S], transforms[] and actualCount. Explicit Truncate policy.",
+        "at": "2026-10-08T10:42:28Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c2716605"
+      }
+    },
+    "e_df_multicamera_text_detector": {
+      "name": {
+        "v": "Text OBB detector",
+        "at": "2026-10-08T10:42:28Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "f96cbe86"
+      },
+      "description": {
+        "v": "Shared endpoint accepts a prepared crop batch. MaxBatchSize=1; CropTextRegion[] retains the crop index.",
+        "at": "2026-10-08T10:42:29Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "18c3256a"
+      }
+    },
+    "e_df_multicamera_text_map": {
+      "name": {
+        "v": "Text regions to rect",
+        "at": "2026-10-08T10:42:29Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "cebd47ca"
+      },
+      "description": {
+        "v": "Op_MapCropTextRegionsToRect: OBBs back to rect plus parallel track IDs; padding crop slot results are discarded.",
+        "at": "2026-10-08T10:42:30Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6ca87853"
+      }
+    },
+    "e_df_multicamera_roi": {
+      "name": {
+        "v": "Text ROI preparation",
+        "at": "2026-10-08T10:42:31Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0e16afef"
+      },
+      "description": {
+        "v": "Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW: re-extract from full-resolution RGB, geometry and Paddle normalization; separate actualCount.",
+        "at": "2026-10-08T10:42:31Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "bc20a7e4"
+      }
+    },
+    "e_df_multicamera_recognition": {
+      "name": {
+        "v": "PaddleOCR Rec",
+        "at": "2026-10-08T10:42:32Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "43c8c541"
+      },
+      "description": {
+        "v": "OrtValue endpoint: [N,3,H,W] to OcrResult[]. Recognition backend is explicit; hidden fallback is forbidden. MaxBatchSize=1.",
+        "at": "2026-10-08T10:42:32Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c36d3a02"
+      }
+    },
+    "e_df_multicamera_results": {
+      "name": {
+        "v": "Text + track IDs",
+        "at": "2026-10-08T10:42:33Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "56e7d9ba"
+      },
+      "description": {
+        "v": "CameraWorker trims padding recognition slots by actualCount and associates strings with track IDs; results and statistics.",
+        "at": "2026-10-08T10:42:33Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2762844f"
+      }
+    },
+    "e_df_videoort_source": {
+      "name": {
+        "v": "Source video",
+        "at": "2026-10-08T10:42:34Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "47a4b2ae"
+      },
+      "description": {
+        "v": "Verify: one file. Bench: files/RTSP and N independent streams.",
+        "at": "2026-10-08T10:42:34Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "dd8e43d7"
+      }
+    },
+    "e_df_videoort_nvdec": {
+      "name": {
+        "v": "FFmpeg + NVDEC",
+        "at": "2026-10-08T10:42:35Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3e213581"
+      },
+      "description": {
+        "v": "One NvdecVideoDecoder per stream. UseFence=true by default; --decode-only measures only this section.",
+        "at": "2026-10-08T10:42:35Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "22cfaf5c"
+      }
+    },
+    "e_df_videoort_cpu": {
+      "name": {
+        "v": "OpenCV: CPU reference",
+        "at": "2026-10-08T10:42:36Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "5fdaad00"
+      },
+      "description": {
+        "v": "VerifyCommand decodes the same file frame by frame through OpenCV.",
+        "at": "2026-10-08T10:42:36Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "fd97d9cb"
+      }
+    },
+    "e_df_videoort_ort": {
+      "name": {
+        "v": "OrtValue over NV12",
+        "at": "2026-10-08T10:42:37Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "cdf3a70d"
+      },
+      "description": {
+        "v": "Zero-copy wrapper over the CUDA surface; NvdecFrame remains alive until the VM run ends.",
+        "at": "2026-10-08T10:42:37Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3cfec1d8"
+      }
+    },
+    "e_df_videoort_convert": {
+      "name": {
+        "v": "ONNX: NV12 to BGR",
+        "at": "2026-10-08T10:42:38Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "90fb34ea"
+      },
+      "description": {
+        "v": "BGR U8 NHWC. Verify: isFinal=true, CPU output. Bench: isFinal=false, GPU output.",
+        "at": "2026-10-08T10:42:38Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2e3e818d"
+      }
+    },
+    "e_df_videoort_download": {
+      "name": {
+        "v": "Mat from GPU path",
+        "at": "2026-10-08T10:42:39Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c0963226"
+      },
+      "description": {
+        "v": "Verify: Copy_OrtValue_To_MatImage; intentional download for pixel comparison.",
+        "at": "2026-10-08T10:42:39Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "12d5277c"
+      }
+    },
+    "e_df_videoort_resize": {
+      "name": {
+        "v": "Bench: GPU resize",
+        "at": "2026-10-08T10:42:39Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e6467cfd"
+      },
+      "description": {
+        "v": "Op_Onnx_Resize_U8_NHWC, without frame download; one VmController per stream.",
+        "at": "2026-10-08T10:42:40Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2acc6f85"
+      }
+    },
+    "e_df_videoort_statistics": {
+      "name": {
+        "v": "Bench: measurements",
+        "at": "2026-10-08T10:42:40Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "c22ca484"
+      },
+      "description": {
+        "v": "Completed frames, decode ms, VM ms, total/per-stream FPS. This measures the video path without detection, tracking or OCR.",
+        "at": "2026-10-08T10:42:40Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "39d5af9e"
+      }
+    },
+    "e_df_videoort_compare": {
+      "name": {
+        "v": "Verify: pixel comparison",
+        "at": "2026-10-08T10:42:41Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1cd6f6cf"
+      },
+      "description": {
+        "v": "Cv2.Absdiff; mean and maximum absolute difference with frame-by-frame matching.",
+        "at": "2026-10-08T10:42:41Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "eb0c5de8"
+      }
+    },
+    "e_df_videoort_artifacts": {
+      "name": {
+        "v": "Verify: PNG + metrics",
+        "at": "2026-10-08T10:42:42Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "048ec091"
+      },
+      "description": {
+        "v": "First/worst frame: GPU path, CPU reference, diff*8. Pass: compared>0 and average difference below threshold; bitwise identity is not required.",
+        "at": "2026-10-08T10:42:42Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "424a36f2"
+      }
+    },
+    "r_df_video_ingest_source_df_video_ingest_nvdec_data_flow": {
+      "name": {
+        "v": "Compressed video packets",
+        "at": "2026-10-08T10:43:05Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "dc2a8b94"
+      }
+    },
+    "r_df_video_ingest_source_df_video_ingest_opencv_data_flow": {
+      "name": {
+        "v": "Video data",
+        "at": "2026-10-08T10:43:06Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "e6022bc4"
+      }
+    },
+    "r_df_video_ingest_nvdec_df_video_ingest_ort_nv12_data_flow": {
+      "name": {
+        "v": "CUDA NV12 surface",
+        "at": "2026-10-08T10:43:07Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7f35d8c1"
+      }
+    },
+    "r_df_video_ingest_opencv_df_video_ingest_ort_cpu_data_flow": {
+      "name": {
+        "v": "CPU Mat: BGR U8",
+        "at": "2026-10-08T10:43:08Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "dc61dfb1"
+      }
+    },
+    "r_df_video_ingest_ort_nv12_df_video_ingest_convert_data_flow": {
+      "name": {
+        "v": "GPU OrtValue: NV12 U8",
+        "at": "2026-10-08T10:43:09Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9a4303eb"
+      }
+    },
+    "r_df_video_ingest_ort_cpu_df_video_ingest_upload_data_flow": {
+      "name": {
+        "v": "CPU OrtValue: BGR U8 NHWC",
+        "at": "2026-10-08T10:43:10Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "710a7d8b"
+      }
+    },
+    "r_df_video_ingest_convert_df_video_ingest_prepare_data_flow": {
+      "name": {
+        "v": "GPU BGR U8 NHWC",
+        "at": "2026-10-08T10:43:11Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a01d6365"
+      }
+    },
+    "r_df_video_ingest_upload_df_video_ingest_prepare_data_flow": {
+      "name": {
+        "v": "Device BGR U8 NHWC",
+        "at": "2026-10-08T10:43:12Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "b702e223"
+      }
+    },
+    "r_df_video_ingest_prepare_df_video_ingest_rect_data_flow": {
+      "name": {
+        "v": "OrtValue [1,H,W,3]",
+        "at": "2026-10-08T10:43:13Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "fac71192"
+      }
+    },
+    "r_df_multicamera_rect_df_multicamera_det_prepare_data_flow": {
+      "name": {
+        "v": "BGR U8 NHWC",
+        "at": "2026-10-08T10:43:15Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "24b82dd7"
+      }
+    },
+    "r_df_multicamera_rect_df_multicamera_rgb_data_flow": {
+      "name": {
+        "v": "BGR U8 NHWC",
+        "at": "2026-10-08T10:43:16Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "24b82dd7"
+      }
+    },
+    "r_df_multicamera_det_prepare_df_multicamera_detector_data_flow": {
+      "name": {
+        "v": "RGB FP16/FP32 NCHW",
+        "at": "2026-10-08T10:43:18Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "205cf681"
+      }
+    },
+    "r_df_multicamera_det_prepare_df_multicamera_det_map_data_flow": {
+      "name": {
+        "v": "Back-transform",
+        "at": "2026-10-08T10:43:18Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "0daf0c73"
+      }
+    },
+    "r_df_multicamera_detector_df_multicamera_det_map_data_flow": {
+      "name": {
+        "v": "YoloBox[] / YoloObb[]",
+        "at": "2026-10-08T10:43:20Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "984eae5e"
+      }
+    },
+    "r_df_multicamera_det_map_df_multicamera_tracker_data_flow": {
+      "name": {
+        "v": "TrackDetection[]",
+        "at": "2026-10-08T10:43:20Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "1bb3ac8b"
+      }
+    },
+    "r_df_multicamera_tracker_df_multicamera_select_data_flow": {
+      "name": {
+        "v": "TrackedObject[]",
+        "at": "2026-10-08T10:43:21Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "74672cb2"
+      }
+    },
+    "r_df_multicamera_select_df_multicamera_crops_data_flow": {
+      "name": {
+        "v": "OBB[]",
+        "at": "2026-10-08T10:43:22Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "004ea4f2"
+      }
+    },
+    "r_df_multicamera_rgb_df_multicamera_crops_data_flow": {
+      "name": {
+        "v": "RGB FP32 pixels",
+        "at": "2026-10-08T10:43:23Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "47ab2fa5"
+      }
+    },
+    "r_df_multicamera_crops_df_multicamera_text_detector_data_flow": {
+      "name": {
+        "v": "GPU batch [maxCrops,3,S,S]",
+        "at": "2026-10-08T10:43:24Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "51db214b"
+      }
+    },
+    "r_df_multicamera_crops_df_multicamera_text_map_data_flow": {
+      "name": {
+        "v": "Transforms[] / count",
+        "at": "2026-10-08T10:45:32Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "33f7f342"
+      }
+    },
+    "r_df_multicamera_select_df_multicamera_text_map_data_flow": {
+      "name": {
+        "v": "Track IDs",
+        "at": "2026-10-08T10:43:26Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d1a82521"
+      }
+    },
+    "r_df_multicamera_text_detector_df_multicamera_text_map_data_flow": {
+      "name": {
+        "v": "CropTextRegion[]",
+        "at": "2026-10-08T10:43:26Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7d8a2c60"
+      }
+    },
+    "r_df_multicamera_text_map_df_multicamera_roi_data_flow": {
+      "name": {
+        "v": "OBB rect",
+        "at": "2026-10-08T10:43:27Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "2bd19234"
+      }
+    },
+    "r_df_multicamera_rgb_df_multicamera_roi_data_flow": {
+      "name": {
+        "v": "Full-resolution pixels",
+        "at": "2026-10-08T10:43:28Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "f8bcec3d"
+      }
+    },
+    "r_df_multicamera_roi_df_multicamera_recognition_data_flow": {
+      "name": {
+        "v": "FP32 NCHW + actualCount",
+        "at": "2026-10-08T10:43:29Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "bcdd2de0"
+      }
+    },
+    "r_df_multicamera_recognition_df_multicamera_results_data_flow": {
+      "name": {
+        "v": "OcrResult[]",
+        "at": "2026-10-08T10:43:30Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "7c7ec63e"
+      }
+    },
+    "r_df_multicamera_text_map_df_multicamera_results_data_flow": {
+      "name": {
+        "v": "Track IDs",
+        "at": "2026-10-08T10:43:31Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "d1a82521"
+      }
+    },
+    "r_df_multicamera_rect_df_multicamera_preview_resize_data_flow": {
+      "name": {
+        "v": "BGR U8 NHWC",
+        "at": "2026-10-08T10:43:31Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "24b82dd7"
+      }
+    },
+    "r_df_multicamera_preview_resize_df_multicamera_preview_mat_data_flow": {
+      "name": {
+        "v": "CPU tensor → Mat",
+        "at": "2026-10-08T10:43:32Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "644ab0ce"
+      }
+    },
+    "r_df_videoort_source_df_videoort_nvdec_data_flow": {
+      "name": {
+        "v": "Compressed video packets",
+        "at": "2026-10-08T10:43:34Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "dc2a8b94"
+      }
+    },
+    "r_df_videoort_source_df_videoort_cpu_data_flow": {
+      "name": {
+        "v": "Same file",
+        "at": "2026-10-08T10:43:35Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "769320b2"
+      }
+    },
+    "r_df_videoort_nvdec_df_videoort_ort_data_flow": {
+      "name": {
+        "v": "CUDA NV12",
+        "at": "2026-10-08T10:43:35Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "3e4c6cf5"
+      }
+    },
+    "r_df_videoort_ort_df_videoort_convert_data_flow": {
+      "name": {
+        "v": "GPU OrtValue",
+        "at": "2026-10-08T10:43:36Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "88632fe7"
+      }
+    },
+    "r_df_videoort_convert_df_videoort_download_data_flow": {
+      "name": {
+        "v": "Verify: CPU BGR tensor",
+        "at": "2026-10-08T10:43:37Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "5ad33f28"
+      }
+    },
+    "r_df_videoort_convert_df_videoort_resize_data_flow": {
+      "name": {
+        "v": "GPU BGR",
+        "at": "2026-10-08T10:43:37Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "ef7be726"
+      }
+    },
+    "r_df_videoort_resize_df_videoort_statistics_data_flow": {
+      "name": {
+        "v": "Frame count / timing",
+        "at": "2026-10-08T10:43:38Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "6a2be61b"
+      }
+    },
+    "r_df_videoort_download_df_videoort_compare_data_flow": {
+      "name": {
+        "v": "BGR Mat from GPU path",
+        "at": "2026-10-08T10:43:39Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "9d165ed8"
+      }
+    },
+    "r_df_videoort_cpu_df_videoort_compare_data_flow": {
+      "name": {
+        "v": "CPU reference Mat",
+        "at": "2026-10-08T10:43:40Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "a7d0c2b2"
+      }
+    },
+    "r_df_videoort_compare_df_videoort_artifacts_data_flow": {
+      "name": {
+        "v": "Diff / mean / max",
+        "at": "2026-10-08T10:43:40Z",
+        "origin": "translated",
+        "from": "ru",
+        "fromHash": "43b91edf"
+      }
     }
   }
 }

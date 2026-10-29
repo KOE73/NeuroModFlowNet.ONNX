@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1820" height="1720" viewBox="0 0 1820 1720">
+<rect width="100%" height="100%" fill="white"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/></marker></defs>
+<text x="910.0" y="42" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700" fill="#0f172a">VideoOrt: verify / bench, потоки данных</text>
+<text x="910.0" y="84" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">Только потоки данных • синий: GPU • оранжевый: CPU • зелёный: граница</text>
+<polyline points="900.0,240 900.0,310.0 340.0,310.0 340.0,380" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="900.0,240 900.0,310.0 1460.0,310.0 1460.0,380" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="340.0,480 340.0,550.0 340.0,550.0 340.0,620" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="340.0,720 340.0,790.0 340.0,790.0 340.0,860" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="340.0,960 340.0,1030.0 340.0,1030.0 340.0,1100" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="560.0,910.0 680.0,910.0" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="900.0,960 900.0,1030.0 900.0,1030.0 900.0,1100" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="340.0,1200 340.0,1270.0 900.0,1270.0 900.0,1340" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1460,480 1460,1390 1120,1390" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="900.0,1440 900.0,1510.0 900.0,1510.0 900.0,1580" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="680" y="140" width="440" height="100" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"><title>Verify: один файл. Bench: файлы/RTSP, N независимых streams.</title></rect>
+<text x="900.0" y="180.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Исходное видео</text>
+<text x="900.0" y="214.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">Вход / граница памяти</text>
+<rect x="120" y="380" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>Собственный NvdecVideoDecoder на stream. UseFence=true по умолчанию; --decode-only измеряет только этот участок.</title></rect>
+<text x="340.0" y="420.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">FFmpeg + NVDEC</text>
+<text x="340.0" y="454.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="1240" y="380" width="440" height="100" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"><title>VerifyCommand декодирует тот же файл по кадрам через OpenCV.</title></rect>
+<text x="1460.0" y="420.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">OpenCV: CPU-эталон</text>
+<text x="1460.0" y="454.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">CPU / managed data</text>
+<rect x="120" y="620" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>Zero-copy обёртка поверхности CUDA с удержанием NvdecFrame до конца VM run.</title></rect>
+<text x="340.0" y="660.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">OrtValue над NV12</text>
+<text x="340.0" y="694.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="120" y="860" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>BGR U8 NHWC. Verify: isFinal=true, выход CPU. Bench: isFinal=false, выход GPU.</title></rect>
+<text x="340.0" y="900.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">ONNX: NV12 → BGR</text>
+<text x="340.0" y="934.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="120" y="1100" width="440" height="100" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"><title>Verify: Copy_OrtValue_To_MatImage; намеренная выгрузка для сравнения пикселей.</title></rect>
+<text x="340.0" y="1140.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Mat после GPU-пути</text>
+<text x="340.0" y="1174.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">CPU / managed data</text>
+<rect x="680" y="860" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>Op_Onnx_Resize_U8_NHWC, без выгрузки кадра; один VmController на stream.</title></rect>
+<text x="900.0" y="900.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Bench: GPU resize</text>
+<text x="900.0" y="934.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="680" y="1100" width="440" height="100" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"><title>Completed frames, decode ms, VM ms, total/per-stream FPS. Это скорость видеотракта без детекции, трекера и OCR.</title></rect>
+<text x="900.0" y="1140.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Bench: измерения</text>
+<text x="900.0" y="1174.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">CPU / managed data</text>
+<rect x="680" y="1340" width="440" height="100" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"><title>Cv2.Absdiff; средняя и максимальная абсолютная разница, покадровое соответствие.</title></rect>
+<text x="900.0" y="1380.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Verify: сравнение пикселей</text>
+<text x="900.0" y="1414.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">CPU / managed data</text>
+<rect x="680" y="1580" width="440" height="100" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"><title>Первый/худший кадр: GPU-путь, CPU-эталон, diff*8. Pass: compared&gt;0 и средняя разница ниже threshold; побитовая идентичность не требуется.</title></rect>
+<text x="900.0" y="1620.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Verify: PNG + метрики</text>
+<text x="900.0" y="1654.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">CPU / managed data</text>
+<rect x="504.75" y="282.0" width="230.5" height="32" rx="4" fill="white"/>
+<text x="620.0" y="298.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Сжатые видеопакеты</text>
+<rect x="1110.0" y="282.0" width="140.0" height="32" rx="4" fill="white"/>
+<text x="1180.0" y="298.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Тот же файл</text>
+<rect x="273.0" y="522.0" width="134.0" height="32" rx="4" fill="white"/>
+<text x="340.0" y="538.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">CUDA NV12</text>
+<rect x="265.0" y="762.0" width="150.0" height="32" rx="4" fill="white"/>
+<text x="340.0" y="778.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">GPU OrtValue</text>
+<rect x="221.0" y="1002.0" width="238.0" height="32" rx="4" fill="white"/>
+<text x="340.0" y="1018.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Verify: CPU BGR tensor</text>
+<rect x="567.25" y="882.0" width="105.5" height="32" rx="4" fill="white"/>
+<text x="620.0" y="898.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">GPU BGR</text>
+<rect x="780.75" y="1002.0" width="238.5" height="32" rx="4" fill="white"/>
+<text x="900.0" y="1018.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Число кадров / время</text>
+<rect x="513.0" y="1242.0" width="214.0" height="32" rx="4" fill="white"/>
+<text x="620.0" y="1258.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">BGR Mat после GPU</text>
+<rect x="1361.0" y="994" width="198.0" height="32" rx="4" fill="white"/>
+<text x="1460" y="1010" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">CPU reference Mat</text>
+<rect x="807.0" y="1482.0" width="186.0" height="32" rx="4" fill="white"/>
+<text x="900.0" y="1498.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Diff / mean / max</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="1480" viewBox="0 0 1420 1480">
+<rect width="100%" height="100%" fill="white"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/></marker></defs>
+<text x="710.0" y="42" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700" fill="#0f172a">Видео → рабочий кадр: потоки данных</text>
+<text x="710.0" y="84" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">Только потоки данных • синий: GPU • оранжевый: CPU • зелёный: граница</text>
+<polyline points="710.0,240 710.0,310.0 320.0,310.0 320.0,380" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="710.0,240 710.0,310.0 1100.0,310.0 1100.0,380" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="320.0,480 320.0,550.0 320.0,550.0 320.0,620" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1100.0,480 1100.0,550.0 1100.0,550.0 1100.0,620" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="320.0,720 320.0,790.0 320.0,790.0 320.0,860" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1100.0,720 1100.0,790.0 1100.0,790.0 1100.0,860" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="320.0,960 320.0,1030.0 710.0,1030.0 710.0,1100" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="1100.0,960 1100.0,1030.0 710.0,1030.0 710.0,1100" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<polyline points="710.0,1200 710.0,1270.0 710.0,1270.0 710.0,1340" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="490" y="140" width="440" height="100" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"><title>Сжатое видео. NVDEC принимает файлы и RTSP; USB-источник доступен через OpenCV.</title></rect>
+<text x="710.0" y="180.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Видеофайл / RTSP</text>
+<text x="710.0" y="214.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">Вход / граница памяти</text>
+<rect x="100" y="380" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>NvdecVideoDecoder: demux и аппаратный декод в CUDA NV12. Без CPU fallback.</title></rect>
+<text x="320.0" y="420.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">FFmpeg + NVDEC</text>
+<text x="320.0" y="454.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="880" y="380" width="440" height="100" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"><title>Явно выбранный CPU/Mat путь; также поддерживает USB-камеру.</title></rect>
+<text x="1100.0" y="420.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">OpenCV: декод в Mat</text>
+<text x="1100.0" y="454.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">CPU / managed data</text>
+<rect x="100" y="620" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>NvdecFrame.CreateNv12Tensor: zero-copy view [allocatedHeight*3/2, pitch] U8. Поверхность удерживается до завершения run; CudaDecodeFence обеспечивает готовность данных.</title></rect>
+<text x="320.0" y="660.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">OrtValue над NV12</text>
+<text x="320.0" y="694.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="880" y="620" width="440" height="100" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"><title>Wrap_MatImage_To_OrtTensor: обёртка над пикселями CPU Mat.</title></rect>
+<text x="1100.0" y="660.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">OrtValue над Mat</text>
+<text x="1100.0" y="694.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">CPU / managed data</text>
+<rect x="100" y="860" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>Op_Onnx_Nv12_To_BgrU8Nhwc: явная цветовая матрица BT.601/BT.709 и диапазон; создаёт новый BGR tensor на GPU.</title></rect>
+<text x="320.0" y="900.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">ONNX: NV12 → BGR</text>
+<text x="320.0" y="934.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="880" y="860" width="440" height="100" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"><title>Copy_OrtTensor_To_ModelDevice: явный перенос пикселей с CPU на устройство модели.</title></rect>
+<text x="1100.0" y="900.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Явный upload</text>
+<text x="1100.0" y="934.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">Вход / граница памяти</text>
+<rect x="490" y="1100" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>CameraPrepareProgramFactory: configured undistort, perspective, rotate, crop, resize в заданном порядке.</title></rect>
+<text x="710.0" y="1140.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Геометрия камеры</text>
+<text x="710.0" y="1174.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="490" y="1340" width="440" height="100" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"><title>Рабочий кадр BGR U8 NHWC [1,H,W,3] после геометрии; единое координатное пространство common.</title></rect>
+<text x="710.0" y="1380.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">image.rect</text>
+<text x="710.0" y="1414.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="400" fill="#475569">GPU / tensor</text>
+<rect x="399.75" y="282.0" width="230.5" height="32" rx="4" fill="white"/>
+<text x="515.0" y="298.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Сжатые видеопакеты</text>
+<rect x="828.5" y="282.0" width="153.0" height="32" rx="4" fill="white"/>
+<text x="905.0" y="298.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Видеоданные</text>
+<rect x="185.0" y="522.0" width="270.0" height="32" rx="4" fill="white"/>
+<text x="320.0" y="538.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">CUDA NV12-поверхность</text>
+<rect x="1007.0" y="522.0" width="186.0" height="32" rx="4" fill="white"/>
+<text x="1100.0" y="538.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">CPU Mat: BGR U8</text>
+<rect x="196.0" y="762.0" width="248.0" height="32" rx="4" fill="white"/>
+<text x="320.0" y="778.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">GPU OrtValue: NV12 U8</text>
+<rect x="947.5" y="762.0" width="305.0" height="32" rx="4" fill="white"/>
+<text x="1100.0" y="778.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">CPU OrtValue: BGR U8 NHWC</text>
+<rect x="410.0" y="1002.0" width="210.0" height="32" rx="4" fill="white"/>
+<text x="515.0" y="1018.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">GPU BGR U8 NHWC</text>
+<rect x="789.0" y="1002.0" width="232.0" height="32" rx="4" fill="white"/>
+<text x="905.0" y="1018.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">Device BGR U8 NHWC</text>
+<rect x="612.25" y="1242.0" width="195.5" height="32" rx="4" fill="white"/>
+<text x="710.0" y="1258.0" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="400" fill="#1d4ed8">OrtValue [1,H,W,3]</text>
+</svg>

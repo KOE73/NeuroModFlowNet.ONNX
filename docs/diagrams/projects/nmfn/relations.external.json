@@ -1,0 +1,4928 @@
+{
+  "relations": [
+    {
+      "id": "r_benchmark_inferencesession_createinferencesession",
+      "from": "e_benchmark",
+      "to": "e_inferencesession",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Rec/BenchmarkCommon.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.Benchmark",
+          "via": {
+            "member": "CreateInferenceSession",
+            "memberKind": "return",
+            "text": "InferenceSession"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_benchmark_nodemetadata_meta",
+      "from": "e_benchmark",
+      "to": "e_nodemetadata",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Rec/BenchmarkCommon.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.Benchmark",
+          "via": {
+            "member": "meta",
+            "memberKind": "parameter",
+            "text": "NodeMetadata"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortallocator_matricescudaallocator",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "matricesCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortallocator_outputcudaallocator",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "outputCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortallocator_uploadcudaallocator",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "uploadCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortmemoryinfo_matricescudamemoryinfo",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "matricesCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortmemoryinfo_outputcudamemoryinfo",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "outputCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortmemoryinfo_uploadcudamemoryinfo",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "uploadCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_matricesondevice",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "matricesOnDevice",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtValue?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_preparedoutput",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "preparedOutput",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtValue?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_sourceondevice",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "sourceOnDevice",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtValue?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_creatematrixtensor",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "CreateMatrixTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_createsourcetensor",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "CreateSourceTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_uploadmatricestodevice",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "UploadMatricesToDevice",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_uploadsourcetodevice",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "UploadSourceToDevice",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_matrices",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "matrices",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_ortvalue_source",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "source",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparebenchmark_runoptions_runoptions",
+      "from": "e_paddlerecroipreparebenchmark",
+      "to": "e_runoptions",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareBenchmark",
+          "via": {
+            "member": "runOptions",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "RunOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortallocator_matricescudaallocator",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "matricesCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortallocator_outputcudaallocator",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "outputCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortallocator_uploadcudaallocator",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "uploadCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortmemoryinfo_matricescudamemoryinfo",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "matricesCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortmemoryinfo_outputcudamemoryinfo",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "outputCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortmemoryinfo_uploadcudamemoryinfo",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "uploadCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_matricesondevice",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "matricesOnDevice",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtValue?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_preparedoutput",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "preparedOutput",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtValue?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_sourceondevice",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "sourceOnDevice",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtValue?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_creatematrixtensor",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "CreateMatrixTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_createsourcetensor",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "CreateSourceTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_uploadmatricestodevice",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "UploadMatricesToDevice",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_uploadsourcetodevice",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "UploadSourceToDevice",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_matrices",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "matrices",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_ortvalue_source",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "source",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddlerecroipreparefixedcapacitybenchmark_runoptions_runoptions",
+      "from": "e_paddlerecroipreparefixedcapacitybenchmark",
+      "to": "e_runoptions",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Bench/Bench/Ocr/PaddleRecRoiPrepareFixedCapacityBenchmark.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Bench.PaddleRecRoiPrepareFixedCapacityBenchmark",
+          "via": {
+            "member": "runOptions",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "RunOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_poscvdnnfp16_float16_buffer_item",
+      "from": "e_poscvdnnfp16",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Pos/PosCvdnnFP16.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.PosCvdnnFP16",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_posdivhalftensorreorderptrfp16_float16_buffer_item",
+      "from": "e_posdivhalftensorreorderptrfp16",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Pos/PosDivHalfTensorReorderPtrFP16.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.PosDivHalfTensorReorderPtrFP16",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_posreorderdivhalfptrfp16_float16_buffer_item",
+      "from": "e_posreorderdivhalfptrfp16",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Pos/PosReorderDivHalfPtrFP16.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.PosReorderDivHalfPtrFP16",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_posreorderdivptrhalftensorfp16_float16_buffer_item",
+      "from": "e_posreorderdivptrhalftensorfp16",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Pos/PosReorderDivPtrHalfTensorFP16.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.PosReorderDivPtrHalfTensorFP16",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_posreorderptrdivhalftensorfp16_float16_buffer_item",
+      "from": "e_posreorderptrdivhalftensorfp16",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Pos/PosReorderPtrDivHalfTensorFP16.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.PosReorderPtrDivHalfTensorFP16",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_positivealgorithmhelpers_float16_autotunefp16_arg:1",
+      "from": "e_positivealgorithmhelpers",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Pos/Helpers/PositiveAlgorithmHelpers.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.PositiveAlgorithmHelpers",
+          "via": {
+            "member": "AutoTuneFP16",
+            "memberKind": "return",
+            "text": "InputDataToSpanBufConverter<List<Mat>, Float16>",
+            "path": [
+              "arg:1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_positivealgorithmhelpers_float16_buffer_item",
+      "from": "e_positivealgorithmhelpers",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Pos/Helpers/PositiveAlgorithmHelpers.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.PositiveAlgorithmHelpers",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_symcvdnnfp16_float16_buffer_item",
+      "from": "e_symcvdnnfp16",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Sym/SymCvdnnFP16.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.SymCvdnnFP16",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_symreordernormptrhalftensorfp16_float16_buffer_item",
+      "from": "e_symreordernormptrhalftensorfp16",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Sym/SymReorderNormPtrHalfTensorFP16.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.SymReorderNormPtrHalfTensorFP16",
+          "via": {
+            "member": "buffer",
+            "memberKind": "parameter",
+            "text": "Span<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_symmetricalgorithmhelpers_float16_autotunefp16_arg:1",
+      "from": "e_symmetricalgorithmhelpers",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Inputs/Algorithms/Sym/Helpers/SymmetricAlgorithmHelpers.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Converters.Algorithms.SymmetricAlgorithmHelpers",
+          "via": {
+            "member": "AutoTuneFP16",
+            "memberKind": "return",
+            "text": "InputDataToSpanBufConverter<List<Mat>, Float16>",
+            "path": [
+              "arg:1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_cudaconfig_ortcudaprovideroptions_cudaoptions",
+      "from": "e_cudaconfig",
+      "to": "e_ortcudaprovideroptions",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxConfigs/CudaConfig.cs",
+          "symbol": "NeuroModFlowNet.ONNX.CudaConfig",
+          "via": {
+            "member": "cudaOptions",
+            "memberKind": "parameter",
+            "text": "OrtCUDAProviderOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_imodelmetadataprovider_tensorelementtype_getinputelementtype",
+      "from": "e_imodelmetadataprovider",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Contracts/IModelMetadataProvider.cs",
+          "symbol": "NeuroModFlowNet.ONNX.IModelMetadataProvider",
+          "via": {
+            "member": "GetInputElementType",
+            "memberKind": "return",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_imodelmetadataprovider_tensorelementtype_getoutputelementtype",
+      "from": "e_imodelmetadataprovider",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Contracts/IModelMetadataProvider.cs",
+          "symbol": "NeuroModFlowNet.ONNX.IModelMetadataProvider",
+          "via": {
+            "member": "GetOutputElementType",
+            "memberKind": "return",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ionnxmodeloutputs_ortvalue_getoutputvalue",
+      "from": "e_ionnxmodeloutputs",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Contracts/IOnnxModelOutputs.cs",
+          "symbol": "NeuroModFlowNet.ONNX.IOnnxModelOutputs",
+          "via": {
+            "member": "GetOutputValue",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_program_3_float16_converter_arg:1",
+      "from": "e_program_3",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.ONNX.Lab.Algorithms/Program.cs",
+          "symbol": "NeuroModFlowNet.ONNX.Lab.Algorithms.Program",
+          "via": {
+            "member": "converter",
+            "memberKind": "parameter",
+            "text": "InputDataToSpanBufConverter<List<Mat>, Float16>",
+            "path": [
+              "arg:1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortiobinding_iobinding",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortiobinding",
+      "type": "holds.one",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "IoBinding",
+            "memberKind": "property",
+            "modifiers": [
+              "public",
+              "readonly"
+            ],
+            "text": "OrtIoBinding"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_inputpersistentvalues_value_arg:1",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "inputPersistentValues",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "Dictionary<string, (long[] shape, OrtValue val)>",
+            "path": [
+              "value",
+              "arg:1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_outputpersistentvalues_value_arg:1",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "outputPersistentValues",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "Dictionary<string, (long[] shape, OrtValue val)>",
+            "path": [
+              "value",
+              "arg:1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_runinputvalues_value",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "holds.keyed.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "runInputValues",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "Dictionary<string, OrtValue>",
+            "path": [
+              "value"
+            ],
+            "cardinality": "keyed",
+            "mutability": "mutable"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_runoutputvalues_value",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "holds.keyed.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "runOutputValues",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "Dictionary<string, OrtValue>",
+            "path": [
+              "value"
+            ],
+            "cardinality": "keyed",
+            "mutability": "mutable"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_getinputpersistentvalue",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "GetInputPersistentValue",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_getoutputpersistentvalue",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "GetOutputPersistentValue",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_getoutputvalue",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "GetOutputValue",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_initinputpersistentvalue",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "InitInputPersistentValue",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_initoutputpersistentvalue",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "InitOutputPersistentValue",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_ortvalue_value",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "value",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontext_runoptions_runoptions",
+      "from": "e_onnxexecutioncontext",
+      "to": "e_runoptions",
+      "type": "holds.one",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContext.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContext",
+          "via": {
+            "member": "RunOptions",
+            "memberKind": "property",
+            "modifiers": [
+              "public",
+              "readonly"
+            ],
+            "text": "RunOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxexecutioncontextdebugview_nodemetadata_nodemetadata",
+      "from": "e_onnxexecutioncontextdebugview",
+      "to": "e_nodemetadata",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxExecutionContextDebugView.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxExecutionContextDebugView",
+          "via": {
+            "member": "nodeMetadata",
+            "memberKind": "parameter",
+            "text": "NodeMetadata"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxmodel_inferencesession_session",
+      "from": "e_onnxmodel",
+      "to": "e_inferencesession",
+      "type": "holds.one",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxModel.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxModel",
+          "via": {
+            "member": "Session",
+            "memberKind": "property",
+            "modifiers": [
+              "public",
+              "readonly"
+            ],
+            "text": "InferenceSession"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxmodel_sessionoptions_createsessionoptions",
+      "from": "e_onnxmodel",
+      "to": "e_sessionoptions",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxModel.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxModel",
+          "via": {
+            "member": "CreateSessionOptions",
+            "memberKind": "return",
+            "text": "SessionOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxmodel_sessionoptions_sessionoptions",
+      "from": "e_onnxmodel",
+      "to": "e_sessionoptions",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxModel.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxModel",
+          "via": {
+            "member": "sessionOptions",
+            "memberKind": "parameter",
+            "text": "SessionOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxmodel_tensorelementtype_getinputelementtype",
+      "from": "e_onnxmodel",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxModel.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxModel",
+          "via": {
+            "member": "GetInputElementType",
+            "memberKind": "return",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxmodel_tensorelementtype_getoutputelementtype",
+      "from": "e_onnxmodel",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxModel.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxModel",
+          "via": {
+            "member": "GetOutputElementType",
+            "memberKind": "return",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxruntimemodelsource_inferencesession_createsession",
+      "from": "e_onnxruntimemodelsource",
+      "to": "e_inferencesession",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxRuntimeModelSource.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxRuntimeModelSource",
+          "via": {
+            "member": "CreateSession",
+            "memberKind": "return",
+            "text": "InferenceSession"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_onnxruntimemodelsource_sessionoptions_sessionoptions",
+      "from": "e_onnxruntimemodelsource",
+      "to": "e_sessionoptions",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxRuntimeModelSource.cs",
+          "symbol": "NeuroModFlowNet.ONNX.OnnxRuntimeModelSource",
+          "via": {
+            "member": "sessionOptions",
+            "memberKind": "parameter",
+            "text": "SessionOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrdetfactory_float16_list_fp16_16fc1_safe_arg:2_arg:0",
+      "from": "e_paddleocrdetfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Det/Factories/PaddleOCRDetFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.PaddleOCRDetFactory",
+          "via": {
+            "member": "List_FP16_16FC1_Safe",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_SafeListExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrdetfactory_float16_list_fp16_8uc1_safe_arg:2_arg:0",
+      "from": "e_paddleocrdetfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Det/Factories/PaddleOCRDetFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.PaddleOCRDetFactory",
+          "via": {
+            "member": "List_FP16_8UC1_Safe",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC1_SafeListExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrdetfactory_float16_list_fp16_8uc3_rgb_safe_arg:2_arg:0",
+      "from": "e_paddleocrdetfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Det/Factories/PaddleOCRDetFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.PaddleOCRDetFactory",
+          "via": {
+            "member": "List_FP16_8UC3_RGB_Safe",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, List<Mat>, ConverterMatListNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC3_RGB_SafeListExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrdetfactory_float16_single_fp16_16fc1_safe_arg:2_arg:0",
+      "from": "e_paddleocrdetfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Det/Factories/PaddleOCRDetFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.PaddleOCRDetFactory",
+          "via": {
+            "member": "Single_FP16_16FC1_Safe",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_SafeExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrdetfactory_float16_single_fp16_16fc1_unsafe_arg:2_arg:0",
+      "from": "e_paddleocrdetfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Det/Factories/PaddleOCRDetFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.PaddleOCRDetFactory",
+          "via": {
+            "member": "Single_FP16_16FC1_Unsafe",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_16FC1_UnsafeExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrdetfactory_float16_single_fp16_8uc1_arg:2_arg:0",
+      "from": "e_paddleocrdetfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Det/Factories/PaddleOCRDetFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.PaddleOCRDetFactory",
+          "via": {
+            "member": "Single_FP16_8UC1",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC1_Extractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrdetfactory_float16_single_fp16_8uc3_rgb_arg:2_arg:0",
+      "from": "e_paddleocrdetfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/PaddleOCR/Det/Factories/PaddleOCRDetFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.PaddleOCRDetFactory",
+          "via": {
+            "member": "Single_FP16_8UC3_RGB",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, Mat, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, PaddleOCRDetFP16_8UC3_RGBExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_trtconfig_orttensorrtprovideroptions_trtoptions",
+      "from": "e_trtconfig",
+      "to": "e_orttensorrtprovideroptions",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Core/OnnxConfigs/TrtConfig.cs",
+          "symbol": "NeuroModFlowNet.ONNX.TrtConfig",
+          "via": {
+            "member": "trtOptions",
+            "memberKind": "parameter",
+            "text": "OrtTensorRTProviderOptions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloboxfactory_float16_list_poscvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloboxfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Box/Factories/YoloBoxFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloBoxFactory",
+          "via": {
+            "member": "List_PosCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, IDetectionResult<YoloBox>, ConverterMatListNchw<Float16, PosCvdnnFP16>, YoloBoxNmsFP16StdExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloboxfactory_float16_list_symcvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloboxfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Box/Factories/YoloBoxFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloBoxFactory",
+          "via": {
+            "member": "List_SymCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, IDetectionResult<YoloBox>, ConverterMatListNchw<Float16, SymCvdnnFP16>, YoloBoxNmsFP16StdExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloboxfactory_float16_single_poscvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloboxfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Box/Factories/YoloBoxFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloBoxFactory",
+          "via": {
+            "member": "Single_PosCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, IDetectionResult<YoloBox>, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloBoxNmsFP16StdExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloboxfactory_float16_single_symcvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloboxfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Box/Factories/YoloBoxFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloBoxFactory",
+          "via": {
+            "member": "Single_SymCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, IDetectionResult<YoloBox>, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloBoxNmsFP16StdExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloclsfactory_float16_list_poscvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloclsfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Cls/Factories/YoloClsFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloClsFactory",
+          "via": {
+            "member": "List_PosCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<Float16, PosCvdnnFP16>, YoloClsFP16SingleExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloclsfactory_float16_list_symcvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloclsfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Cls/Factories/YoloClsFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloClsFactory",
+          "via": {
+            "member": "List_SymCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, YoloCls, ConverterMatListNchw<Float16, SymCvdnnFP16>, YoloClsFP16SingleExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloclsfactory_float16_single_poscvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloclsfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Cls/Factories/YoloClsFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloClsFactory",
+          "via": {
+            "member": "Single_PosCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloClsFP16SingleExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloclsfactory_float16_single_symcvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloclsfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Cls/Factories/YoloClsFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloClsFactory",
+          "via": {
+            "member": "Single_SymCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, YoloCls, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloClsFP16SingleExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloposefactory_float16_list_poscvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloposefactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Pose/Factories/YoloPoseFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloPoseFactory",
+          "via": {
+            "member": "List_PosCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<Float16, PosCvdnnFP16>, YoloPoseFP32Keypoint17Extractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloposefactory_float16_list_symcvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloposefactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Pose/Factories/YoloPoseFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloPoseFactory",
+          "via": {
+            "member": "List_SymCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<List<Mat>, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatListNchw<Float16, SymCvdnnFP16>, YoloPoseFP32Keypoint17Extractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloposefactory_float16_single_poscvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloposefactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Pose/Factories/YoloPoseFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloPoseFactory",
+          "via": {
+            "member": "Single_PosCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloPoseFP32Keypoint17Extractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloposefactory_float16_single_symcvdnn_fp16_arg:2_arg:0",
+      "from": "e_yoloposefactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Pose/Factories/YoloPoseFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloPoseFactory",
+          "via": {
+            "member": "Single_SymCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, IDetectionResult<YoloPose_FP32_Size57_Keypoint17>, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloPoseFP32Keypoint17Extractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yolosegfactory_float16_single_poscvdnn_fp16_arg:2_arg:0",
+      "from": "e_yolosegfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Seg/Factories/YoloSegFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloSegFactory",
+          "via": {
+            "member": "Single_PosCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleNchw<Float16, PosCvdnnFP16>, YoloSegFP16SingleExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yolosegfactory_float16_single_symcvdnn_fp16_arg:2_arg:0",
+      "from": "e_yolosegfactory",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.ONNX/Outputs/Yolo/Seg/Factories/YoloSegFactory.cs",
+          "symbol": "NeuroModFlowNet.ONNX.YoloSegFactory",
+          "via": {
+            "member": "Single_SymCvdnn_FP16",
+            "memberKind": "return",
+            "text": "ImageRunner<Mat, YoloSegResult_FP16_Mask32, ConverterMatSingleNchw<Float16, SymCvdnnFP16>, YoloSegFP16SingleExtractor>",
+            "path": [
+              "arg:2",
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_croptextobboutputdecoder_float16_rowdata_item",
+      "from": "e_croptextobboutputdecoder",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.MultiCamera/Instructions/CropTextObbOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.MultiCamera.CropTextObbOutputDecoder",
+          "via": {
+            "member": "rowData",
+            "memberKind": "parameter",
+            "text": "ReadOnlySpan<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_croptextobboutputdecoder_ortvalue_output",
+      "from": "e_croptextobboutputdecoder",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.MultiCamera/Instructions/CropTextObbOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.MultiCamera.CropTextObbOutputDecoder",
+          "via": {
+            "member": "output",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecsourceframe_ortvalue_nv12",
+      "from": "e_nvdecsourceframe",
+      "to": "e_ortvalue",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.MultiCamera/Sources/NvdecSourceFrame.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.MultiCamera.NvdecSourceFrame",
+          "via": {
+            "member": "nv12",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_ortallocator_cudaallocator",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "cudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_ortmemoryinfo_cudamemoryinfo",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "cudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_ortvalue_createoutputorttensor",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "CreateOutputOrtTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_ortvalue_batchvalue",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "batchValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_ortvalue_inputs_item",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "inputs",
+            "memberKind": "parameter",
+            "text": "IReadOnlyList<OrtValue>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_tensorelementtype_initializedelementtype",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_tensorelementtype",
+      "type": "holds.optional.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "initializedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "TensorElementType?",
+            "cardinality": "optional"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_tensorelementtype_elementtype",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "elementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluebatchinputassembler_tensorelementtype_expectedelementtype",
+      "from": "e_concatortvaluebatchinputassembler",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueBatchInputAssembler",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_ortallocator_cudaallocator",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueRequestBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueRequestBatchInputAssembler",
+          "via": {
+            "member": "cudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_ortmemoryinfo_cudamemoryinfo",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueRequestBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueRequestBatchInputAssembler",
+          "via": {
+            "member": "cudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_ortvalue_createoutputorttensor",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueRequestBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueRequestBatchInputAssembler",
+          "via": {
+            "member": "CreateOutputOrtTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_ortvalue_batchvalue",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueRequestBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueRequestBatchInputAssembler",
+          "via": {
+            "member": "batchValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_ortvalue_inputs_item",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueRequestBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueRequestBatchInputAssembler",
+          "via": {
+            "member": "inputs",
+            "memberKind": "parameter",
+            "text": "IReadOnlyList<OrtValue>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_tensorelementtype_initializedelementtype",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_tensorelementtype",
+      "type": "holds.optional.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueRequestBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueRequestBatchInputAssembler",
+          "via": {
+            "member": "initializedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "TensorElementType?",
+            "cardinality": "optional"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_concatortvaluerequestbatchinputassembler_tensorelementtype_elementtype",
+      "from": "e_concatortvaluerequestbatchinputassembler",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/ConcatOrtValueRequestBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.ConcatOrtValueRequestBatchInputAssembler",
+          "via": {
+            "member": "elementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_ortallocator_cudaallocator",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/Copy_OrtTensor_To_ModelDevice.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Copy_OrtTensor_To_ModelDevice",
+          "via": {
+            "member": "cudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_ortmemoryinfo_cudamemoryinfo",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/Copy_OrtTensor_To_ModelDevice.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Copy_OrtTensor_To_ModelDevice",
+          "via": {
+            "member": "cudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_ortvalue_createoutputorttensor",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/Copy_OrtTensor_To_ModelDevice.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Copy_OrtTensor_To_ModelDevice",
+          "via": {
+            "member": "CreateOutputOrtTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_ortvalue_inputortvalue",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/Copy_OrtTensor_To_ModelDevice.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Copy_OrtTensor_To_ModelDevice",
+          "via": {
+            "member": "inputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_ortvalue_outputortvalue",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/Copy_OrtTensor_To_ModelDevice.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Copy_OrtTensor_To_ModelDevice",
+          "via": {
+            "member": "outputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_tensorelementtype_initializedelementtype",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_tensorelementtype",
+      "type": "holds.optional.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/Copy_OrtTensor_To_ModelDevice.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Copy_OrtTensor_To_ModelDevice",
+          "via": {
+            "member": "initializedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "TensorElementType?",
+            "cardinality": "optional"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_copy_orttensor_to_modeldevice_tensorelementtype_elementtype",
+      "from": "e_copy_orttensor_to_modeldevice",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/Copy_OrtTensor_To_ModelDevice.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Copy_OrtTensor_To_ModelDevice",
+          "via": {
+            "member": "elementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_iortvaluebatchinputassembler_ortvalue_inputs_item",
+      "from": "e_iortvaluebatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/IOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.IOrtValueBatchInputAssembler",
+          "via": {
+            "member": "inputs",
+            "memberKind": "parameter",
+            "text": "IReadOnlyList<OrtValue>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_iortvaluebatchoutputdecoder_ortvalue_output",
+      "from": "e_iortvaluebatchoutputdecoder",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/IOrtValueBatchOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.IOrtValueBatchOutputDecoder`1",
+          "via": {
+            "member": "output",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbfp16nchw_div255_tensorelementtype_getoutputelementtype",
+      "from": "e_op_onnx_bgru8hwc_to_rgbfp16nchw_div255",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255",
+          "via": {
+            "member": "GetOutputElementType",
+            "memberKind": "return",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbfp16nchw_div255_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_bgru8hwc_to_rgbfp16nchw_div255",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_BgrU8Hwc_To_RgbFP16Nchw_Div255",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbfp32nchw_div255_tensorelementtype_getoutputelementtype",
+      "from": "e_op_onnx_bgru8hwc_to_rgbfp32nchw_div255",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255",
+          "via": {
+            "member": "GetOutputElementType",
+            "memberKind": "return",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbfp32nchw_div255_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_bgru8hwc_to_rgbfp32nchw_div255",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_bgru8hwc_to_rgbnchw_div255base_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_bgru8hwc_to_rgbnchw_div255base",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_BgrU8Hwc_To_RgbNchw_Div255Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_BgrU8Hwc_To_RgbNchw_Div255Base",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_crop_nchw_base_tensorelementtype_expectedelementtype",
+      "from": "e_op_onnx_crop_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Crop_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Crop_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_crop_nchw_base_tensorelementtype_expectedelementtype_2",
+      "from": "e_op_onnx_crop_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Crop_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Crop_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "constructor",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_crop_nchw_base_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_crop_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Crop_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Crop_NCHW_Base",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_crop_u8_nhwc_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_crop_u8_nhwc",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Crop_U8_NHWC.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Crop_U8_NHWC",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortallocator_matrixcudaallocator",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "matrixCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortallocator_outputcudaallocator",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "outputCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortmemoryinfo_matrixcudamemoryinfo",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "matrixCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortmemoryinfo_outputcudamemoryinfo",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "outputCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortvalue_creatematrixtensor",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "CreateMatrixTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortvalue_createoutputtensor",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "CreateOutputTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortvalue_uploadmatricestodevice",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "UploadMatricesToDevice",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortvalue_image",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "image",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortvalue_matrices",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "matrices",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortvalue_matrixhost",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "matrixHost",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_ortvalue_output",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "output",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtoletterboxbatch_fp32_nchw_tensorelementtype_imageelementtype",
+      "from": "e_op_onnx_extractobbtoletterboxbatch_fp32_nchw",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW",
+          "via": {
+            "member": "imageElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortallocator_matrixcudaallocator",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "matrixCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortallocator_outputcudaallocator",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "outputCudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortmemoryinfo_matrixcudamemoryinfo",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "matrixCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortmemoryinfo_outputcudamemoryinfo",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "outputCudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortvalue_creatematrixtensor",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "CreateMatrixTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortvalue_createoutputtensor",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "CreateOutputTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortvalue_uploadmatricestodevice",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "UploadMatricesToDevice",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortvalue_image",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "image",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortvalue_matrices",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "matrices",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortvalue_matrixhost",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "matrixHost",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_ortvalue_output",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "output",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_extractobbtopaddlerec_fp32_nchw_tensorelementtype_imageelementtype",
+      "from": "e_op_onnx_extractobbtopaddlerec_fp32_nchw",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW",
+          "via": {
+            "member": "imageElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_padresize_nchw_base_tensorelementtype_expectedelementtype",
+      "from": "e_op_onnx_padresize_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_PadResize_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_PadResize_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_padresize_nchw_base_tensorelementtype_expectedelementtype_2",
+      "from": "e_op_onnx_padresize_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_PadResize_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_PadResize_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "constructor",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_padresize_nchw_base_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_padresize_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_PadResize_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_PadResize_NCHW_Base",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_padresize_u8_nhwc_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_padresize_u8_nhwc",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_PadResize_U8_NHWC.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_PadResize_U8_NHWC",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_perspective_nchw_base_tensorelementtype_expectedelementtype",
+      "from": "e_op_onnx_perspective_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Perspective_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Perspective_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_perspective_nchw_base_tensorelementtype_expectedelementtype_2",
+      "from": "e_op_onnx_perspective_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Perspective_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Perspective_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "constructor",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_perspective_nchw_base_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_perspective_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Perspective_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Perspective_NCHW_Base",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_perspective_u8_nhwc_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_perspective_u8_nhwc",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Perspective_U8_NHWC.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Perspective_U8_NHWC",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_resize_nchw_base_tensorelementtype_expectedelementtype",
+      "from": "e_op_onnx_resize_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Resize_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_resize_nchw_base_tensorelementtype_expectedelementtype_2",
+      "from": "e_op_onnx_resize_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Resize_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "constructor",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_resize_nchw_base_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_resize_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Resize_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize_NCHW_Base",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_resize_u8_nhwc_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_resize_u8_nhwc",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Resize_U8_NHWC.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Resize_U8_NHWC",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_rotate90_nchw_base_tensorelementtype_expectedelementtype",
+      "from": "e_op_onnx_rotate90_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Rotate90_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Rotate90_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_rotate90_nchw_base_tensorelementtype_expectedelementtype_2",
+      "from": "e_op_onnx_rotate90_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Rotate90_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Rotate90_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "constructor",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_rotate90_nchw_base_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_rotate90_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Rotate90_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Rotate90_NCHW_Base",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_rotate90_u8_nhwc_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_rotate90_u8_nhwc",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Rotate90_U8_NHWC.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Rotate90_U8_NHWC",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_ortallocator_cudaallocator",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_ortallocator",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "cudaAllocator",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtAllocator?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_ortmemoryinfo_cudamemoryinfo",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "cudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "OrtMemoryInfo?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_ortvalue_createoutputorttensor",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "CreateOutputOrtTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_ortvalue_inputortvalue",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "inputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_ortvalue_outputortvalue",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "outputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_tensorelementtype_initializedinputelementtype",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_tensorelementtype",
+      "type": "holds.optional.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "initializedInputElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "TensorElementType?",
+            "cardinality": "optional"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_tensorelementtype_getoutputelementtype",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "GetOutputElementType",
+            "memberKind": "return",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_tensortransformbase_tensorelementtype_outputelementtype",
+      "from": "e_op_onnx_tensortransformbase",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_TensorTransformBase.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_TensorTransformBase",
+          "via": {
+            "member": "outputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_undistort_nchw_base_tensorelementtype_expectedelementtype",
+      "from": "e_op_onnx_undistort_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Undistort_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Undistort_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly"
+            ],
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_undistort_nchw_base_tensorelementtype_expectedelementtype_2",
+      "from": "e_op_onnx_undistort_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Undistort_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Undistort_NCHW_Base",
+          "via": {
+            "member": "expectedElementType",
+            "memberKind": "constructor",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_undistort_nchw_base_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_undistort_nchw_base",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Undistort_NCHW_Base.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Undistort_NCHW_Base",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_undistort_u8_nhwc_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_undistort_u8_nhwc",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Operators/Op_Onnx_Undistort_U8_NHWC.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.Op_Onnx_Undistort_U8_NHWC",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ortvaluebatchinput_ortvalue_value",
+      "from": "e_ortvaluebatchinput",
+      "to": "e_ortvalue",
+      "type": "holds.one",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/OrtValueBatchInput.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.OrtValueBatchInput",
+          "via": {
+            "member": "Value",
+            "memberKind": "property",
+            "modifiers": [
+              "public"
+            ],
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ortvaluebatchinput_ortvalue_value_2",
+      "from": "e_ortvaluebatchinput",
+      "to": "e_ortvalue",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/OrtValueBatchInput.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.OrtValueBatchInput",
+          "via": {
+            "member": "Value",
+            "memberKind": "constructor",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ortvaluebatchedinferenceendpoint_idisposablereadonlycollection_runwithfreshbinding",
+      "from": "e_ortvaluebatchedinferenceendpoint",
+      "to": "e_idisposablereadonlycollection",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/OrtValueBatchedInferenceEndpoint.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.OrtValueBatchedInferenceEndpoint`1",
+          "via": {
+            "member": "RunWithFreshBinding",
+            "memberKind": "return",
+            "text": "IDisposableReadOnlyCollection<OrtValue>"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ortvaluebatchedinferenceendpoint_ortvalue_runwithfreshbinding_arg:0",
+      "from": "e_ortvaluebatchedinferenceendpoint",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/OrtValueBatchedInferenceEndpoint.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.OrtValueBatchedInferenceEndpoint`1",
+          "via": {
+            "member": "RunWithFreshBinding",
+            "memberKind": "return",
+            "text": "IDisposableReadOnlyCollection<OrtValue>",
+            "path": [
+              "arg:0"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ortvaluebatchedinferenceendpoint_ortvalue_inputortvalue",
+      "from": "e_ortvaluebatchedinferenceendpoint",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/OrtValueBatchedInferenceEndpoint.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.OrtValueBatchedInferenceEndpoint`1",
+          "via": {
+            "member": "inputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ortvaluebatchedinferenceendpoint_ortvalue_inputs_item",
+      "from": "e_ortvaluebatchedinferenceendpoint",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/OrtValueBatchedInferenceEndpoint.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.OrtValueBatchedInferenceEndpoint`1",
+          "via": {
+            "member": "inputs",
+            "memberKind": "parameter",
+            "text": "IReadOnlyList<OrtValue>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ortvaluebatchedinferenceendpoint_ortvalue_outputortvalue",
+      "from": "e_ortvaluebatchedinferenceendpoint",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/OrtValueBatchedInferenceEndpoint.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.OrtValueBatchedInferenceEndpoint`1",
+          "via": {
+            "member": "outputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_paddleocrrecortvalueoutputdecoder_ortvalue_output",
+      "from": "e_paddleocrrecortvalueoutputdecoder",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/PaddleOCR/PaddleOCRRecOrtValueOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.PaddleOCRRecOrtValueOutputDecoder",
+          "via": {
+            "member": "output",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_singleortvaluebatchinputassembler_ortvalue_inputs_item",
+      "from": "e_singleortvaluebatchinputassembler",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Resources/SingleOrtValueBatchInputAssembler.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.SingleOrtValueBatchInputAssembler",
+          "via": {
+            "member": "inputs",
+            "memberKind": "parameter",
+            "text": "IReadOnlyList<OrtValue>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_unmanagedtensormemoryview_tensorelementtype_elementtype",
+      "from": "e_unmanagedtensormemoryview",
+      "to": "e_tensorelementtype",
+      "type": "holds.one",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/UnmanagedTensorMemoryView.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.UnmanagedTensorMemoryView",
+          "via": {
+            "member": "ElementType",
+            "memberKind": "property",
+            "modifiers": [
+              "public"
+            ],
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_unmanagedtensormemoryview_tensorelementtype_elementtype_2",
+      "from": "e_unmanagedtensormemoryview",
+      "to": "e_tensorelementtype",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Instructions/Memory/UnmanagedTensorMemoryView.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.UnmanagedTensorMemoryView",
+          "via": {
+            "member": "ElementType",
+            "memberKind": "constructor",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloboxortvalueoutputdecoder_float16_data_item",
+      "from": "e_yoloboxortvalueoutputdecoder",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Yolo/Box/YoloBoxOrtValueOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.YoloBoxOrtValueOutputDecoder",
+          "via": {
+            "member": "data",
+            "memberKind": "parameter",
+            "text": "ReadOnlySpan<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloboxortvalueoutputdecoder_ortvalue_output",
+      "from": "e_yoloboxortvalueoutputdecoder",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Yolo/Box/YoloBoxOrtValueOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.YoloBoxOrtValueOutputDecoder",
+          "via": {
+            "member": "output",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloobbortvalueoutputdecoder_float16_batchdata_item",
+      "from": "e_yoloobbortvalueoutputdecoder",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Yolo/Obb/YoloObbOrtValueOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.YoloObbOrtValueOutputDecoder",
+          "via": {
+            "member": "batchData",
+            "memberKind": "parameter",
+            "text": "ReadOnlySpan<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloobbortvalueoutputdecoder_float16_data_item",
+      "from": "e_yoloobbortvalueoutputdecoder",
+      "to": "e_float16",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Yolo/Obb/YoloObbOrtValueOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.YoloObbOrtValueOutputDecoder",
+          "via": {
+            "member": "data",
+            "memberKind": "parameter",
+            "text": "ReadOnlySpan<Float16>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "readonly"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_yoloobbortvalueoutputdecoder_ortvalue_output",
+      "from": "e_yoloobbortvalueoutputdecoder",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "src/NeuroModFlowNet.Pipeline.ONNX/Yolo/Obb/YoloObbOrtValueOutputDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.ONNX.YoloObbOrtValueOutputDecoder",
+          "via": {
+            "member": "output",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_model_imgtexttoobbrawortvalue_ortvalue_createoutputorttensor",
+      "from": "e_model_imgtexttoobbrawortvalue",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/Infrastructure/Model_ImgTextToObbRawOrtValue.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.Model_ImgTextToObbRawOrtValue",
+          "via": {
+            "member": "CreateOutputOrtTensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_model_imgtexttoobbrawortvalue_ortvalue_inputortvalue",
+      "from": "e_model_imgtexttoobbrawortvalue",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/Infrastructure/Model_ImgTextToObbRawOrtValue.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.Model_ImgTextToObbRawOrtValue",
+          "via": {
+            "member": "inputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_model_imgtexttoobbrawortvalue_ortvalue_outputortvalue",
+      "from": "e_model_imgtexttoobbrawortvalue",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/Infrastructure/Model_ImgTextToObbRawOrtValue.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.Model_ImgTextToObbRawOrtValue",
+          "via": {
+            "member": "outputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_obbbatchservice_inferencesession_concatsession",
+      "from": "e_obbbatchservice",
+      "to": "e_inferencesession",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/MultiStream/ObbBatchService.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.ObbBatchService",
+          "via": {
+            "member": "concatSession",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "InferenceSession?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_obbbatchservice_ortvalue_runconcatmodel",
+      "from": "e_obbbatchservice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/MultiStream/ObbBatchService.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.ObbBatchService",
+          "via": {
+            "member": "RunConcatModel",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_obbbatchservice_ortvalue_runobbmodel",
+      "from": "e_obbbatchservice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/MultiStream/ObbBatchService.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.ObbBatchService",
+          "via": {
+            "member": "RunObbModel",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_obbbatchservice_ortvalue_wrapmatasortvalue",
+      "from": "e_obbbatchservice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/MultiStream/ObbBatchService.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.ObbBatchService",
+          "via": {
+            "member": "WrapMatAsOrtValue",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_obbbatchservice_ortvalue_batchortvalue",
+      "from": "e_obbbatchservice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/MultiStream/ObbBatchService.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.ObbBatchService",
+          "via": {
+            "member": "batchOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_obbbatchservice_ortvalue_inputortvalues_item",
+      "from": "e_obbbatchservice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/MultiStream/ObbBatchService.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.ObbBatchService",
+          "via": {
+            "member": "inputOrtValues",
+            "memberKind": "parameter",
+            "text": "List<OrtValue>",
+            "path": [
+              "item"
+            ],
+            "cardinality": "many",
+            "mutability": "mutable"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_obbbatchservice_ortvalue_outputortvalue",
+      "from": "e_obbbatchservice",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.VMDebug/MultiStream/ObbBatchService.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.VMDebug.ObbBatchService",
+          "via": {
+            "member": "outputOrtValue",
+            "memberKind": "parameter",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecframe_ortmemoryinfo_cudamemoryinfo",
+      "from": "e_nvdecframe",
+      "to": "e_ortmemoryinfo",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecFrame.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecFrame",
+          "via": {
+            "member": "CudaMemoryInfo",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly",
+              "static"
+            ],
+            "text": "OrtMemoryInfo"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecframe_ortvalue_createnv12tensor",
+      "from": "e_nvdecframe",
+      "to": "e_ortvalue",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecFrame.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecFrame",
+          "via": {
+            "member": "CreateNv12Tensor",
+            "memberKind": "return",
+            "text": "OrtValue"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_op_onnx_nv12_to_bgru8nhwc_tensorelementtype_inputelementtype",
+      "from": "e_op_onnx_nv12_to_bgru8nhwc",
+      "to": "e_tensorelementtype",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/Op_Onnx_Nv12_To_BgrU8Nhwc.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.Op_Onnx_Nv12_To_BgrU8Nhwc",
+          "via": {
+            "member": "inputElementType",
+            "memberKind": "parameter",
+            "text": "TensorElementType"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecframe_avframe_frame_pointee",
+      "from": "e_nvdecframe",
+      "to": "e_avframe",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecFrame.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecFrame",
+          "via": {
+            "member": "frame",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "AVFrame*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecframe_avframe_frame_pointee_2",
+      "from": "e_nvdecframe",
+      "to": "e_avframe",
+      "type": "injects",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecFrame.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecFrame",
+          "via": {
+            "member": "frame",
+            "memberKind": "constructor",
+            "text": "AVFrame*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avbufferref_devicecontext_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avbufferref",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "deviceContext",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "AVBufferRef*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avcodec_decoder_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avcodec",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "decoder",
+            "memberKind": "parameter",
+            "text": "AVCodec*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avcodeccontext_codeccontext_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avcodeccontext",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "codecContext",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "AVCodecContext*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avcodeccontext_context_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avcodeccontext",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "context",
+            "memberKind": "parameter",
+            "text": "AVCodecContext*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avcodeccontext_get_format_getformatcallback",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avcodeccontext_get_format",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "GetFormatCallback",
+            "memberKind": "field",
+            "modifiers": [
+              "private",
+              "readonly",
+              "static"
+            ],
+            "text": "AVCodecContext_get_format"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avformatcontext_formatcontext_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avformatcontext",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "formatContext",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "AVFormatContext*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avframe_receiveframe_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avframe",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "receiveFrame",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "AVFrame*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avpacket_packet_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avpacket",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "packet",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "AVPacket*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avpixelformat_selectcudaformat",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avpixelformat",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "SelectCudaFormat",
+            "memberKind": "return",
+            "text": "AVPixelFormat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avpixelformat_formats_pointee",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avpixelformat",
+      "type": "uses",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "formats",
+            "memberKind": "parameter",
+            "text": "AVPixelFormat*",
+            "path": [
+              "pointee"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nvdecvideodecoder_avrational_timebase",
+      "from": "e_nvdecvideodecoder",
+      "to": "e_avrational",
+      "type": "holds.one.internal",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "ref": "labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NvdecVideoDecoder.cs",
+          "symbol": "NeuroModFlowNet.Pipeline.Video.Nvdec.NvdecVideoDecoder",
+          "via": {
+            "member": "timeBase",
+            "memberKind": "field",
+            "modifiers": [
+              "private"
+            ],
+            "text": "AVRational"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_neuromodflownet_pipeline_video_nvdec_assembly_ffmpeg_autogen_abstractions_depends",
+      "from": "e_assembly_neuromodflownet_pipeline_video_nvdec",
+      "to": "e_assembly_ffmpeg_autogen_abstractions",
+      "type": "depends",
+      "origin": "authored"
+    },
+    {
+      "id": "r_assembly_neuromodflownet_pipeline_video_nvdec_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_depends",
+      "from": "e_assembly_neuromodflownet_pipeline_video_nvdec",
+      "to": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "type": "depends",
+      "origin": "authored"
+    },
+    {
+      "id": "r_asm_pipeonnx_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_depends",
+      "from": "e_asm_pipeonnx",
+      "to": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "type": "depends",
+      "origin": "authored"
+    },
+    {
+      "id": "r_asm_onnx_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_depends",
+      "from": "e_asm_onnx",
+      "to": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "type": "depends",
+      "origin": "authored"
+    }
+  ]
+}

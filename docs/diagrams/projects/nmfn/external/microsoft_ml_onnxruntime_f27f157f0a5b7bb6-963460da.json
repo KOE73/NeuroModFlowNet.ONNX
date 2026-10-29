@@ -1,0 +1,415 @@
+{
+  "library": {
+    "id": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6",
+    "name": "Microsoft.ML.OnnxRuntime",
+    "version": "1.30.0.0"
+  },
+  "entities": [
+    {
+      "id": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "name": "Microsoft.ML.OnnxRuntime",
+      "kind": "assembly",
+      "origin": "code",
+      "status": "present",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_float16",
+      "name": "Float16",
+      "kind": "struct",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.Float16",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_idisposablereadonlycollection",
+      "name": "IDisposableReadOnlyCollection",
+      "kind": "interface",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.IDisposableReadOnlyCollection`1",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_inferencesession",
+      "name": "InferenceSession",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.InferenceSession",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_nodemetadata",
+      "name": "NodeMetadata",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.NodeMetadata",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_ortallocator",
+      "name": "OrtAllocator",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.OrtAllocator",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_ortcudaprovideroptions",
+      "name": "OrtCUDAProviderOptions",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.OrtCUDAProviderOptions",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_ortiobinding",
+      "name": "OrtIoBinding",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.OrtIoBinding",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_ortmemoryinfo",
+      "name": "OrtMemoryInfo",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.OrtMemoryInfo",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_orttensorrtprovideroptions",
+      "name": "OrtTensorRTProviderOptions",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.OrtTensorRTProviderOptions",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_ortvalue",
+      "name": "OrtValue",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.OrtValue",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_runoptions",
+      "name": "RunOptions",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.RunOptions",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_sessionoptions",
+      "name": "SessionOptions",
+      "kind": "class",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.SessionOptions",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "e_tensorelementtype",
+      "name": "TensorElementType",
+      "kind": "enum",
+      "origin": "code",
+      "status": "present",
+      "namespace": "Microsoft.ML.OnnxRuntime.Tensors",
+      "code": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]::Microsoft.ML.OnnxRuntime.Tensors.TensorElementType",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_float16_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_float16",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_idisposablereadonlycollection_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_idisposablereadonlycollection",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_inferencesession_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_inferencesession",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_nodemetadata_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_nodemetadata",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_ortallocator_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_ortallocator",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_ortcudaprovideroptions_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_ortcudaprovideroptions",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_ortiobinding_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_ortiobinding",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_ortmemoryinfo_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_ortmemoryinfo",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_orttensorrtprovideroptions_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_orttensorrtprovideroptions",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_ortvalue_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_ortvalue",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_runoptions_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_runoptions",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_sessionoptions_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_sessionoptions",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    },
+    {
+      "id": "r_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6_tensorelementtype_contains",
+      "from": "e_assembly_microsoft_ml_onnxruntime_f27f157f0a5b7bb6",
+      "to": "e_tensorelementtype",
+      "type": "contains",
+      "origin": "code",
+      "status": "present",
+      "evidence": [
+        {
+          "lang": "csharp",
+          "symbol": "[Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6]",
+          "library": "Microsoft.ML.OnnxRuntime-f27f157f0a5b7bb6"
+        }
+      ]
+    }
+  ]
+}

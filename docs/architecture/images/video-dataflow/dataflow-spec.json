@@ -1,0 +1,799 @@
+[
+  {
+    "id": "v_video_ingest_dataflow",
+    "slug": "video-ingest",
+    "width": 1420,
+    "height": 1480,
+    "ru": "Видео → рабочий кадр: потоки данных",
+    "en": "Video to working frame: data flow",
+    "nodes": [
+      {
+        "key": "source",
+        "ru": "Видеофайл / RTSP",
+        "en": "Video file / RTSP",
+        "x": 490,
+        "y": 140,
+        "width": 440,
+        "height": 100,
+        "role": "boundary",
+        "description": "Сжатое видео. NVDEC принимает файлы и RTSP; USB-источник доступен через OpenCV.",
+        "english": "Compressed video. NVDEC accepts files and RTSP; USB capture is available through OpenCV."
+      },
+      {
+        "key": "nvdec",
+        "ru": "FFmpeg + NVDEC",
+        "en": "FFmpeg + NVDEC",
+        "x": 100,
+        "y": 380,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "NvdecVideoDecoder: demux и аппаратный декод в CUDA NV12. Без CPU fallback.",
+        "english": "NvdecVideoDecoder: demux and hardware decode into CUDA NV12, without CPU fallback."
+      },
+      {
+        "key": "opencv",
+        "ru": "OpenCV: декод в Mat",
+        "en": "OpenCV: decode to Mat",
+        "x": 880,
+        "y": 380,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Явно выбранный CPU/Mat путь; также поддерживает USB-камеру.",
+        "english": "Explicit CPU/Mat input path; also supports USB camera capture."
+      },
+      {
+        "key": "ort_nv12",
+        "ru": "OrtValue над NV12",
+        "en": "OrtValue over NV12",
+        "x": 100,
+        "y": 620,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "NvdecFrame.CreateNv12Tensor: zero-copy view [allocatedHeight*3/2, pitch] U8. Поверхность удерживается до завершения run; CudaDecodeFence обеспечивает готовность данных.",
+        "english": "NvdecFrame.CreateNv12Tensor: zero-copy view [allocatedHeight*3/2, pitch] U8. The surface remains alive until the run completes; CudaDecodeFence ensures data readiness."
+      },
+      {
+        "key": "ort_cpu",
+        "ru": "OrtValue над Mat",
+        "en": "OrtValue over Mat",
+        "x": 880,
+        "y": 620,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Wrap_MatImage_To_OrtTensor: обёртка над пикселями CPU Mat.",
+        "english": "Wrap_MatImage_To_OrtTensor wraps the CPU Mat pixels."
+      },
+      {
+        "key": "convert",
+        "ru": "ONNX: NV12 → BGR",
+        "en": "ONNX: NV12 to BGR",
+        "x": 100,
+        "y": 860,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Op_Onnx_Nv12_To_BgrU8Nhwc: явная цветовая матрица BT.601/BT.709 и диапазон; создаёт новый BGR tensor на GPU.",
+        "english": "Op_Onnx_Nv12_To_BgrU8Nhwc uses an explicit BT.601/BT.709 matrix and range; it creates a new BGR tensor on the GPU."
+      },
+      {
+        "key": "upload",
+        "ru": "Явный upload",
+        "en": "Explicit upload",
+        "x": 880,
+        "y": 860,
+        "width": 440,
+        "height": 100,
+        "role": "boundary",
+        "description": "Copy_OrtTensor_To_ModelDevice: явный перенос пикселей с CPU на устройство модели.",
+        "english": "Copy_OrtTensor_To_ModelDevice explicitly transfers pixels from CPU to the model device."
+      },
+      {
+        "key": "prepare",
+        "ru": "Геометрия камеры",
+        "en": "Camera geometry",
+        "x": 490,
+        "y": 1100,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "CameraPrepareProgramFactory: configured undistort, perspective, rotate, crop, resize в заданном порядке.",
+        "english": "CameraPrepareProgramFactory: configured undistort, perspective, rotate, crop and resize in the declared order."
+      },
+      {
+        "key": "rect",
+        "ru": "image.rect",
+        "en": "image.rect",
+        "x": 490,
+        "y": 1340,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Рабочий кадр BGR U8 NHWC [1,H,W,3] после геометрии; единое координатное пространство common.",
+        "english": "Working BGR U8 NHWC [1,H,W,3] frame after geometry; the common program uses this coordinate space."
+      }
+    ],
+    "edges": [
+      {
+        "start": "source",
+        "end": "nvdec",
+        "label": "Сжатые видеопакеты"
+      },
+      {
+        "start": "source",
+        "end": "opencv",
+        "label": "Видеоданные"
+      },
+      {
+        "start": "nvdec",
+        "end": "ort_nv12",
+        "label": "CUDA NV12-поверхность"
+      },
+      {
+        "start": "opencv",
+        "end": "ort_cpu",
+        "label": "CPU Mat: BGR U8"
+      },
+      {
+        "start": "ort_nv12",
+        "end": "convert",
+        "label": "GPU OrtValue: NV12 U8"
+      },
+      {
+        "start": "ort_cpu",
+        "end": "upload",
+        "label": "CPU OrtValue: BGR U8 NHWC"
+      },
+      {
+        "start": "convert",
+        "end": "prepare",
+        "label": "GPU BGR U8 NHWC"
+      },
+      {
+        "start": "upload",
+        "end": "prepare",
+        "label": "Device BGR U8 NHWC"
+      },
+      {
+        "start": "prepare",
+        "end": "rect",
+        "label": "OrtValue [1,H,W,3]"
+      }
+    ]
+  },
+  {
+    "id": "v_multicamera_dataflow",
+    "slug": "multicamera",
+    "width": 1840,
+    "height": 2410,
+    "ru": "MultiCamera: потоки данных",
+    "en": "MultiCamera: data flow",
+    "nodes": [
+      {
+        "key": "rect",
+        "ru": "image.rect",
+        "en": "image.rect",
+        "x": 680,
+        "y": 140,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Полноразмерный рабочий кадр после prepare. Все координаты ниже приводятся в rect space.",
+        "english": "Full-resolution working frame after prepare. All coordinates below are mapped to rect space."
+      },
+      {
+        "key": "det_prepare",
+        "ru": "Вход детектора мешков",
+        "en": "Bag detector input",
+        "x": 120,
+        "y": 380,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Resize/letterbox по размеру модели камеры; BGR U8 → RGB FP16/FP32 NCHW /255. Также выдаёт back-transform.",
+        "english": "Resize/letterbox to the camera model size; BGR U8 to RGB FP16/FP32 NCHW /255. Also outputs a back-transform."
+      },
+      {
+        "key": "rgb",
+        "ru": "Полноразмерный RGB",
+        "en": "Full-resolution RGB",
+        "x": 1240,
+        "y": 380,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "RGB FP32 NCHW 0..1 из image.rect, источник пикселей для вырезок мешков и текстовых ROI при включённом OCR.",
+        "english": "RGB FP32 NCHW 0..1 from image.rect; the pixel source for bag crops and text ROIs when OCR is enabled."
+      },
+      {
+        "key": "detector",
+        "ru": "Детектор мешков",
+        "en": "Bag detector",
+        "x": 120,
+        "y": 620,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Model_OrtValueInference<YoloBox/YoloObb>; endpoint на файл модели. MaxBatchSize=1, MaxWaitTime=0.",
+        "english": "Model_OrtValueInference<YoloBox/YoloObb>; one endpoint per model file. MaxBatchSize=1, MaxWaitTime=0."
+      },
+      {
+        "key": "preview_resize",
+        "ru": "Уменьшение превью",
+        "en": "Preview resize",
+        "x": 680,
+        "y": 620,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Опциональная ветка: сначала уменьшить кадр на GPU; isFinal=true размещает выход в CPU memory.",
+        "english": "Optional branch: resize on the GPU first; isFinal=true places the output in CPU memory."
+      },
+      {
+        "key": "det_map",
+        "ru": "Детекции → rect",
+        "en": "Detections to rect",
+        "x": 120,
+        "y": 860,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Op_Map_Coordinates и отбор класса преобразуют готовые typed boxes в TrackDetection[].",
+        "english": "Op_Map_Coordinates and class filtering turn typed boxes into TrackDetection[]."
+      },
+      {
+        "key": "preview_mat",
+        "ru": "Mat: превью с подписями",
+        "en": "Mat: annotated preview",
+        "x": 680,
+        "y": 860,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Copy_OrtValue_To_MatImage; CPU-отрисовка получает готовые detections/tracks/OCR results. Опционально окно и PNG snapshots.",
+        "english": "Copy_OrtValue_To_MatImage; CPU rendering consumes detections, tracks and OCR results. Optional window and PNG snapshots."
+      },
+      {
+        "key": "tracker",
+        "ru": "Трекер камеры",
+        "en": "Camera tracker",
+        "x": 120,
+        "y": 1100,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Op_Track: состояние в VmGlobalMemory камеры, обновление в ordered critical section; выход TrackedObject[].",
+        "english": "Op_Track: state in the camera VmGlobalMemory, updated in an ordered critical section; output TrackedObject[]."
+      },
+      {
+        "key": "select",
+        "ru": "Области мешков + ID",
+        "en": "Bag regions + track IDs",
+        "x": 120,
+        "y": 1340,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Op_TracksToCropBoxes: подтверждённые треки с MissedFrames=0, не более maxCrops; YoloObb[] и int[].",
+        "english": "Op_TracksToCropBoxes: confirmed tracks with MissedFrames=0, at most maxCrops; YoloObb[] and int[]."
+      },
+      {
+        "key": "crops",
+        "ru": "Вырезки мешков",
+        "en": "Bag crops",
+        "x": 680,
+        "y": 1340,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW: [maxCrops,3,S,S], transforms[] и actualCount. Явная политика Truncate.",
+        "english": "Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW: [maxCrops,3,S,S], transforms[] and actualCount. Explicit Truncate policy."
+      },
+      {
+        "key": "text_detector",
+        "ru": "Детектор текстовых OBB",
+        "en": "Text OBB detector",
+        "x": 400,
+        "y": 1580,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Общий endpoint принимает готовый batch вырезок. MaxBatchSize=1; CropTextRegion[] сохраняет crop index.",
+        "english": "Shared endpoint accepts a prepared crop batch. MaxBatchSize=1; CropTextRegion[] retains the crop index."
+      },
+      {
+        "key": "text_map",
+        "ru": "Текстовые области → rect",
+        "en": "Text regions to rect",
+        "x": 680,
+        "y": 1820,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Op_MapCropTextRegionsToRect: OBB обратно в rect и параллельные track IDs; результаты padding crop slots отбрасываются.",
+        "english": "Op_MapCropTextRegionsToRect: OBBs back to rect plus parallel track IDs; padding crop slot results are discarded."
+      },
+      {
+        "key": "roi",
+        "ru": "Подготовка текстовых ROI",
+        "en": "Text ROI preparation",
+        "x": 1240,
+        "y": 1820,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW: повторная вырезка из полноразмерного RGB, геометрия и Paddle-нормализация; actualCount отдельно.",
+        "english": "Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW: re-extract from full-resolution RGB, geometry and Paddle normalization; separate actualCount."
+      },
+      {
+        "key": "recognition",
+        "ru": "PaddleOCR Rec",
+        "en": "PaddleOCR Rec",
+        "x": 1240,
+        "y": 2060,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "OrtValue endpoint: [N,3,H,W] → OcrResult[]. Backend recognition задан явно; скрытый fallback запрещён. MaxBatchSize=1.",
+        "english": "OrtValue endpoint: [N,3,H,W] to OcrResult[]. Recognition backend is explicit; hidden fallback is forbidden. MaxBatchSize=1."
+      },
+      {
+        "key": "results",
+        "ru": "Текст + ID треков",
+        "en": "Text + track IDs",
+        "x": 1240,
+        "y": 2300,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "CameraWorker отсекает padding recognition slots по actualCount, связывает строки с track IDs; результат и статистика.",
+        "english": "CameraWorker trims padding recognition slots by actualCount and associates strings with track IDs; results and statistics."
+      }
+    ],
+    "edges": [
+      {
+        "start": "rect",
+        "end": "det_prepare",
+        "label": "BGR U8 NHWC"
+      },
+      {
+        "start": "rect",
+        "end": "rgb",
+        "label": "BGR U8 NHWC"
+      },
+      {
+        "start": "det_prepare",
+        "end": "detector",
+        "label": "RGB FP16/FP32 NCHW"
+      },
+      {
+        "start": "det_prepare",
+        "end": "det_map",
+        "label": "Back-transform",
+        "route": [
+          [
+            120,
+            430
+          ],
+          [
+            60,
+            430
+          ],
+          [
+            60,
+            910
+          ],
+          [
+            120,
+            910
+          ]
+        ],
+        "labelPos": [
+          160,
+          750
+        ]
+      },
+      {
+        "start": "detector",
+        "end": "det_map",
+        "label": "YoloBox[] / YoloObb[]"
+      },
+      {
+        "start": "det_map",
+        "end": "tracker",
+        "label": "TrackDetection[]"
+      },
+      {
+        "start": "tracker",
+        "end": "select",
+        "label": "TrackedObject[]"
+      },
+      {
+        "start": "select",
+        "end": "crops",
+        "label": "OBB[]",
+        "labelPos": [
+          620,
+          1385
+        ]
+      },
+      {
+        "start": "rgb",
+        "end": "crops",
+        "label": "RGB FP32: пиксели",
+        "route": [
+          [
+            1240,
+            430
+          ],
+          [
+            1160,
+            430
+          ],
+          [
+            1160,
+            1390
+          ],
+          [
+            1120,
+            1390
+          ]
+        ],
+        "labelPos": [
+          1160,
+          1070
+        ]
+      },
+      {
+        "start": "crops",
+        "end": "text_detector",
+        "label": "GPU batch [maxCrops,3,S,S]"
+      },
+      {
+        "start": "crops",
+        "end": "text_map",
+        "label": "Transforms[] / count",
+        "route": [
+          [
+            1120,
+            1390
+          ],
+          [
+            1190,
+            1390
+          ],
+          [
+            1190,
+            1780
+          ],
+          [
+            1100,
+            1780
+          ],
+          [
+            1100,
+            1820
+          ]
+        ],
+        "labelPos": [
+          1190,
+          1730
+        ]
+      },
+      {
+        "start": "select",
+        "end": "text_map",
+        "label": "ID треков",
+        "route": [
+          [
+            340,
+            1440
+          ],
+          [
+            340,
+            1870
+          ],
+          [
+            680,
+            1870
+          ]
+        ],
+        "labelPos": [
+          340,
+          1740
+        ]
+      },
+      {
+        "start": "text_detector",
+        "end": "text_map",
+        "label": "CropTextRegion[]"
+      },
+      {
+        "start": "text_map",
+        "end": "roi",
+        "label": "OBB rect",
+        "labelPos": [
+          1180,
+          1865
+        ]
+      },
+      {
+        "start": "rgb",
+        "end": "roi",
+        "label": "Полноразмерные пиксели",
+        "route": [
+          [
+            1680,
+            430
+          ],
+          [
+            1760,
+            430
+          ],
+          [
+            1760,
+            1870
+          ],
+          [
+            1680,
+            1870
+          ]
+        ],
+        "labelPos": [
+          1600,
+          1240
+        ]
+      },
+      {
+        "start": "roi",
+        "end": "recognition",
+        "label": "FP32 NCHW + actualCount"
+      },
+      {
+        "start": "recognition",
+        "end": "results",
+        "label": "OcrResult[]"
+      },
+      {
+        "start": "text_map",
+        "end": "results",
+        "label": "ID треков",
+        "route": [
+          [
+            1120,
+            1870
+          ],
+          [
+            1180,
+            1870
+          ],
+          [
+            1180,
+            2350
+          ],
+          [
+            1240,
+            2350
+          ]
+        ],
+        "labelPos": [
+          1180,
+          2190
+        ]
+      },
+      {
+        "start": "rect",
+        "end": "preview_resize",
+        "label": "BGR U8 NHWC"
+      },
+      {
+        "start": "preview_resize",
+        "end": "preview_mat",
+        "label": "CPU tensor → Mat"
+      }
+    ]
+  },
+  {
+    "id": "v_videoort_dataflow",
+    "slug": "videoort",
+    "width": 1820,
+    "height": 1720,
+    "ru": "VideoOrt: verify / bench, потоки данных",
+    "en": "VideoOrt: verify / bench data flow",
+    "nodes": [
+      {
+        "key": "source",
+        "ru": "Исходное видео",
+        "en": "Source video",
+        "x": 680,
+        "y": 140,
+        "width": 440,
+        "height": 100,
+        "role": "boundary",
+        "description": "Verify: один файл. Bench: файлы/RTSP, N независимых streams.",
+        "english": "Verify: one file. Bench: files/RTSP and N independent streams."
+      },
+      {
+        "key": "nvdec",
+        "ru": "FFmpeg + NVDEC",
+        "en": "FFmpeg + NVDEC",
+        "x": 120,
+        "y": 380,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Собственный NvdecVideoDecoder на stream. UseFence=true по умолчанию; --decode-only измеряет только этот участок.",
+        "english": "One NvdecVideoDecoder per stream. UseFence=true by default; --decode-only measures only this section."
+      },
+      {
+        "key": "cpu",
+        "ru": "OpenCV: CPU-эталон",
+        "en": "OpenCV: CPU reference",
+        "x": 1240,
+        "y": 380,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "VerifyCommand декодирует тот же файл по кадрам через OpenCV.",
+        "english": "VerifyCommand decodes the same file frame by frame through OpenCV."
+      },
+      {
+        "key": "ort",
+        "ru": "OrtValue над NV12",
+        "en": "OrtValue over NV12",
+        "x": 120,
+        "y": 620,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Zero-copy обёртка поверхности CUDA с удержанием NvdecFrame до конца VM run.",
+        "english": "Zero-copy wrapper over the CUDA surface; NvdecFrame remains alive until the VM run ends."
+      },
+      {
+        "key": "convert",
+        "ru": "ONNX: NV12 → BGR",
+        "en": "ONNX: NV12 to BGR",
+        "x": 120,
+        "y": 860,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "BGR U8 NHWC. Verify: isFinal=true, выход CPU. Bench: isFinal=false, выход GPU.",
+        "english": "BGR U8 NHWC. Verify: isFinal=true, CPU output. Bench: isFinal=false, GPU output."
+      },
+      {
+        "key": "download",
+        "ru": "Mat после GPU-пути",
+        "en": "Mat from GPU path",
+        "x": 120,
+        "y": 1100,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Verify: Copy_OrtValue_To_MatImage; намеренная выгрузка для сравнения пикселей.",
+        "english": "Verify: Copy_OrtValue_To_MatImage; intentional download for pixel comparison."
+      },
+      {
+        "key": "resize",
+        "ru": "Bench: GPU resize",
+        "en": "Bench: GPU resize",
+        "x": 680,
+        "y": 860,
+        "width": 440,
+        "height": 100,
+        "role": "gpu",
+        "description": "Op_Onnx_Resize_U8_NHWC, без выгрузки кадра; один VmController на stream.",
+        "english": "Op_Onnx_Resize_U8_NHWC, without frame download; one VmController per stream."
+      },
+      {
+        "key": "statistics",
+        "ru": "Bench: измерения",
+        "en": "Bench: measurements",
+        "x": 680,
+        "y": 1100,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Completed frames, decode ms, VM ms, total/per-stream FPS. Это скорость видеотракта без детекции, трекера и OCR.",
+        "english": "Completed frames, decode ms, VM ms, total/per-stream FPS. This measures the video path without detection, tracking or OCR."
+      },
+      {
+        "key": "compare",
+        "ru": "Verify: сравнение пикселей",
+        "en": "Verify: pixel comparison",
+        "x": 680,
+        "y": 1340,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Cv2.Absdiff; средняя и максимальная абсолютная разница, покадровое соответствие.",
+        "english": "Cv2.Absdiff; mean and maximum absolute difference with frame-by-frame matching."
+      },
+      {
+        "key": "artifacts",
+        "ru": "Verify: PNG + метрики",
+        "en": "Verify: PNG + metrics",
+        "x": 680,
+        "y": 1580,
+        "width": 440,
+        "height": 100,
+        "role": "cpu",
+        "description": "Первый/худший кадр: GPU-путь, CPU-эталон, diff*8. Pass: compared>0 и средняя разница ниже threshold; побитовая идентичность не требуется.",
+        "english": "First/worst frame: GPU path, CPU reference, diff*8. Pass: compared>0 and average difference below threshold; bitwise identity is not required."
+      }
+    ],
+    "edges": [
+      {
+        "start": "source",
+        "end": "nvdec",
+        "label": "Сжатые видеопакеты"
+      },
+      {
+        "start": "source",
+        "end": "cpu",
+        "label": "Тот же файл"
+      },
+      {
+        "start": "nvdec",
+        "end": "ort",
+        "label": "CUDA NV12"
+      },
+      {
+        "start": "ort",
+        "end": "convert",
+        "label": "GPU OrtValue"
+      },
+      {
+        "start": "convert",
+        "end": "download",
+        "label": "Verify: CPU BGR tensor"
+      },
+      {
+        "start": "convert",
+        "end": "resize",
+        "label": "GPU BGR"
+      },
+      {
+        "start": "resize",
+        "end": "statistics",
+        "label": "Число кадров / время"
+      },
+      {
+        "start": "download",
+        "end": "compare",
+        "label": "BGR Mat после GPU"
+      },
+      {
+        "start": "cpu",
+        "end": "compare",
+        "label": "CPU reference Mat",
+        "route": [
+          [
+            1460,
+            480
+          ],
+          [
+            1460,
+            1390
+          ],
+          [
+            1120,
+            1390
+          ]
+        ],
+        "labelPos": [
+          1460,
+          1010
+        ]
+      },
+      {
+        "start": "compare",
+        "end": "artifacts",
+        "label": "Diff / mean / max"
+      }
+    ]
+  }
+]

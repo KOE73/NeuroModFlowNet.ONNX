@@ -25604,6 +25604,228 @@
           "symbol": "[NeuroModFlowNet.Pipeline.VideoOrt]"
         }
       ]
+    },
+    {
+      "id": "e_assembly_ffmpeg_autogen_bindings_dynamic",
+      "kind": "assembly",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_assembly_ffmpeg_native_nvdec",
+      "kind": "assembly",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_assembly_nvcuda_native",
+      "kind": "assembly",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_source",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_nvdec",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_opencv",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_ort_nv12",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_ort_cpu",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_convert",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_upload",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_prepare",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_video_ingest_rect",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_rect",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_det_prepare",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_rgb",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_detector",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_preview_resize",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_det_map",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_preview_mat",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_tracker",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_select",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_crops",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_text_detector",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_text_map",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_roi",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_recognition",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_multicamera_results",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_source",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_nvdec",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_cpu",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_ort",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_convert",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_download",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_resize",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_statistics",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_compare",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
+    },
+    {
+      "id": "e_df_videoort_artifacts",
+      "kind": "stage",
+      "origin": "authored",
+      "status": "present"
     }
   ]
 }

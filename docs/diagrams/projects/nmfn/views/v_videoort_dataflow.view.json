@@ -1,0 +1,98 @@
+{
+  "id": "v_videoort_dataflow",
+  "project": "nmfn",
+  "axis": "axis_dataflow",
+  "placements": [
+    {
+      "entity": "e_df_videoort_source",
+      "parent": null,
+      "x": 680,
+      "y": 140,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.boundary"
+    },
+    {
+      "entity": "e_df_videoort_nvdec",
+      "parent": null,
+      "x": 120,
+      "y": 380,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu"
+    },
+    {
+      "entity": "e_df_videoort_cpu",
+      "parent": null,
+      "x": 1240,
+      "y": 380,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu"
+    },
+    {
+      "entity": "e_df_videoort_ort",
+      "parent": null,
+      "x": 120,
+      "y": 620,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu"
+    },
+    {
+      "entity": "e_df_videoort_convert",
+      "parent": null,
+      "x": 120,
+      "y": 860,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu"
+    },
+    {
+      "entity": "e_df_videoort_download",
+      "parent": null,
+      "x": 120,
+      "y": 1100,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu"
+    },
+    {
+      "entity": "e_df_videoort_resize",
+      "parent": null,
+      "x": 680,
+      "y": 860,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu"
+    },
+    {
+      "entity": "e_df_videoort_statistics",
+      "parent": null,
+      "x": 680,
+      "y": 1100,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu"
+    },
+    {
+      "entity": "e_df_videoort_compare",
+      "parent": null,
+      "x": 680,
+      "y": 1340,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu"
+    },
+    {
+      "entity": "e_df_videoort_artifacts",
+      "parent": null,
+      "x": 680,
+      "y": 1580,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu"
+    }
+  ],
+  "routing": "orthogonal"
+}

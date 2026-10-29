@@ -2681,6 +2681,751 @@
         "at": "2026-10-07T04:10:23Z",
         "origin": "authored"
       }
+    },
+    "e_assembly_ffmpeg_autogen_bindings_dynamic": {
+      "name": {
+        "v": "FFmpeg.AutoGen.Bindings.DynamicallyLoaded",
+        "at": "2026-10-08T07:14:43Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Managed-сборка загрузки нативных библиотек FFmpeg. PackageReference 9.0.1.1; FfmpegRuntime.Initialize.",
+        "at": "2026-10-08T07:14:44Z",
+        "origin": "authored"
+      }
+    },
+    "e_assembly_ffmpeg_native_nvdec": {
+      "name": {
+        "v": "FFmpeg 9 · native DLL",
+        "at": "2026-10-08T07:14:44Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Нативные библиотеки FFmpeg shared build: avformat (demux/RTSP), avcodec (декодер с CUDA/NVDEC), avutil (CUDA hwdevice и frame pool). FfmpegRuntime требует avcodec-63.dll; NVDEC без CPU fallback.",
+        "at": "2026-10-08T07:14:44Z",
+        "origin": "authored"
+      }
+    },
+    "e_assembly_nvcuda_native": {
+      "name": {
+        "v": "nvcuda.dll · CUDA Driver",
+        "at": "2026-10-08T07:14:44Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Нативная библиотека драйвера NVIDIA. CudaDecodeFence: primary CUDA context и ожидание legacy stream перед передачей кадра ONNX Runtime.",
+        "at": "2026-10-08T07:14:44Z",
+        "origin": "authored"
+      }
+    },
+    "v_lab_nvdec_top": {
+      "name": {
+        "v": "Lab NVDec Top",
+        "origin": "authored",
+        "at": "2026-10-08T07:30:37Z"
+      }
+    },
+    "v_video_ingest_dataflow": {
+      "name": {
+        "v": "Видео → рабочий кадр: потоки данных",
+        "at": "2026-10-08T10:40:39Z",
+        "origin": "authored"
+      }
+    },
+    "v_multicamera_dataflow": {
+      "name": {
+        "v": "MultiCamera: потоки данных",
+        "at": "2026-10-08T10:41:03Z",
+        "origin": "authored"
+      }
+    },
+    "v_videoort_dataflow": {
+      "name": {
+        "v": "VideoOrt: verify / bench, потоки данных",
+        "at": "2026-10-08T10:41:03Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_source": {
+      "name": {
+        "v": "Видеофайл / RTSP",
+        "at": "2026-10-08T10:41:58Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Сжатое видео. NVDEC принимает файлы и RTSP; USB-источник доступен через OpenCV.",
+        "at": "2026-10-08T10:41:58Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_nvdec": {
+      "name": {
+        "v": "FFmpeg + NVDEC",
+        "at": "2026-10-08T10:42:10Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "NvdecVideoDecoder: demux и аппаратный декод в CUDA NV12. Без CPU fallback.",
+        "at": "2026-10-08T10:42:10Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_opencv": {
+      "name": {
+        "v": "OpenCV: декод в Mat",
+        "at": "2026-10-08T10:42:10Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Явно выбранный CPU/Mat путь; также поддерживает USB-камеру.",
+        "at": "2026-10-08T10:42:11Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_ort_nv12": {
+      "name": {
+        "v": "OrtValue над NV12",
+        "at": "2026-10-08T10:42:11Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "NvdecFrame.CreateNv12Tensor: zero-copy view [allocatedHeight*3/2, pitch] U8. Поверхность удерживается до завершения run; CudaDecodeFence обеспечивает готовность данных.",
+        "at": "2026-10-08T10:42:12Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_ort_cpu": {
+      "name": {
+        "v": "OrtValue над Mat",
+        "at": "2026-10-08T10:42:12Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Wrap_MatImage_To_OrtTensor: обёртка над пикселями CPU Mat.",
+        "at": "2026-10-08T10:42:12Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_convert": {
+      "name": {
+        "v": "ONNX: NV12 → BGR",
+        "at": "2026-10-08T10:42:13Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_Onnx_Nv12_To_BgrU8Nhwc: явная цветовая матрица BT.601/BT.709 и диапазон; создаёт новый BGR tensor на GPU.",
+        "at": "2026-10-08T10:42:13Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_upload": {
+      "name": {
+        "v": "Явный upload",
+        "at": "2026-10-08T10:42:14Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Copy_OrtTensor_To_ModelDevice: явный перенос пикселей с CPU на устройство модели.",
+        "at": "2026-10-08T10:42:14Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_prepare": {
+      "name": {
+        "v": "Геометрия камеры",
+        "at": "2026-10-08T10:42:15Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "CameraPrepareProgramFactory: configured undistort, perspective, rotate, crop, resize в заданном порядке.",
+        "at": "2026-10-08T10:42:16Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_video_ingest_rect": {
+      "name": {
+        "v": "image.rect",
+        "at": "2026-10-08T10:42:16Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Рабочий кадр BGR U8 NHWC [1,H,W,3] после геометрии; единое координатное пространство common.",
+        "at": "2026-10-08T10:42:17Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_rect": {
+      "name": {
+        "v": "image.rect",
+        "at": "2026-10-08T10:42:18Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Полноразмерный рабочий кадр после prepare. Все координаты ниже приводятся в rect space.",
+        "at": "2026-10-08T10:42:18Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_det_prepare": {
+      "name": {
+        "v": "Вход детектора мешков",
+        "at": "2026-10-08T10:42:19Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Resize/letterbox по размеру модели камеры; BGR U8 → RGB FP16/FP32 NCHW /255. Также выдаёт back-transform.",
+        "at": "2026-10-08T10:42:19Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_rgb": {
+      "name": {
+        "v": "Полноразмерный RGB",
+        "at": "2026-10-08T10:42:20Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "RGB FP32 NCHW 0..1 из image.rect, источник пикселей для вырезок мешков и текстовых ROI при включённом OCR.",
+        "at": "2026-10-08T10:42:20Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_detector": {
+      "name": {
+        "v": "Детектор мешков",
+        "at": "2026-10-08T10:42:21Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Model_OrtValueInference<YoloBox/YoloObb>; endpoint на файл модели. MaxBatchSize=1, MaxWaitTime=0.",
+        "at": "2026-10-08T10:42:21Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_preview_resize": {
+      "name": {
+        "v": "Уменьшение превью",
+        "at": "2026-10-08T10:42:22Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Опциональная ветка: сначала уменьшить кадр на GPU; isFinal=true размещает выход в CPU memory.",
+        "at": "2026-10-08T10:42:22Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_det_map": {
+      "name": {
+        "v": "Детекции → rect",
+        "at": "2026-10-08T10:42:23Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_Map_Coordinates и отбор класса преобразуют готовые typed boxes в TrackDetection[].",
+        "at": "2026-10-08T10:42:23Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_preview_mat": {
+      "name": {
+        "v": "Mat: превью с подписями",
+        "at": "2026-10-08T10:42:24Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Copy_OrtValue_To_MatImage; CPU-отрисовка получает готовые detections/tracks/OCR results. Опционально окно и PNG snapshots.",
+        "at": "2026-10-08T10:42:24Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_tracker": {
+      "name": {
+        "v": "Трекер камеры",
+        "at": "2026-10-08T10:42:25Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_Track: состояние в VmGlobalMemory камеры, обновление в ordered critical section; выход TrackedObject[].",
+        "at": "2026-10-08T10:42:25Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_select": {
+      "name": {
+        "v": "Области мешков + ID",
+        "at": "2026-10-08T10:42:26Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_TracksToCropBoxes: подтверждённые треки с MissedFrames=0, не более maxCrops; YoloObb[] и int[].",
+        "at": "2026-10-08T10:42:26Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_crops": {
+      "name": {
+        "v": "Вырезки мешков",
+        "at": "2026-10-08T10:42:27Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW: [maxCrops,3,S,S], transforms[] и actualCount. Явная политика Truncate.",
+        "at": "2026-10-08T10:42:27Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_text_detector": {
+      "name": {
+        "v": "Детектор текстовых OBB",
+        "at": "2026-10-08T10:42:28Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Общий endpoint принимает готовый batch вырезок. MaxBatchSize=1; CropTextRegion[] сохраняет crop index.",
+        "at": "2026-10-08T10:42:28Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_text_map": {
+      "name": {
+        "v": "Текстовые области → rect",
+        "at": "2026-10-08T10:42:29Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_MapCropTextRegionsToRect: OBB обратно в rect и параллельные track IDs; результаты padding crop slots отбрасываются.",
+        "at": "2026-10-08T10:42:29Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_roi": {
+      "name": {
+        "v": "Подготовка текстовых ROI",
+        "at": "2026-10-08T10:42:30Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW: повторная вырезка из полноразмерного RGB, геометрия и Paddle-нормализация; actualCount отдельно.",
+        "at": "2026-10-08T10:42:30Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_recognition": {
+      "name": {
+        "v": "PaddleOCR Rec",
+        "at": "2026-10-08T10:42:31Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "OrtValue endpoint: [N,3,H,W] → OcrResult[]. Backend recognition задан явно; скрытый fallback запрещён. MaxBatchSize=1.",
+        "at": "2026-10-08T10:42:32Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_multicamera_results": {
+      "name": {
+        "v": "Текст + ID треков",
+        "at": "2026-10-08T10:42:32Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "CameraWorker отсекает padding recognition slots по actualCount, связывает строки с track IDs; результат и статистика.",
+        "at": "2026-10-08T10:42:33Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_source": {
+      "name": {
+        "v": "Исходное видео",
+        "at": "2026-10-08T10:42:34Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Verify: один файл. Bench: файлы/RTSP, N независимых streams.",
+        "at": "2026-10-08T10:42:34Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_nvdec": {
+      "name": {
+        "v": "FFmpeg + NVDEC",
+        "at": "2026-10-08T10:42:34Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Собственный NvdecVideoDecoder на stream. UseFence=true по умолчанию; --decode-only измеряет только этот участок.",
+        "at": "2026-10-08T10:42:35Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_cpu": {
+      "name": {
+        "v": "OpenCV: CPU-эталон",
+        "at": "2026-10-08T10:42:36Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "VerifyCommand декодирует тот же файл по кадрам через OpenCV.",
+        "at": "2026-10-08T10:42:36Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_ort": {
+      "name": {
+        "v": "OrtValue над NV12",
+        "at": "2026-10-08T10:42:36Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Zero-copy обёртка поверхности CUDA с удержанием NvdecFrame до конца VM run.",
+        "at": "2026-10-08T10:42:37Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_convert": {
+      "name": {
+        "v": "ONNX: NV12 → BGR",
+        "at": "2026-10-08T10:42:37Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "BGR U8 NHWC. Verify: isFinal=true, выход CPU. Bench: isFinal=false, выход GPU.",
+        "at": "2026-10-08T10:42:37Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_download": {
+      "name": {
+        "v": "Mat после GPU-пути",
+        "at": "2026-10-08T10:42:38Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Verify: Copy_OrtValue_To_MatImage; намеренная выгрузка для сравнения пикселей.",
+        "at": "2026-10-08T10:42:38Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_resize": {
+      "name": {
+        "v": "Bench: GPU resize",
+        "at": "2026-10-08T10:42:39Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Op_Onnx_Resize_U8_NHWC, без выгрузки кадра; один VmController на stream.",
+        "at": "2026-10-08T10:42:39Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_statistics": {
+      "name": {
+        "v": "Bench: измерения",
+        "at": "2026-10-08T10:42:40Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Completed frames, decode ms, VM ms, total/per-stream FPS. Это скорость видеотракта без детекции, трекера и OCR.",
+        "at": "2026-10-08T10:42:40Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_compare": {
+      "name": {
+        "v": "Verify: сравнение пикселей",
+        "at": "2026-10-08T10:42:41Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Cv2.Absdiff; средняя и максимальная абсолютная разница, покадровое соответствие.",
+        "at": "2026-10-08T10:42:41Z",
+        "origin": "authored"
+      }
+    },
+    "e_df_videoort_artifacts": {
+      "name": {
+        "v": "Verify: PNG + метрики",
+        "at": "2026-10-08T10:42:41Z",
+        "origin": "authored"
+      },
+      "description": {
+        "v": "Первый/худший кадр: GPU-путь, CPU-эталон, diff*8. Pass: compared>0 и средняя разница ниже threshold; побитовая идентичность не требуется.",
+        "at": "2026-10-08T10:42:42Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_source_df_video_ingest_nvdec_data_flow": {
+      "name": {
+        "v": "Сжатые видеопакеты",
+        "at": "2026-10-08T10:43:04Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_source_df_video_ingest_opencv_data_flow": {
+      "name": {
+        "v": "Видеоданные",
+        "at": "2026-10-08T10:43:05Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_nvdec_df_video_ingest_ort_nv12_data_flow": {
+      "name": {
+        "v": "CUDA NV12-поверхность",
+        "at": "2026-10-08T10:43:07Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_opencv_df_video_ingest_ort_cpu_data_flow": {
+      "name": {
+        "v": "CPU Mat: BGR U8",
+        "at": "2026-10-08T10:43:08Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_ort_nv12_df_video_ingest_convert_data_flow": {
+      "name": {
+        "v": "GPU OrtValue: NV12 U8",
+        "at": "2026-10-08T10:43:09Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_ort_cpu_df_video_ingest_upload_data_flow": {
+      "name": {
+        "v": "CPU OrtValue: BGR U8 NHWC",
+        "at": "2026-10-08T10:43:10Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_convert_df_video_ingest_prepare_data_flow": {
+      "name": {
+        "v": "GPU BGR U8 NHWC",
+        "at": "2026-10-08T10:43:11Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_upload_df_video_ingest_prepare_data_flow": {
+      "name": {
+        "v": "Device BGR U8 NHWC",
+        "at": "2026-10-08T10:43:12Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_video_ingest_prepare_df_video_ingest_rect_data_flow": {
+      "name": {
+        "v": "OrtValue [1,H,W,3]",
+        "at": "2026-10-08T10:43:13Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_rect_df_multicamera_det_prepare_data_flow": {
+      "name": {
+        "v": "BGR U8 NHWC",
+        "at": "2026-10-08T10:43:15Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_rect_df_multicamera_rgb_data_flow": {
+      "name": {
+        "v": "BGR U8 NHWC",
+        "at": "2026-10-08T10:43:16Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_det_prepare_df_multicamera_detector_data_flow": {
+      "name": {
+        "v": "RGB FP16/FP32 NCHW",
+        "at": "2026-10-08T10:43:17Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_det_prepare_df_multicamera_det_map_data_flow": {
+      "name": {
+        "v": "Back-transform",
+        "at": "2026-10-08T10:43:18Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_detector_df_multicamera_det_map_data_flow": {
+      "name": {
+        "v": "YoloBox[] / YoloObb[]",
+        "at": "2026-10-08T10:43:19Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_det_map_df_multicamera_tracker_data_flow": {
+      "name": {
+        "v": "TrackDetection[]",
+        "at": "2026-10-08T10:43:20Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_tracker_df_multicamera_select_data_flow": {
+      "name": {
+        "v": "TrackedObject[]",
+        "at": "2026-10-08T10:43:21Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_select_df_multicamera_crops_data_flow": {
+      "name": {
+        "v": "OBB[]",
+        "at": "2026-10-08T10:43:22Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_rgb_df_multicamera_crops_data_flow": {
+      "name": {
+        "v": "RGB FP32: пиксели",
+        "at": "2026-10-08T10:43:23Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_crops_df_multicamera_text_detector_data_flow": {
+      "name": {
+        "v": "GPU batch [maxCrops,3,S,S]",
+        "at": "2026-10-08T10:43:24Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_crops_df_multicamera_text_map_data_flow": {
+      "name": {
+        "v": "Transforms[] / count",
+        "at": "2026-10-08T10:45:31Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_select_df_multicamera_text_map_data_flow": {
+      "name": {
+        "v": "ID треков",
+        "at": "2026-10-08T10:43:26Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_text_detector_df_multicamera_text_map_data_flow": {
+      "name": {
+        "v": "CropTextRegion[]",
+        "at": "2026-10-08T10:43:26Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_text_map_df_multicamera_roi_data_flow": {
+      "name": {
+        "v": "OBB rect",
+        "at": "2026-10-08T10:43:27Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_rgb_df_multicamera_roi_data_flow": {
+      "name": {
+        "v": "Полноразмерные пиксели",
+        "at": "2026-10-08T10:43:28Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_roi_df_multicamera_recognition_data_flow": {
+      "name": {
+        "v": "FP32 NCHW + actualCount",
+        "at": "2026-10-08T10:43:29Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_recognition_df_multicamera_results_data_flow": {
+      "name": {
+        "v": "OcrResult[]",
+        "at": "2026-10-08T10:43:30Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_text_map_df_multicamera_results_data_flow": {
+      "name": {
+        "v": "ID треков",
+        "at": "2026-10-08T10:43:30Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_rect_df_multicamera_preview_resize_data_flow": {
+      "name": {
+        "v": "BGR U8 NHWC",
+        "at": "2026-10-08T10:43:31Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_multicamera_preview_resize_df_multicamera_preview_mat_data_flow": {
+      "name": {
+        "v": "CPU tensor → Mat",
+        "at": "2026-10-08T10:43:32Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_source_df_videoort_nvdec_data_flow": {
+      "name": {
+        "v": "Сжатые видеопакеты",
+        "at": "2026-10-08T10:43:34Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_source_df_videoort_cpu_data_flow": {
+      "name": {
+        "v": "Тот же файл",
+        "at": "2026-10-08T10:43:34Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_nvdec_df_videoort_ort_data_flow": {
+      "name": {
+        "v": "CUDA NV12",
+        "at": "2026-10-08T10:43:35Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_ort_df_videoort_convert_data_flow": {
+      "name": {
+        "v": "GPU OrtValue",
+        "at": "2026-10-08T10:43:36Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_convert_df_videoort_download_data_flow": {
+      "name": {
+        "v": "Verify: CPU BGR tensor",
+        "at": "2026-10-08T10:43:36Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_convert_df_videoort_resize_data_flow": {
+      "name": {
+        "v": "GPU BGR",
+        "at": "2026-10-08T10:43:37Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_resize_df_videoort_statistics_data_flow": {
+      "name": {
+        "v": "Число кадров / время",
+        "at": "2026-10-08T10:43:38Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_download_df_videoort_compare_data_flow": {
+      "name": {
+        "v": "BGR Mat после GPU",
+        "at": "2026-10-08T10:43:39Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_cpu_df_videoort_compare_data_flow": {
+      "name": {
+        "v": "CPU reference Mat",
+        "at": "2026-10-08T10:43:39Z",
+        "origin": "authored"
+      }
+    },
+    "r_df_videoort_compare_df_videoort_artifacts_data_flow": {
+      "name": {
+        "v": "Diff / mean / max",
+        "at": "2026-10-08T10:43:40Z",
+        "origin": "authored"
+      }
     }
   }
 }

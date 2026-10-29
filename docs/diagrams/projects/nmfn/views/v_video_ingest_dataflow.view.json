@@ -1,0 +1,98 @@
+{
+  "id": "v_video_ingest_dataflow",
+  "project": "nmfn",
+  "axis": "axis_dataflow",
+  "placements": [
+    {
+      "entity": "e_df_video_ingest_source",
+      "parent": null,
+      "x": 100,
+      "y": 140,
+      "width": 1220,
+      "height": 100,
+      "styleId": "dataflow.stage.boundary",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_nvdec",
+      "parent": null,
+      "x": 100,
+      "y": 380,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_opencv",
+      "parent": null,
+      "x": 880,
+      "y": 380,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_ort_nv12",
+      "parent": null,
+      "x": 100,
+      "y": 620,
+      "width": 440,
+      "height": 105,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_ort_cpu",
+      "parent": null,
+      "x": 880,
+      "y": 620,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.cpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_convert",
+      "parent": null,
+      "x": 100,
+      "y": 860,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_upload",
+      "parent": null,
+      "x": 880,
+      "y": 860,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.boundary",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_prepare",
+      "parent": null,
+      "x": 490,
+      "y": 1100,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    },
+    {
+      "entity": "e_df_video_ingest_rect",
+      "parent": null,
+      "x": 490,
+      "y": 1340,
+      "width": 440,
+      "height": 100,
+      "styleId": "dataflow.stage.gpu",
+      "template": "title-description"
+    }
+  ],
+  "routing": "orthogonal"
+}

@@ -1,8 +1,8 @@
 export class ObservationView {
-  constructor({api,t,esc,onChange,onError,read,save}) {
-    Object.assign(this,{api,t,esc,onChange,onError,read,save});
+  constructor({api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap}) {
+    Object.assign(this,{api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap});
     this.camera = ''; this.cameraRevision = 0; this.snapshot = null; this.updating = false; this.polling = false;
-    this.after = {}; this.frames = new Map(); this.urls = new Map(); this.variables = new Map();
+    this.after = {}; this.frames = new Map(); this.urls = new Map(); this.variables = new Map(); this.tiles = new Map();
     this.gallery = document.querySelector('#watch-gallery');
     this.enabled = document.querySelector('#watch-enabled');
     this.frequency = document.querySelector('#watch-fps');
@@ -43,7 +43,7 @@ export class ObservationView {
     const cameraRevision = ++this.cameraRevision;
     this.camera = camera; this.snapshot = null; this.pendingConfiguration = null; this.queuedConfiguration = null; this.updating = false; this.after = {}; this.frames.clear();
     for(const url of this.urls.values()) URL.revokeObjectURL(url);
-    this.urls.clear(); this.gallery.replaceChildren(); this.render();
+    this.urls.clear(); for(const key of this.tiles.keys()) this.onRemove(key); this.tiles.clear(); this.gallery.replaceChildren(); this.render();
     if(!camera) return;
     try {
       const snapshot = await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/watch`)).json();
@@ -54,7 +54,10 @@ export class ObservationView {
         if(Number.isFinite(frequency) && frequency >= 0.2 && frequency <= 15) snapshot.configuration.framesPerSecond = frequency;
         if([320,640,1000,1600,2000].includes(size)) snapshot.configuration.maxEdge = size;
       }
-      this.accept(snapshot); this.onChange();
+      if(snapshot.generation === 0 && this.bootstrap?.camera === camera && this.bootstrap.configuration?.registers?.length) {
+        this.snapshot = snapshot;
+        await this.configure(this.bootstrap.configuration);
+      } else { this.accept(snapshot); this.onChange(); }
     } catch(error) { if(camera === this.camera) this.onError(error); }
   }
 
@@ -100,15 +103,22 @@ export class ObservationView {
     if(document.activeElement !== this.frequency) this.frequency.value = configuration.framesPerSecond;
     if(document.activeElement !== this.size) this.size.value = configuration.maxEdge;
     const keys = new Set(configuration.registers.map(item => item.key));
-    for(const tile of this.gallery.querySelectorAll('[data-watch-key]')) if(!keys.has(tile.dataset.watchKey)) tile.remove();
+    if(this.snapshot) this.onSync(keys);
+    for(const [key,tile] of this.tiles) if(!keys.has(key)) { this.onRemove(key); tile.remove(); this.tiles.delete(key); }
     for(const [key,url] of this.urls) if(!keys.has(key)) { URL.revokeObjectURL(url); this.urls.delete(key); this.frames.delete(key); }
     for(const selection of configuration.registers) {
-      let tile = [...this.gallery.children].find(element => element.dataset.watchKey === selection.key);
+      let tile = this.tiles.get(selection.key);
       if(!tile) {
         tile = document.createElement('figure'); tile.className = 'watch-tile'; tile.dataset.watchKey = selection.key; tile.dataset.format = selection.format;
-        tile.innerHTML = `<figcaption data-tooltip="${this.esc(selection.key)}">${this.esc(selection.key)}</figcaption><div class="watch-location mono"></div><div class="watch-content">${selection.format === 'png' ? '<a target="_blank" rel="noopener" hidden><img alt=""></a><span class="watch-placeholder"></span>':'<pre></pre>'}</div><div class="watch-counts"></div>`;
+        tile.innerHTML = `<figcaption><span class="watch-title" data-tooltip="${this.esc(selection.key)}">${this.esc(selection.key)}</span><button class="pane-action" data-tile-float aria-label="${this.esc(this.t('floatpanel'))}" data-tooltip="${this.esc(this.t('floatpanel'))}"><i class="ti ti-maximize" aria-hidden="true"></i></button><button class="pane-action" data-tile-popup aria-label="${this.esc(this.t('newviewer'))}" data-tooltip="${this.esc(this.t('newviewer'))}"><i class="ti ti-external-link" aria-hidden="true"></i></button></figcaption><div class="watch-location mono"></div><div class="watch-content">${selection.format === 'png' ? '<a target="_blank" rel="noopener" hidden><img alt=""></a><span class="watch-placeholder"></span>':'<pre></pre>'}</div><div class="watch-counts"></div>`;
+        const created = tile;
+        tile.querySelector('[data-tile-float]').onclick = () => this.onFloat(selection.key,created);
+        tile.querySelector('[data-tile-popup]').onclick = () => this.onPopup(selection.key);
+        this.tiles.set(selection.key,tile);
         this.gallery.append(tile);
+        this.onTile(selection.key,tile);
       }
+      tile.dataset.watchOrder = configuration.registers.indexOf(selection);
       const item = this.snapshot?.items.find(item => item.target.key === selection.key);
       const frame = this.frames.get(selection.key);
       const location = frame?.location ?? item?.target;
@@ -137,7 +147,7 @@ export class ObservationView {
       for(const item of snapshot.items) {
         const frame = item.frame;
         if(!frame || frame.sequence <= (this.after[item.target.key] ?? 0)) continue;
-        const tile = [...this.gallery.children].find(element => element.dataset.watchKey === item.target.key);
+        const tile = this.tiles.get(item.target.key);
         if(!tile) continue;
         if(frame.data && frame.contentType === 'image/png') {
           const bytes = Uint8Array.from(atob(frame.data),character => character.charCodeAt(0));

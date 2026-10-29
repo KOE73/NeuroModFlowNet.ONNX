@@ -182,7 +182,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
         }
     }
 
-    public DebugWatchSnapshot ConfigureObservation(DebugWatchConfiguration configuration)
+    public DebugWatchSnapshot ConfigureObservation(DebugWatchConfiguration configuration, string viewerId = "main")
     {
         lock(syncRoot)
         {
@@ -201,13 +201,13 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
                 DebugInstruction point = writer ?? instructions[0];
                 return new DebugWatchTarget(selection.Key, selection.Format, point.Program, point.Index, writer is null ? "before" : "after");
             }).ToArray();
-            return Observation.Configure(configuration, targets) with { Variables = knownVariables };
+            return Observation.Configure(configuration, targets, viewerId) with { Variables = knownVariables };
         }
     }
 
-    public DebugWatchSnapshot ObservationSnapshot()
+    public DebugWatchSnapshot ObservationSnapshot(string viewerId = "main")
     {
-        lock(syncRoot) return Observation.Snapshot() with { Variables = knownVariables };
+        lock(syncRoot) return Observation.Snapshot(false, viewerId) with { Variables = knownVariables };
     }
 
     public Task<DebugInspectionResult> InspectAsync(DebugInspectionRequest request, CancellationToken cancellationToken)

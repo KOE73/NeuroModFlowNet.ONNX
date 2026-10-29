@@ -5,6 +5,7 @@
   <title>NeuroModFlowNet · VM Debug</title>
   <link rel="stylesheet" href="shell/icons/tabler-icons.css"><link rel="stylesheet" href="shell/themes.css">
   <link rel="stylesheet" href="shell/shell.css"><link rel="stylesheet" href="debug.css">
+  <link rel="stylesheet" href="vendor/dockview/dockview.css"><link rel="stylesheet" href="workspace.css"><link rel="stylesheet" href="theme-debug-extensions.css">
   <script type="module" src="debug.js"></script>
 </head>
 <body>
@@ -12,7 +13,8 @@
   <header class="shell-topbar">
     <button id="menu" data-label="menu" data-tip="menu"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
     <strong class="shell-brand"><i class="ti ti-bolt" aria-hidden="true"></i>VM Debug</strong>
-    <span class="shell-version">NeuroModFlowNet</span><div class="shell-stats" id="connection" role="status"></div>
+    <span class="shell-version">NeuroModFlowNet</span><select id="viewer-camera" hidden></select><div class="shell-stats" id="connection" role="status"></div>
+    <details id="panels-menu"><summary data-i18n="panels"></summary><div class="appearance-menu"><button data-panel="instructions" data-i18n="instructions"></button><button data-panel="registers" data-i18n="registers"></button><button data-panel="preview" data-i18n="image"></button><button id="reset-layout" data-i18n="resetlayout"></button><button id="new-viewer" data-i18n="newviewer"></button></div></details>
     <button id="diagnostics" data-label="diagnostics" data-tip="nodiagnostics"><i class="ti ti-list-details" aria-hidden="true"></i></button>
     <span id="message-announcement" class="sr-only" role="status" aria-live="polite"></span>
     <details class="appearance" id="appearance"><summary><i class="ti ti-palette" aria-hidden="true"></i> <span id="appearance-label"></span></summary><div class="appearance-menu" id="appearance-menu"></div></details>
@@ -57,7 +59,7 @@
         <div class="pane-divider" role="separator" aria-orientation="vertical" tabindex="0" data-divider="0" data-label="resizeinstructions" data-tip="resizetip"></div>
         <section class="panel debug-pane register-pane">
           <div class="panel-header"><h2 data-i18n="registers"></h2><span id="register-count" class="muted"></span></div>
-          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><colgroup><col class="action-column"><col class="action-column"><col class="action-column"><col><col class="memory-column"><col class="shape-column"></colgroup><thead><tr><th data-label="watch" data-tip="watchtip" class="register-watch-cell"><i class="ti ti-refresh" aria-hidden="true"></i></th><th data-label="inspect" class="register-action-cell"></th><th data-label="preview" class="register-action-cell second-action"></th><th data-i18n="register"></th><th data-i18n="memory"></th><th data-i18n="shape"></th></tr></thead><tbody id="registers"></tbody></table></div>
+          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><colgroup><col class="action-column"><col class="action-column"><col class="action-column"><col><col class="memory-column"><col class="shape-column"></colgroup><thead><tr><th data-label="watch" data-tip="watchtip" class="register-watch-cell"><i class="ti ti-refresh" aria-hidden="true"></i></th><th data-label="inspect" class="register-action-cell"></th><th data-label="preview" class="register-action-cell second-action"></th><th data-sort="key" aria-sort="ascending"><button class="sort-header" data-sort="key"><span data-i18n="register"></span><span class="sort-indicator" aria-hidden="true"></span></button></th><th data-sort="memory" aria-sort="none"><button class="sort-header" data-sort="memory"><span data-i18n="memory"></span><span class="sort-indicator" aria-hidden="true"></span></button></th><th data-sort="shape" aria-sort="none"><button class="sort-header" data-sort="shape"><span data-i18n="shape"></span><span class="sort-indicator" aria-hidden="true"></span></button></th></tr></thead><tbody id="registers"></tbody></table></div>
         </section>
         <div class="pane-divider" role="separator" aria-orientation="vertical" tabindex="0" data-divider="1" data-label="resizeregisters" data-tip="resizetip"></div>
         <section class="panel debug-pane preview-pane">

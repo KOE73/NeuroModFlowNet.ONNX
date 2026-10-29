@@ -52,6 +52,16 @@ The default loopback endpoint can be forwarded over an existing SSH/VPN connecti
 
 ## HTTP API
 
+### Dockview workspace and independent windows
+
+The default workspace retains the three adjacent instruction, register and inspection panes. Drag a pane header to move it, combine tabs or split horizontally/vertically; drag the separators to resize. The bare maximize icon floats a pane inside the page and docks it back; move a floating window by its narrow top grip. A watched image/value has the same action beside its caption, so individual samples can be arranged separately. **Panels → Reset layout** restores the initial overview. Layout and sizes are saved in browser storage, separately for the main page and each observation window.
+
+The external-link icon opens an ordinary popup with a complete, independent Dockview page. It copies the chosen camera and either that register or the current observation selection. The popup has its own register selection, frequency, image size and layout; it can add the register table through **Panels**. Closing a watched pane in that window unsubscribes only its register. Closing the main page does not stop the window. The window talks directly to the same HTTP API, without opener messaging or a parent-window lifetime dependency. Its compact UI omits VM/program controls. PWA installation is deferred. Browser popup policy determines whether this is a separate window or tab and how much browser address chrome remains visible; allow popups for this origin when needed.
+
+Observation subscriptions are isolated by the optional `viewer` query parameter on all three `/watch` routes (omitted means `main`). Simultaneously ready register/location/format/size requests share one owned snapshot and encoding. Each viewer has its own acknowledgement slot, rate and five-second lease: a slow viewer cannot block another viewer or accumulate a queue. Limits per camera are eight viewer subscriptions, eight registers per viewer, sixteen distinct register/size targets and eight in-flight captures/encoders globally across those viewers. Unseen non-main subscriptions expire after ten minutes. Idle/closed windows lose their lease before any further GPU preparation; disabled observation retains the allocation-free hook fast path.
+
+Register headers sort by register name, memory or shape/value; clicking again reverses the order. Natural sorting keeps numeric name components together and compares scalar numbers numerically. Provider colors are an additive extension in `wwwroot/theme-debug-extensions.css`, leaving the base palettes untouched: readable NVIDIA greens for CUDA/TensorRT, the theme's red for Managed and information blue for DirectML. Unknown placement stays neutral; no GPU manufacturer is guessed from a generic provider name.
+
 All mutation requests require `X-VM-Debug: 1`. Remote bindings additionally require the bearer token. Successful commands are visible in `GET /api/status`. A missing camera returns 404; stale/unavailable stops return 409; unsupported inspection returns 400. Do not concurrently issue a pause-relative command from multiple clients without the current revision.
 
 | Method | Route | Body / result |
@@ -75,9 +85,12 @@ The register JSON endpoint allows typed arrays (first 256 items, with explicit t
 
 Shell resources, palettes, local Tabler icons and tooltip behavior were copied from `UI.TechnicalShell`; its complete owner standard is retained in `docs/ui-principles.md` and `REQUIREMENTS.md`. Appearance remains the combined theme/density menu, with RU/EN and per-application browser preferences. Icon licensing is in `wwwroot/shell/icons/LICENSE.txt`.
 
+Dockview Core 8.2.0 is vendored locally under `wwwroot/vendor/dockview` with its MIT license. It is the same dependency version already used by the local SeMaps editor. No CDN, frontend framework or bundler is required; the workspace adapter is isolated in `workspace.js`/`workspace.css`.
+
 ## Verified 2026-10-29
 
 - Complete solution builds, including samples, both Avalonia labs and all test projects. Existing unrelated warnings remain.
+- Dockview changes: all 35 debugger tests pass, including capture sharing and independent/slow viewers; three Node tests cover register sorting and provider classification. Browser checks cover header drag/split, persisted layout after reload, reset, individual floating images, isolated window settings and continued samples after the opener closes. Physical transfer to a second monitor has not been exercised.
 - 19 debugger/renderer/access-policy tests (including run-to and register action capabilities) and all 36 existing VM tests pass.
 - Actual recordings from both new cameras: NVDEC surfaces in CUDA memory; H.264 2688×1520 verified with FFprobe; 4K 3840×2160 second source. Single-step color conversion, undistort and perspective, real detector outputs, independent camera pauses, program-local breakpoints, next accepted frame and explicit PNG inspection were exercised through the running host.
 - More than 1,200 completed VM runs across the two cameras without VM failures, followed by successful pause and OCR inspection: fixed recognition batch `[16,3,48,640]`, actual ROI counts 2 and 1, typed recognition strings available through the register API. Model recognition accuracy is outside this debugger change.

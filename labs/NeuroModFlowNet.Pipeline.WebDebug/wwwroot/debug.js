@@ -1,11 +1,23 @@
 import './shell/ui-tooltip.js';
 import { ObservationView } from './observation.js';
+import { DebugWorkspace } from './workspace.js';
+import { memoryKind,sortRegisters } from './register-table.js';
 
 const $ = selector => document.querySelector(selector);
 const shell = $('#shell');
 const storage = 'nmfn.webdebug.ui.';
+const parameters = new URLSearchParams(location.search);
+const viewerId = parameters.get('viewer') || 'main';
+const viewerMode = viewerId !== 'main';
+let workspace = null;
+let registerSort = {column:'key',direction:1};
 const read = (key, fallback) => { try { return localStorage.getItem(storage + key) ?? fallback; } catch { return fallback; } };
 const save = (key, value) => { try { localStorage.setItem(storage + key, value); } catch { /* Preferences are optional. */ } };
+let viewerBootstrap = null;
+try { viewerBootstrap = JSON.parse(read(`viewer.${viewerId}`,'null')); registerSort = JSON.parse(read('registerSort','null')) ?? registerSort; } catch { }
+if(!['key','memory','shape'].includes(registerSort.column) || ![1,-1].includes(registerSort.direction)) registerSort = {column:'key',direction:1};
+shell.classList.toggle('viewer-mode',viewerMode);
+if(viewerMode) { window.opener = null; $('#viewer-camera').hidden = false; }
 let language = read('language', 'ru');
 let theme = read('theme', 'cream');
 let density = read('density', 'nano');
@@ -22,6 +34,10 @@ const words = {
   cameras:['Камеры','Cameras'],camera:['Камера','Camera'],state:['Состояние','State'],decoder:['Декодер','Decoder'],frames:['Кадры','Frames'],runms:['Прогон, мс','Run, ms'],tracks:['Треки','Tracks'],failures:['Ошибки','Errors'],text:['Распознанный текст','Recognized text'],
   pause:['Пауза','Pause'],continue:['Продолжить','Continue'],step:['Шаг','Step'],nextframe:['Следующий кадр','Next frame'],detach:['Отсоединить','Detach'],
   debugcontrols:['Управление отладкой выбранной камеры','Selected camera debug controls'],
+  panels:['Панели','Panels'],resetlayout:['Сбросить расположение','Reset layout'],newviewer:['Открыть окно наблюдения','Open observation window'],
+  floatpanel:['Плавающая панель / вернуть в раскладку','Float panel / dock back'],returngallery:['Вернуть в обзор','Return to overview'],
+  closepanel:['Закрыть панель','Close panel'],
+  layoutinvalid:['Не удалось восстановить расположение','Could not restore layout'],popupblocked:['Браузер не открыл окно. Разрешите всплывающие окна для этого адреса.','The browser did not open the window. Allow popups for this site.'],
   instructions:['Программы и инструкции','Programs and instructions'],instruction:['Инструкция','Instruction'],breakpoint:['Т.О.','B.P.'],ms:['мс','ms'],registers:['Регистры','Registers'],register:['Регистр','Register'],memory:['Память','Memory'],shape:['Форма','Shape'],
   inspect:['Значение','Value'],preview:['Изображение','Image'],image:['Просмотр данных','Data inspection'],pin:['Закрепить вход','Pin input'],resultframe:['Кадр результата','Result frame'],
   imageempty:['На паузе выберите изображение или значение значком. Для динамики отметьте регистры галочками и продолжите VM.','On pause, use an icon to inspect an image or value. For live observation, check registers and resume the VM.'],
@@ -67,7 +83,11 @@ const t = key => words[key]?.[language === 'ru' ? 0 : 1] ?? key;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const number = (value, digits = 0) => Number.isFinite(value) ? value.toFixed(digits) : '—';
 const cameraPath = () => `/api/cameras/${encodeURIComponent(selectedCamera)}`;
-const observation = new ObservationView({api,t,esc,read,save,onError:showError,onChange:() => { lastRender = ''; renderSelected(); }});
+const observation = new ObservationView({api,t,esc,read,save,bootstrap:viewerBootstrap,
+  onTile:(key,tile)=>workspace?.attachTile(key,tile),onRemove:key=>workspace?.removeTile(key),
+  onFloat:(key,tile)=>workspace?.floatTile(key,tile),onPopup:key=>openViewer(key),
+  onSync:keys=>workspace?.pruneTiles(keys),
+  onError:showError,onChange:() => { if(viewerMode && observation.snapshot) { save(`viewer.${viewerId}`,JSON.stringify({camera:observation.camera,configuration:observation.configuration})); if(workspace && observation.selected.length === 0 && workspace.dock.panels.length === 0) workspace.show('registers'); } lastRender = ''; renderSelected(); }});
 function updateDiagnostics() {
   $('#diagnostics').classList.toggle('error',Boolean(lastError));
   $('#diagnostics').dataset.tooltip = t(lastError ? 'hasdiagnostics':'nodiagnostics');
@@ -80,6 +100,7 @@ function showError(error) {
 }
 function clearError() { lastError = ''; $('#message-announcement').textContent = ''; updateDiagnostics(); }
 async function api(path, options = {}) {
+  if(/\/watch(?:\/poll)?$/.test(path)) path += `?viewer=${encodeURIComponent(viewerId)}`;
   const headers = { 'X-VM-Debug':'1', ...(token ? {Authorization:`Bearer ${token}`} : {}), ...options.headers };
   if(options.body) headers['Content-Type'] = 'application/json';
   const response = await fetch(path, { ...options, headers, signal:options.signal ?? AbortSignal.timeout(15000) });
@@ -107,105 +128,9 @@ function translate() {
   document.querySelectorAll('[data-i18n]').forEach(element => element.textContent = t(element.dataset.i18n));
   document.querySelectorAll('[data-label]').forEach(element => element.setAttribute('aria-label',t(element.dataset.label)));
   document.querySelectorAll('[data-tip]').forEach(element => element.dataset.tooltip = t(element.dataset.tip));
-  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); observation.render(); lastRender = ''; renderSelected();
+  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); observation.render(); workspace?.translate(); lastRender = ''; renderSelected();
 }
 
-function initializePanelSizing() {
-  const columns = $('.debug-columns');
-  const panes = [...columns.querySelectorAll('.debug-pane')];
-  const dividers = [...columns.querySelectorAll('.pane-divider')];
-  const minimumWidth = 220, minimumTotal = 935, dividerWidth = 6;
-  let proportions = null, drag = null;
-  try {
-    const stored = JSON.parse(read('panelWidths','null'));
-    if(Array.isArray(stored) && stored.length === 3 && stored.every(value => Number.isFinite(value) && value > 0)) {
-      const total = stored.reduce((sum,value) => sum + value,0);
-      if(Number.isFinite(total)) proportions = stored.map(value => value / total);
-    }
-  } catch { /* Ignore invalid optional preferences. */ }
-
-  const widths = () => panes.map(pane => pane.getBoundingClientRect().width);
-  function updateDividers(values) {
-    dividers.forEach((divider,index) => {
-      divider.setAttribute('aria-valuemin',minimumWidth);
-      divider.setAttribute('aria-valuemax',Math.round(values[index] + values[index + 1] - minimumWidth));
-      divider.setAttribute('aria-valuenow',Math.round(values[index]));
-    });
-  }
-  function apply(values) {
-    columns.style.setProperty('--panel-columns',values.map(value => `${value}px`).join(` ${dividerWidth}px `));
-    updateDividers(values);
-  }
-  function remember() {
-    const values = widths(), total = values.reduce((sum,value) => sum + value,0);
-    proportions = values.map(value => value / total);
-    save('panelWidths',JSON.stringify(proportions));
-  }
-  function fit() {
-    if(drag) return;
-    if(!proportions) { updateDividers(widths()); return; }
-    const total = Math.max(minimumTotal,columns.clientWidth - dividerWidth * dividers.length);
-    const values = new Array(3).fill(0);
-    let available = total, remaining = [0,1,2];
-    // Clamp narrow panels first, then distribute the remaining space proportionally.
-    while(remaining.length) {
-      const weight = remaining.reduce((sum,index) => sum + proportions[index],0);
-      const clamped = remaining.filter(index => available * proportions[index] / weight < minimumWidth);
-      if(!clamped.length) {
-        remaining.forEach(index => values[index] = available * proportions[index] / weight);
-        break;
-      }
-      clamped.forEach(index => { values[index] = minimumWidth; available -= minimumWidth; });
-      remaining = remaining.filter(index => !clamped.includes(index));
-    }
-    apply(values);
-  }
-  function resize(values,index,delta) {
-    const result = [...values], pair = values[index] + values[index + 1];
-    result[index] = Math.max(minimumWidth,Math.min(pair - minimumWidth,values[index] + delta));
-    result[index + 1] = pair - result[index];
-    apply(result);
-  }
-  function finish(cancel = false) {
-    if(!drag) return;
-    const previous = drag; drag = null;
-    previous.divider.classList.remove('dragging');
-    shell.classList.remove('resizing-panels');
-    if(cancel) apply(previous.widths); else remember();
-    if(previous.divider.hasPointerCapture(previous.pointerId)) previous.divider.releasePointerCapture(previous.pointerId);
-    fit();
-  }
-  dividers.forEach((divider,index) => {
-    divider.addEventListener('pointerdown',event => {
-      if(event.button !== 0 || drag) return;
-      event.preventDefault();
-      divider.focus({preventScroll:true});
-      drag = {divider,index,pointerId:event.pointerId,startX:event.clientX,widths:widths()};
-      divider.setPointerCapture(event.pointerId);
-      divider.classList.add('dragging'); shell.classList.add('resizing-panels');
-    });
-    divider.addEventListener('pointermove',event => {
-      if(drag?.divider === divider && event.pointerId === drag.pointerId) resize(drag.widths,index,event.clientX - drag.startX);
-    });
-    divider.addEventListener('pointerup',event => { if(event.pointerId === drag?.pointerId) finish(); });
-    divider.addEventListener('pointercancel',() => finish(true));
-    divider.addEventListener('lostpointercapture',() => finish(true));
-    divider.addEventListener('dblclick',() => {
-      finish(true); proportions = null;
-      try { localStorage.removeItem(storage + 'panelWidths'); } catch { /* Preferences are optional. */ }
-      columns.style.removeProperty('--panel-columns'); fit();
-    });
-    divider.addEventListener('keydown',event => {
-      if(event.key === 'Escape' && drag) { event.preventDefault(); finish(true); return; }
-      if(!['ArrowLeft','ArrowRight'].includes(event.key) || drag) return;
-      event.preventDefault();
-      resize(widths(),index,(event.key === 'ArrowRight' ? 1 : -1) * (event.shiftKey ? 30 : 10)); remember();
-    });
-  });
-  window.addEventListener('blur',() => finish(true));
-  new ResizeObserver(fit).observe(columns);
-  fit();
-}
 function showDialog(title, html) {
   modalReturnFocus = document.activeElement;
   $('#dialog-title').textContent = title; $('#dialog-body').innerHTML = html; $('#dialog').showModal();
@@ -231,6 +156,8 @@ $('#appearance-menu').onclick = event => {
 async function selectCamera(id) {
   if(id !== selectedCamera) { selectedRegister = ''; selectedInstruction = null; clearImage(); }
   selectedCamera = id; lastRender = '';
+  save(`camera.${viewerId}`,id);
+  if(viewerMode) document.title = `VM View · ${id}`;
   const watching = observation.setCamera(id);
   try {
     const instructions = await (await api(`${cameraPath()}/instructions`)).json();
@@ -293,13 +220,14 @@ function renderSelected() {
   $('#instruction-count').textContent = String(catalog.length);
   const active = selectedInstruction ?? catalog.find(item => item.program === point?.program && item.index === point?.index);
   $('#instruction-io').textContent = active ? `${t('reads')}: ${active.reads.join(', ') || '—'}\n${t('writes')}: ${active.writes.join(', ') || '—'}` : '—';
-  const registerVariables = observation.knownVariables(snapshot?.variables ?? [],paused);
+  const registerVariables = sortRegisters(observation.knownVariables(snapshot?.variables ?? [],paused),registerSort.column,registerSort.direction);
   $('#registers').innerHTML = registerVariables.length ? registerVariables.map(variable => {
     const action = (format, icon, label) => `<button class="row-action" data-register-action="${format}" data-focus-key="${esc(selectedCamera + '|register|' + variable.key + '|' + format)}" aria-label="${esc(t(label) + ' ' + variable.key)}" data-tooltip="${esc(t(label) + ' ' + variable.key)}" ${busy || !paused ? 'disabled':''}><i class="ti ti-${icon}" aria-hidden="true"></i></button>`;
-    return `<tr tabindex="0" data-register="${esc(variable.key)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="register-watch-cell">${observation.checkbox(variable)}</td><td class="register-action-cell">${variable.canInspectValue ? action('json','list-details','valueaction'):''}</td><td class="register-action-cell second-action">${variable.canPreviewImage ? action('png','eye','imageaction'):''}</td><td data-tooltip="${esc(variable.key + '\n' + variable.type + (variable.value != null ? '\n' + variable.value:''))}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
+    return `<tr tabindex="0" data-register="${esc(variable.key)}" data-memory-kind="${memoryKind(variable.memory)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="register-watch-cell">${observation.checkbox(variable)}</td><td class="register-action-cell">${variable.canInspectValue ? action('json','list-details','valueaction'):''}</td><td class="register-action-cell second-action">${variable.canPreviewImage ? action('png','eye','imageaction'):''}</td><td data-tooltip="${esc(variable.key + '\n' + variable.type + (variable.value != null ? '\n' + variable.value:''))}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
   }).join('') : `<tr><td colspan="6" class="muted">${t('noRegisters')}</td></tr>`;
   $('#register-count').textContent = String(registerVariables.length);
   $('#register-count').dataset.tooltip = t('registermetadatatip');
+  for(const header of document.querySelectorAll('th[data-sort]')) header.setAttribute('aria-sort',header.dataset.sort !== registerSort.column ? 'none' : registerSort.direction === 1 ? 'ascending':'descending');
   selectRows(); restoreRowFocus();
 }
 
@@ -310,6 +238,7 @@ function restoreRowFocus() {
 }
 
 async function command(name, target = {}) {
+  if(viewerMode) return;
   if(busy || !selectedCamera) return;
   busy = true; renderSelected();
   try {
@@ -323,6 +252,7 @@ document.querySelector('.debug-actions').onclick = event => { const button = eve
 for(const selector of ['#cameras','#camera-nav']) $(selector).addEventListener('click',event => { const row = event.target.closest('[data-camera]'); if(row) { event.preventDefault(); selectCamera(row.dataset.camera); } });
 $('#cameras').addEventListener('keydown',event => { if(event.key === 'Enter' && event.target.dataset.camera) selectCamera(event.target.dataset.camera); });
 $('#instructions').addEventListener('click', async event => {
+  if(viewerMode) return;
   const row = event.target.closest('[data-program]'); if(!row) return;
   selectedInstruction = catalog.find(item => item.program === row.dataset.program && item.index === Number(row.dataset.index));
   if(event.target.closest('[data-run-to]')) {
@@ -363,6 +293,7 @@ function updateCaptions() {
   $('#pinned-image').alt = captionFor(pinnedInfo);
 }
 function displayImage(blob, info) {
+  workspace?.show('preview');
   if(imageUrl && imageUrl !== pinnedUrl) URL.revokeObjectURL(imageUrl);
   imageUrl = URL.createObjectURL(blob); imageInfo = info;
   $('#preview-image').src = imageUrl; $('#image-link').href = imageUrl;
@@ -413,11 +344,15 @@ async function poll() {
     $('#start').disabled = current.canStart === undefined ? ['starting','running'].includes(current.state) : !current.canStart;
     $('#stop').disabled = current.canStop === undefined ? !['starting','running'].includes(current.state) : !current.canStop;
     renderCameras(current);
+    const cameraOptions = current.cameras.map(camera=>`<option value="${esc(camera.id)}">${esc(camera.id)}</option>`).join('');
+    if($('#viewer-camera').innerHTML !== cameraOptions) $('#viewer-camera').innerHTML = cameraOptions;
     if(!current.cameras.some(camera => camera.id === selectedCamera)) {
-      selectedCamera = current.cameras[0]?.id ?? ''; catalog = []; lastRender = '';
+      const preferred = read(`camera.${viewerId}`,'') || parameters.get('camera');
+      selectedCamera = current.cameras.find(camera=>camera.id === preferred)?.id ?? current.cameras[0]?.id ?? ''; catalog = []; lastRender = '';
       if(selectedCamera) await selectCamera(selectedCamera); else await observation.setCamera('');
     } else if(catalog.length === 0 && selectedCamera) await selectCamera(selectedCamera);
     renderSelected();
+    $('#viewer-camera').value = selectedCamera;
     if(current.error) showError(current.error);
   } catch(error) {
     $('#connection').textContent = t('disconnected'); $('#connection').classList.add('error');
@@ -425,4 +360,22 @@ async function poll() {
     showError(error);
   } finally { polling = false; }
 }
-translate(); initializePanelSizing(); poll(); setInterval(poll,600);
+function openViewer(key) {
+  const id = `view-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+  const configuration = {...observation.configuration,registers:observation.selected.filter(item=>!key || item.key === key)};
+  save(`viewer.${id}`,JSON.stringify({camera:selectedCamera,configuration}));
+  const url = new URL(location.pathname,location.origin); url.searchParams.set('viewer',id); url.searchParams.set('camera',selectedCamera);
+  if(!window.open(url.href,id,'popup=yes,width=1150,height=800,resizable=yes,scrollbars=yes')) showError(new Error(t('popupblocked')));
+}
+$('#viewer-camera').onchange = () => selectCamera($('#viewer-camera').value);
+document.querySelector('.register-table thead').onclick = event => {
+  const button = event.target.closest('button[data-sort]'); if(!button) return;
+  registerSort = {column:button.dataset.sort,direction:registerSort.column === button.dataset.sort ? -registerSort.direction:1};
+  save('registerSort',JSON.stringify(registerSort)); lastRender = ''; renderSelected();
+};
+translate();
+workspace = new DebugWorkspace({t,read,save,onError:showError,onPopup:openViewer,onCloseTile:key=>{
+  const registers=observation.selected.filter(item=>item.key !== key);
+  observation.configure({...observation.configuration,registers,enabled:registers.length > 0 && observation.configuration.enabled});
+},viewer:viewerMode,id:viewerId,hasWatches:Boolean(viewerBootstrap?.configuration?.registers?.length)});
+poll(); setInterval(poll,600);

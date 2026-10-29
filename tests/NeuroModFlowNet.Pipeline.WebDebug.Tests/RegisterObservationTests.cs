@@ -179,6 +179,58 @@ public sealed class RegisterObservationTests
         Assert.Throws<ArgumentException>(() => observation.Configure(Configuration() with { FramesPerSecond = fps, MaxEdge = maxEdge },[Target]));
     }
 
+    [Fact]
+    public async Task IdenticalViewerTargetsShareOnePreparationAndEncodedPayload()
+    {
+        int captures = 0;
+        using var observation = new RegisterObservation((context,request,cancellation) => { captures++; return ValueTask.FromResult(Value("shared")); });
+        using var context = Context();
+        DebugWatchSnapshot first = observation.Configure(Configuration(),[Target],"main");
+        DebugWatchSnapshot second = observation.Configure(Configuration(),[Target],"screen2");
+        observation.Poll(new(first.Generation,[]),"main"); observation.Poll(new(second.Generation,[]),"screen2");
+        await Capture(observation,context);
+        await WaitFor(() => observation.Snapshot().Items[0].Captured == 1);
+        DebugWatchFrame firstFrame = observation.Poll(new(first.Generation,[]),"main").Items[0].Frame!;
+        DebugWatchFrame secondFrame = observation.Poll(new(second.Generation,[]),"screen2").Items[0].Frame!;
+        Assert.Equal(1,captures); Assert.Same(firstFrame.Data,secondFrame.Data);
+        Assert.Equal(firstFrame.Sequence,secondFrame.Sequence);
+    }
+
+    [Fact]
+    public async Task DisablingMainViewerDoesNotDisableAutonomousViewer()
+    {
+        using var observation = new RegisterObservation((context,request,cancellation) => ValueTask.FromResult(Value("independent")));
+        using var context = Context();
+        observation.Configure(Configuration(),[Target]);
+        DebugWatchSnapshot second = observation.Configure(Configuration(),[Target],"screen2");
+        observation.Poll(new(second.Generation,[]),"screen2");
+        observation.Configure(Configuration() with { Enabled = false },[Target]);
+        Assert.True(observation.Enabled);
+        await Capture(observation,context);
+        await WaitFor(() => observation.Snapshot(false,"screen2").Items[0].Captured == 1);
+        Assert.Equal(0,observation.Snapshot().Items[0].Captured);
+    }
+
+    [Fact]
+    public async Task SlowViewerKeepsItsPendingSampleWhileFastViewerContinues()
+    {
+        int captures = 0;
+        using var observation = new RegisterObservation((context,request,cancellation) => ValueTask.FromResult(Value((++captures).ToString())));
+        using var context = Context();
+        DebugWatchSnapshot first = observation.Configure(Configuration(),[Target]);
+        DebugWatchSnapshot second = observation.Configure(Configuration(),[Target],"slow");
+        observation.Poll(new(first.Generation,[])); observation.Poll(new(second.Generation,[]),"slow");
+        await Capture(observation,context);
+        await WaitFor(() => observation.Snapshot().Items[0].Captured == 1);
+        long sequence = observation.Snapshot().Items[0].Frame!.Sequence;
+        observation.Poll(new(first.Generation,new() { ["value"] = sequence }));
+        await Task.Delay(100); await Capture(observation,context);
+        await WaitFor(() => observation.Snapshot().Items[0].Captured == 2);
+        Assert.Equal(1,observation.Snapshot(false,"slow").Items[0].Captured);
+        Assert.Equal(sequence,observation.Snapshot(false,"slow").Items[0].Frame!.Sequence);
+        Assert.Equal(2,captures);
+    }
+
     #endregion
 
     #region Fixtures

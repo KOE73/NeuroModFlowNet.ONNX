@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NeuroModFlowNet · VM Debug</title>
+  <link rel="stylesheet" href="shell/icons/tabler-icons.css"><link rel="stylesheet" href="shell/themes.css">
+  <link rel="stylesheet" href="shell/shell.css"><link rel="stylesheet" href="debug.css">
+  <script type="module" src="debug.js"></script>
+</head>
+<body>
+<div class="lu-shell" data-theme="cream" data-density="nano" data-tooltips="true" id="shell">
+  <header class="shell-topbar">
+    <button id="menu" data-label="menu" data-tip="menu"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
+    <strong class="shell-brand"><i class="ti ti-bolt" aria-hidden="true"></i>VM Debug</strong>
+    <span class="shell-version">NeuroModFlowNet</span><div class="shell-stats" id="connection" role="status"></div>
+    <details class="appearance" id="appearance"><summary><i class="ti ti-palette" aria-hidden="true"></i> <span id="appearance-label"></span></summary><div class="appearance-menu" id="appearance-menu"></div></details>
+    <button id="language" aria-label="Language / Язык">RU</button>
+  </header>
+  <div class="shell-body">
+    <aside class="shell-sidebar"><nav aria-label="Разделы" data-label="sections">
+      <span class="nav-caption" data-i18n="sections"></span>
+      <a href="#overview" class="active" id="overview-nav"><i class="ti ti-chart-bar" aria-hidden="true"></i><span data-i18n="overview"></span></a>
+      <div class="nav-children" id="camera-nav"></div>
+      <div class="settings-menu"><a href="#settings" id="settings-nav"><i class="ti ti-settings" aria-hidden="true"></i><span data-i18n="settings"></span></a></div>
+    </nav></aside>
+    <main class="shell-content workspace-page">
+      <div class="page-header">
+        <h1 data-i18n="heading"></h1>
+        <div class="toolbar"><button id="start" data-i18n="start"></button><button id="stop" disabled data-i18n="stop"></button><button id="help" data-label="help" data-tip="help">ⓘ</button></div>
+      </div>
+      <div id="message" role="status" class="message" hidden></div>
+      <section class="panel cameras-panel" aria-label="Камеры" data-label="cameras">
+        <div class="table-scroll" tabindex="0" data-label="cameras">
+          <table class="camera-table"><colgroup><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+            <thead><tr><th data-i18n="camera"></th><th data-i18n="state"></th><th data-i18n="decoder"></th><th class="number">W</th><th class="number">H</th><th class="number" data-i18n="frames"></th><th class="number">FPS</th><th class="number" data-i18n="runms"></th><th class="number" data-i18n="tracks"></th><th class="number" data-i18n="failures"></th><th data-i18n="text"></th></tr></thead>
+            <tbody id="cameras"></tbody>
+          </table>
+        </div>
+      </section>
+      <div class="debug-toolbar toolbar">
+        <strong id="selected-camera">—</strong><span id="stop-location" class="mono location">—</span>
+        <div class="debug-actions">
+          <button data-command="pause" data-i18n="pause" data-tip="pausetip"></button>
+          <button data-command="continue" data-i18n="continue" data-tip="continuetip"></button>
+          <button data-command="step" data-i18n="step" data-tip="steptip"></button>
+          <button data-command="next-frame" data-i18n="nextframe" data-tip="nextframetip"></button>
+          <button data-command="detach" data-i18n="detach" data-tip="detachtip"></button>
+        </div>
+      </div>
+      <div class="debug-columns">
+        <section class="panel debug-pane instruction-pane">
+          <div class="panel-header"><h2 data-i18n="instructions"></h2><span id="instruction-count" class="muted"></span></div>
+          <div class="pane-scroll" tabindex="0" data-label="instructions"><table class="instruction-table"><thead><tr><th data-i18n="breakpoint"></th><th class="number">#</th><th data-i18n="instruction"></th><th class="number" data-i18n="ms"></th></tr></thead><tbody id="instructions"></tbody></table></div>
+          <div id="instruction-io" class="pane-footer mono">—</div>
+        </section>
+        <section class="panel debug-pane register-pane">
+          <div class="panel-header"><h2 data-i18n="registers"></h2><span id="register-count" class="muted"></span></div>
+          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><thead><tr><th data-i18n="register"></th><th data-i18n="memory"></th><th data-i18n="shape"></th></tr></thead><tbody id="registers"></tbody></table></div>
+          <div class="pane-footer toolbar"><span id="selected-register" class="mono">—</span><button id="inspect" data-i18n="inspect" disabled></button><button id="preview" data-i18n="preview" data-tip="previewtip" disabled></button></div>
+        </section>
+        <section class="panel debug-pane preview-pane">
+          <div class="panel-header"><h2 data-i18n="image"></h2><button id="pin" data-i18n="pin" disabled></button><button id="live" data-i18n="resultframe"></button></div>
+          <div class="pane-scroll image-scroll" tabindex="0" data-label="image">
+            <figure id="pinned-figure" hidden><figcaption id="pinned-caption"></figcaption><img id="pinned-image" alt=""></figure>
+            <figure id="preview-figure" hidden><figcaption id="preview-caption"></figcaption><a id="image-link" target="_blank" rel="noopener"><img id="preview-image" alt=""></a></figure>
+            <p class="empty muted" id="image-empty" data-i18n="imageempty"></p>
+            <pre id="value-output" hidden></pre>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <dialog id="dialog"><form method="dialog" class="dialog-header"><h2 id="dialog-title"></h2><button data-label="close">×</button></form><div id="dialog-body"></div></dialog>
+</div>
+</body></html>

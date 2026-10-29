@@ -1,0 +1,28 @@
+# Иконки
+
+Источник: **Tabler Icons**. Локальные `tabler-icons.css` и `tabler-icons.woff` взяты из адаптации LinguaUnlock Studio в SPLA.LLMQueue Dashboard. Используется CSS-подмножество имён поверх локального шрифта. CDN не требуется. Лицензия MIT находится рядом с файлами; сохранять её при переносе.
+
+```html
+<i class="ti ti-settings" aria-hidden="true"></i>
+```
+
+Для кнопки только с иконкой задавать `aria-label` и `title`. Не использовать символ шрифта как доступное имя. Не брать имя «по памяти»: сначала проверить, есть ли `.ti-имя::before` в карте CSS. При расширении обновлять CSS и совместимый font из одного источника, сохранять лицензию.
+
+| Назначение | Имя |
+|---|---|
+| Меню | `menu-2` |
+| Обзор | `chart-bar` |
+| Подключения | `plug` |
+| Рабочий объект | `bolt` |
+| Демо | `flask` |
+| Настройки | `settings` |
+| Темы | `palette` |
+| Cream / Dark / Emerald / Light | `ice-cream` / `moon` / `trees` / `sun` |
+| Nano / Mini / Norm | `baseline-density-small` / `baseline-density-medium` / `baseline-density-large` |
+| Перечитать / сохранить | `refresh` / `device-floppy` |
+| Добавить / удалить | `plus` / `trash` |
+| Группа / подробности | `folder` / `list-details` |
+| Успех / предупреждение / ошибка | `circle-check` / `alert-triangle` / `circle-x` |
+| Поиск / фильтр | `search` / `filter` |
+
+Рекомендуемый размер значка оболочки — 19 px; в плотной строке возможен 15–16 px. Смысл действий не должен зависеть от узнавания иконки без подписи.

@@ -26,17 +26,25 @@ internal sealed class CameraWorker : IAsyncDisposable
     readonly VmController controller;
     readonly IFrameSource source;
     readonly Channel<ISourceFrame> frameChannel;
+    readonly Action<VmRunOutcome>? debugRunCompleted;
     readonly object previewSyncRoot = new();
     Mat? latestPreview;
 
-    public CameraWorker(CameraConfig camera, MultiCameraConfig config, SharedInferenceEndpoints endpoints)
+    public CameraWorker(CameraConfig camera, MultiCameraConfig config, SharedInferenceEndpoints endpoints,
+        Func<VmProgram, VmProgram>? debugProgramDecorator = null, Action<VmRunOutcome>? debugRunCompleted = null)
     {
         this.camera = camera ?? throw new ArgumentNullException(nameof(camera));
         this.config = config ?? throw new ArgumentNullException(nameof(config));
+        this.debugRunCompleted = debugRunCompleted;
         ArgumentNullException.ThrowIfNull(endpoints);
 
         (VmProgram prepare, CameraGeometry geometry) = CameraPrepareProgramFactory.Create(camera, config.Backend);
         VmProgram common = CommonProgramFactory.Create(config, camera, geometry, endpoints);
+        if(debugProgramDecorator is not null)
+        {
+            prepare = debugProgramDecorator(prepare);
+            common = debugProgramDecorator(common);
+        }
         Geometry = geometry;
 
         var globalMemory = new VmGlobalMemory();
@@ -246,6 +254,7 @@ internal sealed class CameraWorker : IAsyncDisposable
     {
         long startTimestamp = Stopwatch.GetTimestamp();
         VmRunOutcome outcome = await handle.Completion.ConfigureAwait(false);
+        debugRunCompleted?.Invoke(outcome);
         TimeSpan duration = Stopwatch.GetElapsedTime(startTimestamp);
 
         if(outcome.Status != VmRunStatus.Completed)

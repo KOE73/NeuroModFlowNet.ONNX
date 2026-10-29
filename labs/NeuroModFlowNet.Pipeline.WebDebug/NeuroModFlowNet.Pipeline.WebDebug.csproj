@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);SYSLIB5001</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../NeuroModFlowNet.Pipeline.MultiCamera/NeuroModFlowNet.Pipeline.MultiCamera.csproj" />
+    <ProjectReference Include="../../src/NeuroModFlowNet.ONNX.Visualizer/NeuroModFlowNet.ONNX.Visualizer.csproj" />
+    <InternalsVisibleTo Include="NeuroModFlowNet.Pipeline.WebDebug.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="App.local.config" CopyToOutputDirectory="PreserveNewest" Condition="Exists('App.local.config')" />
+  </ItemGroup>
+  <!-- An explicit same-version CUDA build may replace the NuGet default only for this debug host. -->
+  <Target Name="CopyExplicitDebugNativeRuntime" AfterTargets="Build" Condition="'$(WebDebugNativeRoot)' != ''">
+    <Error Condition="!Exists('$(WebDebugNativeRoot)/onnxruntime.dll')" Text="WebDebugNativeRoot must contain the chosen ONNX Runtime native DLLs." />
+    <ItemGroup><DebugNativeRuntime Include="$(WebDebugNativeRoot)/*.dll" /></ItemGroup>
+    <Copy SourceFiles="@(DebugNativeRuntime)" DestinationFolder="$(OutDir)runtimes/win-x64/native" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

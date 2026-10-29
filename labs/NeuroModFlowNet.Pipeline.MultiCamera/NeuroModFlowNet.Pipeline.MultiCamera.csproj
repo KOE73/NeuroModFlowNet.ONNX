@@ -20,6 +20,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="NeuroModFlowNet.Pipeline.WebDebug" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Using Include="Onnx" />
 		<Using Include="Google.Protobuf" />
 	</ItemGroup>

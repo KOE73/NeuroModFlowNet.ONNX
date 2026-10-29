@@ -32,6 +32,7 @@
     <Project Path="labs/NeuroModFlowNet.Pipeline.Avalonia.VMDebug/NeuroModFlowNet.Pipeline.Avalonia.VMDebug.csproj" />
     <Project Path="labs/NeuroModFlowNet.Pipeline.MultiCamera/NeuroModFlowNet.Pipeline.MultiCamera.csproj" />
     <Project Path="labs/NeuroModFlowNet.Pipeline.VMDebug/NeuroModFlowNet.Pipeline.VMDebug.csproj" />
+    <Project Path="labs/NeuroModFlowNet.Pipeline.WebDebug/NeuroModFlowNet.Pipeline.WebDebug.csproj" />
     <Project Path="labs/NeuroModFlowNet.Pipeline.Video.Nvdec/NeuroModFlowNet.Pipeline.Video.Nvdec.csproj" />
     <Project Path="labs/NeuroModFlowNet.Pipeline.VideoOrt/NeuroModFlowNet.Pipeline.VideoOrt.csproj" />
   </Folder>
@@ -60,6 +61,7 @@
     <Project Path="src/NeuroModFlowNet.Pipeline/NeuroModFlowNet.Pipeline.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/NeuroModFlowNet.Pipeline.WebDebug.Tests/NeuroModFlowNet.Pipeline.WebDebug.Tests.csproj" />
     <Project Path="tests/NeuroModFlowNet.ONNX.Tests/NeuroModFlowNet.ONNX.Tests.csproj" Id="088445c2-813e-48a9-b2f5-2dc114bd6478">
       <BuildType Solution="Publish|*" Project="Release" />
     </Project>

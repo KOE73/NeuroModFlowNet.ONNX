@@ -13,6 +13,7 @@ let selectedCamera = '', selectedRegister = '', selectedInstruction = null, curr
 let catalog = [], lastRender = '', busy = false, polling = false, imageUrl = null, pinnedUrl = null;
 let imageCaption = '', modalReturnFocus = null;
 let imageInfo = null, pinnedInfo = null;
+let lastError = '';
 const words = {
   sections:['Разделы','Sections'], overview:['Отладка камер','Camera debugger'], settings:['Настройки','Settings'],
   heading:['Виртуальные машины · камеры','Virtual machines · cameras'], start:['Запустить','Start'],stop:['Остановить всё','Stop all'],
@@ -33,6 +34,8 @@ const words = {
   color:['Цветовая схема','Color scheme'],cream:['Кремовая','Cream'],dark:['Тёмная','Dark'],emerald:['Изумрудная','Emerald'],light:['Светлая','Light'],density:['Плотность','Density'],nano:['Ультракомпактная','Ultra compact'],mini:['Компактная','Compact'],norm:['Обычная','Normal'],tooltips:['Подсказки','Tooltips'],showtips:['Показывать подсказки','Show tooltips'],
   connection:['Подключение к API','API connection'],connected:['API подключён','API connected'],disconnected:['API недоступен','API unavailable'],unauthorized:['Нужен токен доступа. Откройте настройки.','Access token required. Open settings.'],
   accesstoken:['Токен доступа к удалённому отладчику','Remote debugger access token'],apply:['Применить','Apply'],tokenhint:['Токен хранится только в этой вкладке браузера. Адрес API совпадает с адресом страницы.','The token is stored only in this browser tab. The API uses the page address.'],
+  diagnostics:['Диагностика','Diagnostics'],nodiagnostics:['Диагностика: сообщений нет','Diagnostics: no messages'],hasdiagnostics:['Есть сообщение. Открыть диагностику','A message is available. Open diagnostics'],
+  tensorvalue:['Тип и форма тензора показаны в таблице. Для просмотра картинки используйте «Изображение».','Tensor type and shape are shown in the table. Use Image to inspect its pixels.'],
   helpbody:[
     '<p>Отладчик запускает отдельный экземпляр существующего MultiCamera pipeline: NVDEC → GPU NV12 → BGR → преобразования → детектор → трекинг → OCR. На камеру — один VmController и один кадр в работе. Прогрев выполняется без остановок, первый рабочий кадр останавливается перед первой инструкцией.</p><p>Камеры, программа, регистры и данные доступны в одном обзоре. Выберите камеру строкой таблицы или в меню. Галочка у инструкции задаёт точку останова. «До» — инструкция ещё не выполнена, «после» — её результаты уже в регистрах. F6 — один шаг, F8 — продолжить.</p><p>Просмотр картинки выполняется явно на паузе. Вход можно закрепить над следующим результатом и сравнить этапы преобразования. Нажатие картинки открывает полный PNG. Поддержаны NV12 поверхности, BGR U8 NHWC и одиночные RGB FP16/FP32 NCHW 0..1. Массивы batch показываются как метаданные; интерпретация неподдержанных форматов не подменяется.</p><p>Время инструкции исключает ожидание паузы и отладочный просмотр. Время прогона включает паузы. Захват продолжает читать источник, очередь хранит два последних кадра с вытеснением старых; «следующий кадр» — следующий принятый VM кадр. Это не покадровый проигрыватель всех кадров видео.</p><p>Закрытие вкладки сохраняет паузу. Переподключитесь или используйте API, чтобы продолжить. «Отсоединить» снимает паузу выбранной камеры. «Остановить всё» освобождает ресурсы отладочного запуска. Рабочие службы и другие процессы не управляются этим UI.</p>',
     '<p>The debugger starts a separate instance of the existing MultiCamera pipeline: NVDEC → GPU NV12 → BGR → transforms → detection → tracking → OCR. Each camera has one VmController and one in-flight frame. Warmup runs without stops; the first working frame stops before its first instruction.</p><p>Cameras, programs, registers and inspected data share one overview. Select a camera in the table or navigation. Check an instruction to set a breakpoint. Before means it has not executed; after means its results are already in the registers. F6 steps one instruction; F8 continues.</p><p>Image inspection is explicit and requires a pause. Pin an input above the next result to compare transform stages. Click an image to open its full PNG. NV12 surfaces, BGR U8 NHWC and single RGB FP16/FP32 NCHW 0..1 images are supported. Batch tensors show metadata; unsupported formats are never reinterpreted.</p><p>Instruction timing excludes debugger waits and inspection. Run timing includes pauses. Capture continues reading into a two-frame drop-oldest queue; next frame means the next frame accepted by the VM, not every consecutive frame of a video.</p><p>Closing the tab preserves the pause. Reconnect or use the API to resume. Detach releases this camera. Stop all releases the debug run resources. This UI does not control production services or other processes.</p>'
@@ -46,8 +49,17 @@ const t = key => words[key]?.[language === 'ru' ? 0 : 1] ?? key;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const number = (value, digits = 0) => Number.isFinite(value) ? value.toFixed(digits) : '—';
 const cameraPath = () => `/api/cameras/${encodeURIComponent(selectedCamera)}`;
-function showError(error) { $('#message').textContent = error.message ?? String(error); $('#message').hidden = false; }
-function clearError() { $('#message').hidden = true; }
+function updateDiagnostics() {
+  $('#diagnostics').classList.toggle('error',Boolean(lastError));
+  $('#diagnostics').dataset.tooltip = t(lastError ? 'hasdiagnostics':'nodiagnostics');
+  $('#diagnostics').setAttribute('aria-label',t(lastError ? 'hasdiagnostics':'diagnostics'));
+}
+function showError(error) {
+  const message = error.message ?? String(error);
+  if(message !== lastError) $('#message-announcement').textContent = t('hasdiagnostics');
+  lastError = message; updateDiagnostics();
+}
+function clearError() { lastError = ''; $('#message-announcement').textContent = ''; updateDiagnostics(); }
 async function api(path, options = {}) {
   const headers = { 'X-VM-Debug':'1', ...(token ? {Authorization:`Bearer ${token}`} : {}), ...options.headers };
   if(options.body) headers['Content-Type'] = 'application/json';
@@ -76,7 +88,7 @@ function translate() {
   document.querySelectorAll('[data-i18n]').forEach(element => element.textContent = t(element.dataset.i18n));
   document.querySelectorAll('[data-label]').forEach(element => element.setAttribute('aria-label',t(element.dataset.label)));
   document.querySelectorAll('[data-tip]').forEach(element => element.dataset.tooltip = t(element.dataset.tip));
-  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); lastRender = ''; renderSelected();
+  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); lastRender = ''; renderSelected();
 }
 function showDialog(title, html) {
   modalReturnFocus = document.activeElement;
@@ -84,6 +96,7 @@ function showDialog(title, html) {
 }
 $('#dialog').addEventListener('close', () => modalReturnFocus?.focus());
 $('#help').onclick = () => showDialog(t('help'),t('helpbody'));
+$('#diagnostics').onclick = () => showDialog(t('diagnostics'),`<pre class="diagnostic-detail">${esc(lastError || t('nodiagnostics'))}</pre>`);
 $('#settings-nav').onclick = event => {
   event.preventDefault();
   showDialog(t('settings'), `<p class="mono">API: ${esc(location.origin)}/api</p><label>${t('accesstoken')}<input id="access-token" type="password" autocomplete="off" value="${esc(token)}"></label><p>${t('tokenhint')}</p><button id="save-token">${t('apply')}</button>`);
@@ -134,7 +147,11 @@ function renderSelected() {
   document.querySelectorAll('[data-command]').forEach(button => {
     button.disabled = busy || !camera || (['step','continue','next-frame'].includes(button.dataset.command) && !paused);
   });
-  $('#inspect').disabled = $('#preview').disabled = busy || !paused || !selectedRegister;
+  const variable = snapshot?.variables.find(item => item.key === selectedRegister);
+  const imageVariable = variable && ['Microsoft.ML.OnnxRuntime.OrtValue','OpenCvSharp.Mat'].includes(variable.type);
+  $('#inspect').disabled = busy || !paused || !variable || imageVariable;
+  $('#inspect').dataset.tooltip = imageVariable ? t('tensorvalue') : t('inspect');
+  $('#preview').disabled = busy || !paused || !imageVariable;
   $('#live').disabled = !camera;
   const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}`;
   if(renderKey === lastRender) return;

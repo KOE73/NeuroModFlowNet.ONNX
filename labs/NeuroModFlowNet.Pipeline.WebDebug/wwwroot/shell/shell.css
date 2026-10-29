@@ -60,7 +60,6 @@ tbody tr:nth-child(even) { background:var(--lu-surface-alt); } tbody tr:hover { 
 .muted { color:var(--lu-text-muted); font-size:12px; } .nowrap { white-space:nowrap; }
 .status { display:inline-flex; align-items:center; gap:4px; border:1px solid var(--lu-border); padding:0 4px; font-size:12px; white-space:nowrap; }
 .status .ti { font-size:15px; } .ok { color:var(--lu-success); } .warn { color:var(--lu-warning); } .error { color:var(--lu-danger); }
-.notice { padding:var(--space) 8px; margin-bottom:var(--space); background:var(--lu-warning-light); border:1px solid var(--lu-border); }
 .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--space) 12px; }
 .field { display:flex; flex-direction:column; gap:3px; min-width:0; } .field input,.field select { width:100%; }
 .field input[type=checkbox] { width:18px; height:18px; }

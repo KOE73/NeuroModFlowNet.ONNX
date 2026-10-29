@@ -22,11 +22,15 @@ internal class DebugOp(IOp inner, CameraDebugSession session, string program, in
         }
 
         await session.BeforeAsync(context, program, index, Descriptor, cancellationToken).ConfigureAwait(false);
+        if(session.Observation.Enabled)
+            await session.Observation.CaptureAsync(context, program, index, "before", Descriptor.Name, cancellationToken).ConfigureAwait(false);
         long started = Stopwatch.GetTimestamp();
         try
         {
             OpResult result = await inner.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
             session.RecordTiming(program, index, Descriptor.Name, Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            if(session.Observation.Enabled)
+                await session.Observation.CaptureAsync(context, program, index, "after", Descriptor.Name, cancellationToken).ConfigureAwait(false);
             await session.AfterAsync(context, program, index, Descriptor, cancellationToken).ConfigureAwait(false);
             return result;
         }

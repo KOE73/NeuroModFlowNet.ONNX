@@ -7,6 +7,21 @@ namespace NeuroModFlowNet.Pipeline.WebDebug.Tests;
 public sealed class TensorImagePreviewRendererTests
 {
     [Fact]
+    public void PreparedImageSurvivesReleaseOfItsSourceTensor()
+    {
+        const int width = 600, height = 500;
+        var pixels = new byte[width * height * 3];
+        Array.Fill(pixels,(byte)93);
+        Mat preview;
+        using(OrtValue tensor = OrtValue.CreateTensorValueFromMemory(pixels,new long[] {1,height,width,3}))
+            preview = TensorImagePreviewRenderer.CreatePreview(tensor);
+        Array.Fill(pixels,(byte)0);
+        using(preview)
+        using(var actual = Cv2.ImDecode(TensorImagePreviewRenderer.EncodePng(preview),ImreadModes.Color))
+            Assert.Equal(new Vec3b(93,93,93),actual.At<Vec3b>(250,300));
+    }
+
+    [Fact]
     public void BgrNhwcPreviewPreservesChannelsAndDimensions()
     {
         const int width = 600, height = 500;

@@ -25,6 +25,9 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     bool disposed;
     long? finishFrame;
     DebugBreakpoint? runTo;
+    DebugVariable[] knownVariables = [];
+    DebugLocation? knownLocation;
+    public RegisterObservation Observation { get; } = new(inspector.CaptureAsync);
 
     public string CameraId { get; } = cameraId;
 
@@ -179,6 +182,34 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
         }
     }
 
+    public DebugWatchSnapshot ConfigureObservation(DebugWatchConfiguration configuration)
+    {
+        lock(syncRoot)
+        {
+            if(disposed) throw new InvalidOperationException("This debug session has ended.");
+            if(configuration.Registers is null || configuration.Registers.Length > 8)
+                throw new ArgumentException("Select up to eight registers.");
+            DebugWatchTarget[] targets = configuration.Registers.Select(selection =>
+            {
+                DebugVariable variable = knownVariables.FirstOrDefault(variable => variable.Key == selection.Key)
+                    ?? throw new ArgumentException("Select a register available at the last pause.");
+                if(selection.Format == "png" ? !variable.CanPreviewImage : selection.Format != "json" || !variable.CanInspectValue)
+                    throw new ArgumentException("The selected register does not support this observation format.");
+                int stopIndex = instructions.FindIndex(instruction => instruction.Program == knownLocation?.Program && instruction.Index == knownLocation.Index);
+                int executed = stopIndex + (knownLocation?.Phase == "after" ? 1 : 0);
+                DebugInstruction? writer = instructions.Take(executed).LastOrDefault(instruction => instruction.Writes.Contains(selection.Key));
+                DebugInstruction point = writer ?? instructions[0];
+                return new DebugWatchTarget(selection.Key, selection.Format, point.Program, point.Index, writer is null ? "before" : "after");
+            }).ToArray();
+            return Observation.Configure(configuration, targets) with { Variables = knownVariables };
+        }
+    }
+
+    public DebugWatchSnapshot ObservationSnapshot()
+    {
+        lock(syncRoot) return Observation.Snapshot() with { Variables = knownVariables };
+    }
+
     public Task<DebugInspectionResult> InspectAsync(DebugInspectionRequest request, CancellationToken cancellationToken)
     {
         lock(syncRoot)
@@ -245,6 +276,8 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
             resumeRequested = false;
             location = new(program, index, descriptor.Name, phase, context.Identity.RunId, context.Identity.SourceFrameId);
             variables = inspector.Snapshot(context);
+            knownVariables = variables;
+            knownLocation = location;
             state = "paused";
             revision++;
         }
@@ -298,6 +331,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
             RejectInspections();
             wake.Dispose();
         }
+        Observation.Dispose();
     }
 
     sealed record InspectionWork(DebugInspectionRequest Request, TaskCompletionSource<DebugInspectionResult> Completion, CancellationToken CancellationToken);

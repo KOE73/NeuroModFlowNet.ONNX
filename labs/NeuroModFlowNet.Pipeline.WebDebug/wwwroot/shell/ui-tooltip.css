@@ -9,6 +9,7 @@
     z-index:10000;
 }
 .lu-tooltip[hidden] { display:none; }
+.lu-tooltip.passive { pointer-events:none; }
 .lu-tooltip::backdrop { background:transparent; pointer-events:none; }
 [data-tooltip]:focus-visible { outline:2px solid var(--lu-primary); outline-offset:2px; }
 svg [data-tooltip]:focus-visible { outline-offset:3px; }

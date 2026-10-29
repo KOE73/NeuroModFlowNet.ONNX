@@ -57,12 +57,18 @@
         <div class="pane-divider" role="separator" aria-orientation="vertical" tabindex="0" data-divider="0" data-label="resizeinstructions" data-tip="resizetip"></div>
         <section class="panel debug-pane register-pane">
           <div class="panel-header"><h2 data-i18n="registers"></h2><span id="register-count" class="muted"></span></div>
-          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><colgroup><col class="action-column"><col class="action-column"><col><col class="memory-column"><col class="shape-column"></colgroup><thead><tr><th data-label="inspect" class="register-action-cell"></th><th data-label="preview" class="register-action-cell second-action"></th><th data-i18n="register"></th><th data-i18n="memory"></th><th data-i18n="shape"></th></tr></thead><tbody id="registers"></tbody></table></div>
+          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><colgroup><col class="action-column"><col class="action-column"><col class="action-column"><col><col class="memory-column"><col class="shape-column"></colgroup><thead><tr><th data-label="watch" data-tip="watchtip" class="register-watch-cell"><i class="ti ti-refresh" aria-hidden="true"></i></th><th data-label="inspect" class="register-action-cell"></th><th data-label="preview" class="register-action-cell second-action"></th><th data-i18n="register"></th><th data-i18n="memory"></th><th data-i18n="shape"></th></tr></thead><tbody id="registers"></tbody></table></div>
         </section>
         <div class="pane-divider" role="separator" aria-orientation="vertical" tabindex="0" data-divider="1" data-label="resizeregisters" data-tip="resizetip"></div>
         <section class="panel debug-pane preview-pane">
           <div class="panel-header"><h2 data-i18n="image"></h2><button id="pin" data-i18n="pin" disabled></button><button id="live" data-i18n="resultframe"></button></div>
+          <div class="watch-toolbar">
+            <label><input type="checkbox" id="watch-enabled"><span data-i18n="watch"></span></label>
+            <label data-tip="watchfpstip">FPS <input id="watch-fps" type="number" min="0.2" max="15" step="0.2" value="3" data-label="watchfps"></label>
+            <label data-tip="watchsizetip">px <select id="watch-size" data-label="watchsize"><option>320</option><option>640</option><option>1000</option><option>1600</option><option>2000</option></select></label>
+          </div>
           <div class="pane-scroll image-scroll" tabindex="0" data-label="image">
+            <div id="watch-gallery" hidden></div>
             <figure id="pinned-figure" hidden><figcaption id="pinned-caption"></figcaption><img id="pinned-image" alt=""></figure>
             <figure id="preview-figure" hidden><figcaption id="preview-caption"></figcaption><a id="image-link" target="_blank" rel="noopener"><img id="preview-image" alt=""></a></figure>
             <p class="empty muted" id="image-empty" data-i18n="imageempty"></p>

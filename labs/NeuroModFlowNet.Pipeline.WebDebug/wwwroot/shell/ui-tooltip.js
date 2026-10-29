@@ -87,6 +87,7 @@ function show(element) {
     const reanchor = active !== element;
     if (reanchor) { unlink(); active = element; }
     tooltip.textContent = text;
+    tooltip.classList.toggle('passive',element.hasAttribute('data-tooltip-passive'));
     tooltip.style.maxHeight = '';
     const ids = new Set((element.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
     ids.add(tooltip.id); element.setAttribute('aria-describedby', [...ids].join(' '));

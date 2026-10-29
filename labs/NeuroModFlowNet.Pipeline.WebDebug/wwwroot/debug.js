@@ -1,4 +1,5 @@
 import './shell/ui-tooltip.js';
+import { ObservationView } from './observation.js';
 
 const $ = selector => document.querySelector(selector);
 const shell = $('#shell');
@@ -22,7 +23,7 @@ const words = {
   pause:['Пауза','Pause'],continue:['Продолжить','Continue'],step:['Шаг','Step'],nextframe:['Следующий кадр','Next frame'],detach:['Отсоединить','Detach'],
   instructions:['Программы и инструкции','Programs and instructions'],instruction:['Инструкция','Instruction'],breakpoint:['Т.О.','B.P.'],ms:['мс','ms'],registers:['Регистры','Registers'],register:['Регистр','Register'],memory:['Память','Memory'],shape:['Форма','Shape'],
   inspect:['Значение','Value'],preview:['Изображение','Image'],image:['Просмотр данных','Data inspection'],pin:['Закрепить вход','Pin input'],resultframe:['Кадр результата','Result frame'],
-  imageempty:['Выберите регистр на паузе и запросите изображение или значение. GPU-данные не выгружаются автоматически.','Select a paused register and request its image or value. GPU data is never downloaded automatically.'],
+  imageempty:['На паузе выберите изображение или значение значком. Для динамики отметьте регистры галочками и продолжите VM.','On pause, use an icon to inspect an image or value. For live observation, check registers and resume the VM.'],
   menu:['Свернуть / развернуть меню','Collapse / expand navigation'],help:['Справка об отладке камер','Camera debugger help'],close:['Закрыть окно','Close dialog'],
   pausetip:['Остановиться перед следующей инструкцией выбранной камеры. Другие камеры продолжают работу.','Stop before the next instruction of this camera. Other cameras continue.'],
   continuetip:['Продолжить до точки останова или запроса паузы. F8.','Continue until a breakpoint or pause request. F8.'],
@@ -42,6 +43,15 @@ const words = {
   valueaction:['Показать значение:','Show value:'],imageaction:['Показать изображение:','Show image:'],
   resizeinstructions:['Ширина панелей инструкций и регистров','Instructions and registers panel widths'],resizeregisters:['Ширина панелей регистров и просмотра','Registers and inspection panel widths'],
   resizetip:['Потяните разделитель мышью. Стрелки ← → меняют ширину с клавиатуры. Двойной щелчок сбрасывает ширины панелей.','Drag to resize. Use ← → to resize with the keyboard. Double-click to reset panel widths.'],
+  watch:['Наблюдать','Watch'],watchregister:['Наблюдать регистр:','Watch register:'],watchoff:['Наблюдение выключено','Observation disabled'],
+  watchfps:['Максимальная частота наблюдения на регистр','Maximum observation frequency per register'],watchsize:['Максимальная сторона изображения, пикселей','Maximum image edge, pixels'],
+  watchfpstip:['Максимум снимков в секунду на каждый регистр. Медленный браузер или кодировщик снижает фактическую частоту.','Maximum samples per second for each register. A slow browser or encoder reduces the actual rate.'],
+  watchsizetip:['Уменьшение изображения выполняется до выгрузки с GPU. Размер задаёт максимальную сторону PNG.','Images are resized before GPU download. This limits the longest PNG edge.'],
+  watchtip:['Выберите до 8 регистров и продолжите VM. Изображения и JSON снимаются после записи регистра; исходные входы — перед первой инструкцией. Снимки ограничены частотой и готовностью браузера. Без подключения браузера наблюдение засыпает через 5 секунд.','Select up to 8 registers and resume the VM. Images and JSON are captured after the register is written; source inputs are captured before the first instruction. Sampling is limited by frequency and browser readiness. Observation sleeps after 5 seconds without a browser.'],
+  watchwaiting:['Ожидание выполнения VM','Waiting for VM execution'],watcherror:['Ошибка наблюдения · подробности в подсказке','Observation error · hover for details'],
+  watchreceived:['Снимки','Samples'],watchskipped:['пропуски','skipped'],
+  watchcountertip:['С момента изменения настроек: подготовленные снимки (включая ошибки) и прохождения точки съёмки, пропущенные до подготовки/GPU-выгрузки из-за лимита частоты или занятого слота.','Since configuration changed: prepared samples (including errors), and capture-point visits skipped before preparation/GPU download due to frequency limits or a busy slot.'],
+  registermetadatatip:['Во время работы показаны метаданные последней паузы. Выбранные значения обновляются в обзоре наблюдения.','While running, this table retains metadata from the last pause. Selected values update in the observation overview.'],
   registerhelp:['«Значение» (значок списка в строке регистра) показывает число, текст, типизированный массив или данные обратного преобразования в JSON. «Изображение» (значок глаза) явно получает PNG из поддерживаемого Mat/GPU-тензора на паузе. Иконки присутствуют только у доступных действий. «Выполнить до» в строке инструкции продолжает камеру до остановки перед этой командой; текущая команда после остановки ещё не выполнена. Если выбранная строка уже пройдена, цель может быть достигнута в следующем кадре. Обычные точки останова продолжают действовать.','Value (the list icon in a register row) shows a scalar, text, typed array or back-transform data as JSON. Image (the eye icon) explicitly obtains a PNG from a supported Mat/GPU tensor while paused. Icons appear only for available actions. Run to in an instruction row continues this camera and stops before that instruction; it has not executed at that stop. A previously passed target may be reached on the next frame. Regular breakpoints remain active.'],
   helpbody:[
     '<p>Отладчик запускает отдельный экземпляр существующего MultiCamera pipeline: NVDEC → GPU NV12 → BGR → преобразования → детектор → трекинг → OCR. На камеру — один VmController и один кадр в работе. Прогрев выполняется без остановок, первый рабочий кадр останавливается перед первой инструкцией.</p><p>Камеры, программа, регистры и данные доступны в одном обзоре. Выберите камеру строкой таблицы или в меню. Галочка у инструкции задаёт точку останова. «До» — инструкция ещё не выполнена, «после» — её результаты уже в регистрах. F6 — один шаг, F8 — продолжить.</p><p>Просмотр картинки выполняется явно на паузе. Вход можно закрепить над следующим результатом и сравнить этапы преобразования. Нажатие картинки открывает полный PNG. Поддержаны NV12 поверхности, BGR U8 NHWC и одиночные RGB FP16/FP32 NCHW 0..1. Массивы batch показываются как метаданные; интерпретация неподдержанных форматов не подменяется.</p><p>Время инструкции исключает ожидание паузы и отладочный просмотр. Время прогона включает паузы. Захват продолжает читать источник, очередь хранит два последних кадра с вытеснением старых; «следующий кадр» — следующий принятый VM кадр. Это не покадровый проигрыватель всех кадров видео.</p><p>Закрытие вкладки сохраняет паузу. Переподключитесь или используйте API, чтобы продолжить. «Отсоединить» снимает паузу выбранной камеры. «Остановить всё» освобождает ресурсы отладочного запуска. Рабочие службы и другие процессы не управляются этим UI.</p>',
@@ -56,6 +66,7 @@ const t = key => words[key]?.[language === 'ru' ? 0 : 1] ?? key;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const number = (value, digits = 0) => Number.isFinite(value) ? value.toFixed(digits) : '—';
 const cameraPath = () => `/api/cameras/${encodeURIComponent(selectedCamera)}`;
+const observation = new ObservationView({api,t,esc,read,save,onError:showError,onChange:() => { lastRender = ''; renderSelected(); }});
 function updateDiagnostics() {
   $('#diagnostics').classList.toggle('error',Boolean(lastError));
   $('#diagnostics').dataset.tooltip = t(lastError ? 'hasdiagnostics':'nodiagnostics');
@@ -95,7 +106,7 @@ function translate() {
   document.querySelectorAll('[data-i18n]').forEach(element => element.textContent = t(element.dataset.i18n));
   document.querySelectorAll('[data-label]').forEach(element => element.setAttribute('aria-label',t(element.dataset.label)));
   document.querySelectorAll('[data-tip]').forEach(element => element.dataset.tooltip = t(element.dataset.tip));
-  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); lastRender = ''; renderSelected();
+  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); observation.render(); lastRender = ''; renderSelected();
 }
 
 function initializePanelSizing() {
@@ -199,7 +210,7 @@ function showDialog(title, html) {
   $('#dialog-title').textContent = title; $('#dialog-body').innerHTML = html; $('#dialog').showModal();
 }
 $('#dialog').addEventListener('close', () => modalReturnFocus?.focus());
-$('#help').onclick = () => showDialog(t('help'),t('helpbody') + `<p>${esc(t('registerhelp'))}</p>`);
+$('#help').onclick = () => showDialog(t('help'),t('helpbody') + `<p>${esc(t('registerhelp'))}</p><p>${esc(t('watchtip'))}</p><p>${esc(t('watchcountertip'))}</p>`);
 $('#diagnostics').onclick = () => showDialog(t('diagnostics'),`<pre class="diagnostic-detail">${esc(lastError || t('nodiagnostics'))}</pre>`);
 $('#settings-nav').onclick = event => {
   event.preventDefault();
@@ -219,8 +230,13 @@ $('#appearance-menu').onclick = event => {
 async function selectCamera(id) {
   if(id !== selectedCamera) { selectedRegister = ''; selectedInstruction = null; clearImage(); }
   selectedCamera = id; lastRender = '';
-  try { catalog = await (await api(`${cameraPath()}/instructions`)).json(); renderSelected(); }
+  const watching = observation.setCamera(id);
+  try {
+    const instructions = await (await api(`${cameraPath()}/instructions`)).json();
+    if(selectedCamera === id) { catalog = instructions; renderSelected(); }
+  }
   catch(error) { showError(error); }
+  await watching;
 }
 function selectRows() {
   document.querySelectorAll('[data-camera]').forEach(element => {
@@ -256,7 +272,7 @@ function renderSelected() {
   document.querySelectorAll('[data-register-action]').forEach(button => button.disabled = busy || !paused);
   document.querySelectorAll('[data-run-to]').forEach(button => button.disabled = busy || !paused || button.dataset.atCurrent === 'true');
   $('#live').disabled = !camera;
-  const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${JSON.stringify(snapshot?.runTo)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}`;
+  const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${JSON.stringify(snapshot?.runTo)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}|${observation.renderKey}`;
   if(renderKey === lastRender) { restoreRowFocus(); return; }
   lastRender = renderKey;
   let program = '';
@@ -276,11 +292,13 @@ function renderSelected() {
   $('#instruction-count').textContent = String(catalog.length);
   const active = selectedInstruction ?? catalog.find(item => item.program === point?.program && item.index === point?.index);
   $('#instruction-io').textContent = active ? `${t('reads')}: ${active.reads.join(', ') || '—'}\n${t('writes')}: ${active.writes.join(', ') || '—'}` : '—';
-  $('#registers').innerHTML = snapshot?.variables.length ? snapshot.variables.map(variable => {
+  const registerVariables = observation.knownVariables(snapshot?.variables ?? [],paused);
+  $('#registers').innerHTML = registerVariables.length ? registerVariables.map(variable => {
     const action = (format, icon, label) => `<button class="row-action" data-register-action="${format}" data-focus-key="${esc(selectedCamera + '|register|' + variable.key + '|' + format)}" aria-label="${esc(t(label) + ' ' + variable.key)}" data-tooltip="${esc(t(label) + ' ' + variable.key)}" ${busy || !paused ? 'disabled':''}><i class="ti ti-${icon}" aria-hidden="true"></i></button>`;
-    return `<tr tabindex="0" data-register="${esc(variable.key)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="register-action-cell">${variable.canInspectValue ? action('json','list-details','valueaction'):''}</td><td class="register-action-cell second-action">${variable.canPreviewImage ? action('png','eye','imageaction'):''}</td><td data-tooltip="${esc(variable.key + '\n' + variable.type + (variable.value != null ? '\n' + variable.value:''))}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
-  }).join('') : `<tr><td colspan="5" class="muted">${t('noRegisters')}</td></tr>`;
-  $('#register-count').textContent = String(snapshot?.variables.length ?? 0);
+    return `<tr tabindex="0" data-register="${esc(variable.key)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="register-watch-cell">${observation.checkbox(variable)}</td><td class="register-action-cell">${variable.canInspectValue ? action('json','list-details','valueaction'):''}</td><td class="register-action-cell second-action">${variable.canPreviewImage ? action('png','eye','imageaction'):''}</td><td data-tooltip="${esc(variable.key + '\n' + variable.type + (variable.value != null ? '\n' + variable.value:''))}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
+  }).join('') : `<tr><td colspan="6" class="muted">${t('noRegisters')}</td></tr>`;
+  $('#register-count').textContent = String(registerVariables.length);
+  $('#register-count').dataset.tooltip = t('registermetadatatip');
   selectRows(); restoreRowFocus();
 }
 
@@ -318,6 +336,7 @@ $('#instructions').addEventListener('click', async event => {
   lastRender = ''; renderSelected();
 });
 $('#registers').addEventListener('click',event => {
+  if(event.target.matches('[data-watch-register]')) return;
   const row = event.target.closest('[data-register]'); if(!row) return;
   selectedRegister = row.dataset.register;
   const action = event.target.closest('[data-register-action]');
@@ -395,7 +414,7 @@ async function poll() {
     renderCameras(current);
     if(!current.cameras.some(camera => camera.id === selectedCamera)) {
       selectedCamera = current.cameras[0]?.id ?? ''; catalog = []; lastRender = '';
-      if(selectedCamera) await selectCamera(selectedCamera);
+      if(selectedCamera) await selectCamera(selectedCamera); else await observation.setCamera('');
     } else if(catalog.length === 0 && selectedCamera) await selectCamera(selectedCamera);
     renderSelected();
     if(current.error) showError(current.error);

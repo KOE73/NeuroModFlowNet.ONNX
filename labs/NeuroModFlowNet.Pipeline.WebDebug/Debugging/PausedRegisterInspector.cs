@@ -62,10 +62,16 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
 
     public async ValueTask<DebugInspectionResult> InspectAsync(VmRunContext context, DebugInspectionRequest request, CancellationToken cancellationToken)
     {
+        using CapturedRegister captured = await CaptureAsync(context, request, cancellationToken).ConfigureAwait(false);
+        return captured.Encode();
+    }
+
+    public async ValueTask<CapturedRegister> CaptureAsync(VmRunContext context, DebugInspectionRequest request, CancellationToken cancellationToken)
+    {
         if(!context.TryGetObject(request.Key, out object? value))
             throw new KeyNotFoundException("The register is not present at this stop.");
         if(request.Format == "png")
-            return new("image/png", await PreviewAsync(value, request, cancellationToken).ConfigureAwait(false));
+            return new(await PreviewAsync(value, request, cancellationToken).ConfigureAwait(false), null);
         if(request.Format != "json") throw new ArgumentException("Inspection format must be json or png.");
         if(value is OrtValue or Mat)
             throw new NotSupportedException("Tensor data is available through the explicit PNG preview; metadata is in the stop snapshot.");
@@ -74,17 +80,17 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         if(value is Array { Length: > 256 } array)
         {
             object?[] firstItems = array.Cast<object?>().Take(256).ToArray();
-            return new("application/json", JsonSerializer.SerializeToUtf8Bytes(new { totalCount = array.Length, truncated = true, items = firstItems }, JsonOptions));
+            return new(null, new("application/json", JsonSerializer.SerializeToUtf8Bytes(new { totalCount = array.Length, truncated = true, items = firstItems }, JsonOptions)));
         }
-        return new("application/json", JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions));
+        return new(null, new("application/json", JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions)));
     }
 
-    async Task<byte[]> PreviewAsync(object? value, DebugInspectionRequest request, CancellationToken cancellationToken)
+    async Task<Mat> PreviewAsync(object? value, DebugInspectionRequest request, CancellationToken cancellationToken)
     {
         if(request.MaxEdge is < 100 or > 2000) throw new ArgumentOutOfRangeException(nameof(request.MaxEdge));
         if(!CanPreviewImage(request.Key, value))
             throw new NotSupportedException("Image preview requires a supported single image; resource and batch registers are metadata-only.");
-        if(value is Mat image) return TensorImagePreviewRenderer.EncodePng(image, request.MaxEdge);
+        if(value is Mat image) return TensorImagePreviewRenderer.CreatePreview(image, request.MaxEdge);
         if(value is not OrtValue tensor) throw new NotSupportedException("Select an image tensor or Mat.");
 
         using var temporary = new VmRunContext(new("debug-preview", 0, DateTimeOffset.UtcNow), new VmGlobalMemory(), new VmSyncGateRegistry());
@@ -120,7 +126,7 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
             try
             {
                 EnsureSuccess(await resize.ExecuteAsync(temporary, cancellationToken).ConfigureAwait(false));
-                return TensorImagePreviewRenderer.EncodePng(temporary.Get<OrtValue>("preview"));
+                return TensorImagePreviewRenderer.CreatePreview(temporary.Get<OrtValue>("preview"));
             }
             finally
             {

@@ -28,6 +28,7 @@ export class DebugWorkspace {
       }
     } catch(error) { onError(new Error(`${t('layoutinvalid')}: ${error.message}`)); }
     if(!restored) this.defaults();
+    this.applyAppearance();
     this.loading = false;
     this.dock.onDidLayoutChange(() => { if(!this.loading) save(this.storageKey,JSON.stringify(this.dock.toJSON())); });
     new ResizeObserver(() => this.dock.layout(this.host.clientWidth,this.host.clientHeight)).observe(this.host);
@@ -42,6 +43,14 @@ export class DebugWorkspace {
       const toolbar = document.querySelector('.watch-toolbar'); toolbar.classList.add('viewer-watch-toolbar');
       document.querySelector('.debug-columns').before(toolbar);
     }
+  }
+
+  applyAppearance() {
+    const gap = Number.parseFloat(getComputedStyle(this.host).getPropertyValue('--vm-panel-gap')) || 0;
+    if(this.panelGap === gap) return;
+    this.panelGap = gap;
+    this.dock.updateOptions({theme:{name:'nmfn',className:'dockview-theme-nmfn',gap}});
+    this.dock.layout(this.host.clientWidth,this.host.clientHeight,true);
   }
 
   entry(id) {

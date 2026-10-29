@@ -1,0 +1,40 @@
+/* Panel framing is independent of color palette, row density and saved Dockview layout. */
+.lu-shell {
+  --vm-panel-gap:0px;
+  --vm-panel-radius:0px;
+  --vm-panel-shadow:none;
+  --vm-panel-shadow-color:rgb(0 0 0 / .16);
+}
+.lu-shell[data-theme=dark],.lu-shell[data-theme=emerald] { --vm-panel-shadow-color:rgb(0 0 0 / .32); }
+.lu-shell[data-panel-scheme=rounded],.lu-shell[data-panel-scheme=square] {
+  --vm-panel-gap:8px;
+  --vm-panel-radius:8px;
+  --vm-panel-shadow:0 1px 4px var(--vm-panel-shadow-color);
+}
+.lu-shell[data-panel-scheme=square] { --vm-panel-radius:0px; }
+.lu-shell[data-panel-scheme=rounded] .dock-workspace,.lu-shell[data-panel-scheme=square] .dock-workspace {
+  --dv-border-radius:var(--vm-panel-radius);
+  --dv-floating-box-shadow:0 0 0 1px var(--lu-border),var(--vm-panel-shadow);
+}
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) :is(.dock-workspace .dv-groupview,.cameras-panel) {
+  border-radius:var(--vm-panel-radius);
+  outline:1px solid var(--lu-border);
+  outline-offset:-1px;
+  box-shadow:var(--vm-panel-shadow);
+}
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-view { overflow:visible; }
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dv-resize-container {
+  border-radius:var(--vm-panel-radius);
+}
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dv-resize-container .dv-groupview { box-shadow:none; }
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dv-floating-titlebar {
+  border-radius:var(--vm-panel-radius) var(--vm-panel-radius) 0 0;
+}
+#appearance-menu { --vm-menu-selection:var(--lu-primary-light); max-height:calc(100dvh - 50px); overflow-y:auto; overscroll-behavior:contain; }
+#appearance-menu button[data-theme] { color:inherit; }
+#appearance-menu button[data-theme]:hover,#appearance-menu button[data-theme].selected { background:var(--vm-menu-selection); }
+.panel-scheme-sample { display:inline-flex; vertical-align:middle; width:20px; height:14px; gap:3px; }
+.panel-scheme-sample>span { flex:1; border:1px solid currentColor; }
+.panel-scheme-sample[data-sample=compact] { gap:0; }
+.panel-scheme-sample[data-sample=compact]>span+span { border-left:0; }
+.panel-scheme-sample[data-sample=rounded]>span { border-radius:3px; }

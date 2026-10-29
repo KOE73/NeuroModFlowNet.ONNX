@@ -21,6 +21,8 @@ if(viewerMode) { window.opener = null; $('#viewer-camera').hidden = false; }
 let language = read('language', 'ru');
 let theme = read('theme', 'cream');
 let density = read('density', 'nano');
+let panelScheme = read('panelScheme','compact');
+if(!['compact','rounded','square'].includes(panelScheme)) panelScheme = 'compact';
 let token = sessionStorage.getItem('nmfn.webdebug.token') || '';
 let selectedCamera = '', selectedRegister = '', selectedInstruction = null, current = null;
 let catalog = [], lastRender = '', busy = false, polling = false, imageUrl = null, pinnedUrl = null;
@@ -37,6 +39,7 @@ const words = {
   panels:['Панели','Panels'],resetlayout:['Сбросить расположение','Reset layout'],newviewer:['Открыть окно наблюдения','Open observation window'],
   floatpanel:['Плавающая панель / вернуть в раскладку','Float panel / dock back'],returngallery:['Вернуть в обзор','Return to overview'],
   closepanel:['Закрыть панель','Close panel'],
+  panelscheme:['Границы панелей','Panel framing'],panelcompact:['Слитно','Joined'],panelrounded:['Скруглённые','Rounded'],panelsquare:['Прямые','Square'],
   layoutinvalid:['Не удалось восстановить расположение','Could not restore layout'],popupblocked:['Браузер не открыл окно. Разрешите всплывающие окна для этого адреса.','The browser did not open the window. Allow popups for this site.'],
   instructions:['Программы и инструкции','Programs and instructions'],instruction:['Инструкция','Instruction'],breakpoint:['Т.О.','B.P.'],ms:['мс','ms'],registers:['Регистры','Registers'],register:['Регистр','Register'],memory:['Память','Memory'],shape:['Форма','Shape'],
   inspect:['Значение','Value'],preview:['Изображение','Image'],image:['Просмотр данных','Data inspection'],pin:['Закрепить вход','Pin input'],resultframe:['Кадр результата','Result frame'],
@@ -113,14 +116,16 @@ async function api(path, options = {}) {
 }
 
 function appearance() {
-  shell.dataset.theme = theme; shell.dataset.density = density;
+  shell.dataset.theme = theme; shell.dataset.density = density; shell.dataset.panelScheme = panelScheme;
+  workspace?.applyAppearance();
   shell.dataset.tooltips = read('tooltips','true');
   shell.classList.toggle('menu-collapsed', read('menu','expanded') === 'collapsed');
-  $('#appearance-label').textContent = `${t(theme)} · ${density.toUpperCase()}`;
+  $('#appearance-label').textContent = `${t(theme)} · ${density.toUpperCase()} · ${t('panel' + panelScheme)}`;
   const themes = [['light','sun'],['cream','ice-cream'],['emerald','trees'],['dark','moon']];
   const densities = [['nano','baseline-density-small'],['mini','baseline-density-medium'],['norm','baseline-density-large']];
   $('#appearance-menu').innerHTML = `<strong>${t('color')}</strong>` + themes.map(([id,icon]) => `<button data-theme="${id}" aria-pressed="${theme === id}" class="${theme === id ? 'selected':''}"><i class="ti ti-${icon}" aria-hidden="true"></i> ${t(id)} ${theme === id ? '✓':''}</button>`).join('')
     + `<strong>${t('density')}</strong>` + densities.map(([id,icon]) => `<button data-density="${id}" aria-pressed="${density === id}" class="${density === id ? 'selected':''}"><i class="ti ti-${icon}" aria-hidden="true"></i> ${t(id)} ${density === id ? '✓':''}</button>`).join('')
+    + `<strong>${t('panelscheme')}</strong>` + ['compact','rounded','square'].map(id => `<button data-panel-scheme="${id}" aria-pressed="${panelScheme === id}" class="${panelScheme === id ? 'selected':''}"><span class="panel-scheme-sample" data-sample="${id}" aria-hidden="true"><span></span><span></span></span> ${t('panel' + id)} ${panelScheme === id ? '✓':''}</button>`).join('')
     + `<strong>${t('tooltips')}</strong><button id="toggle-tips" role="switch" aria-checked="${shell.dataset.tooltips}"><i class="ti ti-eye${shell.dataset.tooltips === 'true' ? '':'-off'}" aria-hidden="true"></i> ${t('showtips')}</button>`;
 }
 function translate() {
@@ -149,6 +154,7 @@ $('#appearance-menu').onclick = event => {
   const button = event.target.closest('button'); if(!button) return;
   if(button.dataset.theme) { theme = button.dataset.theme; save('theme',theme); }
   if(button.dataset.density) { density = button.dataset.density; save('density',density); }
+  if(button.dataset.panelScheme) { panelScheme = button.dataset.panelScheme; save('panelScheme',panelScheme); }
   if(button.id === 'toggle-tips') save('tooltips',shell.dataset.tooltips === 'true' ? 'false':'true');
   appearance();
 };

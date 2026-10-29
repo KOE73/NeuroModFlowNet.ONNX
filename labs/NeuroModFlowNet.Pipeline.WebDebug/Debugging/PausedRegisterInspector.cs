@@ -31,8 +31,34 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
             memory = $"{memoryInfo.Name}:{memoryInfo.Id}";
         }
         return new DebugVariable(key, value?.GetType().FullName ?? "null", memory, shape,
-            elementType, value is null or string or int or long or float or double or bool ? Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) : null);
+            elementType, value is null or string or int or long or float or double or bool ? Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) : null,
+            CanInspectValue(value), CanPreviewImage(key, value));
     }).ToArray();
+
+    static bool CanInspectValue(object? value) => value switch
+    {
+        OrtValue or Mat or IntPtr or UIntPtr => false,
+        null or string or ICoordinateBackTransform => true,
+        Array array => !array.Cast<object?>().Take(256).Any(item => item is IDisposable or IAsyncDisposable),
+        _ => value.GetType().IsValueType
+    };
+
+    bool CanPreviewImage(string key, object? value)
+    {
+        if(value is Mat image) return !image.Empty();
+        if(value is not OrtValue tensor) return false;
+        var information = tensor.GetTensorTypeAndShape();
+        long[] shape = information.Shape;
+        if(key == "image.source.nv12")
+            return sourceWidth > 0 && sourceHeight > 0 && shape.Length == 2 && information.ElementDataType == TensorElementType.UInt8;
+        if(shape.Length != 4 || shape[0] != 1 || key == "ocr.recInput") return false;
+        return information.ElementDataType switch
+        {
+            TensorElementType.UInt8 => shape[3] == 3,
+            TensorElementType.Float or TensorElementType.Float16 => shape[1] == 3,
+            _ => false
+        };
+    }
 
     public async ValueTask<DebugInspectionResult> InspectAsync(VmRunContext context, DebugInspectionRequest request, CancellationToken cancellationToken)
     {
@@ -44,10 +70,7 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         if(value is OrtValue or Mat)
             throw new NotSupportedException("Tensor data is available through the explicit PNG preview; metadata is in the stop snapshot.");
         // Native wrappers and arbitrary resource graphs must never be reflected into JSON.
-        if(value is not null && value is not Array && value is not string && value is not ICoordinateBackTransform && !value.GetType().IsValueType)
-            throw new NotSupportedException("This resource is metadata-only.");
-        if(value is Array nativeArray && nativeArray.Cast<object?>().Take(256).Any(item => item is IDisposable or IAsyncDisposable))
-            throw new NotSupportedException("Arrays of native resources are metadata-only.");
+        if(!CanInspectValue(value)) throw new NotSupportedException("This resource is metadata-only.");
         if(value is Array { Length: > 256 } array)
         {
             object?[] firstItems = array.Cast<object?>().Take(256).ToArray();
@@ -59,6 +82,8 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
     async Task<byte[]> PreviewAsync(object? value, DebugInspectionRequest request, CancellationToken cancellationToken)
     {
         if(request.MaxEdge is < 100 or > 2000) throw new ArgumentOutOfRangeException(nameof(request.MaxEdge));
+        if(!CanPreviewImage(request.Key, value))
+            throw new NotSupportedException("Image preview requires a supported single image; resource and batch registers are metadata-only.");
         if(value is Mat image) return TensorImagePreviewRenderer.EncodePng(image, request.MaxEdge);
         if(value is not OrtValue tensor) throw new NotSupportedException("Select an image tensor or Mat.");
 

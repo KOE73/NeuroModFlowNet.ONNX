@@ -51,13 +51,12 @@
       <div class="debug-columns">
         <section class="panel debug-pane instruction-pane">
           <div class="panel-header"><h2 data-i18n="instructions"></h2><span id="instruction-count" class="muted"></span></div>
-          <div class="pane-scroll" tabindex="0" data-label="instructions"><table class="instruction-table"><thead><tr><th data-i18n="breakpoint"></th><th class="number">#</th><th data-i18n="instruction"></th><th class="number" data-i18n="ms"></th></tr></thead><tbody id="instructions"></tbody></table></div>
+          <div class="pane-scroll" tabindex="0" data-label="instructions"><table class="instruction-table"><colgroup><col class="breakpoint-column"><col class="action-column"><col class="pointer-column"><col class="index-column"><col><col class="timing-column"></colgroup><thead><tr><th data-i18n="breakpoint"></th><th data-i18n="runtoshort" data-tip="runtotip"></th><th data-label="currentinstruction"></th><th class="number">#</th><th data-i18n="instruction"></th><th class="number" data-i18n="ms"></th></tr></thead><tbody id="instructions"></tbody></table></div>
           <div id="instruction-io" class="pane-footer mono">—</div>
         </section>
         <section class="panel debug-pane register-pane">
           <div class="panel-header"><h2 data-i18n="registers"></h2><span id="register-count" class="muted"></span></div>
-          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><thead><tr><th data-i18n="register"></th><th data-i18n="memory"></th><th data-i18n="shape"></th></tr></thead><tbody id="registers"></tbody></table></div>
-          <div class="pane-footer toolbar"><span id="selected-register" class="mono">—</span><button id="inspect" data-i18n="inspect" disabled></button><button id="preview" data-i18n="preview" data-tip="previewtip" disabled></button></div>
+          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><colgroup><col class="action-column"><col class="action-column"><col><col class="memory-column"><col class="shape-column"></colgroup><thead><tr><th data-label="inspect" class="register-action-cell"></th><th data-label="preview" class="register-action-cell second-action"></th><th data-i18n="register"></th><th data-i18n="memory"></th><th data-i18n="shape"></th></tr></thead><tbody id="registers"></tbody></table></div>
         </section>
         <section class="panel debug-pane preview-pane">
           <div class="panel-header"><h2 data-i18n="image"></h2><button id="pin" data-i18n="pin" disabled></button><button id="live" data-i18n="resultframe"></button></div>

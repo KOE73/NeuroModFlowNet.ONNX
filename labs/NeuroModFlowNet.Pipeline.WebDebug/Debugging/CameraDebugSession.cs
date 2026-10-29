@@ -24,6 +24,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     bool resumeRequested;
     bool disposed;
     long? finishFrame;
+    DebugBreakpoint? runTo;
 
     public string CameraId { get; } = cameraId;
 
@@ -50,7 +51,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     public DebugSnapshot Snapshot()
     {
         lock(syncRoot)
-            return new(state, revision, location, variables, breakpoints.ToArray(), timings.Values.ToArray(), error);
+            return new(state, revision, location, variables, breakpoints.ToArray(), timings.Values.ToArray(), error, runTo);
     }
 
     public void RecordTiming(string program, int index, string name, double milliseconds)
@@ -75,6 +76,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
             if(outcome.Status == VmRunStatus.Failed)
             {
                 state = "failed";
+                runTo = null;
                 error = outcome.Exception?.GetBaseException().Message ?? "VM run failed.";
             }
             else if(state != "failed")
@@ -89,6 +91,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
         lock(syncRoot)
         {
             state = "failed";
+            runTo = null;
             error = exception.GetBaseException().Message;
             variables = [];
             revision++;
@@ -113,31 +116,47 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
                 case "pause":
                 case "attach":
                     attached = true;
+                    runTo = null;
                     if(state != "paused") { pauseBefore = true; state = "pausing"; }
                     return;
                 case "detach":
                     attached = false;
                     pauseBefore = pauseAfter = false;
                     finishFrame = null;
+                    runTo = null;
                     break;
                 case "continue":
                     EnsurePaused();
                     pauseBefore = pauseAfter = false;
                     finishFrame = null;
+                    runTo = null;
                     break;
                 case "step":
                     EnsurePaused();
                     pauseBefore = false;
                     pauseAfter = true;
                     finishFrame = null;
+                    runTo = null;
                     break;
                 case "next-frame":
                     EnsurePaused();
                     pauseBefore = pauseAfter = false;
                     finishFrame = location!.RunId;
+                    runTo = null;
+                    break;
+                case "run-to":
+                    EnsurePaused();
+                    if(command.Program is null || command.Index is null ||
+                        !instructions.Any(instruction => instruction.Program == command.Program && instruction.Index == command.Index))
+                        throw new ArgumentException("Run-to requires an existing program name and instruction index.");
+                    if(location is { Phase: "before" } && location.Program == command.Program && location.Index == command.Index)
+                        return;
+                    runTo = new(command.Program, command.Index.Value);
+                    pauseBefore = pauseAfter = false;
+                    finishFrame = null;
                     break;
                 default:
-                    throw new ArgumentException("Unknown command. Use pause, attach, detach, continue, step or next-frame.");
+                    throw new ArgumentException("Unknown command. Use pause, attach, detach, continue, step, next-frame or run-to.");
             }
 
             resumeRequested = true;
@@ -198,10 +217,12 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
         {
             if(!attached) return ValueTask.CompletedTask;
             bool stop = pauseBefore || breakpoints.Contains(new(program, index)) ||
+                runTo is { } target && target.Program == program && target.Index == index ||
                 finishFrame is { } previousRun && previousRun != context.Identity.RunId;
             if(!stop) return ValueTask.CompletedTask;
             pauseBefore = false;
             finishFrame = null;
+            runTo = null;
         }
         return PauseAsync(context, program, index, descriptor, "before", cancellationToken);
     }

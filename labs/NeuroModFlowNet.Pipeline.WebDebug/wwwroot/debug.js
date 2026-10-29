@@ -14,6 +14,7 @@ let catalog = [], lastRender = '', busy = false, polling = false, imageUrl = nul
 let imageCaption = '', modalReturnFocus = null;
 let imageInfo = null, pinnedInfo = null;
 let lastError = '';
+let focusedActionKey = '';
 const words = {
   sections:['Разделы','Sections'], overview:['Отладка камер','Camera debugger'], settings:['Настройки','Settings'],
   heading:['Виртуальные машины · камеры','Virtual machines · cameras'], start:['Запустить','Start'],stop:['Остановить всё','Stop all'],
@@ -36,6 +37,10 @@ const words = {
   accesstoken:['Токен доступа к удалённому отладчику','Remote debugger access token'],apply:['Применить','Apply'],tokenhint:['Токен хранится только в этой вкладке браузера. Адрес API совпадает с адресом страницы.','The token is stored only in this browser tab. The API uses the page address.'],
   diagnostics:['Диагностика','Diagnostics'],nodiagnostics:['Диагностика: сообщений нет','Diagnostics: no messages'],hasdiagnostics:['Есть сообщение. Открыть диагностику','A message is available. Open diagnostics'],
   tensorvalue:['Тип и форма тензора показаны в таблице. Для просмотра картинки используйте «Изображение».','Tensor type and shape are shown in the table. Use Image to inspect its pixels.'],
+  currentinstruction:['Текущая инструкция','Current instruction'],runtoshort:['До','To'],runto:['Выполнить до','Run to'],
+  runtotip:['Продолжить выбранную камеру и остановиться перед этой инструкцией. Постоянные точки останова сохраняются.','Continue this camera and stop before this instruction. Persistent breakpoints remain active.'],
+  valueaction:['Показать значение:','Show value:'],imageaction:['Показать изображение:','Show image:'],
+  registerhelp:['«Значение» (значок списка в строке регистра) показывает число, текст, типизированный массив или данные обратного преобразования в JSON. «Изображение» (значок глаза) явно получает PNG из поддерживаемого Mat/GPU-тензора на паузе. Иконки присутствуют только у доступных действий. «Выполнить до» в строке инструкции продолжает камеру до остановки перед этой командой; текущая команда после остановки ещё не выполнена. Если выбранная строка уже пройдена, цель может быть достигнута в следующем кадре. Обычные точки останова продолжают действовать.','Value (the list icon in a register row) shows a scalar, text, typed array or back-transform data as JSON. Image (the eye icon) explicitly obtains a PNG from a supported Mat/GPU tensor while paused. Icons appear only for available actions. Run to in an instruction row continues this camera and stops before that instruction; it has not executed at that stop. A previously passed target may be reached on the next frame. Regular breakpoints remain active.'],
   helpbody:[
     '<p>Отладчик запускает отдельный экземпляр существующего MultiCamera pipeline: NVDEC → GPU NV12 → BGR → преобразования → детектор → трекинг → OCR. На камеру — один VmController и один кадр в работе. Прогрев выполняется без остановок, первый рабочий кадр останавливается перед первой инструкцией.</p><p>Камеры, программа, регистры и данные доступны в одном обзоре. Выберите камеру строкой таблицы или в меню. Галочка у инструкции задаёт точку останова. «До» — инструкция ещё не выполнена, «после» — её результаты уже в регистрах. F6 — один шаг, F8 — продолжить.</p><p>Просмотр картинки выполняется явно на паузе. Вход можно закрепить над следующим результатом и сравнить этапы преобразования. Нажатие картинки открывает полный PNG. Поддержаны NV12 поверхности, BGR U8 NHWC и одиночные RGB FP16/FP32 NCHW 0..1. Массивы batch показываются как метаданные; интерпретация неподдержанных форматов не подменяется.</p><p>Время инструкции исключает ожидание паузы и отладочный просмотр. Время прогона включает паузы. Захват продолжает читать источник, очередь хранит два последних кадра с вытеснением старых; «следующий кадр» — следующий принятый VM кадр. Это не покадровый проигрыватель всех кадров видео.</p><p>Закрытие вкладки сохраняет паузу. Переподключитесь или используйте API, чтобы продолжить. «Отсоединить» снимает паузу выбранной камеры. «Остановить всё» освобождает ресурсы отладочного запуска. Рабочие службы и другие процессы не управляются этим UI.</p>',
     '<p>The debugger starts a separate instance of the existing MultiCamera pipeline: NVDEC → GPU NV12 → BGR → transforms → detection → tracking → OCR. Each camera has one VmController and one in-flight frame. Warmup runs without stops; the first working frame stops before its first instruction.</p><p>Cameras, programs, registers and inspected data share one overview. Select a camera in the table or navigation. Check an instruction to set a breakpoint. Before means it has not executed; after means its results are already in the registers. F6 steps one instruction; F8 continues.</p><p>Image inspection is explicit and requires a pause. Pin an input above the next result to compare transform stages. Click an image to open its full PNG. NV12 surfaces, BGR U8 NHWC and single RGB FP16/FP32 NCHW 0..1 images are supported. Batch tensors show metadata; unsupported formats are never reinterpreted.</p><p>Instruction timing excludes debugger waits and inspection. Run timing includes pauses. Capture continues reading into a two-frame drop-oldest queue; next frame means the next frame accepted by the VM, not every consecutive frame of a video.</p><p>Closing the tab preserves the pause. Reconnect or use the API to resume. Detach releases this camera. Stop all releases the debug run resources. This UI does not control production services or other processes.</p>'
@@ -95,7 +100,7 @@ function showDialog(title, html) {
   $('#dialog-title').textContent = title; $('#dialog-body').innerHTML = html; $('#dialog').showModal();
 }
 $('#dialog').addEventListener('close', () => modalReturnFocus?.focus());
-$('#help').onclick = () => showDialog(t('help'),t('helpbody'));
+$('#help').onclick = () => showDialog(t('help'),t('helpbody') + `<p>${esc(t('registerhelp'))}</p>`);
 $('#diagnostics').onclick = () => showDialog(t('diagnostics'),`<pre class="diagnostic-detail">${esc(lastError || t('nodiagnostics'))}</pre>`);
 $('#settings-nav').onclick = event => {
   event.preventDefault();
@@ -147,39 +152,51 @@ function renderSelected() {
   document.querySelectorAll('[data-command]').forEach(button => {
     button.disabled = busy || !camera || (['step','continue','next-frame'].includes(button.dataset.command) && !paused);
   });
-  const variable = snapshot?.variables.find(item => item.key === selectedRegister);
-  const imageVariable = variable && ['Microsoft.ML.OnnxRuntime.OrtValue','OpenCvSharp.Mat'].includes(variable.type);
-  $('#inspect').disabled = busy || !paused || !variable || imageVariable;
-  $('#inspect').dataset.tooltip = imageVariable ? t('tensorvalue') : t('inspect');
-  $('#preview').disabled = busy || !paused || !imageVariable;
+  const activeActionKey = document.activeElement?.dataset.focusKey;
+  if(activeActionKey) focusedActionKey = activeActionKey;
+  document.querySelectorAll('[data-register-action]').forEach(button => button.disabled = busy || !paused);
+  document.querySelectorAll('[data-run-to]').forEach(button => button.disabled = busy || !paused || button.dataset.atCurrent === 'true');
   $('#live').disabled = !camera;
-  const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}`;
-  if(renderKey === lastRender) return;
+  const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${JSON.stringify(snapshot?.runTo)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}`;
+  if(renderKey === lastRender) { restoreRowFocus(); return; }
   lastRender = renderKey;
   let program = '';
   $('#instructions').innerHTML = catalog.map(instruction => {
     let header = '';
-    if(program !== instruction.program) { program = instruction.program; header = `<tr class="program-row"><td colspan="4">${esc(program)}</td></tr>`; }
+    if(program !== instruction.program) { program = instruction.program; header = `<tr class="program-row"><td colspan="6">${esc(program)}</td></tr>`; }
     const here = point?.program === instruction.program && point.index === instruction.index;
     const selected = selectedInstruction?.program === instruction.program && selectedInstruction.index === instruction.index;
     const breakpoint = snapshot?.breakpoints.some(item => item.program === instruction.program && item.index === instruction.index);
     const timing = snapshot?.timings.find(item => item.program === instruction.program && item.index === instruction.index);
-    return header + `<tr data-program="${esc(program)}" data-index="${instruction.index}" class="${here ? 'current':''} ${selected ? 'selected':''}"><td><input type="checkbox" aria-label="${esc(t('breakpoint') + ' ' + program + ' ' + instruction.index)}" ${breakpoint ? 'checked':''}></td><td class="number">${instruction.index}</td><td data-tooltip="${esc(instruction.name + '\n' + instruction.operation)}">${esc(instruction.name)}</td><td class="number">${timing ? number(timing.milliseconds,2):'—'}</td></tr>`;
+    const atCurrent = Boolean(here && point.phase === 'before');
+    const target = snapshot?.runTo?.program === program && snapshot.runTo.index === instruction.index;
+    const runLabel = `${t('runto')} ${program} [${instruction.index}] · ${instruction.name}`;
+    const runButton = `<button class="row-action" data-run-to data-at-current="${atCurrent}" data-focus-key="${esc(selectedCamera + '|run|' + program + '|' + instruction.index)}" aria-label="${esc(runLabel)}" data-tooltip="${esc(runLabel + '\n' + t('runtotip'))}" ${busy || !paused || atCurrent ? 'disabled':''}><i class="ti ti-player-track-next" aria-hidden="true"></i></button>`;
+    return header + `<tr data-program="${esc(program)}" data-index="${instruction.index}" class="${here ? 'current':''} ${selected ? 'selected':''} ${target ? 'run-target':''}"><td><input type="checkbox" aria-label="${esc(t('breakpoint') + ' ' + program + ' ' + instruction.index)}" ${breakpoint ? 'checked':''}></td><td class="row-action-cell">${runButton}</td><td class="instruction-pointer">${here ? `<i class="ti ti-arrow-right" aria-hidden="true"></i>`:''}</td><td class="number">${instruction.index}</td><td class="instruction-name" data-tooltip="${esc(instruction.name + '\n' + instruction.operation)}">${esc(instruction.name)}</td><td class="number">${timing ? number(timing.milliseconds,2):'—'}</td></tr>`;
   }).join('');
   $('#instruction-count').textContent = String(catalog.length);
   const active = selectedInstruction ?? catalog.find(item => item.program === point?.program && item.index === point?.index);
   $('#instruction-io').textContent = active ? `${t('reads')}: ${active.reads.join(', ') || '—'}\n${t('writes')}: ${active.writes.join(', ') || '—'}` : '—';
-  $('#registers').innerHTML = snapshot?.variables.length ? snapshot.variables.map(variable => `<tr tabindex="0" data-register="${esc(variable.key)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td data-tooltip="${esc(variable.key + '\n' + variable.type + (variable.value != null ? '\n' + variable.value:''))}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`).join('') : `<tr><td colspan="3" class="muted">${t('noRegisters')}</td></tr>`;
+  $('#registers').innerHTML = snapshot?.variables.length ? snapshot.variables.map(variable => {
+    const action = (format, icon, label) => `<button class="row-action" data-register-action="${format}" data-focus-key="${esc(selectedCamera + '|register|' + variable.key + '|' + format)}" aria-label="${esc(t(label) + ' ' + variable.key)}" data-tooltip="${esc(t(label) + ' ' + variable.key)}" ${busy || !paused ? 'disabled':''}><i class="ti ti-${icon}" aria-hidden="true"></i></button>`;
+    return `<tr tabindex="0" data-register="${esc(variable.key)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="register-action-cell">${variable.canInspectValue ? action('json','list-details','valueaction'):''}</td><td class="register-action-cell second-action">${variable.canPreviewImage ? action('png','eye','imageaction'):''}</td><td data-tooltip="${esc(variable.key + '\n' + variable.type + (variable.value != null ? '\n' + variable.value:''))}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
+  }).join('') : `<tr><td colspan="5" class="muted">${t('noRegisters')}</td></tr>`;
   $('#register-count').textContent = String(snapshot?.variables.length ?? 0);
-  $('#selected-register').textContent = selectedRegister || '—'; selectRows();
+  selectRows(); restoreRowFocus();
 }
 
-async function command(name) {
+function restoreRowFocus() {
+  if(busy || document.activeElement !== document.body || !focusedActionKey) return;
+  const button = [...document.querySelectorAll('[data-focus-key]')].find(item => item.dataset.focusKey === focusedActionKey);
+  if(button && !button.disabled) button.focus({preventScroll:true});
+}
+
+async function command(name, target = {}) {
   if(busy || !selectedCamera) return;
   busy = true; renderSelected();
   try {
     const snapshot = current.cameras.find(item => item.id === selectedCamera)?.debug;
-    await api(`${cameraPath()}/command`,{method:'POST',body:JSON.stringify({command:name,revision:snapshot?.revision})});
+    await api(`${cameraPath()}/command`,{method:'POST',body:JSON.stringify({command:name,revision:snapshot?.revision,...target})});
     clearError();
   } catch(error) { showError(error); }
   finally { busy = false; await poll(); }
@@ -190,6 +207,10 @@ $('#cameras').addEventListener('keydown',event => { if(event.key === 'Enter' && 
 $('#instructions').addEventListener('click', async event => {
   const row = event.target.closest('[data-program]'); if(!row) return;
   selectedInstruction = catalog.find(item => item.program === row.dataset.program && item.index === Number(row.dataset.index));
+  if(event.target.closest('[data-run-to]')) {
+    await command('run-to',{program:row.dataset.program,index:Number(row.dataset.index)});
+    return;
+  }
   if(event.target.matches('input')) {
     const breakpoints = [...$('#instructions').querySelectorAll('input:checked')].map(input => ({program:input.closest('tr').dataset.program,index:Number(input.closest('tr').dataset.index)}));
     try { await api(`${cameraPath()}/breakpoints`,{method:'PUT',body:JSON.stringify(breakpoints)}); await poll(); }
@@ -197,7 +218,13 @@ $('#instructions').addEventListener('click', async event => {
   }
   lastRender = ''; renderSelected();
 });
-$('#registers').addEventListener('click',event => { const row = event.target.closest('[data-register]'); if(row) { selectedRegister = row.dataset.register; lastRender = ''; renderSelected(); } });
+$('#registers').addEventListener('click',event => {
+  const row = event.target.closest('[data-register]'); if(!row) return;
+  selectedRegister = row.dataset.register;
+  const action = event.target.closest('[data-register-action]');
+  if(action) { inspect(action.dataset.registerAction,row.dataset.register); return; }
+  lastRender = ''; renderSelected();
+});
 $('#registers').addEventListener('keydown',event => { if(event.key === 'Enter' && event.target.dataset.register) { selectedRegister = event.target.dataset.register; lastRender = ''; renderSelected(); } });
 
 function clearImage() {
@@ -223,11 +250,13 @@ function displayImage(blob, info) {
   updateCaptions(); $('#preview-figure').hidden = false;
   $('#image-empty').hidden = $('#value-output').hidden = true; $('#pin').disabled = false;
 }
-async function inspect(format) {
+async function inspect(format, key) {
   const snapshot = current?.cameras.find(item => item.id === selectedCamera)?.debug;
-  if(!snapshot || snapshot.state !== 'paused' || !selectedRegister || busy) return;
+  const variable = snapshot?.variables.find(item => item.key === key);
+  if(!snapshot || snapshot.state !== 'paused' || !variable || busy ||
+    (format === 'json' ? !variable.canInspectValue : !variable.canPreviewImage)) return;
   busy = true; renderSelected();
-  const key = selectedRegister, camera = selectedCamera;
+  const camera = selectedCamera;
   try {
     const response = await api(`${cameraPath()}/inspect`,{method:'POST',body:JSON.stringify({key,format,revision:snapshot.revision,maxEdge:1000}),signal:AbortSignal.timeout(120000)});
     if(camera !== selectedCamera) return;
@@ -237,7 +266,6 @@ async function inspect(format) {
   } catch(error) { showError(error); }
   finally { busy = false; renderSelected(); }
 }
-$('#inspect').onclick = () => inspect('json'); $('#preview').onclick = () => inspect('png');
 $('#pin').onclick = () => {
   if(!imageUrl) return;
   if(pinnedUrl && pinnedUrl !== imageUrl) URL.revokeObjectURL(pinnedUrl);

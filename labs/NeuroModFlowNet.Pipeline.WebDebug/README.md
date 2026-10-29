@@ -36,6 +36,8 @@ The default loopback endpoint can be forwarded over an existing SSH/VPN connecti
 - The debug-only instruction decorator preserves descriptors, results, branch semantics, device validation and disposal of the underlying instruction. The VM and ONNX core have no dependency on the debugger.
 - Stop snapshots contain metadata and small scalar values. A live context/OrtValue/Mat is never handed to an HTTP thread. Inspection requests are bounded and are executed by the waiting VM task. Stale stop revisions are rejected.
 - **Step / F6** executes one instruction and stops after it. **Continue / F8** resumes to a breakpoint or pause. **Next frame** finishes the current run and stops before the first instruction of the next accepted run; configured breakpoints remain effective.
+- Each register row exposes only supported actions: the Tabler list icon reads a typed JSON value; the eye icon explicitly requests an image. The server advertises `canInspectValue` and `canPreviewImage` in the paused register metadata, including batch/layout restrictions. Native resources with no supported inspection have empty action cells.
+- The instruction pointer has its own fixed column before `#`; moving it never changes the instruction name position. The row's **Run to** icon sets a temporary program-local target and stops **before** it executes. Existing breakpoints remain active; any earlier stop clears the temporary target. A passed target may be reached on a later frame. Pause, Continue, Step, Next frame and Detach cancel a pending run-to target.
 - Capture continues into the existing two-frame drop-oldest queue while a VM is paused. Next frame means next VM-accepted frame, not every consecutive frame in a recording. Other cameras remain independently controllable.
 - Image inspection is explicit on pause: NV12 is converted on the configured GPU backend, images are resized there and explicitly downloaded by the existing ONNX operator's `isFinal` path. Native GPU pointers are never read in managed code. No CPU/provider fallback is introduced.
 - Image contracts: raw NV12 surfaces use the source's declared dimensions and color matrix; U8 images are BGR NHWC; FP16/FP32 images are RGB NCHW in 0..1. Single images only; batch/unsupported layouts stay metadata-only and fail explicit image requests. Paddle-normalized batch data is never guessed to be 0..1.
@@ -54,7 +56,7 @@ All mutation requests require `X-VM-Debug: 1`. Remote bindings additionally requ
 | POST | `/api/stop` | Stop the debug run and release resources |
 | GET | `/api/cameras/{id}/instructions` | Program name, local instruction index, operation and register dependencies |
 | GET | `/api/cameras/{id}/debug` | State, revision, location, variables, breakpoints and timings |
-| POST | `/api/cameras/{id}/command` | `{"command":"step","revision":123}`; also pause, continue, next-frame, attach, detach |
+| POST | `/api/cameras/{id}/command` | `{"command":"step","revision":123}`; also pause, continue, next-frame, attach, detach; run-to uses `{"command":"run-to","revision":123,"program":"common","index":3}` |
 | PUT | `/api/cameras/{id}/breakpoints` | `[{"program":"common","index":3}]`; replaces the camera's breakpoint set |
 | POST | `/api/cameras/{id}/inspect` | `{"key":"image.rect","revision":123,"format":"png","maxEdge":1000}` or format json |
 | GET | `/api/cameras/{id}/preview.png` | Last completed frame preview; 404 until one exists |
@@ -68,7 +70,7 @@ Shell resources, palettes, local Tabler icons and tooltip behavior were copied f
 ## Verified 2026-10-29
 
 - Complete solution builds, including samples, both Avalonia labs and all test projects. Existing unrelated warnings remain.
-- 14 new debugger/renderer/access-policy tests and all 36 existing VM tests pass.
+- 19 debugger/renderer/access-policy tests (including run-to and register action capabilities) and all 36 existing VM tests pass.
 - Actual recordings from both new cameras: NVDEC surfaces in CUDA memory; H.264 2688×1520 verified with FFprobe; 4K 3840×2160 second source. Single-step color conversion, undistort and perspective, real detector outputs, independent camera pauses, program-local breakpoints, next accepted frame and explicit PNG inspection were exercised through the running host.
 - More than 1,200 completed VM runs across the two cameras without VM failures, followed by successful pause and OCR inspection: fixed recognition batch `[16,3,48,640]`, actual ROI counts 2 and 1, typed recognition strings available through the register API. Model recognition accuracy is outside this debugger change.
 - Stop while both cameras are paused releases the debug run cleanly. Stale revision requests return 409; requests without the mutation header return 403.

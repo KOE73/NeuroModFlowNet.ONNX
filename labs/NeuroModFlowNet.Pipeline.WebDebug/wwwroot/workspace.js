@@ -31,7 +31,7 @@ export class DebugWorkspace {
     this.applyAppearance();
     this.loading = false;
     this.dock.onDidLayoutChange(() => { if(!this.loading) save(this.storageKey,JSON.stringify(this.dock.toJSON())); });
-    new ResizeObserver(() => this.dock.layout(this.host.clientWidth,this.host.clientHeight)).observe(this.host);
+    new ResizeObserver(() => { if(this.host.clientWidth && this.host.clientHeight) this.dock.layout(this.host.clientWidth,this.host.clientHeight); }).observe(this.host);
     document.querySelector('#panels-menu').onclick = event => {
       const button = event.target.closest('[data-panel]'); if(!button) return;
       this.show(button.dataset.panel); document.querySelector('#panels-menu').open = false;

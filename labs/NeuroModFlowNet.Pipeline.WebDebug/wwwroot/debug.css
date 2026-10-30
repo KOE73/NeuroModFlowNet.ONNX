@@ -1,4 +1,13 @@
 .shell-content { overflow:hidden; }
+.lu-shell[data-page=overview] :is(.debug-toolbar,.debug-columns,#panels-menu) { display:none; }
+.lu-shell[data-page=camera] :is(.page-header,.cameras-panel) { display:none; }
+.lu-shell[data-page=overview] .cameras-panel { max-height:none; min-height:0; flex:0 1 auto; }
+.camera-state { display:inline-flex; justify-content:center; width:20px; flex:0 0 20px; }
+.camera-state[data-state=running],.camera-state[data-state=detached] { color:var(--lu-success); }
+.camera-state[data-state=paused],.camera-state[data-state=pausing] { color:var(--lu-warning); }
+.camera-state[data-state=waiting],.camera-state[data-state=starting] { color:var(--lu-info); }
+.camera-state[data-state=failed] { color:var(--lu-danger); }
+.camera-state[data-state=stopped] { color:var(--lu-text-muted); }
 .page-header h1 { font-size:17px; }
 #diagnostics { width:31px; flex:0 0 31px; }
 #diagnostics.error { color:var(--lu-danger); }

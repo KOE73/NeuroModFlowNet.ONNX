@@ -26,12 +26,13 @@ if(!['compact','rounded','square'].includes(panelScheme)) panelScheme = 'compact
 let token = sessionStorage.getItem('nmfn.webdebug.token') || '';
 let selectedCamera = '', selectedRegister = '', selectedInstruction = null, current = null;
 let catalog = [], lastRender = '', busy = false, polling = false, imageUrl = null, pinnedUrl = null;
+let selectingCamera = '';
 let imageCaption = '', modalReturnFocus = null;
 let imageInfo = null, pinnedInfo = null;
 let lastError = '';
 let focusedActionKey = '';
 const words = {
-  sections:['Разделы','Sections'], overview:['Отладка камер','Camera debugger'], settings:['Настройки','Settings'],
+  sections:['Разделы','Sections'], overview:['Обзор камер','Camera overview'], settings:['Настройки','Settings'],
   heading:['Виртуальные машины · камеры','Virtual machines · cameras'], start:['Запустить','Start'],stop:['Остановить всё','Stop all'],
   cameras:['Камеры','Cameras'],camera:['Камера','Camera'],state:['Состояние','State'],decoder:['Декодер','Decoder'],frames:['Кадры','Frames'],runms:['Прогон, мс','Run, ms'],tracks:['Треки','Tracks'],failures:['Ошибки','Errors'],text:['Распознанный текст','Recognized text'],
   pause:['Пауза','Pause'],continue:['Продолжить','Continue'],step:['Шаг','Step'],nextframe:['Следующий кадр','Next frame'],detach:['Отсоединить','Detach'],
@@ -160,8 +161,15 @@ $('#appearance-menu').onclick = event => {
 };
 
 async function selectCamera(id) {
+  showPage(false); initializeWorkspace();
+  if(id === selectedCamera && catalog.length) {
+    if(!viewerMode) location.hash=encodeURIComponent(id);
+    selectRows(); return;
+  }
+  selectingCamera=id;
   if(id !== selectedCamera) { selectedRegister = ''; selectedInstruction = null; clearImage(); }
   selectedCamera = id; lastRender = '';
+  if(!viewerMode && location.hash !== `#${encodeURIComponent(id)}`) location.hash = encodeURIComponent(id);
   save(`camera.${viewerId}`,id);
   if(viewerMode) document.title = `VM View · ${id}`;
   const watching = observation.setCamera(id);
@@ -171,10 +179,12 @@ async function selectCamera(id) {
   }
   catch(error) { showError(error); }
   await watching;
+  if(selectingCamera === id) selectingCamera='';
 }
 function selectRows() {
+  $('#overview-nav').classList.toggle('active',shell.dataset.page === 'overview');
   document.querySelectorAll('[data-camera]').forEach(element => {
-    element.classList.toggle(element.tagName === 'A' ? 'active':'selected',element.dataset.camera === selectedCamera);
+    element.classList.toggle(element.tagName === 'A' ? 'active':'selected',element.dataset.camera === selectedCamera && (element.tagName !== 'A' || shell.dataset.page === 'camera'));
   });
 }
 function renderCameras(data) {
@@ -185,11 +195,34 @@ function renderCameras(data) {
   }).join('') : `<tr><td colspan="11" class="muted">${t('empty')}</td></tr>`;
   const navKey = cameras.map(camera => camera.id).join('|') + language;
   if($('#camera-nav').dataset.key !== navKey) {
-    $('#camera-nav').innerHTML = cameras.map(camera => `<a href="#${encodeURIComponent(camera.id)}" data-camera="${esc(camera.id)}"><i class="ti ti-bolt" aria-hidden="true"></i><span>${esc(camera.id)}</span></a>`).join('');
+    $('#camera-nav').innerHTML = cameras.map(camera => `<a href="#${encodeURIComponent(camera.id)}" data-camera="${esc(camera.id)}"><i class="camera-state ti" aria-hidden="true"></i><span>${esc(camera.id)}</span></a>`).join('');
     $('#camera-nav').dataset.key = navKey;
+  }
+  for(const anchor of $('#camera-nav').querySelectorAll('[data-camera]')) {
+    const camera=cameras.find(item=>item.id === anchor.dataset.camera), state=camera.debug.state;
+    const icon=['running','detached'].includes(state) ? 'player-play' : ['paused','pausing'].includes(state) ? 'player-pause' : state === 'failed' ? 'alert-circle' : ['waiting','starting'].includes(state) ? 'refresh' : 'player-stop';
+    const marker=anchor.querySelector('.camera-state'); marker.className=`camera-state ti ti-${icon}`; marker.dataset.state=state;
+    anchor.setAttribute('aria-label',`${camera.id} · ${t(state)}`); anchor.dataset.tooltip=`${camera.id} · ${t(state)}${camera.debug.error ? '\n' + camera.debug.error:''}`;
   }
   selectRows();
 }
+
+function showPage(overview) {
+  const page=overview ? 'overview':'camera';
+  if(shell.dataset.page !== page) {
+    shell.dataset.page=page;
+    if(!overview && workspace) workspace.dock.layout(workspace.host.clientWidth,workspace.host.clientHeight,true);
+  }
+  selectRows();
+}
+async function route() {
+  if(viewerMode) return;
+  let id; try { id=decodeURIComponent(location.hash.slice(1)) || parameters.get('camera'); } catch { id=''; }
+  if(!id || !current?.cameras.some(camera=>camera.id === id)) { showPage(true); return; }
+  if(id !== selectedCamera || !workspace || (!catalog.length && selectingCamera !== id)) await selectCamera(id);
+  else showPage(false);
+}
+window.addEventListener('hashchange',()=>route());
 
 function renderSelected() {
   const camera = current?.cameras.find(item => item.id === selectedCamera);
@@ -244,7 +277,7 @@ function restoreRowFocus() {
 }
 
 async function command(name, target = {}) {
-  if(viewerMode) return;
+  if(viewerMode || shell.dataset.page !== 'camera') return;
   if(busy || !selectedCamera) return;
   busy = true; renderSelected();
   try {
@@ -352,7 +385,8 @@ async function poll() {
     renderCameras(current);
     const cameraOptions = current.cameras.map(camera=>`<option value="${esc(camera.id)}">${esc(camera.id)}</option>`).join('');
     if($('#viewer-camera').innerHTML !== cameraOptions) $('#viewer-camera').innerHTML = cameraOptions;
-    if(!current.cameras.some(camera => camera.id === selectedCamera)) {
+    if(!viewerMode) await route();
+    else if(!current.cameras.some(camera => camera.id === selectedCamera)) {
       const preferred = read(`camera.${viewerId}`,'') || parameters.get('camera');
       selectedCamera = current.cameras.find(camera=>camera.id === preferred)?.id ?? current.cameras[0]?.id ?? ''; catalog = []; lastRender = '';
       if(selectedCamera) await selectCamera(selectedCamera); else await observation.setCamera('');
@@ -379,9 +413,13 @@ document.querySelector('.register-table thead').onclick = event => {
   registerSort = {column:button.dataset.sort,direction:registerSort.column === button.dataset.sort ? -registerSort.direction:1};
   save('registerSort',JSON.stringify(registerSort)); lastRender = ''; renderSelected();
 };
-translate();
-workspace = new DebugWorkspace({t,read,save,onError:showError,onPopup:openViewer,onCloseTile:key=>{
+function initializeWorkspace() {
+  if(workspace) return;
+  workspace = new DebugWorkspace({t,read,save,onError:showError,onPopup:openViewer,onCloseTile:key=>{
   const registers=observation.selected.filter(item=>item.key !== key);
   observation.configure({...observation.configuration,registers,enabled:registers.length > 0 && observation.configuration.enabled});
 },viewer:viewerMode,id:viewerId,hasWatches:Boolean(viewerBootstrap?.configuration?.registers?.length)});
+}
+translate();
+if(viewerMode) { showPage(false); initializeWorkspace(); }
 poll(); setInterval(poll,600);

@@ -27,9 +27,9 @@ public sealed class RegisterInspectionCapabilitiesTests
 
         Assert.True(variables["image"].CanPreviewImage);
         Assert.False(variables["image"].CanInspectValue);
-        Assert.False(variables["batch"].CanPreviewImage);
+        Assert.True(variables["batch"].CanPreviewImage);
         Assert.False(variables["batch"].CanInspectValue);
-        Assert.False(variables["ocr.recInput"].CanPreviewImage);
+        Assert.True(variables["ocr.recInput"].CanPreviewImage);
         Assert.True(variables["count"].CanInspectValue);
         Assert.False(variables["count"].CanPreviewImage);
         Assert.True(variables["results"].CanInspectValue);

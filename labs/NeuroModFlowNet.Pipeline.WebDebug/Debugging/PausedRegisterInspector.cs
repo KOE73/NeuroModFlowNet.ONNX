@@ -53,7 +53,7 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         long[] shape = information.Shape;
         if(key == "image.source.nv12")
             return sourceWidth > 0 && sourceHeight > 0 && shape.Length == 2 && information.ElementDataType == TensorElementType.UInt8;
-        if(shape.Length != 4 || shape[0] != 1 || key == "ocr.recInput") return false;
+        if(shape.Length != 4 || shape[0] is < 1 or > 64) return false;
         return information.ElementDataType switch
         {
             TensorElementType.UInt8 => shape[3] == 3,
@@ -73,7 +73,7 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         if(!context.TryGetObject(request.Key, out object? value))
             throw new KeyNotFoundException("The register is not present at this instruction boundary.");
         if(request.Format == "png")
-            return new(await PreviewAsync(value, request, cancellationToken).ConfigureAwait(false), null);
+            return new(await PreviewAsync(context, value, request, cancellationToken).ConfigureAwait(false), null);
         if(request.Format != "json") throw new ArgumentException("Inspection format must be json or png.");
         if(value is OrtValue or Mat)
             throw new NotSupportedException("Tensor data is available through the explicit PNG preview; metadata is in the stop snapshot.");
@@ -87,13 +87,16 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         return new(null, new("application/json", JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions)));
     }
 
-    async Task<Mat> PreviewAsync(object? value, DebugInspectionRequest request, CancellationToken cancellationToken)
+    async Task<Mat> PreviewAsync(VmRunContext context, object? value, DebugInspectionRequest request, CancellationToken cancellationToken)
     {
         if(!PreviewImageSize.IsValid(request.MaxEdge)) throw new ArgumentOutOfRangeException(nameof(request.MaxEdge));
         if(!CanPreviewImage(request.Key, value))
-            throw new NotSupportedException("Image preview requires a supported single image; resource and batch registers are metadata-only.");
+            throw new NotSupportedException("Image preview requires supported BGR U8 NHWC or RGB FP16/FP32 NCHW images, up to 64 batch slots.");
         if(value is Mat image) return PreviewImageSize.CopyCpu(image, request.MaxEdge);
         if(value is not OrtValue tensor) throw new NotSupportedException("Select an image tensor or Mat.");
+        long[] imageShape = tensor.GetTensorTypeAndShape().Shape;
+        if(imageShape.Length == 4 && (imageShape[0] > 1 || request.Key is "ocr.recInput" or "ocr.crop.batch"))
+            return PreviewBatch(context, tensor, request, cancellationToken);
         using(OrtMemoryInfo memory = tensor.GetTensorMemoryInfo())
             if(string.Equals(memory.Name, "Cpu", StringComparison.OrdinalIgnoreCase))
             {
@@ -149,6 +152,35 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
             temporary.Dispose();
             conversion?.Dispose();
         }
+    }
+
+    Mat PreviewBatch(VmRunContext context, OrtValue tensor, DebugInspectionRequest request, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var information = tensor.GetTensorTypeAndShape();
+        long[] shape = information.Shape;
+        int capacity = checked((int)shape[0]);
+        string? countKey = request.Key switch { "ocr.recInput" => "ocr.roiCount", "ocr.crop.batch" => "ocr.crop.count", _ => null };
+        int actualCount = capacity;
+        if(countKey is not null && !context.TryGet(countKey, out actualCount))
+            throw new InvalidOperationException($"{countKey} is not present at this boundary; real images cannot be distinguished from padding.");
+        if(actualCount < 0 || actualCount > capacity) throw new InvalidOperationException("Actual image count exceeds the batch capacity.");
+        bool nhwc = information.ElementDataType == TensorElementType.UInt8;
+        int width = checked((int)shape[nhwc ? 2 : 3]), height = checked((int)shape[nhwc ? 1 : 2]);
+        Size itemSize = PreviewImageSize.Resolve(width, height, request.MaxEdge);
+        Size gridSize = TensorBatchPreviewRenderer.GridSize(itemSize, actualCount);
+        if((long)gridSize.Width * gridSize.Height > PreviewImageSize.MaximumPixels)
+            throw new InvalidOperationException("Batch preview grid exceeds 16 megapixels. Choose a smaller image size.");
+        if(actualCount == 0) return TensorBatchPreviewRenderer.CreateEmpty(itemSize, capacity);
+        bool paddleNormalized = request.Key == "ocr.recInput";
+        Mat Render(OrtValue cpu) => TensorBatchPreviewRenderer.CreatePreview(cpu, actualCount, itemSize, paddleNormalized);
+        int bytesPerElement = information.ElementDataType == TensorElementType.UInt8 ? 1 : information.ElementDataType == TensorElementType.Float16 ? 2 : 4;
+        if((long)capacity * width * height * 3 * bytesPerElement > 128 * 1024 * 1024)
+            throw new InvalidOperationException("Full batch snapshot exceeds the 128 MiB limit.");
+        using(OrtMemoryInfo memory = tensor.GetTensorMemoryInfo())
+            if(string.Equals(memory.Name, "Cpu", StringComparison.OrdinalIgnoreCase)) return Render(tensor);
+        // Existing geometry commands require batch=1. Keep their contracts: download one bounded batch and build the CPU grid.
+        return PreviewTensorDownload.Copy(tensor, backend, Render);
     }
 
     static void EnsureSuccess(OpResult result)

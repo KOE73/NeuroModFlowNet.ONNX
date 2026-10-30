@@ -15,7 +15,7 @@ namespace NeuroModFlowNet.Pipeline.WebDebug;
 /// </summary>
 internal static class PreviewTensorDownload
 {
-    public static Mat Copy(OrtValue input, InferenceBackend backend)
+    public static Mat Copy(OrtValue input, InferenceBackend backend, Func<OrtValue, Mat>? render = null)
     {
         var information = input.GetTensorTypeAndShape();
         var type = information.ElementDataType switch
@@ -35,7 +35,7 @@ internal static class PreviewTensorDownload
             execution.IoBinding.BindOutput(IdentityBuilder.OutputName, output);
             execution.Model.Session.RunWithBinding(execution.RunOptions, execution.IoBinding);
             execution.IoBinding.SynchronizeBoundOutputs();
-            return TensorImagePreviewRenderer.CreatePreview(output);
+            return render is null ? TensorImagePreviewRenderer.CreatePreview(output) : render(output);
         }
         finally { execution.IoBinding.ClearBoundInputs(); execution.IoBinding.ClearBoundOutputs(); }
     }

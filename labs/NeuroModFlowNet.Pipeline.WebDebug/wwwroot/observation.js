@@ -228,6 +228,10 @@ export class ObservationView {
       detail.classList.toggle('error',Boolean(frame?.error));
       detail.dataset.tooltip = frame?.error ?? (location ? `${this.camera} · ${location.program} [${location.index}] ${this.t(location.phase)}${frame ? ` · ${this.t('run')} ${location.runId} · ${new Date(frame.capturedAt).toLocaleTimeString()}`:''}\n${this.t(configuration.enabled ? 'watch':'watchoff')}` : this.t('watchtip'));
       const placeholder = tile.querySelector('.watch-placeholder');
+      const imageLink = tile.querySelector('.watch-content a');
+      if(imageLink) imageLink.hidden = !frame?.available;
+      const value = tile.querySelector('.watch-content pre');
+      if(value && frame?.error) value.textContent = '';
       if(placeholder) { placeholder.hidden = Boolean(frame?.available); placeholder.textContent = this.t(!this.capturePoint ? 'watchchoosepoint':missing ? 'watchmissing':configuration.enabled ? 'watchwaiting':'watchoff'); }
       tile.querySelector('.watch-counts').textContent = `${frame?.width ? `${frame.width}×${frame.height} · `:''}${this.t('watchreceived')} ${item?.captured ?? 0} · ${this.t('watchskipped')} ${item?.skipped ?? 0}`;
       tile.querySelector('.watch-counts').dataset.tooltip = `${tile.querySelector('.watch-counts').textContent}\n${this.t('watchcountertip')}`;

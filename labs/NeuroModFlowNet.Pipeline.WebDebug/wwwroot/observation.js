@@ -1,14 +1,14 @@
 export class ObservationView {
-  constructor({api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap}) {
-    Object.assign(this,{api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap});
+  constructor({api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId}) {
+    Object.assign(this,{api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId});
     this.camera = ''; this.cameraRevision = 0; this.snapshot = null; this.updating = false; this.polling = false;
     this.after = {}; this.frames = new Map(); this.urls = new Map(); this.variables = new Map(); this.tiles = new Map();
-    this.catalogs = new Map(); this.pointChoices = new Map(); this.catalogVersion = 0;
+    this.catalogs = new Map(); this.capturePoints = new Map(); this.catalogVersion = 0;
     this.gallery = document.querySelector('#watch-gallery');
     this.enabled = document.querySelector('#watch-enabled');
     this.frequency = document.querySelector('#watch-fps');
     this.size = document.querySelector('#watch-size');
-    this.enabled.onchange = () => this.configure({...this.configuration,enabled:this.enabled.checked});
+    this.enabled.onchange = () => this.configure({...this.configuration,enabled:this.enabled.checked && Boolean(this.capturePoint)});
     this.frequency.onchange = () => {
       if(!this.frequency.reportValidity()) return;
       this.save('watchFps',this.frequency.value);
@@ -19,27 +19,15 @@ export class ObservationView {
       this.configure({...this.configuration,maxEdge:Number(this.size.value)});
     };
     document.querySelector('.register-pane').addEventListener('change',event => {
-      const pointControl = event.target.closest('[data-watch-point]');
-      if(pointControl) {
-        const key=pointControl.dataset.watchPoint, point=JSON.parse(pointControl.value);
-        this.pointChoices.set(`${this.camera}|${key}`,point);
-        const variable=this.catalogs.get(this.camera)?.variables.find(variable=>variable.key === key);
-        const selected=variable?.points?.find(item=>item.program === point[0] && item.index === point[1] && item.phase === point[2]);
-        if(this.selected.some(item=>item.key === key) && selected) {
-          const registers=this.selected.map(item=>item.key === key ? this.selection(variable,selected):item);
-          this.configure({...this.configuration,registers});
-        }
-        this.onChange(); return;
-      }
       const checkbox = event.target.closest('[data-watch-register]');
       if(!checkbox) return;
       const key = checkbox.dataset.watchRegister;
       const registers = this.configuration.registers.filter(item => item.key !== key);
       if(checkbox.checked) {
         const variable=this.catalogs.get(this.camera)?.variables.find(variable=>variable.key === key);
-        registers.push(variable ? this.selection(variable,this.point(variable)):{key,format:checkbox.dataset.format});
+        registers.push(variable ? this.selection(variable):{key,format:checkbox.dataset.format,...this.capturePoint});
       }
-      this.configure({...this.configuration,enabled:registers.length > 0,registers});
+      this.configure({...this.configuration,enabled:registers.length > 0 && Boolean(this.capturePoint),registers});
     });
     this.schedule();
     setInterval(()=>this.pollCatalog(),1000);
@@ -50,6 +38,21 @@ export class ObservationView {
   }
   get renderKey() { return `${this.snapshot?.generation}|${this.updating}|${this.catalogVersion}`; }
   get selected() { return this.configuration.registers; }
+  get capturePoint() { return this.capturePoints.get(this.camera) ?? null; }
+
+  async setCapturePoint(instruction,checked) {
+    const camera=this.camera;
+    const previous=this.capturePoint;
+    const point=checked ? {program:instruction.program,index:instruction.index,phase:'after'}:null;
+    this.capturePoints.set(this.camera,point);
+    this.save(`capturePoint.${this.viewerId}.${this.camera}`,JSON.stringify(point));
+    const registers=this.selected.map(({key,format})=>({key,format,...point}));
+    if(await this.configure({...this.configuration,enabled:Boolean(point) && registers.length > 0,registers}) === false) {
+      this.capturePoints.set(camera,previous);
+      this.save(`capturePoint.${this.viewerId}.${camera}`,JSON.stringify(previous));
+      this.onChange();
+    }
+  }
 
   knownVariables(variables,paused) {
     if(paused) this.variables.set(this.camera,variables);
@@ -64,25 +67,15 @@ export class ObservationView {
   }
 
   point(variable) {
-    const selection=this.selected.find(item=>item.key === variable.key);
-    const choice=this.pointChoices.get(`${this.camera}|${variable.key}`);
+    const selection=this.capturePoint;
     const points=variable.points ?? [];
-    return points.find(point=>choice ? point.program === choice[0] && point.index === choice[1] && point.phase === choice[2] :
-      point.program === selection?.program && point.index === selection?.index && point.phase === selection?.phase)
-      ?? points.findLast(point=>point.isWrite) ?? points[0];
+    return points.find(point=>point.program === selection?.program && point.index === selection?.index && point.phase === selection?.phase);
   }
 
-  selection(variable,point) {
-    const metadata=point?.variable ?? variable;
+  selection(variable) {
+    const metadata=this.point(variable)?.variable ?? variable;
     return {key:variable.key,format:metadata.canPreviewImage ? 'png':'json',
-      ...(point ? {program:point.program,index:point.index,phase:point.phase}:{})};
-  }
-
-  pointSelector(variable) {
-    const {esc,t}=this, selected=this.point(variable), points=variable.points ?? [];
-    const label=`${t('watchpoint')} ${variable.key}`;
-    const detail=selected ? `${selected.program} [${selected.index}] ${t(selected.phase)} · ${selected.name}`:t('watchpointtip');
-    return `<select class="watch-point" data-watch-point="${esc(variable.key)}" data-focus-key="${esc(this.camera+'|point|'+variable.key)}" aria-label="${esc(label)}" data-tooltip="${esc(variable.key+'\n'+detail)}" ${!points.length || this.updating ? 'disabled':''}>${points.length ? points.map(point=>`<option value="${esc(JSON.stringify([point.program,point.index,point.phase]))}" ${point === selected ? 'selected':''} ${!point.variable.canPreviewImage && !point.variable.canInspectValue ? 'disabled':''}>${esc(`${point.program} [${point.index}] ${t(point.phase)} · ${variable.key} · ${point.name}`)}</option>`).join(''):'<option>—</option>'}</select>`;
+      ...this.capturePoint};
   }
 
   async pollCatalog() {
@@ -106,6 +99,13 @@ export class ObservationView {
     try {
       const snapshot = await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/watch`)).json();
       if(cameraRevision !== this.cameraRevision) return;
+      const initial=this.bootstrap?.camera === camera ? this.bootstrap.configuration:snapshot.configuration;
+      const savedPoint=this.read(`capturePoint.${this.viewerId}.${camera}`,'');
+      let point=null;
+      try { point=savedPoint ? JSON.parse(savedPoint):initial?.registers.findLast(item=>item.program); } catch { }
+      point=point?.program && Number.isInteger(point.index) ? {program:point.program,index:point.index,phase:'after'}:null;
+      this.capturePoints.set(camera,point);
+      this.save(`capturePoint.${this.viewerId}.${camera}`,JSON.stringify(point));
       if(snapshot.generation === 0) {
         const frequency = Number(this.read('watchFps','3')), size = Number(this.read('watchSize','640'));
         // A fresh session has no observations yet; the first selection applies the viewer's saved defaults.
@@ -114,7 +114,10 @@ export class ObservationView {
       }
       if(snapshot.generation === 0 && this.bootstrap?.camera === camera && this.bootstrap.configuration?.registers?.length) {
         this.snapshot = snapshot;
-        await this.configure(this.bootstrap.configuration);
+        await this.configure({...this.bootstrap.configuration,enabled:this.bootstrap.configuration.enabled && Boolean(point),registers:this.bootstrap.configuration.registers.map(({key,format})=>({key,format,...point}))});
+      } else if(snapshot.configuration.registers.length && snapshot.configuration.registers.some(item=>!point || item.program !== point.program || item.index !== point.index || item.phase !== point.phase)) {
+        this.snapshot=snapshot;
+        await this.configure({...snapshot.configuration,enabled:snapshot.configuration.enabled && Boolean(point),registers:snapshot.configuration.registers.map(({key,format})=>({key,format,...point}))});
       } else { this.accept(snapshot); this.onChange(); }
       this.pollCatalog();
     } catch(error) { if(camera === this.camera) this.onError(error); }
@@ -136,9 +139,10 @@ export class ObservationView {
     try {
       const snapshot = await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/watch`,{method:'PUT',body:JSON.stringify(configuration)})).json();
       if(cameraRevision === this.cameraRevision) this.accept(snapshot);
+      return true;
     } catch(error) {
-      for(const selection of configuration.registers) this.pointChoices.delete(`${camera}|${selection.key}`);
       this.onError(error);
+      return false;
     }
     finally {
       if(cameraRevision === this.cameraRevision) {
@@ -164,7 +168,7 @@ export class ObservationView {
   render() {
     const configuration = this.configuration;
     this.enabled.checked = configuration.enabled;
-    this.enabled.disabled = !this.snapshot || configuration.registers.length === 0;
+    this.enabled.disabled = !this.snapshot || configuration.registers.length === 0 || !this.capturePoint;
     for(const control of [this.frequency,this.size]) control.disabled = !this.snapshot;
     if(document.activeElement !== this.frequency) this.frequency.value = configuration.framesPerSecond;
     if(document.activeElement !== this.size) this.size.value = configuration.maxEdge;
@@ -193,11 +197,12 @@ export class ObservationView {
       const frame = this.frames.get(selection.key);
       const location = frame?.location ?? item?.target;
       const detail = tile.querySelector('.watch-location');
-      detail.textContent = frame?.error ? this.t('watcherror') : location ? `${frame ? `${this.t('run')} ${location.runId} · `:''}${location.program} [${location.index}] ${this.t(location.phase)}` : this.t('watchwaiting');
+      const missing=frame?.error?.includes('not present');
+      detail.textContent = frame?.error ? this.t(missing ? 'watchmissing':'watcherror') : location ? `${frame ? `${this.t('run')} ${location.runId} · `:''}${location.program} [${location.index}] ${this.t(location.phase)}` : this.t('watchwaiting');
       detail.classList.toggle('error',Boolean(frame?.error));
       detail.dataset.tooltip = frame?.error ?? (location ? `${this.camera} · ${location.program} [${location.index}] ${this.t(location.phase)}${frame ? ` · ${this.t('run')} ${location.runId} · ${new Date(frame.capturedAt).toLocaleTimeString()}`:''}\n${this.t(configuration.enabled ? 'watch':'watchoff')}` : this.t('watchtip'));
       const placeholder = tile.querySelector('.watch-placeholder');
-      if(placeholder) { placeholder.hidden = Boolean(frame?.available); placeholder.textContent = this.t(configuration.enabled ? 'watchwaiting':'watchoff'); }
+      if(placeholder) { placeholder.hidden = Boolean(frame?.available); placeholder.textContent = this.t(!this.capturePoint ? 'watchchoosepoint':missing ? 'watchmissing':configuration.enabled ? 'watchwaiting':'watchoff'); }
       tile.querySelector('.watch-counts').textContent = `${this.t('watchreceived')} ${item?.captured ?? 0} · ${this.t('watchskipped')} ${item?.skipped ?? 0}`;
       tile.querySelector('.watch-counts').dataset.tooltip = `${tile.querySelector('.watch-counts').textContent}\n${this.t('watchcountertip')}`;
     }

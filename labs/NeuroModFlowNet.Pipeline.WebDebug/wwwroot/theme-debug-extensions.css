@@ -5,6 +5,9 @@
 .lu-shell { --vm-panel-border-color:var(--lu-text-muted); }
 .lu-shell { --vm-batch-requests-color:var(--lu-info); --vm-batch-rows-color:var(--lu-success); }
 .lu-shell { --vm-register-write-highlight:color-mix(in srgb,var(--lu-primary) 16%,var(--lu-surface)); }
+.lu-shell { --vm-capture-point-color:var(--lu-info); }
+.instruction-table .capture-point .capture-cell { color:var(--vm-capture-point-color); }
+.instruction-table [data-watch-instruction] { accent-color:var(--vm-capture-point-color); }
 #registers tr[data-memory-kind=cuda] { --register-color:var(--vm-memory-cuda); }
 #registers tr[data-memory-kind=managed] { --register-color:var(--vm-memory-managed); }
 #registers tr[data-memory-kind=directml] { --register-color:var(--vm-memory-directml); }

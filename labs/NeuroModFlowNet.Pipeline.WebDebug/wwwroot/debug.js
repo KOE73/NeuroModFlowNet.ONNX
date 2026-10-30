@@ -46,7 +46,7 @@ const words = {
   layoutinvalid:['Не удалось восстановить расположение','Could not restore layout'],popupblocked:['Браузер не открыл окно. Разрешите всплывающие окна для этого адреса.','The browser did not open the window. Allow popups for this site.'],
   instructions:['Программы и инструкции','Programs and instructions'],instruction:['Инструкция','Instruction'],breakpoint:['Т.О.','B.P.'],ms:['мс','ms'],registers:['Регистры','Registers'],register:['Регистр','Register'],memory:['Память','Memory'],shape:['Форма','Shape'],
   inspect:['Значение','Value'],preview:['Изображение','Image'],image:['Просмотр данных','Data inspection'],pin:['Закрепить вход','Pin input'],resultframe:['Кадр результата','Result frame'],
-  imageempty:['На паузе доступны значки просмотра. Для динамики выберите регистр, точку съёма над таблицей и отметьте галочку. Останавливать VM не требуется.','Inspection icons are available on pause. For live data, select a register, choose its capture point above the table and check it. No pause is required.'],
+  imageempty:['Для динамики отметьте регистры и одну галочку «Съём» у инструкции. Значения читаются после неё. На паузе доступны значки просмотра.','For live data, check registers and one instruction in the Capture column. Values are read after it. Inspection icons are available on pause.'],
   menu:['Свернуть / развернуть меню','Collapse / expand navigation'],help:['Справка об отладке камер','Camera debugger help'],close:['Закрыть окно','Close dialog'],
   pausetip:['Остановиться перед следующей инструкцией выбранной камеры. Другие камеры продолжают работу.','Stop before the next instruction of this camera. Other cameras continue.'],
   continuetip:['Продолжить до точки останова или запроса паузы. F8.','Continue until a breakpoint or pause request. F8.'],
@@ -70,12 +70,15 @@ const words = {
   watchfps:['Максимальная частота наблюдения на регистр','Maximum observation frequency per register'],watchsize:['Максимальная сторона изображения, пикселей','Maximum image edge, pixels'],
   watchfpstip:['Максимум снимков в секунду на каждый регистр. Медленный браузер или кодировщик снижает фактическую частоту.','Maximum samples per second for each register. A slow browser or encoder reduces the actual rate.'],
   watchsizetip:['Уменьшение изображения выполняется до выгрузки с GPU. Размер задаёт максимальную сторону PNG.','Images are resized before GPU download. This limits the longest PNG edge.'],
-  watchtip:['Выберите точку съёма (программа, шаг, до/после) и отметьте до 8 регистров. На каждом проходе этой точки берётся текущее значение, с ограничением частоты и пропуском занятых кадров до выгрузки с GPU. Конец кадра не используется вместо выбранной точки. Каталог и наблюдение засыпают через 5 секунд без клиента.','Choose a capture point (program, instruction, before/after) and check up to 8 registers. Each visit samples the current value, subject to rate limits and dropping busy frames before GPU download. Frame end never substitutes for the chosen point. Catalog and observation sleep after 5 seconds without a client.'],
+  watchtip:['Отметьте до 8 регистров и одну инструкцию в колонке «Съём». Все выбранные значения читаются после неё на каждом прогоне с ограничением частоты. Если имени в этой точке нет, значение недоступно; другая точка не подставляется. Занятые кадры пропускаются до выгрузки с GPU. Без клиента сбор и наблюдение засыпают через 5 секунд.','Check up to 8 registers and one instruction in the Capture column. All selected values are read after it on each run, subject to rate limits. Missing names are unavailable; another step is never substituted. Busy frames are dropped before GPU download. Collection and observation sleep after 5 seconds without a client.'],
   watchwaiting:['Ожидание выполнения VM','Waiting for VM execution'],watcherror:['Ошибка наблюдения · подробности в подсказке','Observation error · hover for details'],
   watchreceived:['Снимки','Samples'],watchskipped:['пропуски','skipped'],
   watchcountertip:['С момента изменения настроек: подготовленные снимки (включая ошибки) и прохождения точки съёмки, пропущенные до подготовки/GPU-выгрузки из-за лимита частоты или занятого слота.','Since configuration changed: prepared samples (including errors), and capture-point visits skipped before preparation/GPU download due to frequency limits or a busy slot.'],
   registermetadatatip:['Каталог реально встречавшихся регистров между кадрами, а не текущие значения. Удалённые имена остаются. Метаданные точки обновляются не чаще раза в секунду; значения читаются только по выбранному наблюдению. До/после относится к границе инструкции. Создание и удаление внутри одной инструкции не видны. Предел 512 имён; + у счётчика означает переполнение.','Catalog of registers actually observed across frames, not current values. Removed names remain. Point metadata refreshes at most once per second; values are read only by selected observations. Before/after means an instruction boundary. Creation and removal within a single instruction are invisible. Capacity is 512 names; + on the count means overflow.'],
-  watchpoint:['Точка съёма','Capture point'],watchpointtip:['Программа, номер инструкции и граница до/после. Одно имя можно наблюдать в разных состояниях, выбирая разные точки.','Program, instruction index and before/after boundary. Choose different points to observe different states of the same name.'],
+  captureshort:['Съём','Capture'],
+  watchmissing:['Нет регистра в точке съёма','Register absent at capture point'],
+  watchchoosepoint:['Отметьте «Съём» у инструкции','Check Capture on an instruction'],
+  watchpoint:['Точка съёма','Capture point'],watchpointtip:['Отметьте одну инструкцию: после её выполнения читаются все регистры, выбранные галочками. Другая отметка переносит точку съёма, снятие выключает наблюдение. Это не точка останова.','Check one instruction: all checked registers are read after it executes. Checking another moves the capture point; unchecking disables observation. This is independent of breakpoints.'],
   registercataloghelp:['Справка: каталог регистров и точки съёма','Register catalog and capture point help'],
   creatorShort:['Оп.','Op.'],creator:['Операция, создавшая регистр','Operation that created the register'],
   creatorTip:['Номер инструкции, до которой имени не было, а после которой оно появилось. Программа и имя инструкции — в подсказке значения. — означает внешний вход или ещё не подтверждённое создание.','Instruction index with confirmed absence before and presence after execution. The value tooltip identifies the program and instruction. — means an external input or creation not yet confirmed.'],
@@ -99,7 +102,7 @@ const t = key => words[key]?.[language === 'ru' ? 0 : 1] ?? key;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const number = (value, digits = 0) => Number.isFinite(value) ? value.toFixed(digits) : '—';
 const cameraPath = () => `/api/cameras/${encodeURIComponent(selectedCamera)}`;
-const observation = new ObservationView({api,t,esc,read,save,bootstrap:viewerBootstrap,
+const observation = new ObservationView({api,t,esc,read,save,bootstrap:viewerBootstrap,viewerId,
   onTile:(key,tile)=>workspace?.attachTile(key,tile),onRemove:key=>workspace?.removeTile(key),
   onFloat:(key,tile)=>workspace?.floatTile(key,tile),onPopup:key=>openViewer(key),
   onSync:keys=>workspace?.pruneTiles(keys),
@@ -254,7 +257,7 @@ function renderSelected() {
   const activeActionKey = document.activeElement?.dataset.focusKey;
   if(activeActionKey) focusedActionKey = activeActionKey;
   document.querySelectorAll('[data-register-action]').forEach(button => button.disabled = busy || !paused || button.dataset.present !== 'true');
-  document.querySelectorAll('[data-run-to]').forEach(button => button.disabled = busy || !paused || button.dataset.atCurrent === 'true');
+  document.querySelectorAll('[data-run-to]').forEach(button => button.disabled = viewerMode || busy || !paused || button.dataset.atCurrent === 'true');
   $('#live').disabled = !camera;
   const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${JSON.stringify(snapshot?.runTo)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}|${observation.renderKey}`;
   if(renderKey === lastRender) { restoreRowFocus(); return; }
@@ -262,25 +265,24 @@ function renderSelected() {
   let program = '';
   $('#instructions').innerHTML = catalog.map(instruction => {
     let header = '';
-    if(program !== instruction.program) { program = instruction.program; header = `<tr class="program-row"><td colspan="6">${esc(program)}</td></tr>`; }
+    if(program !== instruction.program) { program = instruction.program; header = `<tr class="program-row"><td colspan="7">${esc(program)}</td></tr>`; }
     const here = point?.program === instruction.program && point.index === instruction.index;
     const selected = selectedInstruction?.program === instruction.program && selectedInstruction.index === instruction.index;
     const breakpoint = snapshot?.breakpoints.some(item => item.program === instruction.program && item.index === instruction.index);
+    const capture = observation.capturePoint?.program === instruction.program && observation.capturePoint.index === instruction.index;
+    const captureLabel = `${t('watchpoint')} ${program} [${instruction.index}] · ${t('after')} ${instruction.name}`;
     const timing = snapshot?.timings.find(item => item.program === instruction.program && item.index === instruction.index);
     const atCurrent = Boolean(here && point.phase === 'before');
     const target = snapshot?.runTo?.program === program && snapshot.runTo.index === instruction.index;
     const runLabel = `${t('runto')} ${program} [${instruction.index}] · ${instruction.name}`;
     const runButton = `<button class="row-action" data-run-to data-at-current="${atCurrent}" data-focus-key="${esc(selectedCamera + '|run|' + program + '|' + instruction.index)}" aria-label="${esc(runLabel)}" data-tooltip="${esc(runLabel + '\n' + t('runtotip'))}" ${busy || !paused || atCurrent ? 'disabled':''}><i class="ti ti-player-track-next" aria-hidden="true"></i></button>`;
-    return header + `<tr data-program="${esc(program)}" data-index="${instruction.index}" class="${here ? 'current':''} ${selected ? 'selected':''} ${target ? 'run-target':''}"><td><input type="checkbox" aria-label="${esc(t('breakpoint') + ' ' + program + ' ' + instruction.index)}" ${breakpoint ? 'checked':''}></td><td class="row-action-cell">${runButton}</td><td class="instruction-pointer">${here ? `<i class="ti ti-arrow-right" aria-hidden="true"></i>`:''}</td><td class="number">${instruction.index}</td><td class="instruction-name" data-tooltip="${esc(instruction.name + '\n' + instruction.operation)}">${esc(instruction.name)}</td><td class="number">${timing ? number(timing.milliseconds,2):'—'}</td></tr>`;
+    return header + `<tr data-program="${esc(program)}" data-index="${instruction.index}" class="${here ? 'current':''} ${selected ? 'selected':''} ${target ? 'run-target':''} ${capture ? 'capture-point':''}"><td><input type="checkbox" data-breakpoint aria-label="${esc(t('breakpoint') + ' ' + program + ' ' + instruction.index)}" ${breakpoint ? 'checked':''}></td><td class="row-action-cell">${runButton}</td><td class="instruction-pointer">${here ? `<i class="ti ti-arrow-right" aria-hidden="true"></i>`:''}</td><td class="number">${instruction.index}</td><td class="instruction-name" data-tooltip="${esc(instruction.name + '\n' + instruction.operation)}">${esc(instruction.name)}</td><td class="capture-cell"><input type="checkbox" data-watch-instruction data-focus-key="${esc(selectedCamera+'|capture|'+program+'|'+instruction.index)}" aria-label="${esc(captureLabel)}" data-tooltip="${esc(captureLabel+'\n'+t('watchpointtip'))}" ${capture ? 'checked':''} ${!observation.snapshot || observation.updating ? 'disabled':''}></td><td class="number">${timing ? number(timing.milliseconds,2):'—'}</td></tr>`;
   }).join('');
   $('#instruction-count').textContent = String(catalog.length);
   const active = selectedInstruction ?? catalog.find(item => item.program === point?.program && item.index === point?.index);
   $('#instruction-io').textContent = active ? `${t('reads')}: ${active.reads.join(', ') || '—'}\n${t('writes')}: ${active.writes.join(', ') || '—'}` : '—';
   const registerVariables = sortRegisters(observation.knownVariables(snapshot?.variables ?? [],paused),registerSort.column,registerSort.direction);
-  const pointVariable = registerVariables.find(variable=>variable.key === selectedRegister) ?? registerVariables.find(variable=>observation.selected.some(item=>item.key === variable.key)) ?? registerVariables[0];
-  if(pointVariable) selectedRegister = pointVariable.key;
-  if(!document.activeElement?.matches('[data-watch-point]')) $('#register-point-control').innerHTML = pointVariable ? observation.pointSelector(pointVariable):`<select class="watch-point" disabled aria-label="${esc(t('watchpoint'))}"><option>—</option></select>`;
-  if(!document.activeElement?.matches('[data-watch-point]')) $('#registers').innerHTML = registerVariables.length ? registerVariables.map(variable => {
+  $('#registers').innerHTML = registerVariables.length ? registerVariables.map(variable => {
     const action = (format, icon, label) => `<button class="row-action" data-present="${Boolean(variable.availableNow)}" data-register-action="${format}" data-focus-key="${esc(selectedCamera + '|register|' + variable.key + '|' + format)}" aria-label="${esc(t(label) + ' ' + variable.key)}" data-tooltip="${esc(t(label) + ' ' + variable.key)}" ${busy || !variable.availableNow ? 'disabled':''}><i class="ti ti-${icon}" aria-hidden="true"></i></button>`;
     const where=location=>location ? `${location.program} [${location.index}] ${t(location.phase)} · ${t('run')} ${location.runId}`:'';
     const detail=`${variable.key}\n${variable.type}\n${t(variable.presence ?? 'registermetadatatip')}\n${where(variable.lastSeen)}${variable.removedAt ? '\n'+t('removed')+': '+where(variable.removedAt):''}${variable.metadataError ? '\n'+variable.metadataError:''}`;
@@ -290,6 +292,7 @@ function renderSelected() {
   }).join('') : `<tr><td colspan="7" class="muted">${t('noRegisters')}</td></tr>`;
   $('#register-count').textContent = String(registerVariables.length) + (observation.catalogs.get(selectedCamera)?.truncated ? '+':'');
   $('#register-count').dataset.tooltip = t('registermetadatatip');
+  if(viewerMode) document.querySelectorAll('[data-run-to],[data-breakpoint]').forEach(control=>control.disabled=true);
   for(const header of document.querySelectorAll('th[data-sort]')) header.setAttribute('aria-sort',header.dataset.sort !== registerSort.column ? 'none' : registerSort.direction === 1 ? 'ascending':'descending');
   selectRows(); restoreRowFocus();
 }
@@ -316,15 +319,16 @@ document.querySelector('.debug-actions').onclick = event => { const button = eve
 for(const selector of ['#cameras','#camera-nav']) $(selector).addEventListener('click',event => { const row = event.target.closest('[data-camera]'); if(row) { event.preventDefault(); selectCamera(row.dataset.camera); } });
 $('#cameras').addEventListener('keydown',event => { if(event.key === 'Enter' && event.target.dataset.camera) selectCamera(event.target.dataset.camera); });
 $('#instructions').addEventListener('click', async event => {
-  if(viewerMode) return;
   const row = event.target.closest('[data-program]'); if(!row) return;
   selectedInstruction = catalog.find(item => item.program === row.dataset.program && item.index === Number(row.dataset.index));
   if(event.target.closest('[data-run-to]')) {
     await command('run-to',{program:row.dataset.program,index:Number(row.dataset.index)});
     return;
   }
-  if(event.target.matches('input')) {
-    const breakpoints = [...$('#instructions').querySelectorAll('input:checked')].map(input => ({program:input.closest('tr').dataset.program,index:Number(input.closest('tr').dataset.index)}));
+  if(event.target.matches('[data-watch-instruction]')) {
+    await observation.setCapturePoint(selectedInstruction,event.target.checked);
+  } else if(!viewerMode && event.target.matches('[data-breakpoint]')) {
+    const breakpoints = [...$('#instructions').querySelectorAll('[data-breakpoint]:checked')].map(input => ({program:input.closest('tr').dataset.program,index:Number(input.closest('tr').dataset.index)}));
     try { await api(`${cameraPath()}/breakpoints`,{method:'PUT',body:JSON.stringify(breakpoints)}); await poll(); }
     catch(error) { showError(error); }
   }

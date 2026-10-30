@@ -39,7 +39,6 @@ export class DebugWorkspace {
     document.querySelector('#reset-layout').onclick = () => { this.defaults(); document.querySelector('#panels-menu').open = false; };
     document.querySelector('#new-viewer').onclick = () => { onPopup(); document.querySelector('#panels-menu').open = false; };
     if(viewer) {
-      document.querySelector('#panels-menu [data-panel=instructions]').hidden = true;
       const toolbar = document.querySelector('.watch-toolbar'); toolbar.classList.add('viewer-watch-toolbar');
       document.querySelector('.debug-columns').before(toolbar);
     }
@@ -87,7 +86,6 @@ export class DebugWorkspace {
     if(id.startsWith('watch:')) add('x',this.viewer ? 'closepanel':'returngallery',()=>this.viewer ? this.onCloseTile(id.slice(6)):this.returnTile(id));
   }
   show(id) {
-    if(this.viewer && id === 'instructions') return;
     const existing = this.dock.getPanel(id); if(existing) { existing.api.setActive(); return existing; }
     const panel=this.dock.addPanel({id,component:'panel',tabComponent:'panel-tab',title:this.entries.get(id)?.title ? this.t(this.entries.get(id).title):id.slice(6),minimumWidth:180,minimumHeight:120});
     this.dock.layout(this.host.clientWidth,this.host.clientHeight,true); return panel;

@@ -48,7 +48,9 @@ tr.selected { background:var(--lu-primary-light)!important; }
 .pane-scroll { flex:1; min-height:0; min-width:0; overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; }
 .pane-scroll thead { position:sticky; top:0; z-index:2; }
 .pane-footer { padding:4px 7px; border-top:1px solid var(--lu-border); overflow:auto; max-height:100px; }
-.instruction-table { table-layout:fixed; min-width:440px; }
+.instruction-table { table-layout:fixed; min-width:476px; }
+.capture-column { width:36px; }
+.instruction-table .capture-cell { padding-inline:2px; text-align:center; }
 .breakpoint-column { width:30px; }.pointer-column { width:22px; }.index-column { width:34px; }.timing-column { width:58px; }.action-column { width:28px; }
 .instruction-table td,.register-table td { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .instruction-table input { margin:0; vertical-align:middle; width:14px; height:14px; }
@@ -61,9 +63,6 @@ tr.selected { background:var(--lu-primary-light)!important; }
 .register-order-column,.register-creator-column { width:36px; }
 .register-table .register-order,.register-table .register-creator,.register-table th[data-sort=additionOrder],.register-table th.register-creator { padding-inline:4px; }
 .register-table th[data-sort=additionOrder] .sort-indicator { width:8px; }
-.register-point-toolbar { flex:none; display:flex; align-items:center; gap:4px; height:27px; padding:2px 4px; border-bottom:1px solid var(--lu-border); }
-#register-point-control { flex:1; min-width:0; }
-.watch-point { width:100%; min-width:0; padding:0 2px; font:inherit; height:21px; }
 .register-table .input-register [data-register-name] { color:var(--lu-primary); }.register-table .output-register [data-register-name] { font-weight:650; }
 .row-action-cell,.register-action-cell { padding:var(--cell-y) 2px; text-align:center; }
 .row-action,.row-action:hover,.row-action:active,.row-action:focus { position:relative; display:inline-flex; align-items:center; justify-content:center; width:22px; height:18px; padding:0; border:0; border-radius:0; background:none; box-shadow:none; vertical-align:top; }

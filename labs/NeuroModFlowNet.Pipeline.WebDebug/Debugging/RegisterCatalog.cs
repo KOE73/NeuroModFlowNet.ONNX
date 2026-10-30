@@ -182,13 +182,21 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
         {
             if(!entries.TryGetValue(selection.Key, out Entry? entry)) throw new ArgumentException("Register has not been observed yet.");
             bool explicitPoint = selection.Program is not null || selection.Index is not null || selection.Phase is not null;
-            Point? point = explicitPoint
-                ? entry.Points.Values.FirstOrDefault(point => point.Boundary.Program == selection.Program && point.Boundary.Index == selection.Index && point.Boundary.Phase == selection.Phase)
-                : entry.Points.Values.LastOrDefault(point => point.Boundary.Writes.Contains(selection.Key)) ?? entry.Points.Values.FirstOrDefault();
-            if(point is null) throw new ArgumentException("Choose an observed program, instruction and before/after boundary for this register.");
-            if(selection.Format == "png" ? !point.Variable.CanPreviewImage : selection.Format != "json" || !point.Variable.CanInspectValue)
+            Point? point = entry.Points.Values.LastOrDefault(point => point.Boundary.Writes.Contains(selection.Key)) ?? entry.Points.Values.FirstOrDefault();
+            RegisterCatalogBoundary? boundary = point?.Boundary;
+            if(explicitPoint)
+            {
+                if(selection.Program is null || selection.Index is null || selection.Phase is null ||
+                    !boundaries.TryGetValue((selection.Program, selection.Index.Value, selection.Phase), out boundary))
+                    throw new ArgumentException("Choose an installed program, instruction and before/after boundary.");
+                point = entry.Points.GetValueOrDefault(boundary.Id);
+            }
+            if(boundary is null) throw new ArgumentException("Register has not been observed yet.");
+            // A common capture point may precede creation or follow removal. Retain the selection; never substitute another step.
+            DebugVariable metadata = point?.Variable ?? entry.Variable!;
+            if(selection.Format == "png" ? !metadata.CanPreviewImage : selection.Format != "json" || !metadata.CanInspectValue)
                 throw new ArgumentException("This register does not support the selected format at that instruction boundary.");
-            return new(selection.Key, selection.Format, point.Boundary.Program, point.Boundary.Index, point.Boundary.Phase);
+            return new(selection.Key, selection.Format, boundary.Program, boundary.Index, boundary.Phase);
         }
     }
 

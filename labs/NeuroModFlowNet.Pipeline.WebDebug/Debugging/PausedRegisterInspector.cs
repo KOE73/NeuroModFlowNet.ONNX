@@ -71,7 +71,7 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
     public async ValueTask<CapturedRegister> CaptureAsync(VmRunContext context, DebugInspectionRequest request, CancellationToken cancellationToken)
     {
         if(!context.TryGetObject(request.Key, out object? value))
-            throw new KeyNotFoundException("The register is not present at this stop.");
+            throw new KeyNotFoundException("The register is not present at this instruction boundary.");
         if(request.Format == "png")
             return new(await PreviewAsync(value, request, cancellationToken).ConfigureAwait(false), null);
         if(request.Format != "json") throw new ArgumentException("Inspection format must be json or png.");

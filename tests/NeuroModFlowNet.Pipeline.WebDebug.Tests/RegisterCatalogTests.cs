@@ -164,8 +164,10 @@ public sealed class RegisterCatalogTests
         Assert.Contains(variable.Points!, point => point.Index == 1 && point.Phase == "after" && point.IsWrite);
         DebugWatchSnapshot firstViewer = session.ConfigureObservation(new(true, 15, 640, [new("work", "json", "common", 0, "after")]), "first");
         DebugWatchSnapshot secondViewer = session.ConfigureObservation(new(true, 15, 640, [new("work", "json", "common", 1, "after")]), "second");
+        DebugWatchSnapshot absentViewer = session.ConfigureObservation(new(true, 15, 640, [new("work", "json", "common", 2, "after")]), "absent");
         session.Observation.Poll(new(firstViewer.Generation, []), "first");
         session.Observation.Poll(new(secondViewer.Generation, []), "second");
+        session.Observation.Poll(new(absentViewer.Generation, []), "absent");
         using var second = Context(2);
         await program.ExecuteAsync(second, TestContext.Current.CancellationToken);
         Assert.False(second.Contains("work"));
@@ -179,7 +181,11 @@ public sealed class RegisterCatalogTests
         Assert.Equal(0, earlier.Location.Index); Assert.Equal(1, later.Location.Index);
         Assert.Equal(2, earlier.Location.RunId); Assert.Equal(2, later.Location.RunId);
         Assert.Equal(0, session.RegisterCatalogSnapshot().Variables.Single(variable => variable.Key == "work").CreatedAt!.Index);
-        Assert.Throws<ArgumentException>(() => session.ConfigureObservation(new(true, 3, 640, [new("work", "json", "common", 2, "after")])));
+        var absent = session.Observation.Poll(new(absentViewer.Generation, []), "absent").Items[0].Frame!;
+        Assert.Null(absent.Data);
+        Assert.Contains("not present", absent.Error);
+        Assert.Equal(2, absent.Location.Index);
+        Assert.Throws<ArgumentException>(() => session.ConfigureObservation(new(true, 3, 640, [new("work", "json", "common", 99, "after")])));
     }
 
     [Fact]

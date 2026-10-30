@@ -1,6 +1,12 @@
 using System.Text.Json.Serialization;
 using NeuroModFlowNet.Pipeline.WebDebug;
 
+if(args is ["--measure-register-catalog", string outputPath])
+{
+    RegisterCatalogBenchmark.Run(outputPath);
+    return;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 if(builder.Configuration.GetSection("Kestrel:Endpoints").GetChildren().Any())
     throw new InvalidOperationException("Configure this debug host through --urls only, so port and remote access rules are validated.");
@@ -41,6 +47,10 @@ app.MapPost("/api/start", async (DebugRuntime runtime) => { await runtime.StartA
 app.MapPost("/api/stop", async (DebugRuntime runtime) => { await runtime.StopAsync(); return Results.Ok(); });
 app.MapGet("/api/cameras/{id}/instructions", (string id, DebugRuntime runtime) => runtime.Session(id).Instructions);
 app.MapGet("/api/cameras/{id}/debug", (string id, DebugRuntime runtime) => runtime.Session(id).Snapshot());
+app.MapGet("/api/cameras/{id}/registers", (string id, DebugRuntime runtime) => runtime.Session(id).RegisterCatalogSnapshot());
+app.MapPost("/api/cameras/{id}/registers/poll", (string id, DebugRuntime runtime) => runtime.Session(id).RegisterCatalogSnapshot(renew: true));
+app.MapPost("/api/cameras/{id}/registers/measure", (string id, DebugRuntime runtime) => runtime.Session(id).Registers.Cost.Start());
+app.MapGet("/api/cameras/{id}/registers/measure", (string id, DebugRuntime runtime) => runtime.Session(id).Registers.Cost.Snapshot());
 app.MapGet("/api/cameras/{id}/watch", (string id, string? viewer, DebugRuntime runtime) => runtime.Session(id).ObservationSnapshot(viewer ?? "main"));
 app.MapPut("/api/cameras/{id}/watch", (string id, string? viewer, DebugWatchConfiguration configuration, DebugRuntime runtime) => runtime.Session(id).ConfigureObservation(configuration, viewer ?? "main"));
 app.MapPost("/api/cameras/{id}/watch/poll", (string id, string? viewer, DebugWatchAcknowledgement acknowledgement, DebugRuntime runtime) => runtime.Session(id).Observation.Poll(acknowledgement, viewer ?? "main"));

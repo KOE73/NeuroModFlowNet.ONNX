@@ -28,6 +28,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     DebugVariable[] knownVariables = [];
     DebugLocation? knownLocation;
     public RegisterObservation Observation { get; } = new(inspector.CaptureAsync);
+    public RegisterCatalog Registers { get; } = new((context, key) => inspector.Describe(context, key, includeValue: false));
 
     public string CameraId { get; } = cameraId;
 
@@ -42,6 +43,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
                 name, index, instruction.Descriptor.Name, instruction.Descriptor.Operation,
                 instruction.Descriptor.Reads.Select(item => item.Key).ToArray(),
                 instruction.Descriptor.Writes.Select(item => item.Key).ToArray())));
+            foreach(DebugInstruction instruction in instructions.Where(instruction => instruction.Program == name)) Registers.Register(instruction);
         }
         return new VmProgram(program.Instructions.Select((instruction, index) =>
             instruction is IHasExecutionDevice
@@ -74,6 +76,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
 
     public void RunCompleted(VmRunOutcome outcome)
     {
+        Registers.RunCompleted(outcome.Identity.RunId);
         lock(syncRoot)
         {
             if(outcome.Status == VmRunStatus.Failed)
@@ -191,6 +194,9 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
                 throw new ArgumentException("Select up to eight registers.");
             DebugWatchTarget[] targets = configuration.Registers.Select(selection =>
             {
+                if(Registers.Snapshot().Variables.Any(variable => variable.Key == selection.Key)) return Registers.Resolve(selection);
+                if(selection.Program is not null || selection.Index is not null || selection.Phase is not null)
+                    throw new ArgumentException("The register has not been observed at the selected boundary.");
                 DebugVariable variable = knownVariables.FirstOrDefault(variable => variable.Key == selection.Key)
                     ?? throw new ArgumentException("Select a register available at the last pause.");
                 if(selection.Format == "png" ? !variable.CanPreviewImage : selection.Format != "json" || !variable.CanInspectValue)
@@ -201,13 +207,34 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
                 DebugInstruction point = writer ?? instructions[0];
                 return new DebugWatchTarget(selection.Key, selection.Format, point.Program, point.Index, writer is null ? "before" : "after");
             }).ToArray();
-            return Observation.Configure(configuration, targets, viewerId) with { Variables = knownVariables };
+            DebugWatchConfiguration resolved = configuration with { Registers = targets.Select(target => new DebugWatchSelection(
+                target.Key, target.Format, target.Program, target.Index, target.Phase)).ToArray() };
+            return Observation.Configure(resolved, targets, viewerId) with { Variables = KnownRegisters() };
         }
     }
 
     public DebugWatchSnapshot ObservationSnapshot(string viewerId = "main")
     {
-        lock(syncRoot) return Observation.Snapshot(false, viewerId) with { Variables = knownVariables };
+        lock(syncRoot) return Observation.Snapshot(false, viewerId) with { Variables = KnownRegisters() };
+    }
+
+    public DebugRegisterCatalogSnapshot RegisterCatalogSnapshot(bool renew = false)
+    {
+        lock(syncRoot)
+        {
+            if(renew)
+            {
+                Registers.Renew();
+                if(state == "paused" && location is not null) Registers.RememberPause(variables, location);
+            }
+            return Registers.Snapshot();
+        }
+    }
+
+    DebugVariable[] KnownRegisters()
+    {
+        DebugVariable[] catalog = Registers.Snapshot().Variables;
+        return catalog.Length > 0 ? catalog : knownVariables;
     }
 
     public Task<DebugInspectionResult> InspectAsync(DebugInspectionRequest request, CancellationToken cancellationToken)

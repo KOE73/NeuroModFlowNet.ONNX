@@ -11,6 +11,8 @@ internal class DebugOp(IOp inner, CameraDebugSession session, string program, in
 {
     public OpDescriptor Descriptor => inner.Descriptor;
     protected IOp Inner => inner;
+    readonly RegisterCatalogBoundary before = session.Registers.Boundary(program, index, "before");
+    readonly RegisterCatalogBoundary after = session.Registers.Boundary(program, index, "after");
 
     public async ValueTask<OpResult> ExecuteAsync(VmRunContext context, CancellationToken cancellationToken)
     {
@@ -21,6 +23,7 @@ internal class DebugOp(IOp inner, CameraDebugSession session, string program, in
             return await inner.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
         }
 
+        session.Registers.Visit(context, before);
         await session.BeforeAsync(context, program, index, Descriptor, cancellationToken).ConfigureAwait(false);
         if(session.Observation.Enabled)
             await session.Observation.CaptureAsync(context, program, index, "before", Descriptor.Name, cancellationToken).ConfigureAwait(false);
@@ -29,6 +32,7 @@ internal class DebugOp(IOp inner, CameraDebugSession session, string program, in
         {
             OpResult result = await inner.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
             session.RecordTiming(program, index, Descriptor.Name, Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            session.Registers.Visit(context, after);
             if(session.Observation.Enabled)
                 await session.Observation.CaptureAsync(context, program, index, "after", Descriptor.Name, cancellationToken).ConfigureAwait(false);
             await session.AfterAsync(context, program, index, Descriptor, cancellationToken).ConfigureAwait(false);

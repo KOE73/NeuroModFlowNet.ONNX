@@ -4,7 +4,10 @@ internal sealed record DebugInstruction(string Program, int Index, string Name, 
 internal sealed record DebugBreakpoint(string Program, int Index);
 internal sealed record DebugLocation(string Program, int Index, string Name, string Phase, long RunId, long? FrameId);
 internal sealed record DebugVariable(string Key, string Type, string Memory, string? Shape, string? ElementType, string? Value,
-    bool CanInspectValue = false, bool CanPreviewImage = false);
+    bool CanInspectValue = false, bool CanPreviewImage = false, DebugRegisterPoint[]? Points = null,
+    string? Presence = null, DebugLocation? LastSeen = null, DebugLocation? RemovedAt = null, string? MetadataError = null);
+internal sealed record DebugRegisterPoint(string Program, int Index, string Phase, string Name, bool IsWrite, DebugVariable Variable);
+internal sealed record DebugRegisterCatalogSnapshot(long Revision, bool Collecting, bool Truncated, DebugVariable[] Variables);
 internal sealed record DebugTiming(string Program, int Index, string Name, double Milliseconds);
 internal sealed record DebugSnapshot(string State, long Revision, DebugLocation? Location, DebugVariable[] Variables,
     DebugBreakpoint[] Breakpoints, DebugTiming[] Timings, string? Error, DebugBreakpoint? RunTo = null);
@@ -12,7 +15,7 @@ internal sealed record DebugCommand(string Command, long? Revision = null, strin
 internal sealed record DebugInspectionRequest(string Key, long Revision, string Format = "json", int MaxEdge = 1000);
 internal sealed record DebugInspectionResult(string ContentType, byte[] Data);
 
-internal sealed record DebugWatchSelection(string Key, string Format);
+internal sealed record DebugWatchSelection(string Key, string Format, string? Program = null, int? Index = null, string? Phase = null);
 internal sealed record DebugWatchConfiguration(bool Enabled, double FramesPerSecond, int MaxEdge, DebugWatchSelection[] Registers);
 internal sealed record DebugWatchTarget(string Key, string Format, string Program, int Index, string Phase);
 internal sealed record DebugWatchAcknowledgement(long Generation, Dictionary<string, long> After);

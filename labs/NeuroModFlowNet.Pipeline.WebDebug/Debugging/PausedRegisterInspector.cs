@@ -13,7 +13,9 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
 {
     static readonly JsonSerializerOptions JsonOptions = new() { IncludeFields = true, WriteIndented = true, MaxDepth = 12 };
 
-    public DebugVariable[] Snapshot(VmRunContext context) => context.Keys.Order(StringComparer.Ordinal).Select(key =>
+    public DebugVariable[] Snapshot(VmRunContext context) => context.Keys.Order(StringComparer.Ordinal).Select(key => Describe(context, key)).ToArray();
+
+    public DebugVariable Describe(VmRunContext context, string key, bool includeValue = true)
     {
         context.TryGetObject(key, out object? value);
         string? elementType = value is OrtValue tensor ? tensor.GetTensorTypeAndShape().ElementDataType.ToString() : null;
@@ -31,9 +33,9 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
             memory = $"{memoryInfo.Name}:{memoryInfo.Id}";
         }
         return new DebugVariable(key, value?.GetType().FullName ?? "null", memory, shape,
-            elementType, value is null or string or int or long or float or double or bool ? Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) : null,
+            elementType, includeValue && (value is null or string or int or long or float or double or bool) ? Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) : null,
             CanInspectValue(value), CanPreviewImage(key, value));
-    }).ToArray();
+    }
 
     static bool CanInspectValue(object? value) => value switch
     {

@@ -46,7 +46,7 @@ const words = {
   layoutinvalid:['Не удалось восстановить расположение','Could not restore layout'],popupblocked:['Браузер не открыл окно. Разрешите всплывающие окна для этого адреса.','The browser did not open the window. Allow popups for this site.'],
   instructions:['Программы и инструкции','Programs and instructions'],instruction:['Инструкция','Instruction'],breakpoint:['Т.О.','B.P.'],ms:['мс','ms'],registers:['Регистры','Registers'],register:['Регистр','Register'],memory:['Память','Memory'],shape:['Форма','Shape'],
   inspect:['Значение','Value'],preview:['Изображение','Image'],image:['Просмотр данных','Data inspection'],pin:['Закрепить вход','Pin input'],resultframe:['Кадр результата','Result frame'],
-  imageempty:['На паузе выберите изображение или значение значком. Для динамики отметьте регистры галочками и продолжите VM.','On pause, use an icon to inspect an image or value. For live observation, check registers and resume the VM.'],
+  imageempty:['На паузе доступны значки просмотра. Для динамики выберите регистр, точку съёма над таблицей и отметьте галочку. Останавливать VM не требуется.','Inspection icons are available on pause. For live data, select a register, choose its capture point above the table and check it. No pause is required.'],
   menu:['Свернуть / развернуть меню','Collapse / expand navigation'],help:['Справка об отладке камер','Camera debugger help'],close:['Закрыть окно','Close dialog'],
   pausetip:['Остановиться перед следующей инструкцией выбранной камеры. Другие камеры продолжают работу.','Stop before the next instruction of this camera. Other cameras continue.'],
   continuetip:['Продолжить до точки останова или запроса паузы. F8.','Continue until a breakpoint or pause request. F8.'],
@@ -55,7 +55,7 @@ const words = {
   detachtip:['Снять паузу и отключить остановки этой камеры. Повторная пауза подключит отладчик.','Release the pause and disable stops for this camera. Pause attaches the debugger again.'],
   previewtip:['Явно уменьшить и выгрузить выбранный GPU-тензор в PNG на остановленной VM. Это добавляет работу только во время просмотра.','Explicitly resize and download the selected GPU tensor to PNG on the paused VM. This adds work only during inspection.'],
   paused:['Пауза','Paused'],pausing:['Запрос паузы','Pause requested'],running:['Работает','Running'],starting:['Запуск','Starting'],stopped:['Остановлено','Stopped'],waiting:['Прогрев','Warmup'],failed:['Ошибка','Failed'],detached:['Без отладки','Detached'],
-  before:['до','before'],after:['после','after'],warmup:['прогрев','warmup'],empty:['Нет запущенных камер','No cameras running'],noRegisters:['Регистры доступны на паузе','Registers are available while paused'],
+  before:['до','before'],after:['после','after'],warmup:['прогрев','warmup'],empty:['Нет запущенных камер','No cameras running'],noRegisters:['Каталог заполнится при выполнении инструкций','The catalog fills as instructions execute'],
   color:['Цветовая схема','Color scheme'],cream:['Кремовая','Cream'],dark:['Тёмная','Dark'],emerald:['Изумрудная','Emerald'],light:['Светлая','Light'],density:['Плотность','Density'],nano:['Ультракомпактная','Ultra compact'],mini:['Компактная','Compact'],norm:['Обычная','Normal'],tooltips:['Подсказки','Tooltips'],showtips:['Показывать подсказки','Show tooltips'],
   connection:['Подключение к API','API connection'],connected:['API подключён','API connected'],disconnected:['API недоступен','API unavailable'],unauthorized:['Нужен токен доступа. Откройте настройки.','Access token required. Open settings.'],
   accesstoken:['Токен доступа к удалённому отладчику','Remote debugger access token'],apply:['Применить','Apply'],tokenhint:['Токен хранится только в этой вкладке браузера. Адрес API совпадает с адресом страницы.','The token is stored only in this browser tab. The API uses the page address.'],
@@ -70,11 +70,17 @@ const words = {
   watchfps:['Максимальная частота наблюдения на регистр','Maximum observation frequency per register'],watchsize:['Максимальная сторона изображения, пикселей','Maximum image edge, pixels'],
   watchfpstip:['Максимум снимков в секунду на каждый регистр. Медленный браузер или кодировщик снижает фактическую частоту.','Maximum samples per second for each register. A slow browser or encoder reduces the actual rate.'],
   watchsizetip:['Уменьшение изображения выполняется до выгрузки с GPU. Размер задаёт максимальную сторону PNG.','Images are resized before GPU download. This limits the longest PNG edge.'],
-  watchtip:['Выберите до 8 регистров и продолжите VM. Изображения и JSON снимаются после записи регистра; исходные входы — перед первой инструкцией. Снимки ограничены частотой и готовностью браузера. Без подключения браузера наблюдение засыпает через 5 секунд.','Select up to 8 registers and resume the VM. Images and JSON are captured after the register is written; source inputs are captured before the first instruction. Sampling is limited by frequency and browser readiness. Observation sleeps after 5 seconds without a browser.'],
+  watchtip:['Выберите точку съёма (программа, шаг, до/после) и отметьте до 8 регистров. На каждом проходе этой точки берётся текущее значение, с ограничением частоты и пропуском занятых кадров до выгрузки с GPU. Конец кадра не используется вместо выбранной точки. Каталог и наблюдение засыпают через 5 секунд без клиента.','Choose a capture point (program, instruction, before/after) and check up to 8 registers. Each visit samples the current value, subject to rate limits and dropping busy frames before GPU download. Frame end never substitutes for the chosen point. Catalog and observation sleep after 5 seconds without a client.'],
   watchwaiting:['Ожидание выполнения VM','Waiting for VM execution'],watcherror:['Ошибка наблюдения · подробности в подсказке','Observation error · hover for details'],
   watchreceived:['Снимки','Samples'],watchskipped:['пропуски','skipped'],
   watchcountertip:['С момента изменения настроек: подготовленные снимки (включая ошибки) и прохождения точки съёмки, пропущенные до подготовки/GPU-выгрузки из-за лимита частоты или занятого слота.','Since configuration changed: prepared samples (including errors), and capture-point visits skipped before preparation/GPU download due to frequency limits or a busy slot.'],
-  registermetadatatip:['Во время работы показаны метаданные последней паузы. Выбранные значения обновляются в обзоре наблюдения.','While running, this table retains metadata from the last pause. Selected values update in the observation overview.'],
+  registermetadatatip:['Каталог реально встречавшихся регистров между кадрами, а не текущие значения. Удалённые имена остаются. Метаданные точки обновляются не чаще раза в секунду; значения читаются только по выбранному наблюдению. До/после относится к границе инструкции. Создание и удаление внутри одной инструкции не видны. Предел 512 имён; + у счётчика означает переполнение.','Catalog of registers actually observed across frames, not current values. Removed names remain. Point metadata refreshes at most once per second; values are read only by selected observations. Before/after means an instruction boundary. Creation and removal within a single instruction are invisible. Capacity is 512 names; + on the count means overflow.'],
+  watchpoint:['Точка съёма','Capture point'],watchpointtip:['Программа, номер инструкции и граница до/после. Одно имя можно наблюдать в разных состояниях, выбирая разные точки.','Program, instruction index and before/after boundary. Choose different points to observe different states of the same name.'],
+  registercataloghelp:['Справка: каталог регистров и точки съёма','Register catalog and capture point help'],
+  'catalog-idle':['Сбор каталога выключен; сохранённые сведения','Catalog collection is off; retained metadata'],
+  'previous-run':['Встречался в предыдущих прогонах','Seen in previous runs'],'run-ended':['Прогон завершён; имя сохранено','Run ended; name retained'],
+  seen:['Замечен на последней наблюдаемой границе','Seen at the last observed boundary'],removed:['Исчез после границы инструкции; имя сохранено','Disappeared at an instruction boundary; name retained'],
+  'paused-present':['Есть на текущей паузе','Present at the current pause'],'not-at-pause':['На текущей паузе отсутствует; можно выбрать динамическое наблюдение','Absent at the current pause; live observation may still be selected'],
   registerhelp:['«Значение» (значок списка в строке регистра) показывает число, текст, типизированный массив или данные обратного преобразования в JSON. «Изображение» (значок глаза) явно получает PNG из поддерживаемого Mat/GPU-тензора на паузе. Иконки присутствуют только у доступных действий. «Выполнить до» в строке инструкции продолжает камеру до остановки перед этой командой; текущая команда после остановки ещё не выполнена. Если выбранная строка уже пройдена, цель может быть достигнута в следующем кадре. Обычные точки останова продолжают действовать.','Value (the list icon in a register row) shows a scalar, text, typed array or back-transform data as JSON. Image (the eye icon) explicitly obtains a PNG from a supported Mat/GPU tensor while paused. Icons appear only for available actions. Run to in an instruction row continues this camera and stops before that instruction; it has not executed at that stop. A previously passed target may be reached on the next frame. Regular breakpoints remain active.'],
   helpbody:[
     '<p>Отладчик запускает отдельный экземпляр существующего MultiCamera pipeline: NVDEC → GPU NV12 → BGR → преобразования → детектор → трекинг → OCR. На камеру — один VmController и один кадр в работе. Прогрев выполняется без остановок, первый рабочий кадр останавливается перед первой инструкцией.</p><p>Камеры, программа, регистры и данные доступны в одном обзоре. Выберите камеру строкой таблицы или в меню. Галочка у инструкции задаёт точку останова. «До» — инструкция ещё не выполнена, «после» — её результаты уже в регистрах. F6 — один шаг, F8 — продолжить.</p><p>Просмотр картинки выполняется явно на паузе. Вход можно закрепить над следующим результатом и сравнить этапы преобразования. Нажатие картинки открывает полный PNG. Поддержаны NV12 поверхности, BGR U8 NHWC и одиночные RGB FP16/FP32 NCHW 0..1. Массивы batch показываются как метаданные; интерпретация неподдержанных форматов не подменяется.</p><p>Время инструкции исключает ожидание паузы и отладочный просмотр. Время прогона включает паузы. Захват продолжает читать источник, очередь хранит два последних кадра с вытеснением старых; «следующий кадр» — следующий принятый VM кадр. Это не покадровый проигрыватель всех кадров видео.</p><p>Закрытие вкладки сохраняет паузу. Переподключитесь или используйте API, чтобы продолжить. «Отсоединить» снимает паузу выбранной камеры. «Остановить всё» освобождает ресурсы отладочного запуска. Рабочие службы и другие процессы не управляются этим UI.</p>',
@@ -146,6 +152,7 @@ function showDialog(title, html) {
 }
 $('#dialog').addEventListener('close', () => modalReturnFocus?.focus());
 $('#help').onclick = () => showDialog(t('help'),t('helpbody') + `<p>${esc(t('registerhelp'))}</p><p>${esc(t('watchtip'))}</p><p>${esc(t('watchcountertip'))}</p>`);
+$('#register-help').onclick = () => showDialog(t('watchpoint'),`<p>${esc(t('watchpointtip'))}</p><p>${esc(t('registermetadatatip'))}</p><p>${esc(t('watchtip'))}</p>`);
 $('#diagnostics').onclick = () => showDialog(t('diagnostics'),`<pre class="diagnostic-detail">${esc(lastError || t('nodiagnostics'))}</pre>`);
 $('#settings-nav').onclick = event => {
   event.preventDefault();
@@ -242,7 +249,7 @@ function renderSelected() {
   });
   const activeActionKey = document.activeElement?.dataset.focusKey;
   if(activeActionKey) focusedActionKey = activeActionKey;
-  document.querySelectorAll('[data-register-action]').forEach(button => button.disabled = busy || !paused);
+  document.querySelectorAll('[data-register-action]').forEach(button => button.disabled = busy || !paused || button.dataset.present !== 'true');
   document.querySelectorAll('[data-run-to]').forEach(button => button.disabled = busy || !paused || button.dataset.atCurrent === 'true');
   $('#live').disabled = !camera;
   const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${JSON.stringify(snapshot?.runTo)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}|${observation.renderKey}`;
@@ -266,11 +273,16 @@ function renderSelected() {
   const active = selectedInstruction ?? catalog.find(item => item.program === point?.program && item.index === point?.index);
   $('#instruction-io').textContent = active ? `${t('reads')}: ${active.reads.join(', ') || '—'}\n${t('writes')}: ${active.writes.join(', ') || '—'}` : '—';
   const registerVariables = sortRegisters(observation.knownVariables(snapshot?.variables ?? [],paused),registerSort.column,registerSort.direction);
-  $('#registers').innerHTML = registerVariables.length ? registerVariables.map(variable => {
-    const action = (format, icon, label) => `<button class="row-action" data-register-action="${format}" data-focus-key="${esc(selectedCamera + '|register|' + variable.key + '|' + format)}" aria-label="${esc(t(label) + ' ' + variable.key)}" data-tooltip="${esc(t(label) + ' ' + variable.key)}" ${busy || !paused ? 'disabled':''}><i class="ti ti-${icon}" aria-hidden="true"></i></button>`;
-    return `<tr tabindex="0" data-register="${esc(variable.key)}" data-memory-kind="${memoryKind(variable.memory)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="register-watch-cell">${observation.checkbox(variable)}</td><td class="register-action-cell">${variable.canInspectValue ? action('json','list-details','valueaction'):''}</td><td class="register-action-cell second-action">${variable.canPreviewImage ? action('png','eye','imageaction'):''}</td><td data-tooltip="${esc(variable.key + '\n' + variable.type + (variable.value != null ? '\n' + variable.value:''))}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
+  const pointVariable = registerVariables.find(variable=>variable.key === selectedRegister) ?? registerVariables.find(variable=>observation.selected.some(item=>item.key === variable.key)) ?? registerVariables[0];
+  if(pointVariable) selectedRegister = pointVariable.key;
+  if(!document.activeElement?.matches('[data-watch-point]')) $('#register-point-control').innerHTML = pointVariable ? observation.pointSelector(pointVariable):`<select class="watch-point" disabled aria-label="${esc(t('watchpoint'))}"><option>—</option></select>`;
+  if(!document.activeElement?.matches('[data-watch-point]')) $('#registers').innerHTML = registerVariables.length ? registerVariables.map(variable => {
+    const action = (format, icon, label) => `<button class="row-action" data-present="${Boolean(variable.availableNow)}" data-register-action="${format}" data-focus-key="${esc(selectedCamera + '|register|' + variable.key + '|' + format)}" aria-label="${esc(t(label) + ' ' + variable.key)}" data-tooltip="${esc(t(label) + ' ' + variable.key)}" ${busy || !variable.availableNow ? 'disabled':''}><i class="ti ti-${icon}" aria-hidden="true"></i></button>`;
+    const where=location=>location ? `${location.program} [${location.index}] ${t(location.phase)} · ${t('run')} ${location.runId}`:'';
+    const detail=`${variable.key}\n${variable.type}\n${t(variable.presence ?? 'registermetadatatip')}\n${where(variable.lastSeen)}${variable.removedAt ? '\n'+t('removed')+': '+where(variable.removedAt):''}${variable.metadataError ? '\n'+variable.metadataError:''}`;
+    return `<tr tabindex="0" data-register="${esc(variable.key)}" data-memory-kind="${memoryKind(variable.memory)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="register-watch-cell">${observation.checkbox(variable)}</td><td class="register-action-cell">${variable.canInspectValue ? action('json','list-details','valueaction'):''}</td><td class="register-action-cell second-action">${variable.canPreviewImage ? action('png','eye','imageaction'):''}</td><td data-tooltip="${esc(detail)}">${esc(variable.key)}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
   }).join('') : `<tr><td colspan="6" class="muted">${t('noRegisters')}</td></tr>`;
-  $('#register-count').textContent = String(registerVariables.length);
+  $('#register-count').textContent = String(registerVariables.length) + (observation.catalogs.get(selectedCamera)?.truncated ? '+':'');
   $('#register-count').dataset.tooltip = t('registermetadatatip');
   for(const header of document.querySelectorAll('th[data-sort]')) header.setAttribute('aria-sort',header.dataset.sort !== registerSort.column ? 'none' : registerSort.direction === 1 ? 'ascending':'descending');
   selectRows(); restoreRowFocus();
@@ -288,7 +300,8 @@ async function command(name, target = {}) {
   busy = true; renderSelected();
   try {
     const snapshot = current.cameras.find(item => item.id === selectedCamera)?.debug;
-    await api(`${cameraPath()}/command`,{method:'POST',body:JSON.stringify({command:name,revision:snapshot?.revision,...target})});
+    const revision = ['step','continue','next-frame','run-to'].includes(name) ? snapshot?.revision:undefined;
+    await api(`${cameraPath()}/command`,{method:'POST',body:JSON.stringify({command:name,revision,...target})});
     clearError();
   } catch(error) { showError(error); }
   finally { busy = false; await poll(); }
@@ -312,9 +325,9 @@ $('#instructions').addEventListener('click', async event => {
   lastRender = ''; renderSelected();
 });
 $('#registers').addEventListener('click',event => {
-  if(event.target.matches('[data-watch-register]')) return;
   const row = event.target.closest('[data-register]'); if(!row) return;
   selectedRegister = row.dataset.register;
+  if(event.target.matches('[data-watch-register]')) { lastRender = ''; return; }
   const action = event.target.closest('[data-register-action]');
   if(action) { inspect(action.dataset.registerAction,row.dataset.register); return; }
   lastRender = ''; renderSelected();

@@ -57,11 +57,12 @@ tr.selected { background:var(--lu-primary-light)!important; }
 .instruction-pointer { padding:var(--cell-y) 0; text-align:center; color:var(--lu-primary); }
 .instruction-pointer .ti { font-size:16px; }
 .instruction-table .run-target [data-run-to] { color:var(--lu-primary); }
-.register-table { table-layout:fixed; min-width:440px; }.memory-column { width:84px; }.shape-column { width:138px; }
+.register-table { table-layout:fixed; min-width:516px; }.memory-column { width:84px; }.shape-column { width:138px; }
+.register-order-column { width:76px; }
 .register-point-toolbar { flex:none; display:flex; align-items:center; gap:4px; height:27px; padding:2px 4px; border-bottom:1px solid var(--lu-border); }
 #register-point-control { flex:1; min-width:0; }
 .watch-point { width:100%; min-width:0; padding:0 2px; font:inherit; height:21px; }
-.register-table .input-register td:nth-child(4) { color:var(--lu-primary); }.register-table .output-register td:nth-child(4) { font-weight:650; }
+.register-table .input-register [data-register-name] { color:var(--lu-primary); }.register-table .output-register [data-register-name] { font-weight:650; }
 .row-action-cell,.register-action-cell { padding:var(--cell-y) 2px; text-align:center; }
 .row-action,.row-action:hover,.row-action:active,.row-action:focus { position:relative; display:inline-flex; align-items:center; justify-content:center; width:22px; height:18px; padding:0; border:0; border-radius:0; background:none; box-shadow:none; vertical-align:top; }
 .row-action .ti { font-size:16px; transform-origin:center; transition:transform .12s ease-out; }

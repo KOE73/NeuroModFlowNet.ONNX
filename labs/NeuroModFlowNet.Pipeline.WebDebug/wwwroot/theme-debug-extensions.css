@@ -7,4 +7,4 @@
 #registers tr[data-memory-kind=cuda] { --register-color:var(--vm-memory-cuda); }
 #registers tr[data-memory-kind=managed] { --register-color:var(--vm-memory-managed); }
 #registers tr[data-memory-kind=directml] { --register-color:var(--vm-memory-directml); }
-#registers tr[data-memory-kind] td:not(.register-watch-cell):not(.register-action-cell) { color:var(--register-color,var(--lu-text)); }
+#registers tr[data-memory-kind] td:not(.register-watch-cell):not(.register-action-cell):not(.register-order) { color:var(--register-color,var(--lu-text)); }

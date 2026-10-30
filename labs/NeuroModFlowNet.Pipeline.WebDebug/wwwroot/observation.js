@@ -59,7 +59,7 @@ export class ObservationView {
     return catalog.map(variable=>({...variable,...this.point(variable)?.variable,
       ...(paused ? actual.get(variable.key):{}),points:variable.points,
       presence:paused ? actual.has(variable.key) ? 'paused-present':'not-at-pause':variable.presence,
-      lastSeen:variable.lastSeen,removedAt:variable.removedAt,
+      lastSeen:variable.lastSeen,removedAt:variable.removedAt,additionOrder:variable.additionOrder,
       availableNow:paused && actual.has(variable.key)}));
   }
 

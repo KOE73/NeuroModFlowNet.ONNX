@@ -39,6 +39,31 @@ public sealed class RegisterCatalogTests
     }
 
     [Fact]
+    public void AdditionOrderFollowsDiscoveryAndSurvivesOverwriteRemovalAndNextFrame()
+    {
+        var catalog = new RegisterCatalog((context, key) => new(key, "int", "Managed", null, null, null));
+        catalog.Register(new("common", 0, "op", "test", [], []));
+        catalog.Renew();
+        using(var first = Context(1))
+        {
+            first.Set("z-first", 1);
+            catalog.Visit(first, catalog.Boundary("common", 0, "before"));
+            first.Set("a-second", 2); first.Set("z-first", 3);
+            catalog.Visit(first, catalog.Boundary("common", 0, "after"));
+            first.Remove("z-first");
+            catalog.Visit(first, catalog.Boundary("common", 0, "before"));
+        }
+        using var second = Context(2);
+        second.Set("z-first", 4); second.Set("late-branch", 5);
+        catalog.Visit(second, catalog.Boundary("common", 0, "after"));
+        catalog.RememberPause([new("a-second", "int", "Managed", null, null, null)], new("common", 0, "op", "after", 2, null));
+        var variables = catalog.Snapshot().Variables.ToDictionary(variable => variable.Key);
+        Assert.Equal(1, variables["z-first"].AdditionOrder);
+        Assert.Equal(2, variables["a-second"].AdditionOrder);
+        Assert.Equal(3, variables["late-branch"].AdditionOrder);
+    }
+
+    [Fact]
     public void DisabledAndExpiredCatalogDoesNotEnumerateOrDescribeOrAllocate()
     {
         var clock = new ManualClock();

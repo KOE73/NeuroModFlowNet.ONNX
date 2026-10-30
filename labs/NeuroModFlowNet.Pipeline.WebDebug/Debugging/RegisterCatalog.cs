@@ -104,7 +104,7 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
         if(!entries.TryGetValue(key, out Entry? entry))
         {
             if(entries.Count >= capacity) { truncated = true; return; }
-            entries.Add(key, entry = new());
+            entries.Add(key, entry = new(entries.Count + 1));
         }
         if(!entry.Points.TryGetValue(boundary.Id, out Point? point))
         {
@@ -138,7 +138,7 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
                 if(!entries.TryGetValue(variable.Key, out Entry? entry))
                 {
                     if(entries.Count >= capacity) { truncated = true; continue; }
-                    entries.Add(variable.Key, entry = new());
+                    entries.Add(variable.Key, entry = new(entries.Count + 1));
                 }
                 DebugVariable metadata = variable with { Value = null, Points = null, Presence = null, LastSeen = null, RemovedAt = null };
                 entry.Points[boundary.Id] = new(boundary, metadata, clock.GetTimestamp());
@@ -158,6 +158,7 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
         lock(syncRoot)
             return new(revision, Enabled, truncated, entries.Values.Select(entry => entry.Variable! with
             {
+                AdditionOrder = entry.AdditionOrder,
                 Presence = !Enabled ? "catalog-idle" : entry.RunId != runId ? "previous-run" :
                     entry.RemovedVisit > entry.SeenVisit ? "removed" : !runOpen ? "run-ended" : "seen",
                 LastSeen = Location(entry.LastBoundary!, entry.RunId, entry.FrameId),
@@ -198,8 +199,9 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
 
     #endregion
 
-    sealed class Entry
+    sealed class Entry(int additionOrder)
     {
+        public int AdditionOrder { get; } = additionOrder;
         public Dictionary<int, Point> Points { get; } = [];
         public DebugVariable? Variable { get; set; }
         public long SeenVisit, RunId, RemovedRun, RemovedVisit;

@@ -5,7 +5,8 @@ internal sealed record DebugBreakpoint(string Program, int Index);
 internal sealed record DebugLocation(string Program, int Index, string Name, string Phase, long RunId, long? FrameId);
 internal sealed record DebugVariable(string Key, string Type, string Memory, string? Shape, string? ElementType, string? Value,
     bool CanInspectValue = false, bool CanPreviewImage = false, DebugRegisterPoint[]? Points = null,
-    string? Presence = null, DebugLocation? LastSeen = null, DebugLocation? RemovedAt = null, string? MetadataError = null);
+    string? Presence = null, DebugLocation? LastSeen = null, DebugLocation? RemovedAt = null, string? MetadataError = null,
+    int? AdditionOrder = null);
 internal sealed record DebugRegisterPoint(string Program, int Index, string Phase, string Name, bool IsWrite, DebugVariable Variable);
 internal sealed record DebugRegisterCatalogSnapshot(long Revision, bool Collecting, bool Truncated, DebugVariable[] Variables);
 internal sealed record DebugTiming(string Program, int Index, string Name, double Milliseconds);

@@ -34,6 +34,9 @@
   clip-path:inset(0 round max(0px,calc(var(--vm-panel-radius) - 2px)));
 }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace :is(.dv-view,.dv-split-view-container) { overflow:visible; }
+/* Joined-grid paint must not fill the cut-out corners or draw straight lines over the panel frames. */
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-dockview { background-color:transparent; }
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-separator-border .dv-view::before { display:none; }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-view:has(> .dv-groupview) {
   border-radius:var(--vm-panel-radius);
   box-shadow:var(--vm-panel-shadow);

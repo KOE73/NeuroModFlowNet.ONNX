@@ -14,13 +14,14 @@
 .lu-shell[data-panel-scheme=square] { --vm-panel-radius:0px; }
 .lu-shell[data-panel-scheme=rounded] .dock-workspace,.lu-shell[data-panel-scheme=square] .dock-workspace {
   --dv-border-radius:var(--vm-panel-radius);
-  --dv-floating-box-shadow:0 0 0 1px var(--lu-border),var(--vm-panel-shadow);
+  --dv-floating-box-shadow:0 0 0 1px var(--vm-panel-border-color),var(--vm-panel-shadow);
 }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) :is(.dock-workspace .dv-groupview,.cameras-panel) {
   border-radius:var(--vm-panel-radius);
 }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .cameras-panel {
   padding:1px;
+  border-color:var(--vm-panel-border-color);
   box-shadow:var(--vm-panel-shadow);
 }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-groupview {
@@ -28,7 +29,7 @@
   padding:1px;
   /* The inner surface clips sticky/scrolling layers; its parent keeps the exterior shadow. */
   clip-path:inset(0 round var(--vm-panel-radius));
-  box-shadow:inset 0 0 0 1px var(--lu-border);
+  box-shadow:inset 0 0 0 1px var(--vm-panel-border-color);
 }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .cameras-panel .table-scroll {
   clip-path:inset(0 round max(0px,calc(var(--vm-panel-radius) - 2px)));

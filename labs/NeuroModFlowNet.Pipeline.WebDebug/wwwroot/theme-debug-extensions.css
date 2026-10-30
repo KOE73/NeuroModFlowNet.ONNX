@@ -1,6 +1,8 @@
 /* Provider accents extend the existing themes; NVIDIA greens are darkened on light surfaces for readable text. */
 .lu-shell { --vm-memory-cuda:#527f00; --vm-memory-managed:var(--lu-danger); --vm-memory-directml:var(--lu-info); }
 .lu-shell[data-theme=dark],.lu-shell[data-theme=emerald] { --vm-memory-cuda:#91c936; }
+/* Panel outlines can be tuned without changing table and grid separators. */
+.lu-shell { --vm-panel-border-color:var(--lu-text-muted); }
 #registers tr[data-memory-kind=cuda] { --register-color:var(--vm-memory-cuda); }
 #registers tr[data-memory-kind=managed] { --register-color:var(--vm-memory-managed); }
 #registers tr[data-memory-kind=directml] { --register-color:var(--vm-memory-directml); }

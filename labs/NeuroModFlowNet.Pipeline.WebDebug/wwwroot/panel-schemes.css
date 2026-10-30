@@ -9,7 +9,7 @@
 .lu-shell[data-panel-scheme=rounded],.lu-shell[data-panel-scheme=square] {
   --vm-panel-gap:8px;
   --vm-panel-radius:8px;
-  --vm-panel-shadow:0 1px 4px var(--vm-panel-shadow-color);
+  --vm-panel-shadow:2px 3px 4px var(--vm-panel-shadow-color);
 }
 .lu-shell[data-panel-scheme=square] { --vm-panel-radius:0px; }
 .lu-shell[data-panel-scheme=rounded] .dock-workspace,.lu-shell[data-panel-scheme=square] .dock-workspace {
@@ -18,15 +18,30 @@
 }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) :is(.dock-workspace .dv-groupview,.cameras-panel) {
   border-radius:var(--vm-panel-radius);
-  outline:1px solid var(--lu-border);
-  outline-offset:-1px;
+}
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .cameras-panel {
+  padding:1px;
   box-shadow:var(--vm-panel-shadow);
 }
-.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-view { overflow:visible; }
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-groupview {
+  box-sizing:border-box;
+  padding:1px;
+  /* The inner surface clips sticky/scrolling layers; its parent keeps the exterior shadow. */
+  clip-path:inset(0 round var(--vm-panel-radius));
+  box-shadow:inset 0 0 0 1px var(--lu-border);
+}
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .cameras-panel .table-scroll {
+  clip-path:inset(0 round max(0px,calc(var(--vm-panel-radius) - 2px)));
+}
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace :is(.dv-view,.dv-split-view-container) { overflow:visible; }
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dock-workspace .dv-view:has(> .dv-groupview) {
+  border-radius:var(--vm-panel-radius);
+  box-shadow:var(--vm-panel-shadow);
+}
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dv-resize-container {
   border-radius:var(--vm-panel-radius);
 }
-.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dv-resize-container .dv-groupview { box-shadow:none; }
+.lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dv-resize-container .dv-view:has(> .dv-groupview) { box-shadow:none; }
 .lu-shell:is([data-panel-scheme=rounded],[data-panel-scheme=square]) .dv-floating-titlebar {
   border-radius:var(--vm-panel-radius) var(--vm-panel-radius) 0 0;
 }

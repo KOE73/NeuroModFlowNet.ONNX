@@ -57,9 +57,9 @@ tr.selected { background:var(--lu-primary-light)!important; }
 .instruction-pointer { padding:var(--cell-y) 0; text-align:center; color:var(--lu-primary); }
 .instruction-pointer .ti { font-size:16px; }
 .instruction-table .run-target [data-run-to] { color:var(--lu-primary); }
-.register-table { table-layout:fixed; min-width:476px; }.memory-column { width:84px; }.shape-column { width:138px; }
-.register-order-column { width:36px; }
-.register-table .register-order,.register-table th[data-sort=additionOrder] { padding-inline:4px; }
+.register-table { table-layout:fixed; min-width:484px; }.memory-column { width:84px; }.shape-column { width:138px; }
+.register-order-column,.register-creator-column { width:36px; }
+.register-table .register-order,.register-table .register-creator,.register-table th[data-sort=additionOrder],.register-table th.register-creator { padding-inline:4px; }
 .register-table th[data-sort=additionOrder] .sort-indicator { width:8px; }
 .register-point-toolbar { flex:none; display:flex; align-items:center; gap:4px; height:27px; padding:2px 4px; border-bottom:1px solid var(--lu-border); }
 #register-point-control { flex:1; min-width:0; }
@@ -77,10 +77,8 @@ tr.selected { background:var(--lu-primary-light)!important; }
   70% { transform:scale(1.12) translateY(1px); }
 }
 @media(prefers-reduced-motion:reduce) { .row-action .ti,.debug-command svg { transition:none; }.row-action:not(:disabled):hover .ti,.debug-command:not(:disabled):hover svg { animation:none; } }
-.register-watch-cell,.register-action-cell { position:sticky; left:28px; z-index:1; background:var(--lu-surface); }
-.register-watch-cell { left:0; padding:var(--cell-y) 2px; text-align:center; }
+.register-watch-cell,.register-action-cell { padding:var(--cell-y) 2px; text-align:center; }
 .register-watch-cell input { margin:0; width:14px; height:14px; vertical-align:middle; }
-.register-action-cell.second-action { left:56px; }
 .register-table thead :is(.register-watch-cell,.register-action-cell) { z-index:3; background:var(--lu-surface-alt); }
 .register-table tbody tr:nth-child(even) :is(.register-watch-cell,.register-action-cell) { background:var(--lu-surface-alt); }
 .register-table tbody tr:hover :is(.register-watch-cell,.register-action-cell) { background:var(--lu-row-hover); }

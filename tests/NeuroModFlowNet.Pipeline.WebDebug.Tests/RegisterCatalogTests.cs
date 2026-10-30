@@ -64,6 +64,38 @@ public sealed class RegisterCatalogTests
     }
 
     [Fact]
+    public void CreatorRequiresObservedAbsenceAndIsNotReplacedByAnOverwrite()
+    {
+        var catalog = new RegisterCatalog((context, key) => new(key, "int", "Managed", null, null, null));
+        catalog.Register(new("common", 0, "overwrite-input", "test", [], ["input"]));
+        catalog.Register(new("common", 1, "create", "test", [], ["work"]));
+        catalog.Register(new("common", 2, "overwrite", "test", [], ["work"]));
+        catalog.Renew();
+        using(var late = Context(1))
+        {
+            late.Set("work", 1);
+            catalog.Visit(late, catalog.Boundary("common", 2, "after"));
+            Assert.Null(Assert.Single(catalog.Snapshot().Variables).CreatedAt);
+        }
+        using var next = Context(2);
+        next.Set("input", 3);
+        catalog.Visit(next, catalog.Boundary("common", 0, "before"));
+        next.Set("input", 4);
+        catalog.Visit(next, catalog.Boundary("common", 0, "after"));
+        catalog.Visit(next, catalog.Boundary("common", 1, "before"));
+        next.Set("work", 5);
+        catalog.Visit(next, catalog.Boundary("common", 1, "after"));
+        catalog.Visit(next, catalog.Boundary("common", 2, "before"));
+        next.Set("work", 6);
+        catalog.Visit(next, catalog.Boundary("common", 2, "after"));
+        var variables = catalog.Snapshot().Variables.ToDictionary(variable => variable.Key);
+        Assert.Null(variables["input"].CreatedAt);
+        Assert.Equal(1, variables["work"].CreatedAt!.Index);
+        Assert.Equal("create", variables["work"].CreatedAt!.Name);
+        Assert.Equal(1, variables["work"].AdditionOrder);
+    }
+
+    [Fact]
     public void DisabledAndExpiredCatalogDoesNotEnumerateOrDescribeOrAllocate()
     {
         var clock = new ManualClock();
@@ -127,6 +159,7 @@ public sealed class RegisterCatalogTests
         session.Command(new("detach"));
         using(var first = Context(1)) await program.ExecuteAsync(first, TestContext.Current.CancellationToken);
         DebugVariable variable = session.RegisterCatalogSnapshot().Variables.Single(variable => variable.Key == "work");
+        Assert.Equal(0, variable.CreatedAt!.Index);
         Assert.Contains(variable.Points!, point => point.Index == 0 && point.Phase == "after" && point.IsWrite);
         Assert.Contains(variable.Points!, point => point.Index == 1 && point.Phase == "after" && point.IsWrite);
         DebugWatchSnapshot firstViewer = session.ConfigureObservation(new(true, 15, 640, [new("work", "json", "common", 0, "after")]), "first");
@@ -145,6 +178,7 @@ public sealed class RegisterCatalogTests
         Assert.Equal("2", Encoding.UTF8.GetString(later.Data!));
         Assert.Equal(0, earlier.Location.Index); Assert.Equal(1, later.Location.Index);
         Assert.Equal(2, earlier.Location.RunId); Assert.Equal(2, later.Location.RunId);
+        Assert.Equal(0, session.RegisterCatalogSnapshot().Variables.Single(variable => variable.Key == "work").CreatedAt!.Index);
         Assert.Throws<ArgumentException>(() => session.ConfigureObservation(new(true, 3, 640, [new("work", "json", "common", 2, "after")])));
     }
 

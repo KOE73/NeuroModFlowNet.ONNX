@@ -14,6 +14,7 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
     long leaseUntil, epoch, observedEpoch, visit, runId, revision;
     long? frameId;
     bool runOpen, truncated;
+    RegisterCatalogBoundary? previousBoundary;
 
     public RegisterCatalogCost Cost { get; } = new();
     public bool Enabled
@@ -76,6 +77,8 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
         lock(syncRoot)
         {
             bool contiguous = observedEpoch == epoch && runId == context.Identity.RunId && runOpen;
+            bool followsBefore = contiguous && boundary.Phase == "after" && previousBoundary is { Phase: "before" } previous &&
+                previous.Program == boundary.Program && previous.Index == boundary.Index;
             observedEpoch = epoch;
             runId = context.Identity.RunId;
             frameId = context.Identity.SourceFrameId;
@@ -83,9 +86,9 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
             visit++;
             // VmRunContext exposes its Dictionary keys as an interface. Preserve the struct enumerator on that path.
             if(context.Keys is Dictionary<string, object?>.KeyCollection keys)
-                foreach(string key in keys) ObserveKey(context, key, boundary, now);
+                foreach(string key in keys) ObserveKey(context, key, boundary, now, followsBefore);
             else
-                foreach(string key in context.Keys) ObserveKey(context, key, boundary, now);
+                foreach(string key in context.Keys) ObserveKey(context, key, boundary, now, followsBefore);
             if(contiguous)
                 foreach(Entry entry in entries.Values)
                     if(entry.SeenVisit == visit - 1 && entry.RunId == runId)
@@ -95,17 +98,21 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
                         entry.RemovedFrame = frameId;
                         entry.RemovedVisit = visit;
                     }
+            previousBoundary = boundary;
             revision++;
         }
     }
 
-    void ObserveKey(VmRunContext context, string key, RegisterCatalogBoundary boundary, long now)
+    void ObserveKey(VmRunContext context, string key, RegisterCatalogBoundary boundary, long now, bool followsBefore)
     {
         if(!entries.TryGetValue(key, out Entry? entry))
         {
             if(entries.Count >= capacity) { truncated = true; return; }
             entries.Add(key, entry = new(entries.Count + 1));
         }
+        // A declared write or late attachment is not evidence of creation. Require absence before and presence after this op.
+        if(entry.CreatedAt is null && followsBefore && entry.SeenVisit != visit - 1)
+            entry.CreatedAt = Location(boundary, runId, frameId);
         if(!entry.Points.TryGetValue(boundary.Id, out Point? point))
         {
             point = new(boundary, Metadata(context, key), now);
@@ -159,6 +166,7 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
             return new(revision, Enabled, truncated, entries.Values.Select(entry => entry.Variable! with
             {
                 AdditionOrder = entry.AdditionOrder,
+                CreatedAt = entry.CreatedAt,
                 Presence = !Enabled ? "catalog-idle" : entry.RunId != runId ? "previous-run" :
                     entry.RemovedVisit > entry.SeenVisit ? "removed" : !runOpen ? "run-ended" : "seen",
                 LastSeen = Location(entry.LastBoundary!, entry.RunId, entry.FrameId),
@@ -204,6 +212,7 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
         public int AdditionOrder { get; } = additionOrder;
         public Dictionary<int, Point> Points { get; } = [];
         public DebugVariable? Variable { get; set; }
+        public DebugLocation? CreatedAt { get; set; }
         public long SeenVisit, RunId, RemovedRun, RemovedVisit;
         public long? FrameId, RemovedFrame;
         public RegisterCatalogBoundary? LastBoundary, RemovedBoundary;

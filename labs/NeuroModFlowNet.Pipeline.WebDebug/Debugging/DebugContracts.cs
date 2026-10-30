@@ -6,7 +6,7 @@ internal sealed record DebugLocation(string Program, int Index, string Name, str
 internal sealed record DebugVariable(string Key, string Type, string Memory, string? Shape, string? ElementType, string? Value,
     bool CanInspectValue = false, bool CanPreviewImage = false, DebugRegisterPoint[]? Points = null,
     string? Presence = null, DebugLocation? LastSeen = null, DebugLocation? RemovedAt = null, string? MetadataError = null,
-    int? AdditionOrder = null);
+    int? AdditionOrder = null, DebugLocation? CreatedAt = null);
 internal sealed record DebugRegisterPoint(string Program, int Index, string Phase, string Name, bool IsWrite, DebugVariable Variable);
 internal sealed record DebugRegisterCatalogSnapshot(long Revision, bool Collecting, bool Truncated, DebugVariable[] Variables);
 internal sealed record DebugTiming(string Program, int Index, string Name, double Milliseconds);

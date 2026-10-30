@@ -22,6 +22,7 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
     string state = "stopped";
     string? error;
     string? backend;
+    int previewMaxEdge;
 
     #region Public API
 
@@ -38,7 +39,8 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
                     id = pair.Key, decoder = pair.Value.Config.Source.Decoder,
                     sourceKind = pair.Value.Config.Source.Kind,
                     width = pair.Value.Config.Resolution.Width, height = pair.Value.Config.Resolution.Height,
-                    maxInFlight = 1, statistics = pair.Value.Worker.Statistics.Snapshot(), debug = pair.Value.Session.Snapshot()
+                    maxInFlight = 1, statistics = pair.Value.Worker.Statistics.Snapshot(), debug = pair.Value.Session.Snapshot(),
+                    preview = pair.Value.Session.Preview.Snapshot()
                 }).ToArray()
             };
     }
@@ -49,13 +51,30 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
             return cameras.TryGetValue(id, out var camera) ? camera.Session : throw new KeyNotFoundException("Camera not found.");
     }
 
-    public byte[] Preview(string id)
+    public async Task<byte[]> PreviewAsync(string id, CancellationToken cancellationToken)
     {
+        CameraDebugSession session;
+        int maxEdge;
         lock(syncRoot)
         {
             if(!cameras.TryGetValue(id, out var camera)) throw new KeyNotFoundException("Camera not found.");
-            using var preview = camera.Worker.TakePreviewClone();
-            return preview is null ? throw new KeyNotFoundException("No completed frame preview yet.") : TensorImagePreviewRenderer.EncodePng(preview);
+            session = camera.Session;
+            maxEdge = previewMaxEdge;
+        }
+        DebugSnapshot snapshot = session.Snapshot();
+        if(snapshot.State == "paused")
+        {
+            if(!snapshot.Variables.Any(variable => variable.Key == "image.rect"))
+                throw new InvalidOperationException("image.rect is not available at this pause. Step through frame preparation first.");
+            DebugInspectionResult result = await session.InspectAsync(new("image.rect", snapshot.Revision, "png", maxEdge), cancellationToken).ConfigureAwait(false);
+            return result.Data;
+        }
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(10));
+        try { return await session.Preview.RequestAsync(timeout.Token).ConfigureAwait(false); }
+        catch(OperationCanceledException) when(!cancellationToken.IsCancellationRequested)
+        {
+            throw new InvalidOperationException("No completed preview frame within ten seconds. The camera may be paused.");
         }
     }
 
@@ -106,6 +125,8 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
             string? decoder = configuration["WebDebug:Decoder"];
             config = config with
             {
+                // Keep the existing preview register/step contract, but the debug decorator makes both commands demand-only.
+                Preview = config.Preview with { Enabled = true },
                 Cameras = config.Cameras.Select(camera => camera with
                 {
                     MaxInFlight = 1,
@@ -123,7 +144,7 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
             CameraConfig[] enabled = config.EnabledCameras.ToArray();
             Batches.Reset();
             endpoints = SharedInferenceEndpoints.Create(config, enabled, Batches);
-            lock(syncRoot) { cameras.Clear(); backend = config.Backend.ToString(); }
+            lock(syncRoot) { cameras.Clear(); backend = config.Backend.ToString(); previewMaxEdge = config.Preview.MaxEdge; }
             foreach(CameraConfig camera in enabled)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -139,7 +160,7 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
                         stop?.Cancel();
                         ReleasePauses();
                     }
-                });
+                }, session.Preview.Publish);
                 workers.Add(worker);
                 lock(syncRoot) cameras.Add(camera.Id, (worker, session, camera));
             }

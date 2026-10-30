@@ -88,6 +88,31 @@ internal sealed class RegisterObservation(Func<VmRunContext, DebugInspectionRequ
 
     #region VM capture and owned CPU encoding
 
+    public bool NeedsPreviewCapture(string program, int producerIndex)
+    {
+        if(!Enabled) return false;
+        lock(syncRoot)
+        {
+            long now = Stopwatch.GetTimestamp();
+            RefreshEnabled(now);
+            if(!Enabled || inFlight >= 8) return false;
+            // This host has one VM run per camera: only that VM task admits captures, so capacity cannot shrink
+            // between this readiness check and the immediately following preview command/capture boundary.
+            foreach(Viewer viewer in viewers.Values)
+            {
+                if(!viewer.Configuration.Enabled || now > viewer.LeaseExpires) continue;
+                foreach(Watch watch in viewer.Watches)
+                {
+                    DebugWatchTarget selection = watch.Target.Selection;
+                    if(selection.Key is not ("image.preview.tensor" or "image.preview") || selection.Program != program ||
+                        selection.Index < producerIndex || selection.Index == producerIndex && selection.Phase != "after") continue;
+                    if(!watch.Target.Busy && !watch.Busy && watch.Requested && now >= watch.NextCapture) return true;
+                }
+            }
+            return false;
+        }
+    }
+
     public ValueTask CaptureAsync(VmRunContext context, string program, int index, string phase, string name, CancellationToken cancellationToken) =>
         Enabled ? CaptureEnabledAsync(context, program, index, phase, name, cancellationToken) : ValueTask.CompletedTask;
 

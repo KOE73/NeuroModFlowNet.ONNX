@@ -94,6 +94,12 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
             throw new NotSupportedException("Image preview requires a supported single image; resource and batch registers are metadata-only.");
         if(value is Mat image) return TensorImagePreviewRenderer.CreatePreview(image, request.MaxEdge);
         if(value is not OrtValue tensor) throw new NotSupportedException("Select an image tensor or Mat.");
+        using(OrtMemoryInfo memory = tensor.GetTensorMemoryInfo())
+            if(string.Equals(memory.Name, "Cpu", StringComparison.OrdinalIgnoreCase))
+            {
+                using Mat downloaded = TensorImagePreviewRenderer.CreatePreview(tensor);
+                return TensorImagePreviewRenderer.CreatePreview(downloaded, request.MaxEdge);
+            }
 
         using var temporary = new VmRunContext(new("debug-preview", 0, DateTimeOffset.UtcNow), new VmGlobalMemory(), new VmSyncGateRegistry());
         temporary.Set("input", tensor);

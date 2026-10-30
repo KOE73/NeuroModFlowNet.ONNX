@@ -78,6 +78,7 @@ const words = {
   captureshort:['Съём','Capture'],
   watchmissing:['Нет регистра в точке съёма','Register absent at capture point'],
   watchchoosepoint:['Отметьте «Съём» у инструкции','Check Capture on an instruction'],
+  resultpreviewtip:['Один снимок по запросу. При работе — следующий завершённый кадр с разметкой; на паузе — текущее image.rect, если оно уже подготовлено. Без запроса или готового наблюдения превью не выгружается.','One snapshot on demand. While running: the next completed annotated frame; while paused: current image.rect if already prepared. No preview download without a request or a ready observation.'],
   watchpoint:['Точка съёма','Capture point'],watchpointtip:['Отметьте одну инструкцию: после её выполнения читаются все регистры, выбранные галочками. Другая отметка переносит точку съёма, снятие выключает наблюдение. Это не точка останова.','Check one instruction: all checked registers are read after it executes. Checking another moves the capture point; unchecking disables observation. This is independent of breakpoints.'],
   registercataloghelp:['Справка: каталог регистров и точки съёма','Register catalog and capture point help'],
   creatorShort:['Оп.','Op.'],creator:['Операция, создавшая регистр','Operation that created the register'],

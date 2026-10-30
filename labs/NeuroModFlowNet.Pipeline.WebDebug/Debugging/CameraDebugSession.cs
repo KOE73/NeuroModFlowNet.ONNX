@@ -13,6 +13,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     readonly HashSet<DebugBreakpoint> breakpoints = [];
     readonly Dictionary<(string Program, int Index), DebugTiming> timings = [];
     readonly List<DebugInstruction> instructions = [];
+    readonly string warmupSource = cameraId + "_warmup";
     string state = "waiting";
     string? error;
     long revision = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000;
@@ -28,6 +29,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     DebugVariable[] knownVariables = [];
     DebugLocation? knownLocation;
     public RegisterObservation Observation { get; } = new(inspector.CaptureAsync);
+    public FramePreviewDemand Preview { get; } = new();
     public RegisterCatalog Registers { get; } = new((context, key) => inspector.Describe(context, key, includeValue: false));
 
     public string CameraId { get; } = cameraId;
@@ -46,9 +48,16 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
             foreach(DebugInstruction instruction in instructions.Where(instruction => instruction.Program == name)) Registers.Register(instruction);
         }
         return new VmProgram(program.Instructions.Select((instruction, index) =>
-            instruction is IHasExecutionDevice
+        {
+            if(instruction.Descriptor.Writes.Any(write => write.Key == "image.preview.tensor"))
+                instruction = new DemandPreviewOp(instruction, context => context.Identity.SourceId != warmupSource &&
+                    Preview.ShouldPrepare(Observation.NeedsPreviewCapture(name, index)));
+            else if(instruction.Descriptor.Writes.Any(write => write.Key == "image.preview"))
+                instruction = new DemandPreviewOp(instruction, context => context.Contains("image.preview.tensor"));
+            return instruction is IHasExecutionDevice
                 ? (IOp)new DebugDeviceOp(instruction, this, name, index)
-                : new DebugOp(instruction, this, name, index)).ToArray(), program.Labels, program.Name);
+                : new DebugOp(instruction, this, name, index);
+        }).ToArray(), program.Labels, program.Name);
     }
 
     public DebugInstruction[] Instructions { get { lock(syncRoot) return instructions.ToArray(); } }
@@ -94,6 +103,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
 
     public void Fail(Exception exception)
     {
+        Preview.Fail(exception);
         lock(syncRoot)
         {
             state = "failed";
@@ -359,6 +369,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
             wake.Dispose();
         }
         Observation.Dispose();
+        Preview.Dispose();
     }
 
     sealed record InspectionWork(DebugInspectionRequest Request, TaskCompletionSource<DebugInspectionResult> Completion, CancellationToken CancellationToken);

@@ -10,6 +10,28 @@ public sealed class RegisterObservationTests
     #region Demand, backpressure and lifecycle
 
     [Fact]
+    public async Task PreviewProducerChecksLeaseAcknowledgementAndFrequencyBeforeItsDownload()
+    {
+        using var observation = new RegisterObservation((context, request, cancellation) => ValueTask.FromResult(Value("7")));
+        using var context = Context();
+        var target = new DebugWatchTarget("image.preview.tensor", "json", "common", 13, "after");
+        var configuration = new DebugWatchConfiguration(true, 0.2, 640, [new(target.Key, target.Format, target.Program, target.Index, target.Phase)]);
+        DebugWatchSnapshot snapshot = observation.Configure(configuration, [target]);
+        Assert.False(observation.NeedsPreviewCapture("common", 13));
+        observation.Poll(new(snapshot.Generation, []));
+        Assert.True(observation.NeedsPreviewCapture("common", 13));
+        Assert.False(observation.NeedsPreviewCapture("common", 14));
+        await observation.CaptureAsync(context, "common", 13, "after", "preview", TestContext.Current.CancellationToken);
+        await WaitFor(() => observation.Snapshot().Items[0].Captured == 1);
+        Assert.False(observation.NeedsPreviewCapture("common", 13));
+        long sequence = observation.Snapshot().Items[0].Frame!.Sequence;
+        observation.Poll(new(snapshot.Generation, new() { [target.Key] = sequence }));
+        Assert.False(observation.NeedsPreviewCapture("common", 13));
+        observation.Configure(configuration with { Enabled = false }, [target]);
+        Assert.False(observation.NeedsPreviewCapture("common", 13));
+    }
+
+    [Fact]
     public async Task DisabledObservationDoesNotReadRegistersOrAllocatePerVisit()
     {
         int captures = 0;

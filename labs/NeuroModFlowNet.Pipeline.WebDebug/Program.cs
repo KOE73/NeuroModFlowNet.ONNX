@@ -61,6 +61,7 @@ app.MapPost("/api/cameras/{id}/inspect", async (string id, DebugInspectionReques
     DebugInspectionResult result = await runtime.Session(id).InspectAsync(request, cancellationToken);
     return Results.Bytes(result.Data, result.ContentType);
 });
-app.MapGet("/api/cameras/{id}/preview.png", (string id, DebugRuntime runtime) => Results.Bytes(runtime.Preview(id), "image/png"));
+app.MapGet("/api/cameras/{id}/preview.png", async (string id, DebugRuntime runtime, CancellationToken cancellationToken) =>
+    Results.Bytes(await runtime.PreviewAsync(id, cancellationToken), "image/png"));
 app.Lifetime.ApplicationStopping.Register(() => app.Services.GetRequiredService<DebugRuntime>().StopAsync().GetAwaiter().GetResult());
 await app.RunAsync();

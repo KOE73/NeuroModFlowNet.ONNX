@@ -27,15 +27,18 @@ internal sealed class CameraWorker : IAsyncDisposable
     readonly IFrameSource source;
     readonly Channel<ISourceFrame> frameChannel;
     readonly Action<VmRunOutcome>? debugRunCompleted;
+    readonly Action<Mat>? debugPreviewPublished;
     readonly object previewSyncRoot = new();
     Mat? latestPreview;
 
     public CameraWorker(CameraConfig camera, MultiCameraConfig config, SharedInferenceEndpoints endpoints,
-        Func<VmProgram, VmProgram>? debugProgramDecorator = null, Action<VmRunOutcome>? debugRunCompleted = null)
+        Func<VmProgram, VmProgram>? debugProgramDecorator = null, Action<VmRunOutcome>? debugRunCompleted = null,
+        Action<Mat>? debugPreviewPublished = null)
     {
         this.camera = camera ?? throw new ArgumentNullException(nameof(camera));
         this.config = config ?? throw new ArgumentNullException(nameof(config));
         this.debugRunCompleted = debugRunCompleted;
+        this.debugPreviewPublished = debugPreviewPublished;
         ArgumentNullException.ThrowIfNull(endpoints);
 
         (VmProgram prepare, CameraGeometry geometry) = CameraPrepareProgramFactory.Create(camera, config.Backend);
@@ -282,6 +285,7 @@ internal sealed class CameraWorker : IAsyncDisposable
             PreviewRenderer.Draw(preview, Geometry, camera, detections, tracks, textRegions, textTrackIds, recognized, Statistics.Snapshot(), PotentialFps(Statistics.Snapshot()));
             SaveSnapshotIfRequested(preview, outcome.Identity.RunId);
             PublishPreview(preview);
+            debugPreviewPublished?.Invoke(preview);
         }
     }
 

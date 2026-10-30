@@ -95,6 +95,10 @@ tr.selected { background:var(--lu-primary-light)!important; }
 .watch-content a { display:block; height:100%; }
 .image-scroll .watch-content img { width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; border:0; background:transparent; }
 .watch-content pre { min-height:100%; }
+.watch-tile[data-native=true] .watch-content a { width:max-content; height:auto; }
+:is(.image-scroll,.watch-panel-body) .watch-tile[data-native=true] .watch-content img { width:auto; height:auto; max-width:none; max-height:none; object-fit:initial; }
+.watch-tile [data-tile-native][aria-pressed=true] { color:var(--lu-primary); }
+#watch-size { width:90px; }
 .watch-placeholder { position:absolute; inset:0; display:grid; place-items:center; color:var(--lu-text-muted); font-size:12px; }
 .watch-placeholder[hidden],.watch-content a[hidden] { display:none; }
 @container(min-width:366px) { .watch-tile[data-format=json] { grid-column:span 2; } }

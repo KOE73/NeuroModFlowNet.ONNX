@@ -69,7 +69,9 @@ const words = {
   watch:['Наблюдать','Watch'],watchregister:['Наблюдать регистр:','Watch register:'],watchoff:['Наблюдение выключено','Observation disabled'],
   watchfps:['Максимальная частота наблюдения на регистр','Maximum observation frequency per register'],watchsize:['Максимальная сторона изображения, пикселей','Maximum image edge, pixels'],
   watchfpstip:['Максимум снимков в секунду на каждый регистр. Медленный браузер или кодировщик снижает фактическую частоту.','Maximum samples per second for each register. A slow browser or encoder reduces the actual rate.'],
-  watchsizetip:['Уменьшение изображения выполняется до выгрузки с GPU. Размер задаёт максимальную сторону PNG.','Images are resized before GPU download. This limits the longest PNG edge.'],
+  watchsizetip:['Предел длинной стороны передаваемого PNG. Уменьшение выполняется на GPU до выгрузки; «Исходный» передаёт разрешение регистра без resize. На вход нейросети не влияет. Кнопка 1:1 у картинки отдельно переключает масштаб её отображения.','Longest edge of the transmitted PNG. Downscaling happens on GPU before download; Original preserves the register resolution without resize. Model inputs are unchanged. The image 1:1 button independently toggles display scale.'],
+  originalsize:['Исходный','Original'],nativeview:['Отображение картинки 1:1','Display image at 1:1'],
+  nativeviewtip:['1:1 — один пиксель картинки на CSS-пиксель с прокруткой внутри просмотра. Повторное нажатие вписывает картинку в панель. Передаваемый размер не меняется.','1:1 displays one image pixel per CSS pixel with scrolling inside the viewer. Click again to fit the image in the panel. Transmitted resolution is unchanged.'],
   watchtip:['Отметьте до 8 регистров и одну инструкцию в колонке «Съём». Все выбранные значения читаются после неё на каждом прогоне с ограничением частоты. Если имени в этой точке нет, значение недоступно; другая точка не подставляется. Занятые кадры пропускаются до выгрузки с GPU. Без клиента сбор и наблюдение засыпают через 5 секунд.','Check up to 8 registers and one instruction in the Capture column. All selected values are read after it on each run, subject to rate limits. Missing names are unavailable; another step is never substituted. Busy frames are dropped before GPU download. Collection and observation sleep after 5 seconds without a client.'],
   watchwaiting:['Ожидание выполнения VM','Waiting for VM execution'],watcherror:['Ошибка наблюдения · подробности в подсказке','Observation error · hover for details'],
   watchreceived:['Снимки','Samples'],watchskipped:['пропуски','skipped'],
@@ -377,7 +379,7 @@ async function inspect(format, key) {
   busy = true; renderSelected();
   const camera = selectedCamera;
   try {
-    const response = await api(`${cameraPath()}/inspect`,{method:'POST',body:JSON.stringify({key,format,revision:snapshot.revision,maxEdge:1000}),signal:AbortSignal.timeout(120000)});
+    const response = await api(`${cameraPath()}/inspect`,{method:'POST',body:JSON.stringify({key,format,revision:snapshot.revision,maxEdge:Number(observation.size.value)}),signal:AbortSignal.timeout(120000)});
     if(camera !== selectedCamera) return;
     if(format === 'png') displayImage(await response.blob(),{camera,key,...snapshot.location});
     else { $('#value-output').textContent = `${key}\n${await response.text()}`; $('#value-output').hidden = false; $('#image-empty').hidden = true; }

@@ -194,7 +194,7 @@ public sealed class RegisterObservationTests
     [InlineData(0,640)]
     [InlineData(16,640)]
     [InlineData(3,99)]
-    [InlineData(3,2001)]
+    [InlineData(3,8193)]
     public void InvalidLimitsAreRejected(double fps, int maxEdge)
     {
         using var observation = new RegisterObservation((context,request,cancellation) => throw new InvalidOperationException());

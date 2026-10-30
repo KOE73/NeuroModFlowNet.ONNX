@@ -79,9 +79,13 @@ export class DebugWorkspace {
       button.setAttribute('aria-label',this.t(label)); button.dataset.tooltip = this.t(label);
       button.addEventListener('pointerdown',event=>event.stopPropagation());
       button.addEventListener('mousedown',event=>event.stopPropagation());
-      button.onclick = event=>{event.stopPropagation();action();}; header.append(button);
+      button.onclick = event=>{event.stopPropagation();action();}; header.append(button); return button;
     };
     add('maximize','floatpanel',()=>this.toggleFloat(id));
+    if(id.startsWith('watch:')) {
+      const native=add('zoom-in','nativeview',()=>this.entry(id).node.querySelector('[data-tile-native]')?.click());
+      native.textContent='1:1';
+    }
     if(id === 'preview' || id.startsWith('watch:')) add('external-link','newviewer',()=>this.onPopup(id.startsWith('watch:') ? id.slice(6):undefined));
     if(id.startsWith('watch:')) add('x',this.viewer ? 'closepanel':'returngallery',()=>this.viewer ? this.onCloseTile(id.slice(6)):this.returnTile(id));
   }

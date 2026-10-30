@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {ObservationView} from '../../labs/NeuroModFlowNet.Pipeline.WebDebug/wwwroot/observation.js';
+import {ObservationView,sharedCapturePoint} from '../../labs/NeuroModFlowNet.Pipeline.WebDebug/wwwroot/observation.js';
 
 function view() {
   const view=Object.create(ObservationView.prototype);
@@ -13,6 +13,13 @@ function view() {
   view.onChange=()=>{};
   return view;
 }
+
+test('an active server capture point takes precedence over another tab saved point',()=>{
+  const configuration={enabled:true,registers:[{key:'image',program:'common',index:12,phase:'after'},{key:'data',program:'common',index:12,phase:'after'}]};
+  assert.deepEqual(sharedCapturePoint(configuration),{program:'common',index:12,phase:'after'});
+  assert.equal(sharedCapturePoint({...configuration,enabled:false}),null);
+  assert.equal(sharedCapturePoint({...configuration,registers:[configuration.registers[0],{...configuration.registers[1],index:0}]}),null);
+});
 
 test('one checked instruction moves all selected registers to the same after boundary',async()=>{
   const subject=view();
@@ -41,4 +48,37 @@ test('failed point change restores the visible and persisted point',async()=>{
   await subject.setCapturePoint({program:'common',index:5},true);
   assert.deepEqual(subject.capturePoint,previous);
   assert.deepEqual(JSON.parse(subject.saved.get('capturePoint.main.camera')),previous);
+});
+
+for(const cancelledDecode of [false,true]) test(`size change discards an old PNG ${cancelledDecode ? 'decode rejection':'decoded frame'} without poisoning acknowledgements`,async()=>{
+  const previousDocument=globalThis.document;
+  globalThis.document={hidden:false,querySelector:()=>({dataset:{page:'camera'}})};
+  let startDecode, resolveDecode, rejectDecode;
+  const started=new Promise(resolve=>{startDecode=resolve;});
+  const decoded=new Promise((resolve,reject)=>{resolveDecode=resolve;rejectDecode=reject;});
+  const image={decode:()=>{startDecode();return decoded;}};
+  const link={hidden:true};
+  const tile={querySelector:selector=>selector === 'img' ? image:link};
+  const subject=view(), errors=[];
+  Object.assign(subject,{cameraRevision:1,configurationRevision:0,polling:false,updating:false,after:{},frames:new Map(),urls:new Map(),tiles:new Map([['image',tile]])});
+  subject.snapshot.generation=1;
+  subject.render=()=>{};
+  subject.onError=error=>errors.push(error);
+  subject.accept=snapshot=>{subject.snapshot=snapshot;};
+  subject.api=async(path,options)=>({json:async()=>options.method === 'PUT' ?
+    {generation:2,configuration:JSON.parse(options.body),items:[]}:
+    {generation:1,configuration:subject.configuration,items:[{target:{key:'image'},frame:{sequence:91,data:'AAAA',contentType:'image/png',location:{runId:1}}}]}});
+  subject.configure=ObservationView.prototype.configure;
+  try {
+    const polling=subject.poll();
+    await started;
+    await subject.configure({...subject.configuration,maxEdge:2000});
+    if(cancelledDecode) rejectDecode(new Error('Old image was detached'));
+    else resolveDecode();
+    await polling;
+    assert.equal(subject.configuration.maxEdge,2000);
+    assert.deepEqual(subject.after,{});
+    assert.equal(subject.frames.size,0);
+    assert.equal(errors.length,0);
+  } finally {globalThis.document=previousDocument;}
 });

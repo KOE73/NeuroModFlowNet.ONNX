@@ -89,16 +89,16 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
 
     async Task<Mat> PreviewAsync(object? value, DebugInspectionRequest request, CancellationToken cancellationToken)
     {
-        if(request.MaxEdge is < 100 or > 2000) throw new ArgumentOutOfRangeException(nameof(request.MaxEdge));
+        if(!PreviewImageSize.IsValid(request.MaxEdge)) throw new ArgumentOutOfRangeException(nameof(request.MaxEdge));
         if(!CanPreviewImage(request.Key, value))
             throw new NotSupportedException("Image preview requires a supported single image; resource and batch registers are metadata-only.");
-        if(value is Mat image) return TensorImagePreviewRenderer.CreatePreview(image, request.MaxEdge);
+        if(value is Mat image) return PreviewImageSize.CopyCpu(image, request.MaxEdge);
         if(value is not OrtValue tensor) throw new NotSupportedException("Select an image tensor or Mat.");
         using(OrtMemoryInfo memory = tensor.GetTensorMemoryInfo())
             if(string.Equals(memory.Name, "Cpu", StringComparison.OrdinalIgnoreCase))
             {
                 using Mat downloaded = TensorImagePreviewRenderer.CreatePreview(tensor);
-                return TensorImagePreviewRenderer.CreatePreview(downloaded, request.MaxEdge);
+                return PreviewImageSize.CopyCpu(downloaded, request.MaxEdge);
             }
 
         using var temporary = new VmRunContext(new("debug-preview", 0, DateTimeOffset.UtcNow), new VmGlobalMemory(), new VmSyncGateRegistry());
@@ -112,18 +112,20 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         bool nhwc = information.ElementDataType == TensorElementType.UInt8;
         int width = nv12 ? sourceWidth : checked((int)shape[nhwc ? 2 : 3]);
         int height = nv12 ? sourceHeight : checked((int)shape[nhwc ? 1 : 2]);
+        Size size = PreviewImageSize.Resolve(width, height, request.MaxEdge);
+        bool resizeNeeded = size.Width != width || size.Height != height;
         IDisposable? conversion = null;
         try
         {
             if(nv12)
             {
-                var nv12Conversion = new Op_Onnx_Nv12_To_BgrU8Nhwc("input", "converted", width, height, colorMatrix, executionBackend: backend);
+                var nv12Conversion = new Op_Onnx_Nv12_To_BgrU8Nhwc("input", "converted", width, height, colorMatrix, isFinal: !resizeNeeded, executionBackend: backend);
                 conversion = nv12Conversion;
                 EnsureSuccess(await nv12Conversion.ExecuteAsync(temporary, cancellationToken).ConfigureAwait(false));
             }
-            double scale = Math.Min(1, request.MaxEdge / (double)Math.Max(width, height));
-            var size = new Size(Math.Max(1, (int)(width * scale)), Math.Max(1, (int)(height * scale)));
             string inputKey = nv12 ? "converted" : "input";
+            if(!resizeNeeded)
+                return nv12 ? TensorImagePreviewRenderer.CreatePreview(temporary.Get<OrtValue>(inputKey)) : PreviewTensorDownload.Copy(tensor, backend);
             using Op_Onnx_TensorTransformBase resize = information.ElementDataType switch
             {
                 TensorElementType.UInt8 => new Op_Onnx_Resize_U8_NHWC(inputKey, "preview", size, isFinal: true, executionBackend: backend),

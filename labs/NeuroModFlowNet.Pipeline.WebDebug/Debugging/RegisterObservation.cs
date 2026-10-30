@@ -34,7 +34,7 @@ internal sealed class RegisterObservation(Func<VmRunContext, DebugInspectionRequ
     public DebugWatchSnapshot Configure(DebugWatchConfiguration value, DebugWatchTarget[] selections, string viewerId = "main")
     {
         if(!double.IsFinite(value.FramesPerSecond) || value.FramesPerSecond is < 0.2 or > 15) throw new ArgumentException("Observation frequency must be between 0.2 and 15 FPS per register.");
-        if(value.MaxEdge is < 100 or > 2000) throw new ArgumentException("Observation image size must be between 100 and 2000 pixels.");
+        if(!PreviewImageSize.IsValid(value.MaxEdge)) throw new ArgumentException("Use 0 for original size or 100–8192 pixels.");
         if(selections.Length > 8 || selections.Select(target => target.Key).Distinct(StringComparer.Ordinal).Count() != selections.Length) throw new ArgumentException("Select up to eight different registers.");
         lock(syncRoot)
         {
@@ -167,7 +167,7 @@ internal sealed class RegisterObservation(Func<VmRunContext, DebugInspectionRequ
         try
         {
             using(captured) result = captured.Encode();
-            if(result.Data.Length > 16 * 1024 * 1024) throw new InvalidOperationException("Observation exceeds the 16 MiB sample limit.");
+            if(result.Data.Length > PreviewImageSize.MaximumEncodedBytes) throw new InvalidOperationException("Observation exceeds the 64 MiB sample limit.");
         }
         catch(Exception exception) { result = null; error = exception.GetBaseException().Message; }
         Publish(target, receivers, location, capturedAt, result, error);

@@ -1,9 +1,17 @@
+export function sharedCapturePoint(configuration) {
+  const point=configuration?.registers?.[0];
+  if(!configuration?.enabled || !point?.program || !Number.isInteger(point.index) || point.phase !== 'after' ||
+    !configuration.registers.every(item=>item.program === point.program && item.index === point.index && item.phase === point.phase)) return null;
+  return {program:point.program,index:point.index,phase:point.phase};
+}
+
 export class ObservationView {
   constructor({api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId}) {
     Object.assign(this,{api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId});
     this.camera = ''; this.cameraRevision = 0; this.snapshot = null; this.updating = false; this.polling = false;
     this.after = {}; this.frames = new Map(); this.urls = new Map(); this.variables = new Map(); this.tiles = new Map();
     this.catalogs = new Map(); this.capturePoints = new Map(); this.catalogVersion = 0;
+    this.configurationRevision = 0;
     this.gallery = document.querySelector('#watch-gallery');
     this.enabled = document.querySelector('#watch-enabled');
     this.frequency = document.querySelector('#watch-fps');
@@ -102,7 +110,7 @@ export class ObservationView {
       const initial=this.bootstrap?.camera === camera ? this.bootstrap.configuration:snapshot.configuration;
       const savedPoint=this.read(`capturePoint.${this.viewerId}.${camera}`,'');
       let point=null;
-      try { point=savedPoint ? JSON.parse(savedPoint):initial?.registers.findLast(item=>item.program); } catch { }
+      try { point=sharedCapturePoint(initial) ?? (savedPoint ? JSON.parse(savedPoint):initial?.registers.findLast(item=>item.program)); } catch { }
       point=point?.program && Number.isInteger(point.index) ? {program:point.program,index:point.index,phase:'after'}:null;
       this.capturePoints.set(camera,point);
       this.save(`capturePoint.${this.viewerId}.${camera}`,JSON.stringify(point));
@@ -110,7 +118,7 @@ export class ObservationView {
         const frequency = Number(this.read('watchFps','3')), size = Number(this.read('watchSize','640'));
         // A fresh session has no observations yet; the first selection applies the viewer's saved defaults.
         if(Number.isFinite(frequency) && frequency >= 0.2 && frequency <= 15) snapshot.configuration.framesPerSecond = frequency;
-        if([320,640,1000,1600,2000].includes(size)) snapshot.configuration.maxEdge = size;
+        if(size === 0 || Number.isInteger(size) && size >= 100 && size <= 8192) snapshot.configuration.maxEdge = size;
       }
       if(snapshot.generation === 0 && this.bootstrap?.camera === camera && this.bootstrap.configuration?.registers?.length) {
         this.snapshot = snapshot;
@@ -133,6 +141,7 @@ export class ObservationView {
   async configure(configuration) {
     if(!this.camera) return;
     const camera = this.camera, cameraRevision = this.cameraRevision;
+    this.configurationRevision++;
     this.pendingConfiguration = configuration;
     if(this.updating) { this.queuedConfiguration = configuration; this.render(); this.onChange(); return; }
     this.updating = true; this.render(); this.onChange();
@@ -156,6 +165,11 @@ export class ObservationView {
 
   accept(snapshot) {
     if(this.snapshot && snapshot.generation < this.snapshot.generation) return;
+    const point=sharedCapturePoint(snapshot.configuration);
+    if(point) {
+      this.capturePoints.set(this.camera,point);
+      this.save(`capturePoint.${this.viewerId}.${this.camera}`,JSON.stringify(point));
+    }
     if(snapshot.variables) this.variables.set(this.camera,snapshot.variables);
     if(this.snapshot?.generation !== snapshot.generation) {
       this.after = {}; this.frames.clear();
@@ -180,8 +194,14 @@ export class ObservationView {
       let tile = this.tiles.get(selection.key);
       if(!tile) {
         tile = document.createElement('figure'); tile.className = 'watch-tile'; tile.dataset.watchKey = selection.key; tile.dataset.format = selection.format;
-        tile.innerHTML = `<figcaption><span class="watch-title" data-tooltip="${this.esc(selection.key)}">${this.esc(selection.key)}</span><button class="pane-action" data-tile-float aria-label="${this.esc(this.t('floatpanel'))}" data-tooltip="${this.esc(this.t('floatpanel'))}"><i class="ti ti-maximize" aria-hidden="true"></i></button><button class="pane-action" data-tile-popup aria-label="${this.esc(this.t('newviewer'))}" data-tooltip="${this.esc(this.t('newviewer'))}"><i class="ti ti-external-link" aria-hidden="true"></i></button></figcaption><div class="watch-location mono"></div><div class="watch-content">${selection.format === 'png' ? '<a target="_blank" rel="noopener" hidden><img alt=""></a><span class="watch-placeholder"></span>':'<pre></pre>'}</div><div class="watch-counts"></div>`;
+        tile.innerHTML = `<figcaption><span class="watch-title" data-tooltip="${this.esc(selection.key)}">${this.esc(selection.key)}</span><button class="pane-action" data-tile-native aria-pressed="false" aria-label="${this.esc(this.t('nativeview'))}" data-tooltip="${this.esc(this.t('nativeviewtip'))}">1:1</button><button class="pane-action" data-tile-float aria-label="${this.esc(this.t('floatpanel'))}" data-tooltip="${this.esc(this.t('floatpanel'))}"><i class="ti ti-maximize" aria-hidden="true"></i></button><button class="pane-action" data-tile-popup aria-label="${this.esc(this.t('newviewer'))}" data-tooltip="${this.esc(this.t('newviewer'))}"><i class="ti ti-external-link" aria-hidden="true"></i></button></figcaption><div class="watch-location mono"></div><div class="watch-content">${selection.format === 'png' ? '<a target="_blank" rel="noopener" hidden><img alt=""></a><span class="watch-placeholder"></span>':'<pre></pre>'}</div><div class="watch-counts"></div>`;
         const created = tile;
+        created.dataset.native=this.read(`nativeView.${this.viewerId}.${selection.key}`,'false');
+        tile.querySelector('[data-tile-native]').onclick = () => {
+          created.dataset.native=String(created.dataset.native !== 'true');
+          this.save(`nativeView.${this.viewerId}.${selection.key}`,created.dataset.native);
+          this.render();
+        };
         tile.querySelector('[data-tile-float]').onclick = () => this.onFloat(selection.key,created);
         tile.querySelector('[data-tile-popup]').onclick = () => this.onPopup(selection.key);
         this.tiles.set(selection.key,tile);
@@ -189,6 +209,12 @@ export class ObservationView {
         this.onTile(selection.key,tile);
       }
       tile.dataset.watchOrder = configuration.registers.indexOf(selection);
+      tile.querySelector('[data-tile-native]').hidden=selection.format !== 'png';
+      tile.querySelector('[data-tile-native]').setAttribute('aria-pressed',tile.dataset.native === 'true');
+      for(const control of document.querySelectorAll('[data-workspace-action=nativeview]')) if(control.dataset.panelId === `watch:${selection.key}`) {
+        control.hidden=selection.format !== 'png'; control.setAttribute('aria-pressed',tile.dataset.native === 'true');
+        control.dataset.tooltip=this.t('nativeviewtip');
+      }
       if(tile.dataset.generation !== String(this.snapshot?.generation) || tile.dataset.format !== selection.format) {
         tile.dataset.generation=String(this.snapshot?.generation); tile.dataset.format=selection.format;
         tile.querySelector('.watch-content').innerHTML=selection.format === 'png' ? '<a target="_blank" rel="noopener" hidden><img alt=""></a><span class="watch-placeholder"></span>':'<pre></pre>';
@@ -203,7 +229,7 @@ export class ObservationView {
       detail.dataset.tooltip = frame?.error ?? (location ? `${this.camera} · ${location.program} [${location.index}] ${this.t(location.phase)}${frame ? ` · ${this.t('run')} ${location.runId} · ${new Date(frame.capturedAt).toLocaleTimeString()}`:''}\n${this.t(configuration.enabled ? 'watch':'watchoff')}` : this.t('watchtip'));
       const placeholder = tile.querySelector('.watch-placeholder');
       if(placeholder) { placeholder.hidden = Boolean(frame?.available); placeholder.textContent = this.t(!this.capturePoint ? 'watchchoosepoint':missing ? 'watchmissing':configuration.enabled ? 'watchwaiting':'watchoff'); }
-      tile.querySelector('.watch-counts').textContent = `${this.t('watchreceived')} ${item?.captured ?? 0} · ${this.t('watchskipped')} ${item?.skipped ?? 0}`;
+      tile.querySelector('.watch-counts').textContent = `${frame?.width ? `${frame.width}×${frame.height} · `:''}${this.t('watchreceived')} ${item?.captured ?? 0} · ${this.t('watchskipped')} ${item?.skipped ?? 0}`;
       tile.querySelector('.watch-counts').dataset.tooltip = `${tile.querySelector('.watch-counts').textContent}\n${this.t('watchcountertip')}`;
     }
     this.gallery.hidden = keys.size === 0;
@@ -215,10 +241,14 @@ export class ObservationView {
     if(this.polling || this.updating || !this.camera || !this.snapshot || !this.configuration.enabled || !this.selected.length || document.hidden || document.querySelector('#shell').dataset.page !== 'camera') return;
     this.polling = true;
     const camera = this.camera, generation = this.snapshot.generation;
+    const cameraRevision=this.cameraRevision, configurationRevision=this.configurationRevision;
+    const current=()=>cameraRevision === this.cameraRevision && configurationRevision === this.configurationRevision &&
+      camera === this.camera && generation === this.snapshot?.generation && !this.updating;
     try {
       const snapshot = await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/watch/poll`,{method:'POST',body:JSON.stringify({generation,after:this.after})})).json();
-      if(camera !== this.camera || this.updating || generation !== this.snapshot?.generation) return;
+      if(!current()) return;
       this.accept(snapshot);
+      if(!current()) return;
       for(const item of snapshot.items) {
         const frame = item.frame;
         if(!frame || frame.sequence <= (this.after[item.target.key] ?? 0)) continue;
@@ -230,18 +260,20 @@ export class ObservationView {
           const image = tile.querySelector('img'), link = tile.querySelector('a');
           try {
             image.src = url; await image.decode();
-            if(camera !== this.camera || snapshot.generation !== this.snapshot?.generation) { URL.revokeObjectURL(url); return; }
+            if(!current()) { URL.revokeObjectURL(url); return; }
             const previous = this.urls.get(item.target.key); if(previous) URL.revokeObjectURL(previous);
             this.urls.set(item.target.key,url); link.href = url; link.hidden = false;
             image.alt = `${camera} · ${item.target.key} · ${this.t('run')} ${frame.location.runId}`;
-          } catch(error) { URL.revokeObjectURL(url); frame.error = error.message; }
+            frame.width=image.naturalWidth; frame.height=image.naturalHeight;
+          } catch(error) { URL.revokeObjectURL(url); if(!current()) return; frame.error = error.message; }
         } else if(frame.data && frame.contentType === 'application/json') {
           tile.querySelector('pre').textContent = new TextDecoder().decode(Uint8Array.from(atob(frame.data),character => character.charCodeAt(0)));
         }
+        if(!current()) return;
         this.frames.set(item.target.key,{...frame,data:undefined,available:Boolean(frame.data) && !frame.error}); this.after[item.target.key] = frame.sequence;
       }
       this.render();
-    } catch(error) { if(camera === this.camera) this.onError(error); }
+    } catch(error) { if(current()) this.onError(error); }
     finally { this.polling = false; }
   }
 

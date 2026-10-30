@@ -35,6 +35,8 @@ app.Use(async (context, next) =>
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapGet("/api/status", (DebugRuntime runtime) => runtime.Snapshot());
+app.MapGet("/api/batches", (DebugRuntime runtime) => runtime.Batches.Snapshot());
+app.MapPost("/api/batches/poll", (DebugRuntime runtime) => runtime.Batches.Snapshot(renew: true));
 app.MapPost("/api/start", async (DebugRuntime runtime) => { await runtime.StartAsync(); return Results.Accepted(); });
 app.MapPost("/api/stop", async (DebugRuntime runtime) => { await runtime.StopAsync(); return Results.Ok(); });
 app.MapGet("/api/cameras/{id}/instructions", (string id, DebugRuntime runtime) => runtime.Session(id).Instructions);

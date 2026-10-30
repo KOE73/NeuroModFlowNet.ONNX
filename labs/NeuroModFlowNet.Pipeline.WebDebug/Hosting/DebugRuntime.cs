@@ -15,6 +15,7 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
 {
     readonly object syncRoot = new();
     readonly SemaphoreSlim lifecycle = new(1, 1);
+    public BatchDiagnostics Batches { get; } = new();
     readonly Dictionary<string, (CameraWorker Worker, CameraDebugSession Session, CameraConfig Config)> cameras = new(StringComparer.Ordinal);
     CancellationTokenSource? stop;
     Task? execution;
@@ -120,7 +121,8 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
                 FfmpegRuntime.Initialize(libraries);
             }
             CameraConfig[] enabled = config.EnabledCameras.ToArray();
-            endpoints = SharedInferenceEndpoints.Create(config, enabled);
+            Batches.Reset();
+            endpoints = SharedInferenceEndpoints.Create(config, enabled, Batches);
             lock(syncRoot) { cameras.Clear(); backend = config.Backend.ToString(); }
             foreach(CameraConfig camera in enabled)
             {

@@ -52,6 +52,14 @@ The default loopback endpoint can be forwarded over an existing SSH/VPN connecti
 
 ## HTTP API
 
+### Shared inference batches
+
+`#batches` opens a separate shared-service overview: actual backend and batching policy, observed prepared/completed counters, last request/tensor counts and processing time. Select a service row for two charts and its execution history. Each bar is an observed batch in assembly order, not a uniform time interval. The request limit and queue capacity are configured limits, not current queue depth. One VM request can already contain a complete ROI tensor batch; the input's first dimension includes upstream padding and must not be presented as an actual object count or useful-slot percentage.
+
+Collection is opt-in through the visible page's checkbox and a five-second lease, renewed once per second. Leaving the page, hiding/closing the tab or unchecking stops renewal; any other active observer may still renew the shared lease. At most 256 samples per service are retained in a ring; cumulative counters cover observed periods until cameras restart. GET reads never renew collection. An admitted batch can finish recording after its lease expires. The ordinary MultiCamera host creates no decorators; the debugger's inactive wrappers forward directly without metadata capture or GPU work.
+
+The optional factory decorators live only in the MultiCamera/WebDebug labs. The existing input assembler retains tensor ownership and assembly semantics. A sample is admitted only after successful assembly; result decoder return confirms completion. Processing time spans assembly through decoding, excluding queue wait and lazy session creation. A failure before decoding remains unconfirmed, then becomes incomplete when the endpoint next assembles or disposes; decoder failures are recorded as such and rethrown unchanged. No scheduler, VM, model or core ONNX interfaces are changed. Per-camera contribution identities, actual padding occupancy and live queue depth are not exposed by these existing component boundaries.
+
 ### Dockview workspace and independent windows
 
 The root URL and `#overview` open the initial camera overview with aggregate statistics and host start/stop controls. A camera row or sidebar entry opens `#<camera-id>` with only that camera's debug toolbar and Dockview workspace. Browser back/forward and direct camera links are supported; switching to the overview preserves the workspace layout and stops renewing the hidden main viewer's observation lease. Autonomous viewers retain their own leases. Sidebar camera icons show the current debug state (green play, amber pause, red error) with a translated tooltip; selecting the icon opens the camera without issuing a VM command.
@@ -71,6 +79,8 @@ All mutation requests require `X-VM-Debug: 1`. Remote bindings additionally requ
 | Method | Route | Body / result |
 |---|---|---|
 | GET | `/api/status` | Host state, cameras, statistics and debug snapshots |
+| GET | `/api/batches` | Shared-service configuration, bounded batch history and observed-period counters; does not enable collection |
+| POST | `/api/batches/poll` | Renew a five-second metadata collection lease and return the same snapshot |
 | POST | `/api/start` | Start a separate debug run; 202 |
 | POST | `/api/stop` | Stop the debug run and release resources |
 | GET | `/api/cameras/{id}/instructions` | Program name, local instruction index, operation and register dependencies |
@@ -91,7 +101,11 @@ Shell resources, palettes, local Tabler icons and tooltip behavior were copied f
 
 Dockview Core 8.2.0 is vendored locally under `wwwroot/vendor/dockview` with its MIT license. It is the same dependency version already used by the local SeMaps editor. No CDN, frontend framework or bundler is required; the workspace adapter is isolated in `workspace.js`/`workspace.css`.
 
-## Verified 2026-10-29
+## Verified 2026-10-30
+
+- Complete solution builds; all 39 debugger tests and three Node register-table tests pass. New tests cover lease expiry, bounded history, tensor/request count separation, completion after expiry and preservation of decoder failures/results.
+- The new batch page was checked against the actual two-camera host: four TensorRT services, one request per batch, detector inputs of one row, text detection inputs of four rows and recognition inputs of sixteen rows. Both cameras continue running without VM failures. These are tensor sizes, not actual ROI counts.
+- History remains at 256 samples after thousands of observations. Disabling collection expires the lease and freezes counters while camera frame counters continue increasing. Overview/camera/batch navigation retains the camera workspace. Checkbox and collection-state changes keep table/chart/panel geometry unchanged.
 
 - Complete solution builds, including samples, both Avalonia labs and all test projects. Existing unrelated warnings remain.
 - Dockview changes: all 35 debugger tests pass, including capture sharing and independent/slow viewers; three Node tests cover register sorting and provider classification. Browser checks cover header drag/split, persisted layout after reload, reset, individual floating images, isolated window settings and continued samples after the opener closes. Physical transfer to a second monitor has not been exercised.

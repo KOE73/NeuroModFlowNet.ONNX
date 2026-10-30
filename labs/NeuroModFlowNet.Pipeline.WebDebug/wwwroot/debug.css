@@ -1,6 +1,6 @@
 .shell-content { overflow:hidden; }
-.lu-shell[data-page=overview] :is(.debug-toolbar,.debug-columns,#panels-menu) { display:none; }
-.lu-shell[data-page=camera] :is(.page-header,.cameras-panel) { display:none; }
+.lu-shell:not([data-page=camera]) :is(.debug-toolbar,.debug-columns,#panels-menu) { display:none; }
+.lu-shell:not([data-page=overview]) .workspace-page>:is(.page-header,.cameras-panel) { display:none; }
 .lu-shell[data-page=overview] .cameras-panel { max-height:none; min-height:0; flex:0 1 auto; }
 .camera-state { display:inline-flex; justify-content:center; width:20px; flex:0 0 20px; }
 .camera-state[data-state=running],.camera-state[data-state=detached] { color:var(--lu-success); }

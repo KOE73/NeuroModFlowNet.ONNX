@@ -137,7 +137,7 @@ export class ObservationView {
   }
 
   async poll() {
-    if(this.polling || this.updating || !this.camera || !this.snapshot || !this.configuration.enabled || !this.selected.length || document.hidden || document.querySelector('#shell').dataset.page === 'overview') return;
+    if(this.polling || this.updating || !this.camera || !this.snapshot || !this.configuration.enabled || !this.selected.length || document.hidden || document.querySelector('#shell').dataset.page !== 'camera') return;
     this.polling = true;
     const camera = this.camera, generation = this.snapshot.generation;
     try {

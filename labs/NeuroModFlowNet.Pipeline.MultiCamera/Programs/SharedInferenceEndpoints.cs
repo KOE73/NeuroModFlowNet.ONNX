@@ -38,7 +38,8 @@ internal sealed class SharedInferenceEndpoints : IAsyncDisposable
 
     public OrtValueBatchedInferenceEndpoint<YoloObb> GetObbDetector(string modelPath) => obbDetectors[modelPath];
 
-    public static SharedInferenceEndpoints Create(MultiCameraConfig config, IReadOnlyList<CameraConfig> cameras)
+    public static SharedInferenceEndpoints Create(MultiCameraConfig config, IReadOnlyList<CameraConfig> cameras,
+        ISharedInferenceEndpointDiagnostics? diagnostics = null)
     {
         ArgumentNullException.ThrowIfNull(config);
 
@@ -63,9 +64,9 @@ internal sealed class SharedInferenceEndpoints : IAsyncDisposable
                     group.Key,
                     detectorBackend,
                     options,
-                    new SingleOrtValueBatchInputAssembler(),
+                    ObserveInput(name, group.Key, detectorBackend, options, new SingleOrtValueBatchInputAssembler()),
                     new YoloNmsOutputShapeResolver(defaultItemCount: detector.MaxItemCount, fieldCount: 6),
-                    new YoloBoxOrtValueOutputDecoder(detector.ScoreThreshold));
+                    ObserveOutput<YoloBox>(name, new YoloBoxOrtValueOutputDecoder(detector.ScoreThreshold)));
             }
             else
             {
@@ -74,9 +75,9 @@ internal sealed class SharedInferenceEndpoints : IAsyncDisposable
                     group.Key,
                     detectorBackend,
                     options,
-                    new SingleOrtValueBatchInputAssembler(),
+                    ObserveInput(name, group.Key, detectorBackend, options, new SingleOrtValueBatchInputAssembler()),
                     new YoloNmsOutputShapeResolver(defaultItemCount: detector.MaxItemCount, fieldCount: 7),
-                    new YoloObbOrtValueOutputDecoder(detector.ScoreThreshold));
+                    ObserveOutput<YoloObb>(name, new YoloObbOrtValueOutputDecoder(detector.ScoreThreshold)));
             }
         }
 
@@ -87,31 +88,34 @@ internal sealed class SharedInferenceEndpoints : IAsyncDisposable
 
         // One request = one crop batch [maxCrops, 3, S, S] that already matches the fixed model batch, so requests are
         // not merged (MaxBatchSize 1); the request assembler forwards the batch and reports its row count to the decoder.
+        var ocrOptions = new OnnxBatchedResourceOptions(
+            MaxBatchSize: 1, MaxWaitTime: TimeSpan.Zero, MaxPendingRequests: Math.Max(8, cameras.Count * 4));
         var textEndpoint = new OrtValueBatchedInferenceEndpoint<CropTextRegion>(
             name: "multicamera.text.obb.crops",
             modelPath: ocr.TextObbModelPath!,
             executionBackend: config.Backend,
-            options: new OnnxBatchedResourceOptions(
-                MaxBatchSize: 1,
-                MaxWaitTime: TimeSpan.Zero,
-                MaxPendingRequests: Math.Max(8, cameras.Count * 4)),
-            batchInputAssembler: new ConcatOrtValueRequestBatchInputAssembler(),
+            options: ocrOptions,
+            batchInputAssembler: ObserveInput("multicamera.text.obb.crops", ocr.TextObbModelPath!, config.Backend, ocrOptions, new ConcatOrtValueRequestBatchInputAssembler()),
             outputShapeResolver: new YoloNmsOutputShapeResolver(defaultItemCount: 300, fieldCount: 7),
-            outputDecoder: new CropTextObbOutputDecoder(ocr.ScoreThreshold));
+            outputDecoder: ObserveOutput<CropTextRegion>("multicamera.text.obb.crops", new CropTextObbOutputDecoder(ocr.ScoreThreshold)));
 
         var recognitionEndpoint = new OrtValueBatchedInferenceEndpoint<PaddleOCRRecExtractor.OcrResult>(
             name: "multicamera.paddle.rec",
             modelPath: ocr.RecognitionModelPath!,
             executionBackend: ocr.RecognitionBackend,
-            options: new OnnxBatchedResourceOptions(
-                MaxBatchSize: 1,
-                MaxWaitTime: TimeSpan.Zero,
-                MaxPendingRequests: Math.Max(8, cameras.Count * 4)),
-            batchInputAssembler: new ConcatOrtValueRequestBatchInputAssembler(),
+            options: ocrOptions,
+            batchInputAssembler: ObserveInput("multicamera.paddle.rec", ocr.RecognitionModelPath!, ocr.RecognitionBackend, ocrOptions, new ConcatOrtValueRequestBatchInputAssembler()),
             outputShapeResolver: new PaddleOCRRecOutputShapeResolver(ocr.RecognitionInputWidth),
-            outputDecoder: new PaddleOCRRecOrtValueOutputDecoder());
+            outputDecoder: ObserveOutput<PaddleOCRRecExtractor.OcrResult>("multicamera.paddle.rec", new PaddleOCRRecOrtValueOutputDecoder()));
 
         return new SharedInferenceEndpoints(boxDetectors, obbDetectors, textEndpoint, recognitionEndpoint);
+
+        IOrtValueBatchInputAssembler ObserveInput(string name, string path, InferenceBackend backend,
+            OnnxBatchedResourceOptions options, IOrtValueBatchInputAssembler assembler) =>
+            diagnostics?.ObserveInput(name, path, backend, options, assembler) ?? assembler;
+
+        IOrtValueBatchOutputDecoder<TOutput> ObserveOutput<TOutput>(string name, IOrtValueBatchOutputDecoder<TOutput> decoder) =>
+            diagnostics?.ObserveOutput(name, decoder) ?? decoder;
     }
 
     public async ValueTask DisposeAsync()

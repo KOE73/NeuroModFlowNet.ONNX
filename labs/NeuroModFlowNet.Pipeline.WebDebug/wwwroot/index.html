@@ -5,7 +5,7 @@
   <title>NeuroModFlowNet · VM Debug</title>
   <link rel="stylesheet" href="shell/icons/tabler-icons.css"><link rel="stylesheet" href="shell/themes.css">
   <link rel="stylesheet" href="shell/shell.css"><link rel="stylesheet" href="debug.css">
-  <link rel="stylesheet" href="vendor/dockview/dockview.css"><link rel="stylesheet" href="workspace.css"><link rel="stylesheet" href="theme-debug-extensions.css"><link rel="stylesheet" href="panel-schemes.css">
+  <link rel="stylesheet" href="vendor/dockview/dockview.css"><link rel="stylesheet" href="workspace.css"><link rel="stylesheet" href="theme-debug-extensions.css"><link rel="stylesheet" href="panel-schemes.css"><link rel="stylesheet" href="batches.css">
   <script type="module" src="debug.js"></script>
 </head>
 <body>
@@ -25,6 +25,7 @@
       <span class="nav-caption" data-i18n="sections"></span>
       <a href="#overview" class="active" id="overview-nav"><i class="ti ti-chart-bar" aria-hidden="true"></i><span data-i18n="overview"></span></a>
       <div class="nav-children" id="camera-nav"></div>
+      <a href="#batches" id="batches-nav"><i class="ti ti-apps" aria-hidden="true"></i><span data-i18n="batches"></span></a>
       <div class="settings-menu"><a href="#settings" id="settings-nav"><i class="ti ti-settings" aria-hidden="true"></i><span data-i18n="settings"></span></a></div>
     </nav></aside>
     <main class="shell-content workspace-page">
@@ -39,6 +40,13 @@
             <tbody id="cameras"></tbody>
           </table>
         </div>
+      </section>
+      <section id="batches-page" data-label="batches">
+        <div class="page-header"><h1 data-i18n="batches"></h1><div class="toolbar"><label><input id="batch-collect" type="checkbox" checked><span data-i18n="batchCollect"></span></label><span id="batch-state" class="muted"></span><button class="row-action" id="batch-help" data-label="batchHelp" data-tip="batchHelp">ⓘ</button></div></div>
+        <section class="panel batch-summary"><div class="pane-scroll" tabindex="0" data-label="batchServices"><table class="batch-services"><colgroup><col><col><col><col><col><col><col><col><col><col></colgroup><thead><tr><th data-i18n="batchModel"></th><th data-i18n="batchBackend"></th><th class="number" data-i18n="batchLimit" data-tip="batchLimitTip"></th><th class="number" data-i18n="batchWait"></th><th class="number" data-i18n="batchQueue" data-tip="batchQueueTip"></th><th class="number" data-i18n="batchPrepared" data-tip="batchPreparedTip"></th><th class="number" data-i18n="batchCompleted"></th><th class="number" data-i18n="batchRequests"></th><th class="number" data-i18n="batchInput" data-tip="batchRowsTip"></th><th class="number" data-i18n="batchDuration" data-tip="batchDurationTip"></th></tr></thead><tbody id="batch-services"></tbody></table></div></section>
+        <div class="batch-detail-heading"><strong id="batch-selected">—</strong><span class="muted" data-i18n="batchRecent"></span><select id="batch-window" data-label="batchWindow"><option>64</option><option>128</option><option>256</option></select></div>
+        <div class="batch-charts"><figure><figcaption data-i18n="batchRequestChart"></figcaption><div id="batch-request-chart"></div></figure><figure><figcaption data-i18n="batchRowChart"></figcaption><div id="batch-row-chart"></div></figure></div>
+        <section class="panel batch-history"><div class="panel-header"><h2 data-i18n="batchHistory"></h2><span id="batch-history-count" class="muted"></span></div><div class="pane-scroll" tabindex="0" data-label="batchHistory"><table><thead><tr><th class="number">#</th><th data-i18n="batchTime"></th><th data-i18n="state"></th><th class="number" data-i18n="batchRequests"></th><th class="number" data-i18n="batchRows"></th><th data-i18n="batchSplit"></th><th class="number" data-i18n="batchAssembly"></th><th class="number" data-i18n="batchDuration" data-tip="batchDurationTip"></th></tr></thead><tbody id="batch-history"></tbody></table></div></section>
       </section>
       <div class="debug-toolbar toolbar">
         <div class="debug-actions" role="group" data-label="debugcontrols">

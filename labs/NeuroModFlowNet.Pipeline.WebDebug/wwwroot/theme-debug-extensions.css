@@ -3,6 +3,7 @@
 .lu-shell[data-theme=dark],.lu-shell[data-theme=emerald] { --vm-memory-cuda:#91c936; }
 /* Panel outlines can be tuned without changing table and grid separators. */
 .lu-shell { --vm-panel-border-color:var(--lu-text-muted); }
+.lu-shell { --vm-batch-requests-color:var(--lu-info); --vm-batch-rows-color:var(--lu-success); }
 #registers tr[data-memory-kind=cuda] { --register-color:var(--vm-memory-cuda); }
 #registers tr[data-memory-kind=managed] { --register-color:var(--vm-memory-managed); }
 #registers tr[data-memory-kind=directml] { --register-color:var(--vm-memory-directml); }

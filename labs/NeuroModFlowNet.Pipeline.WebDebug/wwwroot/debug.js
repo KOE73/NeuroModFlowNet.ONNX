@@ -2,6 +2,7 @@ import './shell/ui-tooltip.js';
 import { ObservationView } from './observation.js';
 import { DebugWorkspace } from './workspace.js';
 import { memoryKind,sortRegisters } from './register-table.js';
+import { BatchView,batchWords } from './batches.js';
 
 const $ = selector => document.querySelector(selector);
 const shell = $('#shell');
@@ -32,6 +33,7 @@ let imageInfo = null, pinnedInfo = null;
 let lastError = '';
 let focusedActionKey = '';
 const words = {
+  ...batchWords,
   sections:['Разделы','Sections'], overview:['Обзор камер','Camera overview'], settings:['Настройки','Settings'],
   heading:['Виртуальные машины · камеры','Virtual machines · cameras'], start:['Запустить','Start'],stop:['Остановить всё','Stop all'],
   cameras:['Камеры','Cameras'],camera:['Камера','Camera'],state:['Состояние','State'],decoder:['Декодер','Decoder'],frames:['Кадры','Frames'],runms:['Прогон, мс','Run, ms'],tracks:['Треки','Tracks'],failures:['Ошибки','Errors'],text:['Распознанный текст','Recognized text'],
@@ -103,6 +105,7 @@ function showError(error) {
   lastError = message; updateDiagnostics();
 }
 function clearError() { lastError = ''; $('#message-announcement').textContent = ''; updateDiagnostics(); }
+const batches = new BatchView({api,t,esc,read,save,onError:showError,showDialog});
 async function api(path, options = {}) {
   if(/\/watch(?:\/poll)?$/.test(path)) path += `?viewer=${encodeURIComponent(viewerId)}`;
   const headers = { 'X-VM-Debug':'1', ...(token ? {Authorization:`Bearer ${token}`} : {}), ...options.headers };
@@ -134,7 +137,7 @@ function translate() {
   document.querySelectorAll('[data-i18n]').forEach(element => element.textContent = t(element.dataset.i18n));
   document.querySelectorAll('[data-label]').forEach(element => element.setAttribute('aria-label',t(element.dataset.label)));
   document.querySelectorAll('[data-tip]').forEach(element => element.dataset.tooltip = t(element.dataset.tip));
-  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); observation.render(); workspace?.translate(); lastRender = ''; renderSelected();
+  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); observation.render(); workspace?.translate(); batches.render(); lastRender = ''; renderSelected();
 }
 
 function showDialog(title, html) {
@@ -183,6 +186,7 @@ async function selectCamera(id) {
 }
 function selectRows() {
   $('#overview-nav').classList.toggle('active',shell.dataset.page === 'overview');
+  $('#batches-nav').classList.toggle('active',shell.dataset.page === 'batches');
   document.querySelectorAll('[data-camera]').forEach(element => {
     element.classList.toggle(element.tagName === 'A' ? 'active':'selected',element.dataset.camera === selectedCamera && (element.tagName !== 'A' || shell.dataset.page === 'camera'));
   });
@@ -208,16 +212,18 @@ function renderCameras(data) {
 }
 
 function showPage(overview) {
-  const page=overview ? 'overview':'camera';
+  const page=overview === 'batches' ? 'batches' : overview ? 'overview':'camera';
   if(shell.dataset.page !== page) {
     shell.dataset.page=page;
-    if(!overview && workspace) workspace.dock.layout(workspace.host.clientWidth,workspace.host.clientHeight,true);
+    if(page === 'camera' && workspace) workspace.dock.layout(workspace.host.clientWidth,workspace.host.clientHeight,true);
+    if(page === 'batches') batches.poll();
   }
   selectRows();
 }
 async function route() {
   if(viewerMode) return;
   let id; try { id=decodeURIComponent(location.hash.slice(1)) || parameters.get('camera'); } catch { id=''; }
+  if(id === 'batches') { showPage('batches'); return; }
   if(!id || !current?.cameras.some(camera=>camera.id === id)) { showPage(true); return; }
   if(id !== selectedCamera || !workspace || (!catalog.length && selectingCamera !== id)) await selectCamera(id);
   else showPage(false);

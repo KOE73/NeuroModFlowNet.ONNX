@@ -1,0 +1,38 @@
+      <div class="debug-toolbar toolbar">
+        <div class="debug-actions" role="group" data-label="debugcontrols">
+          <button class="debug-command" data-command="pause" data-label="pause" data-tip="pausetip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+          <button class="debug-command" data-command="continue" data-label="continue" data-tip="continuetip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 4v16l14-8z"/></svg></button>
+          <button class="debug-command" data-command="step" data-label="step" data-tip="steptip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h8a4 4 0 0 1 4 4v5m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="20" r="1.5" fill="currentColor"/></svg></button>
+          <button class="debug-command" data-command="next-frame" data-label="nextframe" data-tip="nextframetip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="m7 8 7 4-7 4zM16 8h2v8h-2z"/></svg></button>
+          <button class="debug-command" data-command="detach" data-label="detach" data-tip="detachtip"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3v5m6-5v5M4 8h10v3a5 5 0 0 1-10 0zM9 16v5m8-13 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <strong id="selected-target">—</strong><span id="stop-location" class="mono location">—</span>
+      </div>
+      <div class="debug-columns">
+        <section class="panel debug-pane instruction-pane">
+          <div class="panel-header"><h2 data-i18n="instructions"></h2><span id="instruction-count" class="muted"></span></div>
+          <div class="pane-scroll" tabindex="0" data-label="instructions"><table class="instruction-table"><colgroup><col class="breakpoint-column"><col class="action-column"><col class="pointer-column"><col class="index-column"><col class="instruction-label-column"><col><col class="capture-column"><col class="timing-column"></colgroup><thead><tr><th data-i18n="breakpoint"></th><th data-i18n="runtoshort" data-tip="runtotip"></th><th data-label="currentinstruction"></th><th class="number">#</th><th data-i18n="labels" data-tip="labelstip"></th><th data-i18n="instruction"></th><th class="capture-cell" data-i18n="captureshort" data-label="watchpoint" data-tip="watchpointtip"></th><th class="number" data-i18n="ms"></th></tr></thead><tbody id="instructions"></tbody></table></div>
+          <div id="instruction-io" class="pane-footer mono">—</div>
+        </section>
+        <div class="pane-divider" role="separator" aria-orientation="vertical" tabindex="0" data-divider="0" data-label="resizeinstructions" data-tip="resizetip"></div>
+        <section class="panel debug-pane register-pane">
+          <div class="panel-header"><h2 data-i18n="registers"></h2><span id="register-count" class="muted"></span><button id="register-help" class="row-action" data-label="registercataloghelp" data-tip="registermetadatatip">ⓘ</button></div>
+          <div class="pane-scroll" tabindex="0" data-label="registers"><table class="register-table"><colgroup><col class="register-creator-column"><col class="register-order-column"><col><col class="action-column"><col class="action-column"><col class="memory-column"><col class="shape-column"></colgroup><thead><tr><th class="number register-creator" data-i18n="creatorShort" data-label="creator" data-tip="creatorTip"></th><th data-sort="additionOrder" aria-sort="none"><button class="sort-header" data-sort="additionOrder" data-label="additionOrderLabel" data-tip="additionOrderTip"><span data-i18n="additionOrder"></span><span class="sort-indicator" aria-hidden="true"></span></button></th><th data-sort="key" aria-sort="ascending"><button class="sort-header" data-sort="key"><span data-i18n="register"></span><span class="sort-indicator" aria-hidden="true"></span></button></th><th data-label="watch" data-tip="watchtip" class="register-watch-cell"><i class="ti ti-refresh" aria-hidden="true"></i></th><th data-label="registerview" data-tip="registerviewtip" class="register-action-cell"><i class="ti ti-eye" aria-hidden="true"></i></th><th data-sort="memory" aria-sort="none"><button class="sort-header" data-sort="memory"><span data-i18n="memory"></span><span class="sort-indicator" aria-hidden="true"></span></button></th><th data-sort="shape" aria-sort="none"><button class="sort-header" data-sort="shape"><span data-i18n="shape"></span><span class="sort-indicator" aria-hidden="true"></span></button></th></tr></thead><tbody id="registers"></tbody></table></div>
+        </section>
+        <div class="pane-divider" role="separator" aria-orientation="vertical" tabindex="0" data-divider="1" data-label="resizeregisters" data-tip="resizetip"></div>
+        <section class="panel debug-pane preview-pane">
+          <div class="panel-header"><h2 data-i18n="image"></h2><button id="pin" data-i18n="pin" data-tip="pintip" disabled></button><button id="live" data-i18n="resultframe" data-tip="resultpreviewtip"></button></div>
+          <div class="watch-toolbar">
+            <label><input type="checkbox" id="watch-enabled"><span data-i18n="watch"></span></label>
+            <label data-tip="watchfpstip">FPS <input id="watch-fps" type="number" min="0.2" max="15" step="0.2" value="3" data-label="watchfps"></label>
+            <label data-tip="watchsizetip">px <select id="watch-size" data-label="watchsize"><option>320</option><option>640</option><option>1000</option><option>1600</option><option>2000</option><option>3840</option><option value="0" data-i18n="originalsize"></option></select></label>
+          </div>
+          <div class="pane-scroll image-scroll" tabindex="0" data-label="image">
+            <div id="watch-gallery">
+            <figure id="pinned-figure" hidden><figcaption id="pinned-caption"></figcaption><img id="pinned-image" alt=""></figure>
+            <figure id="preview-figure" hidden><figcaption id="preview-caption"></figcaption><a id="image-link" target="_blank" rel="noopener"><img id="preview-image" alt=""></a></figure>
+            <p class="empty muted" id="image-empty" data-i18n="imageempty"></p>
+            <figure id="value-figure" hidden><figcaption></figcaption><pre id="value-output"></pre></figure></div>
+          </div>
+        </section>
+      </div>

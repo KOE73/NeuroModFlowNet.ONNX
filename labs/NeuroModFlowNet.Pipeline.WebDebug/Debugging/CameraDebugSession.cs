@@ -5,7 +5,7 @@ namespace NeuroModFlowNet.Pipeline.WebDebug;
 ///
 /// RU: Последовательный шлюз паузы одной камеры. Только остановленная задача VM читает живые регистры.
 /// </summary>
-internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspector inspector) : IDisposable
+internal sealed class CameraDebugSession(string targetId, PausedRegisterInspector inspector, string? warmupSource = null, DebugPreviewRegisters? previewRegisters = null) : IDisposable
 {
     readonly object syncRoot = new();
     readonly SemaphoreSlim wake = new(0);
@@ -13,7 +13,6 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     readonly HashSet<DebugBreakpoint> breakpoints = [];
     readonly Dictionary<(string Program, int Index), DebugTiming> timings = [];
     readonly List<DebugInstruction> instructions = [];
-    readonly string warmupSource = cameraId + "_warmup";
     string state = "waiting";
     string? error;
     long revision = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000;
@@ -30,9 +29,12 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
     DebugLocation? knownLocation;
     public RegisterObservation Observation { get; } = new(inspector.CaptureAsync);
     public FramePreviewDemand Preview { get; } = new();
+    public RegisterVideo Video { get; } = new();
     public RegisterCatalog Registers { get; } = new((context, key) => inspector.Describe(context, key, includeValue: false));
 
-    public string CameraId { get; } = cameraId;
+    public string TargetId { get; } = targetId;
+
+    public bool IsWarmup(VmRunContext context) => warmupSource is not null && context.Identity.SourceId == warmupSource;
 
     #region Program and snapshots
 
@@ -41,19 +43,16 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
         string name = program.Name ?? "program";
         lock(syncRoot)
         {
-            instructions.AddRange(program.Instructions.Select((instruction, index) => new DebugInstruction(
-                name, index, instruction.Descriptor.Name, instruction.Descriptor.Operation,
-                instruction.Descriptor.Reads.Select(item => item.Key).ToArray(),
-                instruction.Descriptor.Writes.Select(item => item.Key).ToArray())));
+            instructions.AddRange(DebugInstructionCatalog.Describe(program, name));
             foreach(DebugInstruction instruction in instructions.Where(instruction => instruction.Program == name)) Registers.Register(instruction);
         }
         return new VmProgram(program.Instructions.Select((instruction, index) =>
         {
-            if(instruction.Descriptor.Writes.Any(write => write.Key == "image.preview.tensor"))
-                instruction = new DemandPreviewOp(instruction, context => context.Identity.SourceId != warmupSource &&
-                    Preview.ShouldPrepare(Observation.NeedsPreviewCapture(name, index)));
-            else if(instruction.Descriptor.Writes.Any(write => write.Key == "image.preview"))
-                instruction = new DemandPreviewOp(instruction, context => context.Contains("image.preview.tensor"));
+            if(previewRegisters is not null && instruction.Descriptor.Writes.Any(write => write.Key == previewRegisters.Prepared))
+                instruction = new DemandPreviewOp(instruction, context => !IsWarmup(context) &&
+                    Preview.ShouldPrepare(Observation.NeedsPreviewCapture(name, index, previewRegisters)));
+            else if(previewRegisters is not null && instruction.Descriptor.Writes.Any(write => write.Key == previewRegisters.Published))
+                instruction = new DemandPreviewOp(instruction, context => context.Contains(previewRegisters.Prepared));
             return instruction is IHasExecutionDevice
                 ? (IOp)new DebugDeviceOp(instruction, this, name, index)
                 : new DebugOp(instruction, this, name, index);
@@ -209,7 +208,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
                     throw new ArgumentException("The register has not been observed at the selected boundary.");
                 DebugVariable variable = knownVariables.FirstOrDefault(variable => variable.Key == selection.Key)
                     ?? throw new ArgumentException("Select a register available at the last pause.");
-                if(selection.Format == "png" ? !variable.CanPreviewImage : selection.Format != "json" || !variable.CanInspectValue)
+                if(selection.Format is "png" or "h264" ? !variable.CanPreviewImage : selection.Format != "json" || !variable.CanInspectValue)
                     throw new ArgumentException("The selected register does not support this observation format.");
                 int stopIndex = instructions.FindIndex(instruction => instruction.Program == knownLocation?.Program && instruction.Index == knownLocation.Index);
                 int executed = stopIndex + (knownLocation?.Phase == "after" ? 1 : 0);
@@ -370,6 +369,7 @@ internal sealed class CameraDebugSession(string cameraId, PausedRegisterInspecto
         }
         Observation.Dispose();
         Preview.Dispose();
+        Video.Dispose();
     }
 
     sealed record InspectionWork(DebugInspectionRequest Request, TaskCompletionSource<DebugInspectionResult> Completion, CancellationToken CancellationToken);

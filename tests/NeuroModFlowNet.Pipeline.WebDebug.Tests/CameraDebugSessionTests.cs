@@ -116,7 +116,7 @@ public sealed class CameraDebugSessionTests
     public async Task PausingOneCameraDoesNotStopAnotherController()
     {
         using var firstSession = CreateSession();
-        using var secondSession = new CameraDebugSession("second", new PausedRegisterInspector(InferenceBackend.Cpu, Nv12ColorMatrix.Bt601Full));
+        using var secondSession = new CameraDebugSession("second", new PausedRegisterInspector(InferenceBackend.Cpu));
         var firstOperation = new CounterOp("first");
         var secondOperation = new CounterOp("second");
         VmProgram firstProgram = firstSession.Decorate(new([firstOperation], new Dictionary<string,int>(), "common"));
@@ -153,11 +153,34 @@ public sealed class CameraDebugSessionTests
         await execution;
     }
 
+    [Fact]
+    public void InstructionCatalogResolvesGuardsAndProgramLocalLabels()
+    {
+        using var session = CreateSession();
+        session.Decorate(new VmProgramBuilder("prepare")
+            .Step(new BranchIfInstruction("skip", "done", _ => true))
+            .Label("check")
+            .Step(new OpConditional(new CounterOp("work"), _ => false, "available"))
+            .Label("done")
+            .Build());
+        session.Decorate(new VmProgramBuilder("common")
+            .Label("done")
+            .Step(new BranchIfInstruction("again", "done", _ => false))
+            .Build());
+
+        DebugInstruction[] rows = session.Instructions;
+        Assert.Equal(new DebugJump("done", 2), Assert.Single(rows[0].Flow!.Jumps));
+        Assert.Equal("check", Assert.Single(rows[1].Labels!));
+        Assert.Equal("available", Assert.Single(rows[1].Flow!.Guards));
+        Assert.Equal("done", Assert.Single(rows[1].EndLabels!));
+        Assert.Equal(new DebugJump("done", 0), Assert.Single(rows[2].Flow!.Jumps));
+    }
+
     #endregion
 
     #region Fixtures
 
-    static CameraDebugSession CreateSession() => new("camera", new PausedRegisterInspector(InferenceBackend.Cpu, Nv12ColorMatrix.Bt601Full));
+    static CameraDebugSession CreateSession() => new("camera", new PausedRegisterInspector(InferenceBackend.Cpu), "camera_warmup");
     static VmRunContext Context(long runId) => new(new("camera",runId,DateTimeOffset.UtcNow),new VmGlobalMemory(),new VmSyncGateRegistry());
 
     static async Task WaitForAsync(Func<bool> condition)

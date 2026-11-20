@@ -11,6 +11,8 @@ public sealed record OpDescriptor(
     bool HasSideEffects = false,
     string? SyncGate = null)
 {
+    public OpControlFlow? ControlFlow { get; init; }
+
     public static OpDescriptor Create(
         string name,
         string operation,

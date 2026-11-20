@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {sortRegisters,memoryKind} from '../../labs/NeuroModFlowNet.Pipeline.WebDebug/wwwroot/register-table.js';
+import {sortRegisters,memoryKind} from '../../src/NeuroModFlowNet.Pipeline.Debugger.Web/wwwroot/register-table.js';
 test('register sorting is natural, reversible and does not mutate metadata',()=>{
   const rows=[{key:'image.10',memory:'Managed'},{key:'image.2',memory:'Cuda:0'}];
   assert.deepEqual(sortRegisters(rows,'key',1).map(row=>row.key),['image.2','image.10']);

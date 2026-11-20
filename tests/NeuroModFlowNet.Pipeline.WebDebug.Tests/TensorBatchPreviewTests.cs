@@ -91,6 +91,10 @@ public sealed class TensorBatchPreviewTests
         Assert.Equal(new Vec3b(128, 0, 255), image.At<Vec3b>(55, 420));
     }
 
-    static PausedRegisterInspector Inspector() => new(InferenceBackend.TensorRt, Nv12ColorMatrix.Bt601Full);
+    static PausedRegisterInspector Inspector() => new(InferenceBackend.TensorRt, new Dictionary<string, DebugImageFormat>
+    {
+        ["ocr.recInput"] = new("ocr.roiCount", SignedUnitRange: true),
+        ["ocr.crop.batch"] = new("ocr.crop.count")
+    });
     static VmRunContext Context() => new(new("camera", 1, DateTimeOffset.UtcNow), new VmGlobalMemory(), new VmSyncGateRegistry());
 }

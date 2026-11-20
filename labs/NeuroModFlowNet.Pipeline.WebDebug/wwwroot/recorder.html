@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>VM Debug · Наблюдение</title>
+  <link rel="stylesheet" href="shell/themes.css">
+  <link rel="stylesheet" href="shell/shell.css">
+  <link rel="stylesheet" href="recorder.css">
+  <script type="module" src="recorder.js"></script>
+</head>
+<body>
+<div class="lu-shell" data-theme="cream" data-density="nano">
+  <header class="shell-topbar"><strong class="shell-brand">VM Debug · Наблюдение</strong></header>
+  <div class="shell-body">
+    <main class="shell-content workspace-page recorder-observation">
+      <header class="page-header">
+        <div class="toolbar">
+          <label>Камера <select id="camera"></select></label>
+          <button id="sample" type="button" disabled>Снять следующий кадр</button>
+          <label><input id="continuous" type="checkbox" disabled> Наблюдать</label>
+        </div>
+        <output id="status" aria-live="polite"></output>
+      </header>
+      <div class="workspace-columns" id="observed-registers"></div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

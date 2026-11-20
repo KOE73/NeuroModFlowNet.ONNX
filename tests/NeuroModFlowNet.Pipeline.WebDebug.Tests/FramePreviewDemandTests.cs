@@ -14,7 +14,7 @@ public sealed class FramePreviewDemandTests
         using var context = Context("camera", 1);
         using OrtValue tensor = OrtValue.CreateTensorValueFromMemory(new byte[800 * 600 * 3], new long[] { 1, 600, 800, 3 });
         context.Set("image.preview.tensor", tensor);
-        var inspector = new PausedRegisterInspector(InferenceBackend.TensorRt, Nv12ColorMatrix.Bt601Full);
+        var inspector = new PausedRegisterInspector(InferenceBackend.TensorRt);
         using CapturedRegister captured = await inspector.CaptureAsync(context, new("image.preview.tensor", 0, "png", 640), TestContext.Current.CancellationToken);
         using Mat image = Cv2.ImDecode(captured.Encode().Data, ImreadModes.Color);
         Assert.Equal(640, image.Width); Assert.Equal(480, image.Height);
@@ -68,7 +68,8 @@ public sealed class FramePreviewDemandTests
     [Fact]
     public async Task IdlePreviewCommandsAndWarmupSkipTheirBodiesButRetainTheirProgramPositions()
     {
-        using var session = new CameraDebugSession("camera", new(InferenceBackend.Cpu, Nv12ColorMatrix.Bt601Full));
+        using var session = new CameraDebugSession("camera", new(InferenceBackend.Cpu), "camera_warmup",
+            new("image.preview.tensor", "image.preview"));
         var resize = new PreviewWrite("image.preview.tensor");
         var copy = new PreviewWrite("image.preview");
         VmProgram program = session.Decorate(new([resize, copy], new Dictionary<string, int>(), "common"));

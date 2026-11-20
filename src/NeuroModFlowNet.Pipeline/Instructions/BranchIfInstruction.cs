@@ -17,7 +17,10 @@ public sealed class BranchIfInstruction : OpBase
         string targetLabel,
         Func<VmRunContext, bool> condition,
         IReadOnlyList<VarRequirement>? reads = null)
-        : base(OpDescriptor.Create(name, "branch.if", reads, hasSideEffects: false))
+        : base(OpDescriptor.Create(name, "branch.if", reads, hasSideEffects: false) with
+        {
+            ControlFlow = new OpControlFlow { JumpLabels = [targetLabel] }
+        })
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(targetLabel);
         this.condition = condition ?? throw new ArgumentNullException(nameof(condition));

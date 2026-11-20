@@ -1,11 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {ObservationView,sharedCapturePoint} from '../../labs/NeuroModFlowNet.Pipeline.WebDebug/wwwroot/observation.js';
+import {ObservationView,sharedCapturePoint} from '../../src/NeuroModFlowNet.Pipeline.Debugger.Web/wwwroot/observation.js';
 
 function view() {
   const view=Object.create(ObservationView.prototype);
-  Object.assign(view,{camera:'camera',viewerId:'main',capturePoints:new Map(),saved:new Map(),
-    snapshot:{configuration:{enabled:true,framesPerSecond:3,maxEdge:640,registers:[
+  Object.assign(view,{targetId:'targetId',viewerId:'main',capturePoints:new Map(),saved:new Map(),
+    videos:new Map(),snapshot:{configuration:{enabled:true,framesPerSecond:3,maxEdge:640,registers:[
       {key:'image',format:'png',program:'prepare',index:0,phase:'before'},
       {key:'data',format:'json',program:'common',index:2,phase:'after'}]}}});
   view.save=(key,value)=>view.saved.set(key,value);
@@ -29,7 +29,7 @@ test('one checked instruction moves all selected registers to the same after bou
   await subject.setCapturePoint({program:'prepare',index:1},true);
   assert.equal(subject.configuration.enabled,true);
   assert.ok(subject.selected.every(item=>item.program === 'prepare' && item.index === 1));
-  assert.deepEqual(JSON.parse(subject.saved.get('capturePoint.main.camera')),subject.capturePoint);
+  assert.deepEqual(JSON.parse(subject.saved.get('capturePoint.main.targetId')),subject.capturePoint);
 });
 
 test('unchecking the point stops observation and retains selected register names',async()=>{
@@ -43,16 +43,16 @@ test('unchecking the point stops observation and retains selected register names
 
 test('failed point change restores the visible and persisted point',async()=>{
   const subject=view(), previous={program:'common',index:2,phase:'after'};
-  subject.capturePoints.set('camera',previous);
+  subject.capturePoints.set('targetId',previous);
   subject.configure=async()=>false;
   await subject.setCapturePoint({program:'common',index:5},true);
   assert.deepEqual(subject.capturePoint,previous);
-  assert.deepEqual(JSON.parse(subject.saved.get('capturePoint.main.camera')),previous);
+  assert.deepEqual(JSON.parse(subject.saved.get('capturePoint.main.targetId')),previous);
 });
 
 for(const cancelledDecode of [false,true]) test(`size change discards an old PNG ${cancelledDecode ? 'decode rejection':'decoded frame'} without poisoning acknowledgements`,async()=>{
   const previousDocument=globalThis.document;
-  globalThis.document={hidden:false,querySelector:()=>({dataset:{page:'camera'}})};
+  globalThis.document={hidden:false,querySelector:()=>({dataset:{page:'targetId'}})};
   let startDecode, resolveDecode, rejectDecode;
   const started=new Promise(resolve=>{startDecode=resolve;});
   const decoded=new Promise((resolve,reject)=>{resolveDecode=resolve;rejectDecode=reject;});
@@ -60,14 +60,17 @@ for(const cancelledDecode of [false,true]) test(`size change discards an old PNG
   const link={hidden:true};
   const tile={querySelector:selector=>selector === 'img' ? image:link};
   const subject=view(), errors=[];
-  Object.assign(subject,{cameraRevision:1,configurationRevision:0,polling:false,updating:false,after:{},frames:new Map(),urls:new Map(),tiles:new Map([['image',tile]])});
+  Object.assign(subject,{targetRevision:1,configurationRevision:0,polling:false,updating:false,after:{},frames:new Map(),urls:new Map(),tiles:new Map([['image',tile]])});
   subject.snapshot.generation=1;
   subject.render=()=>{};
   subject.onError=error=>errors.push(error);
   subject.accept=snapshot=>{subject.snapshot=snapshot;};
-  subject.api=async(path,options)=>({json:async()=>options.method === 'PUT' ?
-    {generation:2,configuration:JSON.parse(options.body),items:[]}:
-    {generation:1,configuration:subject.configuration,items:[{target:{key:'image'},frame:{sequence:91,data:'AAAA',contentType:'image/png',location:{runId:1}}}]}});
+  subject.isActive=()=>true;
+  subject.session={
+    setObservation:async(id,configuration)=>({generation:2,configuration,items:[]}),
+    pollObservation:async()=>({generation:1,configuration:subject.configuration,
+      items:[{target:{key:'image'},frame:{sequence:91,data:'AAAA',contentType:'image/png',location:{runId:1}}}]})
+  };
   subject.configure=ObservationView.prototype.configure;
   try {
     const polling=subject.poll();

@@ -35,7 +35,7 @@ public sealed class PreviewImageSizeTests
         using(OrtValue tensor = OrtValue.CreateTensorValueFromMemory(pixels, new long[] { 1, height, width, 3 }))
         {
             context.Set("image", tensor);
-            var inspector = new PausedRegisterInspector(InferenceBackend.TensorRt, Nv12ColorMatrix.Bt601Full);
+            var inspector = new PausedRegisterInspector(InferenceBackend.TensorRt);
             captured = await inspector.CaptureAsync(context, new("image", 0, "png", 0), TestContext.Current.CancellationToken);
         }
         Array.Clear(pixels);

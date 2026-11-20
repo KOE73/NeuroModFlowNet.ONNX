@@ -88,7 +88,7 @@ internal sealed class RegisterObservation(Func<VmRunContext, DebugInspectionRequ
 
     #region VM capture and owned CPU encoding
 
-    public bool NeedsPreviewCapture(string program, int producerIndex)
+    public bool NeedsPreviewCapture(string program, int producerIndex, DebugPreviewRegisters registers)
     {
         if(!Enabled) return false;
         lock(syncRoot)
@@ -104,7 +104,7 @@ internal sealed class RegisterObservation(Func<VmRunContext, DebugInspectionRequ
                 foreach(Watch watch in viewer.Watches)
                 {
                     DebugWatchTarget selection = watch.Target.Selection;
-                    if(selection.Key is not ("image.preview.tensor" or "image.preview") || selection.Program != program ||
+                    if((selection.Key != registers.Prepared && selection.Key != registers.Published) || selection.Program != program ||
                         selection.Index < producerIndex || selection.Index == producerIndex && selection.Phase != "after") continue;
                     if(!watch.Target.Busy && !watch.Busy && watch.Requested && now >= watch.NextCapture) return true;
                 }
@@ -120,6 +120,7 @@ internal sealed class RegisterObservation(Func<VmRunContext, DebugInspectionRequ
     {
         foreach(Target target in Volatile.Read(ref targets))
         {
+            if(target.Selection.Format == "h264") continue;
             if(target.Selection.Program != program || target.Selection.Index != index || target.Selection.Phase != phase) continue;
             Watch[] receivers;
             lock(syncRoot)

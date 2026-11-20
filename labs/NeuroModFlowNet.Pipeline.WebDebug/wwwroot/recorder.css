@@ -1,0 +1,6 @@
+.recorder-observation { overflow: hidden; }
+.recorder-observation .workspace-columns { --workspace-columns: repeat(3, minmax(230px, 1fr)); }
+.recorder-observation .panel { margin: 0; display: flex; flex-direction: column; overflow: hidden; }
+.recorder-observation h2 { margin: 0; font: 600 13px Consolas, monospace; }
+.recorder-observation pre { min-height: 0; flex: 1; margin: 0; padding: 5px 8px; overflow: auto; overscroll-behavior: contain; }
+.recorder-observation output { font-variant-numeric: tabular-nums; }

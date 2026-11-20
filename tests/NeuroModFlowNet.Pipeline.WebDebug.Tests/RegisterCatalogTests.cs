@@ -9,6 +9,27 @@ public sealed class RegisterCatalogTests
 {
     #region Catalog lifetime and boundaries
 
+    [Theory]
+    [InlineData("arbitrary-frame", "Cuda:0", "UInt8", "1×600×800×3", true)]
+    [InlineData("different-name", "Cpu:0", "UInt8", "1×600×800×3", false)]
+    [InlineData("another-frame", "Cuda:0", "Float", "1×3×600×800", false)]
+    [InlineData("odd-size", "Cuda:0", "UInt8", "1×601×800×3", false)]
+    public void VideoSelectionUsesRegisterMetadataAndExplicitBoundary(string key, string memory, string elementType, string shape, bool supported)
+    {
+        var catalog = new RegisterCatalog((context, name) => new(name, "OrtValue", memory, shape, elementType, null, CanPreviewImage: true));
+        catalog.Register(new("program", 0, "create", "test", [], [key]));
+        catalog.Register(new("program", 1, "observe", "test", [key], []));
+        catalog.Renew();
+        using var context = Context(1);
+        context.Set(key, 1);
+        catalog.Visit(context, catalog.Boundary("program", 1, "after"));
+        var selection = new DebugWatchSelection(key, "h264", "program", 1, "after");
+        if(supported)
+            Assert.Equal(new DebugWatchTarget(key, "h264", "program", 1, "after"), catalog.Resolve(selection));
+        else
+            Assert.Throws<NotSupportedException>(() => catalog.Resolve(selection));
+    }
+
     [Fact]
     public void RetainsRemovedNamesAcrossFramesWithoutKeepingValues()
     {
@@ -207,7 +228,7 @@ public sealed class RegisterCatalogTests
 
     #region Fixtures
 
-    static PausedRegisterInspector Inspector() => new(InferenceBackend.Cpu, Nv12ColorMatrix.Bt601Full);
+    static PausedRegisterInspector Inspector() => new(InferenceBackend.Cpu);
     static VmRunContext Context(long run) => new(new("camera", run, DateTimeOffset.UtcNow), new VmGlobalMemory(), new VmSyncGateRegistry());
     sealed class ManualClock : TimeProvider
     {

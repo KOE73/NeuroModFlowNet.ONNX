@@ -194,7 +194,16 @@ internal sealed class RegisterCatalog(Func<VmRunContext, string, DebugVariable> 
             if(boundary is null) throw new ArgumentException("Register has not been observed yet.");
             // A common capture point may precede creation or follow removal. Retain the selection; never substitute another step.
             DebugVariable metadata = point?.Variable ?? entry.Variable!;
-            if(selection.Format == "png" ? !metadata.CanPreviewImage : selection.Format != "json" || !metadata.CanInspectValue)
+            if(selection.Format == "h264")
+            {
+                string[] dimensions = metadata.Shape?.Split('×') ?? [];
+                if(metadata.Memory != "Cuda:0" || metadata.ElementType != "UInt8" || dimensions.Length != 4 ||
+                    dimensions[0] != "1" || dimensions[3] != "3" ||
+                    !int.TryParse(dimensions[1], out int height) || !int.TryParse(dimensions[2], out int width) ||
+                    height <= 0 || width <= 0 || height % 2 != 0 || width % 2 != 0)
+                    throw new NotSupportedException("H.264 BGR U8 NHWC requires a CUDA:0 tensor [1,H,W,3] with even dimensions.");
+            }
+            if(selection.Format is "png" or "h264" ? !metadata.CanPreviewImage : selection.Format != "json" || !metadata.CanInspectValue)
                 throw new ArgumentException("This register does not support the selected format at that instruction boundary.");
             return new(selection.Key, selection.Format, boundary.Program, boundary.Index, boundary.Phase);
         }

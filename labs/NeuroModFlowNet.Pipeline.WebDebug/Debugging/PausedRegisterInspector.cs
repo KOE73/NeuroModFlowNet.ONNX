@@ -9,7 +9,7 @@ using OpenCvSharp;
 
 namespace NeuroModFlowNet.Pipeline.WebDebug;
 
-internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12ColorMatrix colorMatrix, int sourceWidth = 0, int sourceHeight = 0)
+internal sealed class PausedRegisterInspector(InferenceBackend backend, IReadOnlyDictionary<string, DebugImageFormat>? imageFormats = null)
 {
     static readonly JsonSerializerOptions JsonOptions = new() { IncludeFields = true, WriteIndented = true, MaxDepth = 12 };
 
@@ -51,8 +51,9 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         if(value is not OrtValue tensor) return false;
         var information = tensor.GetTensorTypeAndShape();
         long[] shape = information.Shape;
-        if(key == "image.source.nv12")
-            return sourceWidth > 0 && sourceHeight > 0 && shape.Length == 2 && information.ElementDataType == TensorElementType.UInt8;
+        DebugImageFormat? format = imageFormats?.GetValueOrDefault(key);
+        if(format is { Nv12Width: > 0, Nv12Height: > 0 })
+            return shape.Length == 2 && information.ElementDataType == TensorElementType.UInt8;
         if(shape.Length != 4 || shape[0] is < 1 or > 64) return false;
         return information.ElementDataType switch
         {
@@ -95,12 +96,14 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         if(value is Mat image) return PreviewImageSize.CopyCpu(image, request.MaxEdge);
         if(value is not OrtValue tensor) throw new NotSupportedException("Select an image tensor or Mat.");
         long[] imageShape = tensor.GetTensorTypeAndShape().Shape;
-        if(imageShape.Length == 4 && (imageShape[0] > 1 || request.Key is "ocr.recInput" or "ocr.crop.batch"))
-            return PreviewBatch(context, tensor, request, cancellationToken);
+        DebugImageFormat? format = imageFormats?.GetValueOrDefault(request.Key);
+        if(imageShape.Length == 4 && (imageShape[0] > 1 || format?.ActualCountRegister is not null))
+            return PreviewBatch(context, tensor, request, format, cancellationToken);
+        bool nv12 = format is { Nv12Width: > 0, Nv12Height: > 0 };
         using(OrtMemoryInfo memory = tensor.GetTensorMemoryInfo())
-            if(string.Equals(memory.Name, "Cpu", StringComparison.OrdinalIgnoreCase))
+            if(!nv12 && string.Equals(memory.Name, "Cpu", StringComparison.OrdinalIgnoreCase))
             {
-                using Mat downloaded = TensorImagePreviewRenderer.CreatePreview(tensor);
+                using Mat downloaded = TensorImagePreviewRenderer.CreatePreview(tensor, format?.SignedUnitRange == true);
                 return PreviewImageSize.CopyCpu(downloaded, request.MaxEdge);
             }
 
@@ -108,13 +111,12 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         temporary.Set("input", tensor);
         var information = tensor.GetTensorTypeAndShape();
         long[] shape = information.Shape;
-        bool nv12 = request.Key == "image.source.nv12";
         if(!nv12 && (shape.Length != 4 || shape[0] != 1))
             throw new NotSupportedException("Preview currently supports single images. Batch tensors remain available as metadata.");
 
         bool nhwc = information.ElementDataType == TensorElementType.UInt8;
-        int width = nv12 ? sourceWidth : checked((int)shape[nhwc ? 2 : 3]);
-        int height = nv12 ? sourceHeight : checked((int)shape[nhwc ? 1 : 2]);
+        int width = nv12 ? format!.Nv12Width : checked((int)shape[nhwc ? 2 : 3]);
+        int height = nv12 ? format!.Nv12Height : checked((int)shape[nhwc ? 1 : 2]);
         Size size = PreviewImageSize.Resolve(width, height, request.MaxEdge);
         bool resizeNeeded = size.Width != width || size.Height != height;
         IDisposable? conversion = null;
@@ -122,13 +124,13 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         {
             if(nv12)
             {
-                var nv12Conversion = new Op_Onnx_Nv12_To_BgrU8Nhwc("input", "converted", width, height, colorMatrix, isFinal: !resizeNeeded, executionBackend: backend);
+                var nv12Conversion = new Op_Onnx_Nv12_To_BgrU8Nhwc("input", "converted", width, height, format!.Nv12Matrix, isFinal: !resizeNeeded, executionBackend: backend);
                 conversion = nv12Conversion;
                 EnsureSuccess(await nv12Conversion.ExecuteAsync(temporary, cancellationToken).ConfigureAwait(false));
             }
             string inputKey = nv12 ? "converted" : "input";
             if(!resizeNeeded)
-                return nv12 ? TensorImagePreviewRenderer.CreatePreview(temporary.Get<OrtValue>(inputKey)) : PreviewTensorDownload.Copy(tensor, backend);
+                return nv12 ? TensorImagePreviewRenderer.CreatePreview(temporary.Get<OrtValue>(inputKey)) : PreviewTensorDownload.Copy(tensor, backend, cpu => TensorImagePreviewRenderer.CreatePreview(cpu, format?.SignedUnitRange == true));
             using Op_Onnx_TensorTransformBase resize = information.ElementDataType switch
             {
                 TensorElementType.UInt8 => new Op_Onnx_Resize_U8_NHWC(inputKey, "preview", size, isFinal: true, executionBackend: backend),
@@ -139,7 +141,7 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
             try
             {
                 EnsureSuccess(await resize.ExecuteAsync(temporary, cancellationToken).ConfigureAwait(false));
-                return TensorImagePreviewRenderer.CreatePreview(temporary.Get<OrtValue>("preview"));
+                return TensorImagePreviewRenderer.CreatePreview(temporary.Get<OrtValue>("preview"), format?.SignedUnitRange == true);
             }
             finally
             {
@@ -154,13 +156,13 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         }
     }
 
-    Mat PreviewBatch(VmRunContext context, OrtValue tensor, DebugInspectionRequest request, CancellationToken cancellationToken)
+    Mat PreviewBatch(VmRunContext context, OrtValue tensor, DebugInspectionRequest request, DebugImageFormat? format, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var information = tensor.GetTensorTypeAndShape();
         long[] shape = information.Shape;
         int capacity = checked((int)shape[0]);
-        string? countKey = request.Key switch { "ocr.recInput" => "ocr.roiCount", "ocr.crop.batch" => "ocr.crop.count", _ => null };
+        string? countKey = format?.ActualCountRegister;
         int actualCount = capacity;
         if(countKey is not null && !context.TryGet(countKey, out actualCount))
             throw new InvalidOperationException($"{countKey} is not present at this boundary; real images cannot be distinguished from padding.");
@@ -172,7 +174,7 @@ internal sealed class PausedRegisterInspector(InferenceBackend backend, Nv12Colo
         if((long)gridSize.Width * gridSize.Height > PreviewImageSize.MaximumPixels)
             throw new InvalidOperationException("Batch preview grid exceeds 16 megapixels. Choose a smaller image size.");
         if(actualCount == 0) return TensorBatchPreviewRenderer.CreateEmpty(itemSize, capacity);
-        bool paddleNormalized = request.Key == "ocr.recInput";
+        bool paddleNormalized = format?.SignedUnitRange == true;
         Mat Render(OrtValue cpu) => TensorBatchPreviewRenderer.CreatePreview(cpu, actualCount, itemSize, paddleNormalized);
         int bytesPerElement = information.ElementDataType == TensorElementType.UInt8 ? 1 : information.ElementDataType == TensorElementType.Float16 ? 2 : 4;
         if((long)capacity * width * height * 3 * bytesPerElement > 128 * 1024 * 1024)

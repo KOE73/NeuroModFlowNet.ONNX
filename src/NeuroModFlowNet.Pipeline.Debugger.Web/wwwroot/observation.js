@@ -1,3 +1,6 @@
+import { RegisterVideoView } from './register-video.js';
+import { sampleImages } from './preview-layout.js';
+
 export function sharedCapturePoint(configuration) {
   const point=configuration?.registers?.[0];
   if(!configuration?.enabled || !point?.program || !Number.isInteger(point.index) || point.phase !== 'after' ||
@@ -6,16 +9,18 @@ export function sharedCapturePoint(configuration) {
 }
 
 export class ObservationView {
-  constructor({api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId}) {
-    Object.assign(this,{api,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId});
-    this.camera = ''; this.cameraRevision = 0; this.snapshot = null; this.updating = false; this.polling = false;
+  constructor({root,session,signal,isActive,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId}) {
+    Object.assign(this,{root,session,signal,isActive,t,esc,onChange,onError,read,save,onTile,onRemove,onFloat,onPopup,onSync,bootstrap,viewerId});
+    const query = selector => root.querySelector(selector);
+    this.targetId = ''; this.targetRevision = 0; this.snapshot = null; this.updating = false; this.polling = false;
     this.after = {}; this.frames = new Map(); this.urls = new Map(); this.variables = new Map(); this.tiles = new Map();
     this.catalogs = new Map(); this.capturePoints = new Map(); this.catalogVersion = 0;
     this.configurationRevision = 0;
-    this.gallery = document.querySelector('#watch-gallery');
-    this.enabled = document.querySelector('#watch-enabled');
-    this.frequency = document.querySelector('#watch-fps');
-    this.size = document.querySelector('#watch-size');
+    this.videos = new Map();
+    this.gallery = query('#watch-gallery');
+    this.enabled = query('#watch-enabled');
+    this.frequency = query('#watch-fps');
+    this.size = query('#watch-size');
     this.enabled.onchange = () => this.configure({...this.configuration,enabled:this.enabled.checked && Boolean(this.capturePoint)});
     this.frequency.onchange = () => {
       if(!this.frequency.reportValidity()) return;
@@ -26,19 +31,29 @@ export class ObservationView {
       this.save('watchSize',this.size.value);
       this.configure({...this.configuration,maxEdge:Number(this.size.value)});
     };
-    document.querySelector('.register-pane').addEventListener('change',event => {
+    query('.register-pane').addEventListener('change',event => {
       const checkbox = event.target.closest('[data-watch-register]');
       if(!checkbox) return;
       const key = checkbox.dataset.watchRegister;
       const registers = this.configuration.registers.filter(item => item.key !== key);
       if(checkbox.checked) {
-        const variable=this.catalogs.get(this.camera)?.variables.find(variable=>variable.key === key);
+        const variable=this.catalogs.get(this.targetId)?.variables.find(variable=>variable.key === key);
         registers.push(variable ? this.selection(variable):{key,format:checkbox.dataset.format,...this.capturePoint});
       }
       this.configure({...this.configuration,enabled:registers.length > 0 && Boolean(this.capturePoint),registers});
     });
     this.schedule();
-    setInterval(()=>this.pollCatalog(),1000);
+    this.catalogTimer = setInterval(()=>this.pollCatalog(),1000);
+  }
+
+  dispose() {
+    this.stopVideos();
+    this.disposed = true;
+    this.targetRevision++;
+    clearInterval(this.catalogTimer);
+    clearTimeout(this.watchTimer);
+    for(const url of this.urls.values()) URL.revokeObjectURL(url);
+    this.urls.clear();
   }
 
   get configuration() {
@@ -46,26 +61,26 @@ export class ObservationView {
   }
   get renderKey() { return `${this.snapshot?.generation}|${this.updating}|${this.catalogVersion}`; }
   get selected() { return this.configuration.registers; }
-  get capturePoint() { return this.capturePoints.get(this.camera) ?? null; }
+  get capturePoint() { return this.capturePoints.get(this.targetId) ?? null; }
 
   async setCapturePoint(instruction,checked) {
-    const camera=this.camera;
+    const targetId=this.targetId;
     const previous=this.capturePoint;
     const point=checked ? {program:instruction.program,index:instruction.index,phase:'after'}:null;
-    this.capturePoints.set(this.camera,point);
-    this.save(`capturePoint.${this.viewerId}.${this.camera}`,JSON.stringify(point));
+    this.capturePoints.set(this.targetId,point);
+    this.save(`capturePoint.${this.viewerId}.${this.targetId}`,JSON.stringify(point));
     const registers=this.selected.map(({key,format})=>({key,format,...point}));
     if(await this.configure({...this.configuration,enabled:Boolean(point) && registers.length > 0,registers}) === false) {
-      this.capturePoints.set(camera,previous);
-      this.save(`capturePoint.${this.viewerId}.${camera}`,JSON.stringify(previous));
+      this.capturePoints.set(targetId,previous);
+      this.save(`capturePoint.${this.viewerId}.${targetId}`,JSON.stringify(previous));
       this.onChange();
     }
   }
 
   knownVariables(variables,paused) {
-    if(paused) this.variables.set(this.camera,variables);
-    const catalog=this.catalogs.get(this.camera)?.variables;
-    if(!catalog?.length) return (paused ? variables : this.variables.get(this.camera) ?? []).map(variable=>({...variable,availableNow:paused}));
+    if(paused) this.variables.set(this.targetId,variables);
+    const catalog=this.catalogs.get(this.targetId)?.variables;
+    if(!catalog?.length) return (paused ? variables : this.variables.get(this.targetId) ?? []).map(variable=>({...variable,availableNow:paused}));
     const actual=new Map(variables.map(variable=>[variable.key,variable]));
     return catalog.map(variable=>({...variable,...this.point(variable)?.variable,
       ...(paused ? actual.get(variable.key):{}),points:variable.points,
@@ -87,40 +102,43 @@ export class ObservationView {
   }
 
   async pollCatalog() {
-    if(this.catalogPolling || !this.camera || document.hidden || document.querySelector('#shell').dataset.page !== 'camera') return;
+    if(this.catalogPolling || !this.targetId || document.hidden || !this.isActive()) return;
     this.catalogPolling=true;
-    const camera=this.camera, cameraRevision=this.cameraRevision;
+    const targetId=this.targetId, targetRevision=this.targetRevision;
     try {
-      const catalog=await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/registers/poll`,{method:'POST'})).json();
-      if(cameraRevision !== this.cameraRevision) return;
-      this.catalogs.set(camera,catalog); this.catalogVersion++; this.onChange();
-    } catch(error) { if(cameraRevision === this.cameraRevision) this.onError(error); }
+      const catalog=await this.session.pollRegisterCatalog(targetId,this.signal);
+      if(targetRevision !== this.targetRevision) return;
+      this.catalogs.set(targetId,catalog); this.catalogVersion++; this.onChange();
+    } catch(error) { if(targetRevision === this.targetRevision) this.onError(error); }
     finally { this.catalogPolling=false; }
   }
 
-  async setCamera(camera) {
-    const cameraRevision = ++this.cameraRevision;
-    this.camera = camera; this.snapshot = null; this.pendingConfiguration = null; this.queuedConfiguration = null; this.updating = false; this.after = {}; this.frames.clear();
+  async setTarget(targetId) {
+    this.stopVideos();
+    const targetRevision = ++this.targetRevision;
+    this.targetId = targetId; this.snapshot = null; this.pendingConfiguration = null; this.queuedConfiguration = null; this.updating = false; this.after = {}; this.frames.clear();
     for(const url of this.urls.values()) URL.revokeObjectURL(url);
-    this.urls.clear(); for(const key of this.tiles.keys()) this.onRemove(key); this.tiles.clear(); this.gallery.replaceChildren(); this.render();
-    if(!camera) return;
+    this.urls.clear();
+    for(const [key,tile] of this.tiles) { this.onRemove(key); tile.remove(); }
+    this.tiles.clear(); this.render();
+    if(!targetId) return;
     try {
-      const snapshot = await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/watch`)).json();
-      if(cameraRevision !== this.cameraRevision) return;
-      const initial=this.bootstrap?.camera === camera ? this.bootstrap.configuration:snapshot.configuration;
-      const savedPoint=this.read(`capturePoint.${this.viewerId}.${camera}`,'');
+      const snapshot = await this.session.getObservation(targetId,this.signal);
+      if(targetRevision !== this.targetRevision) return;
+      const initial=(this.bootstrap?.targetId) === targetId ? this.bootstrap.configuration:snapshot.configuration;
+      const savedPoint=this.read(`capturePoint.${this.viewerId}.${targetId}`,'');
       let point=null;
       try { point=sharedCapturePoint(initial) ?? (savedPoint ? JSON.parse(savedPoint):initial?.registers.findLast(item=>item.program)); } catch { }
       point=point?.program && Number.isInteger(point.index) ? {program:point.program,index:point.index,phase:'after'}:null;
-      this.capturePoints.set(camera,point);
-      this.save(`capturePoint.${this.viewerId}.${camera}`,JSON.stringify(point));
+      this.capturePoints.set(targetId,point);
+      this.save(`capturePoint.${this.viewerId}.${targetId}`,JSON.stringify(point));
       if(snapshot.generation === 0) {
         const frequency = Number(this.read('watchFps','3')), size = Number(this.read('watchSize','640'));
         // A fresh session has no observations yet; the first selection applies the viewer's saved defaults.
         if(Number.isFinite(frequency) && frequency >= 0.2 && frequency <= 15) snapshot.configuration.framesPerSecond = frequency;
         if(size === 0 || Number.isInteger(size) && size >= 100 && size <= 8192) snapshot.configuration.maxEdge = size;
       }
-      if(snapshot.generation === 0 && this.bootstrap?.camera === camera && this.bootstrap.configuration?.registers?.length) {
+      if(snapshot.generation === 0 && (this.bootstrap?.targetId) === targetId && this.bootstrap.configuration?.registers?.length) {
         this.snapshot = snapshot;
         await this.configure({...this.bootstrap.configuration,enabled:this.bootstrap.configuration.enabled && Boolean(point),registers:this.bootstrap.configuration.registers.map(({key,format})=>({key,format,...point}))});
       } else if(snapshot.configuration.registers.length && snapshot.configuration.registers.some(item=>!point || item.program !== point.program || item.index !== point.index || item.phase !== point.phase)) {
@@ -128,33 +146,34 @@ export class ObservationView {
         await this.configure({...snapshot.configuration,enabled:snapshot.configuration.enabled && Boolean(point),registers:snapshot.configuration.registers.map(({key,format})=>({key,format,...point}))});
       } else { this.accept(snapshot); this.onChange(); }
       this.pollCatalog();
-    } catch(error) { if(camera === this.camera) this.onError(error); }
+    } catch(error) { if(targetRevision === this.targetRevision) this.onError(error); }
   }
 
   checkbox(variable) {
     const checked = this.selected.some(item => item.key === variable.key);
     if(!checked && !variable.canPreviewImage && !variable.canInspectValue) return '';
     const label = `${this.t('watchregister')} ${variable.key}`;
-    return `<input type="checkbox" data-watch-register="${this.esc(variable.key)}" data-format="${variable.canPreviewImage ? 'png':'json'}" data-focus-key="${this.esc(this.camera + '|watch|' + variable.key)}" aria-label="${this.esc(label)}" data-tooltip="${this.esc(label)}" data-tooltip-passive ${checked ? 'checked':''} ${!this.snapshot || (!checked && this.selected.length >= 8) ? 'disabled':''}>`;
+    return `<input type="checkbox" data-watch-register="${this.esc(variable.key)}" data-format="${variable.canPreviewImage ? 'png':'json'}" data-focus-key="${this.esc(this.targetId + '|watch|' + variable.key)}" aria-label="${this.esc(label)}" data-tooltip="${this.esc(label)}" data-tooltip-passive ${checked ? 'checked':''} ${!this.snapshot || (!checked && this.selected.length >= 8) ? 'disabled':''}>`;
   }
 
   async configure(configuration) {
-    if(!this.camera) return;
-    const camera = this.camera, cameraRevision = this.cameraRevision;
+    if(!this.targetId) return;
+    const targetId = this.targetId, targetRevision = this.targetRevision;
+    this.stopVideos();
     this.configurationRevision++;
     this.pendingConfiguration = configuration;
     if(this.updating) { this.queuedConfiguration = configuration; this.render(); this.onChange(); return; }
     this.updating = true; this.render(); this.onChange();
     try {
-      const snapshot = await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/watch`,{method:'PUT',body:JSON.stringify(configuration)})).json();
-      if(cameraRevision === this.cameraRevision) this.accept(snapshot);
+      const snapshot = await this.session.setObservation(targetId,configuration,this.signal);
+      if(targetRevision === this.targetRevision) this.accept(snapshot);
       return true;
     } catch(error) {
-      this.onError(error);
+      if(targetRevision === this.targetRevision) this.onError(error);
       return false;
     }
     finally {
-      if(cameraRevision === this.cameraRevision) {
+      if(targetRevision === this.targetRevision) {
         this.updating = false;
         const queued = this.queuedConfiguration; this.queuedConfiguration = null;
         if(queued) await this.configure(queued);
@@ -167,10 +186,10 @@ export class ObservationView {
     if(this.snapshot && snapshot.generation < this.snapshot.generation) return;
     const point=sharedCapturePoint(snapshot.configuration);
     if(point) {
-      this.capturePoints.set(this.camera,point);
-      this.save(`capturePoint.${this.viewerId}.${this.camera}`,JSON.stringify(point));
+      this.capturePoints.set(this.targetId,point);
+      this.save(`capturePoint.${this.viewerId}.${this.targetId}`,JSON.stringify(point));
     }
-    if(snapshot.variables) this.variables.set(this.camera,snapshot.variables);
+    if(snapshot.variables) this.variables.set(this.targetId,snapshot.variables);
     if(this.snapshot?.generation !== snapshot.generation) {
       this.after = {}; this.frames.clear();
       for(const url of this.urls.values()) URL.revokeObjectURL(url);
@@ -187,6 +206,9 @@ export class ObservationView {
     if(document.activeElement !== this.frequency) this.frequency.value = configuration.framesPerSecond;
     if(document.activeElement !== this.size) this.size.value = configuration.maxEdge;
     const keys = new Set(configuration.registers.map(item => item.key));
+    for(const [key,video] of this.videos) if(!configuration.enabled || !configuration.registers.some(item => item.key === key && item.format === 'h264')) {
+      video.stop(); this.videos.delete(key);
+    }
     if(this.snapshot) this.onSync(keys);
     for(const [key,tile] of this.tiles) if(!keys.has(key)) { this.onRemove(key); tile.remove(); this.tiles.delete(key); }
     for(const [key,url] of this.urls) if(!keys.has(key)) { URL.revokeObjectURL(url); this.urls.delete(key); this.frames.delete(key); }
@@ -194,7 +216,7 @@ export class ObservationView {
       let tile = this.tiles.get(selection.key);
       if(!tile) {
         tile = document.createElement('figure'); tile.className = 'watch-tile'; tile.dataset.watchKey = selection.key; tile.dataset.format = selection.format;
-        tile.innerHTML = `<figcaption><span class="watch-title" data-tooltip="${this.esc(selection.key)}">${this.esc(selection.key)}</span><button class="pane-action" data-tile-native aria-pressed="false" aria-label="${this.esc(this.t('nativeview'))}" data-tooltip="${this.esc(this.t('nativeviewtip'))}">1:1</button><button class="pane-action" data-tile-float aria-label="${this.esc(this.t('floatpanel'))}" data-tooltip="${this.esc(this.t('floatpanel'))}"><i class="ti ti-maximize" aria-hidden="true"></i></button><button class="pane-action" data-tile-popup aria-label="${this.esc(this.t('newviewer'))}" data-tooltip="${this.esc(this.t('newviewer'))}"><i class="ti ti-external-link" aria-hidden="true"></i></button></figcaption><div class="watch-location mono"></div><div class="watch-content">${selection.format === 'png' ? '<a target="_blank" rel="noopener" hidden><img alt=""></a><span class="watch-placeholder"></span>':'<pre></pre>'}</div><div class="watch-counts"></div>`;
+        tile.innerHTML = `<figcaption><span class="watch-title" data-tooltip="${this.esc(selection.key)}">${this.esc(selection.key)}</span><button class="pane-action" data-tile-native aria-pressed="false" aria-label="${this.esc(this.t('nativeview'))}" data-tooltip="${this.esc(this.t('nativeviewtip'))}">1:1</button><button class="pane-action" data-tile-float aria-label="${this.esc(this.t('floatpaneltip'))}" data-tooltip="${this.esc(this.t('floatpaneltip'))}"><i class="ti ti-maximize" aria-hidden="true"></i></button><button class="pane-action" data-tile-popup aria-label="${this.esc(this.t('newviewertip'))}" data-tooltip="${this.esc(this.t('newviewertip'))}"><i class="ti ti-external-link" aria-hidden="true"></i></button></figcaption><div class="watch-location mono"></div><div class="watch-content">${selection.format === 'png' ? '<a target="_blank" rel="noopener" hidden><img alt=""></a><span class="watch-placeholder"></span>':'<pre></pre>'}</div><div class="watch-counts"></div>`;
         const created = tile;
         created.dataset.native=this.read(`nativeView.${this.viewerId}.${selection.key}`,'false');
         tile.querySelector('[data-tile-native]').onclick = () => {
@@ -203,17 +225,34 @@ export class ObservationView {
           this.render();
         };
         tile.querySelector('[data-tile-float]').onclick = () => this.onFloat(selection.key,created);
-        tile.querySelector('[data-tile-popup]').onclick = () => this.onPopup(selection.key);
+        const popup = tile.querySelector('[data-tile-popup]');
+        popup.hidden = !this.onPopup;
+        popup.onclick = () => this.onPopup?.(selection.key);
         this.tiles.set(selection.key,tile);
         this.gallery.append(tile);
         this.onTile(selection.key,tile);
       }
+      if(this.session.openRegisterVideo && selection.format !== 'json' && !tile.querySelector('[data-video-format]')) {
+        const format = document.createElement('select');
+        format.dataset.videoFormat = '';
+        format.setAttribute('aria-label', `${selection.key} PNG / H.264`);
+        format.innerHTML = '<option value="png">PNG</option><option value="h264">H.264 · BGR U8 NHWC CUDA</option>';
+        format.onchange = () => this.configure({...this.configuration, registers:this.selected.map(item =>
+          item.key === selection.key ? {...item,format:format.value}:item)});
+        tile.querySelector('.watch-location').before(format);
+      }
+      const format = tile.querySelector('[data-video-format]');
+      if(format) format.value = selection.format;
       tile.dataset.watchOrder = configuration.registers.indexOf(selection);
       tile.querySelector('[data-tile-native]').hidden=selection.format !== 'png';
       tile.querySelector('[data-tile-native]').setAttribute('aria-pressed',tile.dataset.native === 'true');
-      for(const control of document.querySelectorAll('[data-workspace-action=nativeview]')) if(control.dataset.panelId === `watch:${selection.key}`) {
+      for(const control of this.root.querySelectorAll('[data-workspace-action=nativeview]')) if(control.dataset.panelId === `watch:${selection.key}`) {
         control.hidden=selection.format !== 'png'; control.setAttribute('aria-pressed',tile.dataset.native === 'true');
         control.dataset.tooltip=this.t('nativeviewtip');
+      }
+      if(selection.format === 'h264') {
+        this.renderVideo(selection,tile);
+        continue;
       }
       if(tile.dataset.generation !== String(this.snapshot?.generation) || tile.dataset.format !== selection.format) {
         tile.dataset.generation=String(this.snapshot?.generation); tile.dataset.format=selection.format;
@@ -226,30 +265,56 @@ export class ObservationView {
       const missing=frame?.error?.includes('not present');
       detail.textContent = frame?.error ? this.t(missing ? 'watchmissing':'watcherror') : location ? `${frame ? `${this.t('run')} ${location.runId} · `:''}${location.program} [${location.index}] ${this.t(location.phase)}` : this.t('watchwaiting');
       detail.classList.toggle('error',Boolean(frame?.error));
-      detail.dataset.tooltip = frame?.error ?? (location ? `${this.camera} · ${location.program} [${location.index}] ${this.t(location.phase)}${frame ? ` · ${this.t('run')} ${location.runId} · ${new Date(frame.capturedAt).toLocaleTimeString()}`:''}\n${this.t(configuration.enabled ? 'watch':'watchoff')}` : this.t('watchtip'));
+      detail.dataset.tooltip = frame?.error ?? (location ? `${this.targetId} · ${location.program} [${location.index}] ${this.t(location.phase)}${frame ? ` · ${this.t('run')} ${location.runId} · ${new Date(frame.capturedAt).toLocaleTimeString()}`:''}\n${this.t(configuration.enabled ? 'watch':'watchoff')}` : this.t('watchtip'));
       const placeholder = tile.querySelector('.watch-placeholder');
       const imageLink = tile.querySelector('.watch-content a');
       if(imageLink) imageLink.hidden = !frame?.available;
       const value = tile.querySelector('.watch-content pre');
       if(value && frame?.error) value.textContent = '';
-      if(placeholder) { placeholder.hidden = Boolean(frame?.available); placeholder.textContent = this.t(!this.capturePoint ? 'watchchoosepoint':missing ? 'watchmissing':configuration.enabled ? 'watchwaiting':'watchoff'); }
+      if(placeholder) { placeholder.hidden = Boolean(frame?.available || frame?.error); placeholder.textContent = this.t(!this.capturePoint ? 'watchchoosepoint':configuration.enabled ? 'watchwaiting':'watchoff'); }
       tile.querySelector('.watch-counts').textContent = `${frame?.width ? `${frame.width}×${frame.height} · `:''}${this.t('watchreceived')} ${item?.captured ?? 0} · ${this.t('watchskipped')} ${item?.skipped ?? 0}`;
       tile.querySelector('.watch-counts').dataset.tooltip = `${tile.querySelector('.watch-counts').textContent}\n${this.t('watchcountertip')}`;
     }
-    this.gallery.hidden = keys.size === 0;
-    if(!document.querySelector('#preview-figure').hidden || !document.querySelector('#value-output').hidden) return;
-    document.querySelector('#image-empty').hidden = keys.size > 0;
+
+    if(!this.root.querySelector('#preview-figure').hidden || !this.root.querySelector('#value-figure').hidden) return;
+    this.root.querySelector('#image-empty').hidden = keys.size > 0;
+  }
+
+  stopVideos() {
+    for(const video of this.videos.values()) video.stop();
+    this.videos.clear();
+  }
+
+  renderVideo(selection,tile) {
+    tile.dataset.format = 'h264';
+    const location = tile.querySelector('.watch-location');
+    location.textContent = `${selection.program} [${selection.index}] ${this.t(selection.phase)}`;
+    if(!tile.querySelector('canvas')) tile.querySelector('.watch-content').innerHTML = '<canvas></canvas>';
+    if(!this.configuration.enabled || !this.capturePoint || this.updating || this.videos.has(selection.key)) return;
+    const canvas = tile.querySelector('canvas');
+    const stats = tile.querySelector('.watch-counts');
+    stats.textContent = 'H.264';
+    location.classList.remove('error');
+    location.dataset.tooltip = location.textContent;
+    const video = new RegisterVideoView((target,signal) => this.session.openRegisterVideo(this.targetId,target,signal),canvas,stats);
+    this.videos.set(selection.key,video);
+    video.show(selection).catch(error => {
+      if(video.abort.signal.aborted) return;
+      location.classList.add('error');
+      location.dataset.tooltip = error.message;
+      this.onError(error);
+    });
   }
 
   async poll() {
-    if(this.polling || this.updating || !this.camera || !this.snapshot || !this.configuration.enabled || !this.selected.length || document.hidden || document.querySelector('#shell').dataset.page !== 'camera') return;
+    if(this.polling || this.updating || !this.targetId || !this.snapshot || !this.configuration.enabled || !this.selected.length || document.hidden || !this.isActive()) return;
     this.polling = true;
-    const camera = this.camera, generation = this.snapshot.generation;
-    const cameraRevision=this.cameraRevision, configurationRevision=this.configurationRevision;
-    const current=()=>cameraRevision === this.cameraRevision && configurationRevision === this.configurationRevision &&
-      camera === this.camera && generation === this.snapshot?.generation && !this.updating;
+    const targetId = this.targetId, generation = this.snapshot.generation;
+    const targetRevision=this.targetRevision, configurationRevision=this.configurationRevision;
+    const current=()=>targetRevision === this.targetRevision && configurationRevision === this.configurationRevision &&
+      targetId === this.targetId && generation === this.snapshot?.generation && !this.updating;
     try {
-      const snapshot = await (await this.api(`/api/cameras/${encodeURIComponent(camera)}/watch/poll`,{method:'POST',body:JSON.stringify({generation,after:this.after})})).json();
+      const snapshot = await this.session.pollObservation(targetId,{generation,after:this.after},this.signal);
       if(!current()) return;
       this.accept(snapshot);
       if(!current()) return;
@@ -260,14 +325,15 @@ export class ObservationView {
         if(!tile) continue;
         if(frame.data && frame.contentType === 'image/png') {
           const bytes = Uint8Array.from(atob(frame.data),character => character.charCodeAt(0));
-          const url = URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
+          const blob = new Blob([bytes],{type:'image/png'});
+          const url = URL.createObjectURL(blob);
           const image = tile.querySelector('img'), link = tile.querySelector('a');
           try {
             image.src = url; await image.decode();
             if(!current()) { URL.revokeObjectURL(url); return; }
             const previous = this.urls.get(item.target.key); if(previous) URL.revokeObjectURL(previous);
-            this.urls.set(item.target.key,url); link.href = url; link.hidden = false;
-            image.alt = `${camera} · ${item.target.key} · ${this.t('run')} ${frame.location.runId}`;
+            this.urls.set(item.target.key,url); sampleImages.set(image,blob); link.href = url; link.hidden = false;
+            image.alt = `${targetId} · ${item.target.key} · ${this.t('run')} ${frame.location.runId}`;
             frame.width=image.naturalWidth; frame.height=image.naturalHeight;
           } catch(error) { URL.revokeObjectURL(url); if(!current()) return; frame.error = error.message; }
         } else if(frame.data && frame.contentType === 'application/json') {
@@ -282,6 +348,7 @@ export class ObservationView {
   }
 
   schedule() {
-    setTimeout(async () => { await this.poll(); this.schedule(); },Math.max(50,Math.min(500,500 / this.configuration.framesPerSecond)));
+    if(this.disposed) return;
+    this.watchTimer = setTimeout(async () => { await this.poll(); this.schedule(); },Math.max(50,Math.min(500,500 / this.configuration.framesPerSecond)));
   }
 }

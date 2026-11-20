@@ -17,18 +17,18 @@ public sealed class RegisterObservationTests
         var target = new DebugWatchTarget("image.preview.tensor", "json", "common", 13, "after");
         var configuration = new DebugWatchConfiguration(true, 0.2, 640, [new(target.Key, target.Format, target.Program, target.Index, target.Phase)]);
         DebugWatchSnapshot snapshot = observation.Configure(configuration, [target]);
-        Assert.False(observation.NeedsPreviewCapture("common", 13));
+        Assert.False(observation.NeedsPreviewCapture("common", 13, new("image.preview.tensor", "image.preview")));
         observation.Poll(new(snapshot.Generation, []));
-        Assert.True(observation.NeedsPreviewCapture("common", 13));
-        Assert.False(observation.NeedsPreviewCapture("common", 14));
+        Assert.True(observation.NeedsPreviewCapture("common", 13, new("image.preview.tensor", "image.preview")));
+        Assert.False(observation.NeedsPreviewCapture("common", 14, new("image.preview.tensor", "image.preview")));
         await observation.CaptureAsync(context, "common", 13, "after", "preview", TestContext.Current.CancellationToken);
         await WaitFor(() => observation.Snapshot().Items[0].Captured == 1);
-        Assert.False(observation.NeedsPreviewCapture("common", 13));
+        Assert.False(observation.NeedsPreviewCapture("common", 13, new("image.preview.tensor", "image.preview")));
         long sequence = observation.Snapshot().Items[0].Frame!.Sequence;
         observation.Poll(new(snapshot.Generation, new() { [target.Key] = sequence }));
-        Assert.False(observation.NeedsPreviewCapture("common", 13));
+        Assert.False(observation.NeedsPreviewCapture("common", 13, new("image.preview.tensor", "image.preview")));
         observation.Configure(configuration with { Enabled = false }, [target]);
-        Assert.False(observation.NeedsPreviewCapture("common", 13));
+        Assert.False(observation.NeedsPreviewCapture("common", 13, new("image.preview.tensor", "image.preview")));
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public sealed class RegisterObservationTests
     [Fact]
     public async Task JsonCaptureRemainsValidAfterTheRunContextAndSourceArrayAreGone()
     {
-        var inspector = new PausedRegisterInspector(InferenceBackend.Cpu,Nv12ColorMatrix.Bt601Full);
+        var inspector = new PausedRegisterInspector(InferenceBackend.Cpu);
         int[] values = [2,3,5];
         CapturedRegister captured;
         using(var context = Context())
@@ -151,7 +151,7 @@ public sealed class RegisterObservationTests
     [Fact]
     public async Task SessionObservesSourceBeforeFirstInstructionAndOutputAfterItsWriterAcrossRuns()
     {
-        using var session = new CameraDebugSession("camera",new PausedRegisterInspector(InferenceBackend.Cpu,Nv12ColorMatrix.Bt601Full));
+        using var session = new CameraDebugSession("camera",new PausedRegisterInspector(InferenceBackend.Cpu));
         VmProgram program = session.Decorate(new([new WriteOp()],new Dictionary<string,int>(),"common"));
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         using var firstContext = Context(); firstContext.Set("source",41);

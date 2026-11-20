@@ -22,7 +22,7 @@ public sealed class RegisterInspectionCapabilitiesTests
         context.Set("results",new[] {1,2,3});
         context.Set("resource",resource);
         context.Set("nativeArray",new[] {resource});
-        var inspector = new PausedRegisterInspector(InferenceBackend.Cpu,Nv12ColorMatrix.Bt601Full);
+        var inspector = new PausedRegisterInspector(InferenceBackend.Cpu);
         Dictionary<string,DebugVariable> variables = inspector.Snapshot(context).ToDictionary(variable => variable.Key);
 
         Assert.True(variables["image"].CanPreviewImage);

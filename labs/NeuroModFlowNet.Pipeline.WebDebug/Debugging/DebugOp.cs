@@ -17,12 +17,13 @@ internal class DebugOp(IOp inner, CameraDebugSession session, string program, in
     public async ValueTask<OpResult> ExecuteAsync(VmRunContext context, CancellationToken cancellationToken)
     {
         // Warmup keeps the existing placement checks but does not stop or take debugger snapshots.
-        if(context.Identity.SourceId == session.CameraId + "_warmup")
+        if(session.IsWarmup(context))
         {
             session.RecordWarmup(context, program, index, Descriptor.Name);
             return await inner.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
         }
 
+        session.Video.Capture(context, program, index, "before");
         session.Registers.Visit(context, before);
         await session.BeforeAsync(context, program, index, Descriptor, cancellationToken).ConfigureAwait(false);
         if(session.Observation.Enabled)
@@ -32,6 +33,7 @@ internal class DebugOp(IOp inner, CameraDebugSession session, string program, in
         {
             OpResult result = await inner.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
             session.RecordTiming(program, index, Descriptor.Name, Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            if(result.Kind != OpResultKind.Fail) session.Video.Capture(context, program, index, "after");
             session.Registers.Visit(context, after);
             if(session.Observation.Enabled)
                 await session.Observation.CaptureAsync(context, program, index, "after", Descriptor.Name, cancellationToken).ConfigureAwait(false);

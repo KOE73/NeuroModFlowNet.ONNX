@@ -107,7 +107,7 @@ public sealed class RunToInstructionTests
 
     #region Fixtures
 
-    static CameraDebugSession Session() => new("camera",new PausedRegisterInspector(InferenceBackend.Cpu,Nv12ColorMatrix.Bt601Full));
+    static CameraDebugSession Session() => new("camera",new PausedRegisterInspector(InferenceBackend.Cpu));
     static VmRunContext Context(long run) => new(new("camera",run,DateTimeOffset.UtcNow),new VmGlobalMemory(),new VmSyncGateRegistry());
     static VmProgram Program(CameraDebugSession session,string name,params IOp[] instructions) => session.Decorate(new(instructions,new Dictionary<string,int>(),name));
     static CancellationTokenSource Timeout() => new(TimeSpan.FromSeconds(10));

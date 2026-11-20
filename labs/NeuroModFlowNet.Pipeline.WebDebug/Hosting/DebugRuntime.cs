@@ -51,6 +51,17 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
             return cameras.TryGetValue(id, out var camera) ? camera.Session : throw new KeyNotFoundException("Camera not found.");
     }
 
+    public Task StreamRegisterAsync(string id, DebugWatchSelection selection, HttpContext http)
+    {
+        string libraries = configuration["WebDebug:FFmpegLibrariesPath"]
+            ?? throw new NotSupportedException("Set WebDebug:FFmpegLibrariesPath to enable H.264.");
+        if(selection.Format != "h264" || selection.Program is null || selection.Index is null || selection.Phase is null)
+            throw new ArgumentException("Select a register and an explicit observation boundary for H.264.");
+        CameraDebugSession session = Session(id);
+        DebugWatchTarget target = session.Registers.Resolve(selection);
+        return session.Video.StreamAsync(http, libraries, target);
+    }
+
     public async Task<byte[]> PreviewAsync(string id, CancellationToken cancellationToken)
     {
         CameraDebugSession session;
@@ -64,9 +75,9 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
         DebugSnapshot snapshot = session.Snapshot();
         if(snapshot.State == "paused")
         {
-            if(!snapshot.Variables.Any(variable => variable.Key == "image.rect"))
-                throw new InvalidOperationException("image.rect is not available at this pause. Step through frame preparation first.");
-            DebugInspectionResult result = await session.InspectAsync(new("image.rect", snapshot.Revision, "png", maxEdge), cancellationToken).ConfigureAwait(false);
+            if(!snapshot.Variables.Any(variable => variable.Key == MultiCameraKeys.ImageRect))
+                throw new InvalidOperationException($"{MultiCameraKeys.ImageRect} is not available at this pause. Step through frame preparation first.");
+            DebugInspectionResult result = await session.InspectAsync(new(MultiCameraKeys.ImageRect, snapshot.Revision, "png", maxEdge), cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -148,8 +159,16 @@ internal sealed class DebugRuntime(IConfiguration configuration, ILogger<DebugRu
             foreach(CameraConfig camera in enabled)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var inspector = new PausedRegisterInspector(config.Backend, camera.Source.ColorMatrix, camera.Resolution.Width, camera.Resolution.Height);
-                var session = new CameraDebugSession(camera.Id, inspector);
+                var imageFormats = new Dictionary<string, DebugImageFormat>(StringComparer.Ordinal)
+                {
+                    [MultiCameraKeys.SourceNv12] = new(Nv12Width: camera.Resolution.Width, Nv12Height: camera.Resolution.Height,
+                        Nv12Matrix: camera.Source.ColorMatrix),
+                    [MultiCameraKeys.OcrRecInput] = new(MultiCameraKeys.OcrRoiCount, SignedUnitRange: true),
+                    [MultiCameraKeys.CropBatch] = new(MultiCameraKeys.CropCount)
+                };
+                var inspector = new PausedRegisterInspector(config.Backend, imageFormats);
+                var session = new CameraDebugSession(camera.Id, inspector, camera.Id + "_warmup",
+                    new(MultiCameraKeys.PreviewTensor, MultiCameraKeys.PreviewImage));
                 sessions.Add(session);
                 var worker = new CameraWorker(camera, config, endpoints, session.Decorate, outcome =>
                 {

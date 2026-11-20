@@ -1,7 +1,6 @@
 import './shell/ui-tooltip.js';
-import { ObservationView } from './observation.js';
-import { DebugWorkspace } from './workspace.js';
-import { memoryKind,sortRegisters } from './register-table.js';
+import { mountDebuggerWorkspace } from './debugger/debugger-workspace.js';
+import { createDebuggerSession } from './debugger-session.js';
 import { BatchView,batchWords } from './batches.js';
 
 const $ = selector => document.querySelector(selector);
@@ -10,32 +9,34 @@ const storage = 'nmfn.webdebug.ui.';
 const parameters = new URLSearchParams(location.search);
 const viewerId = parameters.get('viewer') || 'main';
 const viewerMode = viewerId !== 'main';
-let workspace = null;
-let registerSort = {column:'key',direction:1};
 const read = (key, fallback) => { try { return localStorage.getItem(storage + key) ?? fallback; } catch { return fallback; } };
 const save = (key, value) => { try { localStorage.setItem(storage + key, value); } catch { /* Preferences are optional. */ } };
 let viewerBootstrap = null;
-try { viewerBootstrap = JSON.parse(read(`viewer.${viewerId}`,'null')); registerSort = JSON.parse(read('registerSort','null')) ?? registerSort; } catch { }
-if(!['key','memory','shape','additionOrder'].includes(registerSort.column) || ![1,-1].includes(registerSort.direction)) registerSort = {column:'key',direction:1};
+try { viewerBootstrap = JSON.parse(read('viewer.' + viewerId,'null')); if(viewerBootstrap) viewerBootstrap.targetId ??= viewerBootstrap.camera; } catch { }
 shell.classList.toggle('viewer-mode',viewerMode);
-if(viewerMode) { window.opener = null; $('#viewer-camera').hidden = false; }
+if(viewerMode) { $('#viewer-camera').hidden = false; }
 let language = read('language', 'ru');
 let theme = read('theme', 'cream');
 let density = read('density', 'nano');
 let panelScheme = read('panelScheme','compact');
 if(!['compact','rounded','square'].includes(panelScheme)) panelScheme = 'compact';
 let token = sessionStorage.getItem('nmfn.webdebug.token') || '';
-let selectedCamera = '', selectedRegister = '', selectedInstruction = null, current = null;
-let catalog = [], lastRender = '', busy = false, polling = false, imageUrl = null, pinnedUrl = null;
-let selectingCamera = '';
-let imageCaption = '', modalReturnFocus = null;
-let imageInfo = null, pinnedInfo = null;
-let lastError = '';
-let focusedActionKey = '';
+let current = null, polling = false, modalReturnFocus = null, lastError = '';
 const words = {
   ...batchWords,
   sections:['Разделы','Sections'], overview:['Обзор камер','Camera overview'], settings:['Настройки','Settings'],
   heading:['Виртуальные машины · камеры','Virtual machines · cameras'], start:['Запустить','Start'],stop:['Остановить всё','Stop all'],
+  source:['Источник','Source'],file:['Файл','File'],files:['Файлы','Files'],folder:['Папка','Folder'],rtsp:['RTSP','RTSP'],
+  labels:['Метки','Labels'], labelstip:['Метки переходов, локальные для программы','Jump labels local to the program'],
+  guard:['Условие перед командой','Guard checked before the instruction'],
+  unnamedGuard:['Без названия','Unnamed'],
+  'ocr.hasCrops':['Есть вырезки треков','Track crops exist'],
+  'ocr.hasTextRegions':['Есть области текста','Text regions exist'],
+  flowSpan:['Строк в условном диапазоне','Rows in conditional span'],
+  flowNext:['Следующая инструкция','Next instruction'],
+  flowStop:['Остановка прогона','Stop run'],
+  flowEnd:['Конец программы','End of program'],
+  stoppipelinestip:['Полностью остановить все отладочные конвейеры и освободить декодеры, VM и нейросети. Повторный запуск — на странице обзора.','Fully stop all debug pipelines and release decoders, VMs and inference services. Start again from the overview.'],
   cameras:['Камеры','Cameras'],camera:['Камера','Camera'],state:['Состояние','State'],decoder:['Декодер','Decoder'],frames:['Кадры','Frames'],runms:['Прогон, мс','Run, ms'],tracks:['Треки','Tracks'],failures:['Ошибки','Errors'],text:['Распознанный текст','Recognized text'],
   pause:['Пауза','Pause'],continue:['Продолжить','Continue'],step:['Шаг','Step'],nextframe:['Следующий кадр','Next frame'],detach:['Отсоединить','Detach'],
   debugcontrols:['Управление отладкой выбранной камеры','Selected camera debug controls'],
@@ -46,6 +47,10 @@ const words = {
   layoutinvalid:['Не удалось восстановить расположение','Could not restore layout'],popupblocked:['Браузер не открыл окно. Разрешите всплывающие окна для этого адреса.','The browser did not open the window. Allow popups for this site.'],
   instructions:['Программы и инструкции','Programs and instructions'],instruction:['Инструкция','Instruction'],breakpoint:['Т.О.','B.P.'],ms:['мс','ms'],registers:['Регистры','Registers'],register:['Регистр','Register'],memory:['Память','Memory'],shape:['Форма','Shape'],
   inspect:['Значение','Value'],preview:['Изображение','Image'],image:['Просмотр данных','Data inspection'],pin:['Закрепить вход','Pin input'],resultframe:['Кадр результата','Result frame'],
+  pintip:['Сохранить текущий снимок как «Вход» для сравнения со следующим. Он остаётся в панели при шагах и при запросе нового кадра.','Keep the current snapshot as Input to compare with the next one. It stays visible while stepping and when requesting another frame.'],
+  floatpaneltip:['Сделать панель плавающей в этой вкладке. Перетаскивайте её за заголовок и меняйте размер за края. Повторное нажатие возвращает её в раскладку.','Float in this tab. Drag by the title and resize by the edges. Click again to dock.'],
+  dockbacktip:['Вернуть плавающую панель в раскладку просмотра.','Return this floating panel to the viewer layout.'],
+  newviewertip:['Открыть отдельное окно с уже показанным кадром или значением, в том числе на паузе. Если наблюдение включено, окно также получает новые выборки.','Open a separate window with the currently displayed frame or value, including on pause. When observation is enabled it also receives new samples.'],
   imageempty:['Для динамики отметьте регистры и одну галочку «Съём» у инструкции. Значения читаются после неё. На паузе доступны значки просмотра.','For live data, check registers and one instruction in the Capture column. Values are read after it. Inspection icons are available on pause.'],
   menu:['Свернуть / развернуть меню','Collapse / expand navigation'],help:['Справка об отладке камер','Camera debugger help'],close:['Закрыть окно','Close dialog'],
   pausetip:['Остановиться перед следующей инструкцией выбранной камеры. Другие камеры продолжают работу.','Stop before the next instruction of this camera. Other cameras continue.'],
@@ -104,12 +109,6 @@ const words = {
 const t = key => words[key]?.[language === 'ru' ? 0 : 1] ?? key;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const number = (value, digits = 0) => Number.isFinite(value) ? value.toFixed(digits) : '—';
-const cameraPath = () => `/api/cameras/${encodeURIComponent(selectedCamera)}`;
-const observation = new ObservationView({api,t,esc,read,save,bootstrap:viewerBootstrap,viewerId,
-  onTile:(key,tile)=>workspace?.attachTile(key,tile),onRemove:key=>workspace?.removeTile(key),
-  onFloat:(key,tile)=>workspace?.floatTile(key,tile),onPopup:key=>openViewer(key),
-  onSync:keys=>workspace?.pruneTiles(keys),
-  onError:showError,onChange:() => { if(viewerMode && observation.snapshot) { save(`viewer.${viewerId}`,JSON.stringify({camera:observation.camera,configuration:observation.configuration})); if(workspace && observation.selected.length === 0 && workspace.dock.panels.length === 0) workspace.show('registers'); } lastRender = ''; renderSelected(); }});
 function updateDiagnostics() {
   $('#diagnostics').classList.toggle('error',Boolean(lastError));
   $('#diagnostics').dataset.tooltip = t(lastError ? 'hasdiagnostics':'nodiagnostics');
@@ -137,7 +136,7 @@ async function api(path, options = {}) {
 
 function appearance() {
   shell.dataset.theme = theme; shell.dataset.density = density; shell.dataset.panelScheme = panelScheme;
-  workspace?.applyAppearance();
+  debuggerUi.applyAppearance();
   shell.dataset.tooltips = read('tooltips','true');
   shell.classList.toggle('menu-collapsed', read('menu','expanded') === 'collapsed');
   $('#appearance-label').textContent = `${t(theme)} · ${density.toUpperCase()} · ${t('panel' + panelScheme)}`;
@@ -153,7 +152,7 @@ function translate() {
   document.querySelectorAll('[data-i18n]').forEach(element => element.textContent = t(element.dataset.i18n));
   document.querySelectorAll('[data-label]').forEach(element => element.setAttribute('aria-label',t(element.dataset.label)));
   document.querySelectorAll('[data-tip]').forEach(element => element.dataset.tooltip = t(element.dataset.tip));
-  $('#language').textContent = language.toUpperCase(); appearance(); updateCaptions(); updateDiagnostics(); observation.render(); workspace?.translate(); batches.render(); lastRender = ''; renderSelected();
+  $('#language').textContent = language.toUpperCase(); appearance(); updateDiagnostics(); debuggerUi.translate(); batches.render();
 }
 
 function showDialog(title, html) {
@@ -162,7 +161,6 @@ function showDialog(title, html) {
 }
 $('#dialog').addEventListener('close', () => modalReturnFocus?.focus());
 $('#help').onclick = () => showDialog(t('help'),t('helpbody') + `<p>${esc(t('registerhelp'))}</p><p>${esc(t('watchtip'))}</p><p>${esc(t('watchcountertip'))}</p>`);
-$('#register-help').onclick = () => showDialog(t('watchpoint'),`<p>${esc(t('watchpointtip'))}</p><p>${esc(t('registermetadatatip'))}</p><p>${esc(t('watchtip'))}</p>`);
 $('#diagnostics').onclick = () => showDialog(t('diagnostics'),`<pre class="diagnostic-detail">${esc(lastError || t('nodiagnostics'))}</pre>`);
 $('#settings-nav').onclick = event => {
   event.preventDefault();
@@ -180,40 +178,43 @@ $('#appearance-menu').onclick = event => {
   appearance();
 };
 
+const debuggerUi = await mountDebuggerWorkspace($('#debugger-workspace'),{
+  session:createDebuggerSession(api),
+  t,read,save,onError:showError,clearError,onRefresh:poll,onOpenViewer:openViewer,
+  onHelp:()=>showDialog(t('watchpoint'),'<p>'+esc(t('watchpointtip'))+'</p><p>'+esc(t('registermetadatatip'))+'</p><p>'+esc(t('watchtip'))+'</p>'),
+  isActive:()=>shell.dataset.page === 'camera',
+  canUseShortcuts:()=>shell.dataset.page === 'camera' && !$('#dialog').open,
+  viewerId,viewerBootstrap
+});
+$('.debug-actions').prepend($('#debugger-host-actions').content.cloneNode(true));
+$('#panels-menu').onclick = event => {
+  const button = event.target.closest('[data-panel]'); if(!button) return;
+  debuggerUi.showPanel(button.dataset.panel); $('#panels-menu').open = false;
+};
+$('#reset-layout').onclick = () => { debuggerUi.resetLayout(); $('#panels-menu').open = false; };
+$('#new-viewer').onclick = () => { debuggerUi.openViewer(); $('#panels-menu').open = false; };
 async function selectCamera(id) {
-  showPage(false); initializeWorkspace();
-  if(id === selectedCamera && catalog.length) {
-    if(!viewerMode) location.hash=encodeURIComponent(id);
-    selectRows(); return;
-  }
-  selectingCamera=id;
-  if(id !== selectedCamera) { selectedRegister = ''; selectedInstruction = null; clearImage(); }
-  selectedCamera = id; lastRender = '';
-  if(!viewerMode && location.hash !== `#${encodeURIComponent(id)}`) location.hash = encodeURIComponent(id);
-  save(`camera.${viewerId}`,id);
-  if(viewerMode) document.title = `VM View · ${id}`;
-  const watching = observation.setCamera(id);
-  try {
-    const instructions = await (await api(`${cameraPath()}/instructions`)).json();
-    if(selectedCamera === id) { catalog = instructions; renderSelected(); }
-  }
-  catch(error) { showError(error); }
-  await watching;
-  if(selectingCamera === id) selectingCamera='';
+  showPage(false);
+  if(!viewerMode && location.hash !== '#' + encodeURIComponent(id)) location.hash = encodeURIComponent(id);
+  save('camera.' + viewerId,id);
+  if(viewerMode) document.title = 'VM View · ' + id;
+  await debuggerUi.selectTarget(id);
+  if(debuggerUi.targetId === id) debuggerUi.update(current?.cameras.find(camera=>camera.id === id)?.debug);
+  selectRows();
 }
 function selectRows() {
   $('#overview-nav').classList.toggle('active',shell.dataset.page === 'overview');
   $('#batches-nav').classList.toggle('active',shell.dataset.page === 'batches');
   document.querySelectorAll('[data-camera]').forEach(element => {
-    element.classList.toggle(element.tagName === 'A' ? 'active':'selected',element.dataset.camera === selectedCamera && (element.tagName !== 'A' || shell.dataset.page === 'camera'));
+    element.classList.toggle(element.tagName === 'A' ? 'active':'selected',element.dataset.camera === debuggerUi.targetId && (element.tagName !== 'A' || shell.dataset.page === 'camera'));
   });
 }
 function renderCameras(data) {
   const cameras = data.cameras;
   $('#cameras').innerHTML = cameras.length ? cameras.map(camera => {
     const stats = camera.statistics, debug = camera.debug;
-    return `<tr data-camera="${esc(camera.id)}" tabindex="0" aria-label="${esc(camera.id)}"><td>${esc(camera.id)}</td><td class="${debug.state === 'failed' ? 'error' : debug.state === 'paused' ? 'warn':''}" data-tooltip="${esc(debug.error ?? stats.lastError ?? t(debug.state))}">${t(debug.state)}</td><td>${esc(camera.decoder)}</td><td class="number">${camera.width}</td><td class="number">${camera.height}</td><td class="number" data-tooltip="${t('totalframes')}">${number(stats.framesRead)}</td><td class="number" data-tooltip="${t('fpshint')}">${number(stats.averageFps,1)}</td><td class="number" data-tooltip="${t('runhint')}">${number(stats.averageRunMilliseconds,1)}</td><td class="number">${number(stats.lastTrackCount)}</td><td class="number ${stats.runsFailed ? 'error':''}">${number(stats.runsFailed)}</td><td data-tooltip="${esc(stats.lastText)}">${esc(stats.lastText || '—')}</td></tr>`;
-  }).join('') : `<tr><td colspan="11" class="muted">${t('empty')}</td></tr>`;
+    return `<tr data-camera="${esc(camera.id)}" tabindex="0" aria-label="${esc(camera.id)}"><td>${esc(camera.id)}</td><td>${esc(t(camera.sourceKind))}</td><td class="${debug.state === 'failed' ? 'error' : debug.state === 'paused' ? 'warn':''}" data-tooltip="${esc(debug.error ?? stats.lastError ?? t(debug.state))}">${t(debug.state)}</td><td>${esc(camera.decoder)}</td><td class="number">${camera.width}</td><td class="number">${camera.height}</td><td class="number" data-tooltip="${t('totalframes')}">${number(stats.framesRead)}</td><td class="number" data-tooltip="${t('fpshint')}">${number(stats.averageFps,1)}</td><td class="number" data-tooltip="${t('runhint')}">${number(stats.averageRunMilliseconds,1)}</td><td class="number">${number(stats.lastTrackCount)}</td><td class="number ${stats.runsFailed ? 'error':''}">${number(stats.runsFailed)}</td><td data-tooltip="${esc(stats.lastText)}">${esc(stats.lastText || '—')}</td></tr>`;
+  }).join('') : `<tr><td colspan="12" class="muted">${t('empty')}</td></tr>`;
   const navKey = cameras.map(camera => camera.id).join('|') + language;
   if($('#camera-nav').dataset.key !== navKey) {
     $('#camera-nav').innerHTML = cameras.map(camera => `<a href="#${encodeURIComponent(camera.id)}" data-camera="${esc(camera.id)}"><i class="camera-state ti" aria-hidden="true"></i><span>${esc(camera.id)}</span></a>`).join('');
@@ -232,7 +233,7 @@ function showPage(overview) {
   const page=overview === 'batches' ? 'batches' : overview ? 'overview':'camera';
   if(shell.dataset.page !== page) {
     shell.dataset.page=page;
-    if(page === 'camera' && workspace) workspace.dock.layout(workspace.host.clientWidth,workspace.host.clientHeight,true);
+    if(page === 'camera') debuggerUi.layout();
     if(page === 'batches') batches.poll();
   }
   selectRows();
@@ -242,169 +243,20 @@ async function route() {
   let id; try { id=decodeURIComponent(location.hash.slice(1)) || parameters.get('camera'); } catch { id=''; }
   if(id === 'batches') { showPage('batches'); return; }
   if(!id || !current?.cameras.some(camera=>camera.id === id)) { showPage(true); return; }
-  if(id !== selectedCamera || !workspace || (!catalog.length && selectingCamera !== id)) await selectCamera(id);
+  if(id !== debuggerUi.targetId || debuggerUi.needsInstructions) await selectCamera(id);
   else showPage(false);
 }
 window.addEventListener('hashchange',()=>route());
-
-function renderSelected() {
-  const camera = current?.cameras.find(item => item.id === selectedCamera);
-  const snapshot = camera?.debug, paused = snapshot?.state === 'paused';
-  $('#selected-camera').textContent = selectedCamera || '—';
-  const point = paused || snapshot?.state === 'waiting' ? snapshot?.location : null;
-  $('#stop-location').textContent = point ? `${t('run')} ${point.runId} · ${point.program} [${point.index}] · ${t(point.phase)} ${point.name}` : snapshot ? t(snapshot.state) : '—';
-  $('#stop-location').dataset.tooltip = $('#stop-location').textContent;
-  document.querySelectorAll('[data-command]').forEach(button => {
-    button.disabled = busy || !camera || (['step','continue','next-frame'].includes(button.dataset.command) && !paused);
-  });
-  const activeActionKey = document.activeElement?.dataset.focusKey;
-  if(activeActionKey) focusedActionKey = activeActionKey;
-  document.querySelectorAll('[data-register-action]').forEach(button => button.disabled = busy || !paused || button.dataset.present !== 'true');
-  document.querySelectorAll('[data-run-to]').forEach(button => button.disabled = viewerMode || busy || !paused || button.dataset.atCurrent === 'true');
-  $('#live').disabled = !camera;
-  const renderKey = `${selectedCamera}|${snapshot?.revision}|${JSON.stringify(snapshot?.breakpoints)}|${JSON.stringify(snapshot?.runTo)}|${selectedRegister}|${selectedInstruction?.program}|${selectedInstruction?.index}|${language}|${catalog.length}|${observation.renderKey}`;
-  if(renderKey === lastRender) { restoreRowFocus(); return; }
-  lastRender = renderKey;
-  let program = '';
-  $('#instructions').innerHTML = catalog.map(instruction => {
-    let header = '';
-    if(program !== instruction.program) { program = instruction.program; header = `<tr class="program-row"><td colspan="7">${esc(program)}</td></tr>`; }
-    const here = point?.program === instruction.program && point.index === instruction.index;
-    const selected = selectedInstruction?.program === instruction.program && selectedInstruction.index === instruction.index;
-    const breakpoint = snapshot?.breakpoints.some(item => item.program === instruction.program && item.index === instruction.index);
-    const capture = observation.capturePoint?.program === instruction.program && observation.capturePoint.index === instruction.index;
-    const captureLabel = `${t('watchpoint')} ${program} [${instruction.index}] · ${t('after')} ${instruction.name}`;
-    const timing = snapshot?.timings.find(item => item.program === instruction.program && item.index === instruction.index);
-    const atCurrent = Boolean(here && point.phase === 'before');
-    const target = snapshot?.runTo?.program === program && snapshot.runTo.index === instruction.index;
-    const runLabel = `${t('runto')} ${program} [${instruction.index}] · ${instruction.name}`;
-    const runButton = `<button class="row-action" data-run-to data-at-current="${atCurrent}" data-focus-key="${esc(selectedCamera + '|run|' + program + '|' + instruction.index)}" aria-label="${esc(runLabel)}" data-tooltip="${esc(runLabel + '\n' + t('runtotip'))}" ${busy || !paused || atCurrent ? 'disabled':''}><i class="ti ti-player-track-next" aria-hidden="true"></i></button>`;
-    return header + `<tr data-program="${esc(program)}" data-index="${instruction.index}" class="${here ? 'current':''} ${selected ? 'selected':''} ${target ? 'run-target':''} ${capture ? 'capture-point':''}"><td><input type="checkbox" data-breakpoint aria-label="${esc(t('breakpoint') + ' ' + program + ' ' + instruction.index)}" ${breakpoint ? 'checked':''}></td><td class="row-action-cell">${runButton}</td><td class="instruction-pointer">${here ? `<i class="ti ti-arrow-right" aria-hidden="true"></i>`:''}</td><td class="number">${instruction.index}</td><td class="instruction-name" data-tooltip="${esc(instruction.name + '\n' + instruction.operation)}">${esc(instruction.name)}</td><td class="capture-cell"><input type="checkbox" data-watch-instruction data-focus-key="${esc(selectedCamera+'|capture|'+program+'|'+instruction.index)}" aria-label="${esc(captureLabel)}" data-tooltip="${esc(captureLabel+'\n'+t('watchpointtip'))}" ${capture ? 'checked':''} ${!observation.snapshot || observation.updating ? 'disabled':''}></td><td class="number">${timing ? number(timing.milliseconds,2):'—'}</td></tr>`;
-  }).join('');
-  $('#instruction-count').textContent = String(catalog.length);
-  const active = selectedInstruction ?? catalog.find(item => item.program === point?.program && item.index === point?.index);
-  $('#instruction-io').textContent = active ? `${t('reads')}: ${active.reads.join(', ') || '—'}\n${t('writes')}: ${active.writes.join(', ') || '—'}` : '—';
-  const registerVariables = sortRegisters(observation.knownVariables(snapshot?.variables ?? [],paused),registerSort.column,registerSort.direction);
-  $('#registers').innerHTML = registerVariables.length ? registerVariables.map(variable => {
-    const action = (format, icon, label) => `<button class="row-action" data-present="${Boolean(variable.availableNow)}" data-register-action="${format}" data-focus-key="${esc(selectedCamera + '|register|' + variable.key + '|' + format)}" aria-label="${esc(t(label) + ' ' + variable.key)}" data-tooltip="${esc(t(label) + ' ' + variable.key)}" ${busy || !variable.availableNow ? 'disabled':''}><i class="ti ti-${icon}" aria-hidden="true"></i></button>`;
-    const where=location=>location ? `${location.program} [${location.index}] ${t(location.phase)} · ${t('run')} ${location.runId}`:'';
-    const detail=`${variable.key}\n${variable.type}\n${t(variable.presence ?? 'registermetadatatip')}\n${where(variable.lastSeen)}${variable.removedAt ? '\n'+t('removed')+': '+where(variable.removedAt):''}${variable.metadataError ? '\n'+variable.metadataError:''}`;
-    const created=variable.createdAt, creatorDetail=created ? `${t('creator')}: ${where(created)} · ${created.name}`:t('creatorTip');
-    const inspectAction=variable.canPreviewImage ? action('png','eye','imageaction'):variable.canInspectValue ? action('json','list-details','valueaction'):'';
-    return `<tr tabindex="0" data-register="${esc(variable.key)}" data-memory-kind="${memoryKind(variable.memory)}" class="${selectedRegister === variable.key ? 'selected':''} ${active?.reads.includes(variable.key) ? 'input-register':''} ${active?.writes.includes(variable.key) ? 'output-register':''}"><td class="number register-creator" data-tooltip="${esc(creatorDetail)}">${created?.index ?? '—'}</td><td class="number register-order">${variable.additionOrder ?? '—'}</td><td data-register-name data-tooltip="${esc(detail)}">${esc(variable.key)}</td><td class="register-watch-cell">${observation.checkbox(variable)}</td><td class="register-action-cell">${inspectAction}</td><td>${esc(variable.memory)}</td><td class="mono" data-tooltip="${esc(variable.elementType ?? variable.type)}">${esc(variable.shape ?? variable.value ?? '—')}</td></tr>`;
-  }).join('') : `<tr><td colspan="7" class="muted">${t('noRegisters')}</td></tr>`;
-  $('#register-count').textContent = String(registerVariables.length) + (observation.catalogs.get(selectedCamera)?.truncated ? '+':'');
-  $('#register-count').dataset.tooltip = t('registermetadatatip');
-  if(viewerMode) document.querySelectorAll('[data-run-to],[data-breakpoint]').forEach(control=>control.disabled=true);
-  for(const header of document.querySelectorAll('th[data-sort]')) header.setAttribute('aria-sort',header.dataset.sort !== registerSort.column ? 'none' : registerSort.direction === 1 ? 'ascending':'descending');
-  selectRows(); restoreRowFocus();
-}
-
-function restoreRowFocus() {
-  if(busy || document.activeElement !== document.body || !focusedActionKey) return;
-  const button = [...document.querySelectorAll('[data-focus-key]')].find(item => item.dataset.focusKey === focusedActionKey);
-  if(button && !button.disabled) button.focus({preventScroll:true});
-}
-
-async function command(name, target = {}) {
-  if(viewerMode || shell.dataset.page !== 'camera') return;
-  if(busy || !selectedCamera) return;
-  busy = true; renderSelected();
-  try {
-    const snapshot = current.cameras.find(item => item.id === selectedCamera)?.debug;
-    const revision = ['step','continue','next-frame','run-to'].includes(name) ? snapshot?.revision:undefined;
-    await api(`${cameraPath()}/command`,{method:'POST',body:JSON.stringify({command:name,revision,...target})});
-    clearError();
-  } catch(error) { showError(error); }
-  finally { busy = false; await poll(); }
-}
-document.querySelector('.debug-actions').onclick = event => { const button = event.target.closest('[data-command]'); if(button) command(button.dataset.command); };
 for(const selector of ['#cameras','#camera-nav']) $(selector).addEventListener('click',event => { const row = event.target.closest('[data-camera]'); if(row) { event.preventDefault(); selectCamera(row.dataset.camera); } });
 $('#cameras').addEventListener('keydown',event => { if(event.key === 'Enter' && event.target.dataset.camera) selectCamera(event.target.dataset.camera); });
-$('#instructions').addEventListener('click', async event => {
-  const row = event.target.closest('[data-program]'); if(!row) return;
-  selectedInstruction = catalog.find(item => item.program === row.dataset.program && item.index === Number(row.dataset.index));
-  if(event.target.closest('[data-run-to]')) {
-    await command('run-to',{program:row.dataset.program,index:Number(row.dataset.index)});
-    return;
-  }
-  if(event.target.matches('[data-watch-instruction]')) {
-    await observation.setCapturePoint(selectedInstruction,event.target.checked);
-  } else if(!viewerMode && event.target.matches('[data-breakpoint]')) {
-    const breakpoints = [...$('#instructions').querySelectorAll('[data-breakpoint]:checked')].map(input => ({program:input.closest('tr').dataset.program,index:Number(input.closest('tr').dataset.index)}));
-    try { await api(`${cameraPath()}/breakpoints`,{method:'PUT',body:JSON.stringify(breakpoints)}); await poll(); }
-    catch(error) { showError(error); }
-  }
-  lastRender = ''; renderSelected();
-});
-$('#registers').addEventListener('click',event => {
-  const row = event.target.closest('[data-register]'); if(!row) return;
-  selectedRegister = row.dataset.register;
-  if(event.target.matches('[data-watch-register]')) { lastRender = ''; return; }
-  const action = event.target.closest('[data-register-action]');
-  if(action) { inspect(action.dataset.registerAction,row.dataset.register); return; }
-  lastRender = ''; renderSelected();
-});
-$('#registers').addEventListener('keydown',event => { if(event.key === 'Enter' && event.target.dataset.register) { selectedRegister = event.target.dataset.register; lastRender = ''; renderSelected(); } });
-
-function clearImage() {
-  if(imageUrl) URL.revokeObjectURL(imageUrl);
-  if(pinnedUrl) URL.revokeObjectURL(pinnedUrl);
-  imageUrl = pinnedUrl = imageInfo = pinnedInfo = null; $('#preview-figure').hidden = $('#pinned-figure').hidden = $('#value-output').hidden = true;
-  $('#image-empty').hidden = false; $('#pin').disabled = true;
-}
-function captionFor(info) {
-  if(!info) return '';
-  return info.result ? `${info.camera} · ${t('resultframe')}` : `${info.camera} · ${t('run')} ${info.runId} · ${info.key} · ${info.program} [${info.index}] ${t(info.phase)}`;
-}
-function updateCaptions() {
-  imageCaption = captionFor(imageInfo);
-  $('#preview-caption').textContent = imageCaption; $('#preview-image').alt = imageCaption;
-  $('#pinned-caption').textContent = pinnedInfo ? `${t('input')}: ${captionFor(pinnedInfo)}` : '';
-  $('#pinned-image').alt = captionFor(pinnedInfo);
-}
-function displayImage(blob, info) {
-  workspace?.show('preview');
-  if(imageUrl && imageUrl !== pinnedUrl) URL.revokeObjectURL(imageUrl);
-  imageUrl = URL.createObjectURL(blob); imageInfo = info;
-  $('#preview-image').src = imageUrl; $('#image-link').href = imageUrl;
-  updateCaptions(); $('#preview-figure').hidden = false;
-  $('#image-empty').hidden = $('#value-output').hidden = true; $('#pin').disabled = false;
-}
-async function inspect(format, key) {
-  const snapshot = current?.cameras.find(item => item.id === selectedCamera)?.debug;
-  const variable = snapshot?.variables.find(item => item.key === key);
-  if(!snapshot || snapshot.state !== 'paused' || !variable || busy ||
-    (format === 'json' ? !variable.canInspectValue : !variable.canPreviewImage)) return;
-  busy = true; renderSelected();
-  const camera = selectedCamera;
-  try {
-    const response = await api(`${cameraPath()}/inspect`,{method:'POST',body:JSON.stringify({key,format,revision:snapshot.revision,maxEdge:Number(observation.size.value)}),signal:AbortSignal.timeout(120000)});
-    if(camera !== selectedCamera) return;
-    if(format === 'png') displayImage(await response.blob(),{camera,key,...snapshot.location});
-    else { $('#value-output').textContent = `${key}\n${await response.text()}`; $('#value-output').hidden = false; $('#image-empty').hidden = true; }
-    clearError();
-  } catch(error) { showError(error); }
-  finally { busy = false; renderSelected(); }
-}
-$('#pin').onclick = () => {
-  if(!imageUrl) return;
-  if(pinnedUrl && pinnedUrl !== imageUrl) URL.revokeObjectURL(pinnedUrl);
-  pinnedUrl = imageUrl; pinnedInfo = imageInfo; $('#pinned-image').src = pinnedUrl;
-  updateCaptions(); $('#pinned-figure').hidden = false;
-};
-$('#live').onclick = async () => {
-  try { const camera = selectedCamera; const response = await api(`${cameraPath()}/preview.png`); if(camera === selectedCamera) displayImage(await response.blob(),{camera,result:true}); clearError(); }
-  catch(error) { showError(error); }
-};
 $('#start').onclick = async () => { try { await api('/api/start',{method:'POST'}); clearError(); await poll(); } catch(error) { showError(error); } };
-$('#stop').onclick = async () => { try { $('#stop').disabled = true; await api('/api/stop',{method:'POST',signal:AbortSignal.timeout(120000)}); catalog = []; clearError(); await poll(); } catch(error) { showError(error); } };
-document.addEventListener('keydown',event => {
-  if($('#dialog').open || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
-  if(event.key === 'F6') { event.preventDefault(); command('step'); }
-  if(event.key === 'F8') { event.preventDefault(); command('continue'); }
-});
-
+$('#stop').onclick = $('#stop-pipelines').onclick = async () => {
+  try {
+    $('#stop').disabled = $('#stop-pipelines').disabled = true;
+    await api('/api/stop',{method:'POST',signal:AbortSignal.timeout(120000)});
+    await debuggerUi.clearTarget(); clearError(); await poll();
+  } catch(error) { showError(error); }
+};
 async function poll() {
   if(polling) return;
   polling = true;
@@ -414,17 +266,18 @@ async function poll() {
     $('#connection').classList.remove('error');
     $('#start').disabled = current.canStart === undefined ? ['starting','running'].includes(current.state) : !current.canStart;
     $('#stop').disabled = current.canStop === undefined ? !['starting','running'].includes(current.state) : !current.canStop;
+    $('#stop-pipelines').disabled = $('#stop').disabled;
     renderCameras(current);
     const cameraOptions = current.cameras.map(camera=>`<option value="${esc(camera.id)}">${esc(camera.id)}</option>`).join('');
     if($('#viewer-camera').innerHTML !== cameraOptions) $('#viewer-camera').innerHTML = cameraOptions;
     if(!viewerMode) await route();
-    else if(!current.cameras.some(camera => camera.id === selectedCamera)) {
+    else if(!current.cameras.some(camera => camera.id === debuggerUi.targetId)) {
       const preferred = read(`camera.${viewerId}`,'') || parameters.get('camera');
-      selectedCamera = current.cameras.find(camera=>camera.id === preferred)?.id ?? current.cameras[0]?.id ?? ''; catalog = []; lastRender = '';
-      if(selectedCamera) await selectCamera(selectedCamera); else await observation.setCamera('');
-    } else if(catalog.length === 0 && selectedCamera) await selectCamera(selectedCamera);
-    renderSelected();
-    $('#viewer-camera').value = selectedCamera;
+      const id = current.cameras.find(camera=>camera.id === preferred)?.id ?? current.cameras[0]?.id ?? '';
+      if(id) await selectCamera(id); else await debuggerUi.clearTarget();
+    } else if(debuggerUi.needsInstructions && debuggerUi.targetId) await selectCamera(debuggerUi.targetId);
+    debuggerUi.update(current.cameras.find(camera=>camera.id === debuggerUi.targetId)?.debug);
+    $('#viewer-camera').value = debuggerUi.targetId;
     if(current.error) showError(current.error);
   } catch(error) {
     $('#connection').textContent = t('disconnected'); $('#connection').classList.add('error');
@@ -432,26 +285,36 @@ async function poll() {
     showError(error);
   } finally { polling = false; }
 }
-function openViewer(key) {
+function openViewer({targetId,configuration,sample}) {
   const id = `view-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
-  const configuration = {...observation.configuration,registers:observation.selected.filter(item=>!key || item.key === key)};
-  save(`viewer.${id}`,JSON.stringify({camera:selectedCamera,configuration}));
-  const url = new URL(location.pathname,location.origin); url.searchParams.set('viewer',id); url.searchParams.set('camera',selectedCamera);
-  if(!window.open(url.href,id,'popup=yes,width=1150,height=800,resizable=yes,scrollbars=yes')) showError(new Error(t('popupblocked')));
+  save(`viewer.${id}`,JSON.stringify({targetId,configuration}));
+  const url = new URL(location.pathname,location.origin); url.searchParams.set('viewer',id); url.searchParams.set('camera',targetId);
+  const popup = window.open(url.href,id,'popup=yes,width=1150,height=800,resizable=yes,scrollbars=yes');
+  if(!popup) { showError(new Error(t('popupblocked'))); return; }
+  const snapshot = sample;
+  const ready = event => {
+    if(event.origin !== location.origin || event.source !== popup || event.data?.previewReady !== id) return;
+    window.removeEventListener('message',ready);
+    if(snapshot && !popup.closed) popup.postMessage({previewSample:id,sample:snapshot},location.origin);
+  };
+  window.addEventListener('message',ready);
+  setTimeout(()=>window.removeEventListener('message',ready),30000);
 }
 $('#viewer-camera').onchange = () => selectCamera($('#viewer-camera').value);
-document.querySelector('.register-table thead').onclick = event => {
-  const button = event.target.closest('button[data-sort]'); if(!button) return;
-  registerSort = {column:button.dataset.sort,direction:registerSort.column === button.dataset.sort ? -registerSort.direction:1};
-  save('registerSort',JSON.stringify(registerSort)); lastRender = ''; renderSelected();
-};
-function initializeWorkspace() {
-  if(workspace) return;
-  workspace = new DebugWorkspace({t,read,save,onError:showError,onPopup:openViewer,onCloseTile:key=>{
-  const registers=observation.selected.filter(item=>item.key !== key);
-  observation.configure({...observation.configuration,registers,enabled:registers.length > 0 && observation.configuration.enabled});
-},viewer:viewerMode,id:viewerId,hasWatches:Boolean(viewerBootstrap?.configuration?.registers?.length)});
-}
 translate();
-if(viewerMode) { showPage(false); initializeWorkspace(); }
+if(viewerMode) {
+  showPage(false);
+  const parent = window.opener;
+  if(parent) {
+    const receive = event => {
+      if(event.origin !== location.origin || event.source !== parent || event.data?.previewSample !== viewerId) return;
+      window.removeEventListener('message',receive);
+      debuggerUi.showSample(event.data.sample,Boolean(viewerBootstrap?.configuration?.registers?.length));
+    };
+    window.addEventListener('message',receive);
+    setTimeout(()=>window.removeEventListener('message',receive),30000);
+    parent.postMessage({previewReady:viewerId},location.origin);
+    window.opener = null;
+  }
+}
 poll(); setInterval(poll,600);

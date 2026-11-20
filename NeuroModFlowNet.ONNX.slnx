@@ -50,6 +50,7 @@
     <File Path="README_RU.md" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/NeuroModFlowNet.Pipeline.Debugger.Web/NeuroModFlowNet.Pipeline.Debugger.Web.csproj" />
     <Project Path="src/NeuroModFlowNet.CV/NeuroModFlowNet.CV.csproj" />
     <Project Path="src/NeuroModFlowNet.ONNX.Diagnostics/NeuroModFlowNet.ONNX.Diagnostics.csproj" />
     <Project Path="src/NeuroModFlowNet.ONNX.Graph/NeuroModFlowNet.ONNX.Graph.csproj" />

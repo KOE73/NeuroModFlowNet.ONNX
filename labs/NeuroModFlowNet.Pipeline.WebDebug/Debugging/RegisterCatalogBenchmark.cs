@@ -15,7 +15,7 @@ internal static class RegisterCatalogBenchmark
     public static void Run(string outputPath)
     {
         const int instructionCount = 40, registerCount = 32, framesPerSample = 10000, sampleCount = 7;
-        var inspector = new PausedRegisterInspector(InferenceBackend.Cpu, Nv12ColorMatrix.Bt601Full);
+        var inspector = new PausedRegisterInspector(InferenceBackend.Cpu);
         string[] keys = Enumerable.Range(0, registerCount).Select(index => $"register.{index}").ToArray();
         object[] values = Enumerable.Range(0, registerCount).Select(index => (object)index).ToArray();
         var global = new VmGlobalMemory();

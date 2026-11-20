@@ -1,14 +1,14 @@
 import { createDockview } from './vendor/dockview/dockview.mjs';
 
 export class DebugWorkspace {
-  constructor({t,read,save,onError,onPopup,onCloseTile,viewer=false,id='main',hasWatches=false}) {
-    Object.assign(this,{t,read,save,onError,onPopup,onCloseTile,viewer,id,hasWatches});
+  constructor({root,t,read,save,onError,onPopup,onCloseTile,viewer=false,id='main',hasWatches=false}) {
+    Object.assign(this,{root,t,read,save,onError,onPopup,onCloseTile,viewer,id,hasWatches});
     this.entries = new Map(); this.loading = true;
     this.storageKey = `layout.${id}.v1`;
-    this.host = document.querySelector('.debug-columns'); this.host.classList.add('dock-workspace');
-    this.stash = document.createElement('div'); this.stash.hidden = true; document.querySelector('#shell').append(this.stash);
+    this.host = root.querySelector('.debug-columns'); this.host.classList.add('dock-workspace');
+    this.stash = document.createElement('div'); this.stash.hidden = true; root.append(this.stash);
     for(const [key,selector,title] of [['instructions','.instruction-pane','instructions'],['registers','.register-pane','registers'],['preview','.preview-pane','image']]) {
-      const node = document.querySelector(selector), header = node.querySelector('.panel-header');
+      const node = root.querySelector(selector), header = node.querySelector('.panel-header');
       this.entries.set(key,{node,header,title}); this.stash.append(node,header);
       this.decorateHeader(header,key);
     }
@@ -24,24 +24,37 @@ export class DebugWorkspace {
     try {
       const state = JSON.parse(read(this.storageKey,'null'));
       if(state?.grid && state?.panels && Object.keys(state.panels).length <= 24 && Object.keys(state.panels).every(key => this.entries.has(key) || key.startsWith('watch:'))) {
-        this.dock.fromJSON(state); restored = true;
+        this.dock.fromJSON(state);
+        for(const panel of [...this.dock.panels]) {
+          if(panel.id.startsWith('watch:@preview:')) this.dock.removePanel(panel);
+        }
+        restored = true;
       }
     } catch(error) { onError(new Error(`${t('layoutinvalid')}: ${error.message}`)); }
     if(!restored) this.defaults();
     this.applyAppearance();
     this.loading = false;
-    this.dock.onDidLayoutChange(() => { if(!this.loading) save(this.storageKey,JSON.stringify(this.dock.toJSON())); });
-    new ResizeObserver(() => { if(this.host.clientWidth && this.host.clientHeight) this.dock.layout(this.host.clientWidth,this.host.clientHeight); }).observe(this.host);
-    document.querySelector('#panels-menu').onclick = event => {
-      const button = event.target.closest('[data-panel]'); if(!button) return;
-      this.show(button.dataset.panel); document.querySelector('#panels-menu').open = false;
-    };
-    document.querySelector('#reset-layout').onclick = () => { this.defaults(); document.querySelector('#panels-menu').open = false; };
-    document.querySelector('#new-viewer').onclick = () => { onPopup(); document.querySelector('#panels-menu').open = false; };
+    this.dock.onDidLayoutChange(() => {
+      if(!this.loading) save(this.storageKey,JSON.stringify(this.dock.toJSON()));
+      this.updateFloatActions();
+    });
+    this.resizeObserver = new ResizeObserver(() => this.layout());
+    this.resizeObserver.observe(this.host);
     if(viewer) {
-      const toolbar = document.querySelector('.watch-toolbar'); toolbar.classList.add('viewer-watch-toolbar');
-      document.querySelector('.debug-columns').before(toolbar);
+      const toolbar = root.querySelector('.watch-toolbar'); toolbar.classList.add('viewer-watch-toolbar');
+      this.host.before(toolbar);
     }
+  }
+
+  layout() {
+    if(this.host.clientWidth && this.host.clientHeight)
+      this.dock.layout(this.host.clientWidth,this.host.clientHeight);
+  }
+
+  dispose() {
+    this.resizeObserver.disconnect();
+    this.loading = true;
+    this.dock.dispose();
   }
 
   applyAppearance() {
@@ -76,7 +89,7 @@ export class DebugWorkspace {
       const button = document.createElement('button'); button.className = 'pane-action';
       button.dataset.workspaceAction = label; button.dataset.panelId = id;
       button.innerHTML = `<i class="ti ti-${icon}" aria-hidden="true"></i>`;
-      button.setAttribute('aria-label',this.t(label)); button.dataset.tooltip = this.t(label);
+      button.setAttribute('aria-label',this.t(label)); button.dataset.tooltip = this.actionTip(label);
       button.addEventListener('pointerdown',event=>event.stopPropagation());
       button.addEventListener('mousedown',event=>event.stopPropagation());
       button.onclick = event=>{event.stopPropagation();action();}; header.append(button); return button;
@@ -85,18 +98,25 @@ export class DebugWorkspace {
     if(id.startsWith('watch:')) {
       const native=add('zoom-in','nativeview',()=>this.entry(id).node.querySelector('[data-tile-native]')?.click());
       native.textContent='1:1';
+      native.hidden=id === 'watch:@preview:value-figure';
     }
-    if(id === 'preview' || id.startsWith('watch:')) add('external-link','newviewer',()=>this.onPopup(id.startsWith('watch:') ? id.slice(6):undefined));
-    if(id.startsWith('watch:')) add('x',this.viewer ? 'closepanel':'returngallery',()=>this.viewer ? this.onCloseTile(id.slice(6)):this.returnTile(id));
+    if(this.onPopup && (id === 'preview' || id.startsWith('watch:'))) add('external-link','newviewer',()=>this.onPopup(id.startsWith('watch:') ? id.slice(6):undefined));
+    if(id.startsWith('watch:')) {
+      const close = this.viewer && !id.startsWith('watch:@preview:');
+      add('x',close ? 'closepanel':'returngallery',()=>close ? this.onCloseTile(id.slice(6)):this.returnTile(id));
+    }
   }
-  show(id) {
+  show(id,position) {
     const existing = this.dock.getPanel(id); if(existing) { existing.api.setActive(); return existing; }
-    const panel=this.dock.addPanel({id,component:'panel',tabComponent:'panel-tab',title:this.entries.get(id)?.title ? this.t(this.entries.get(id).title):id.slice(6),minimumWidth:180,minimumHeight:120});
+    const panel=this.dock.addPanel({id,component:'panel',tabComponent:'panel-tab',title:this.entries.get(id)?.title ? this.t(this.entries.get(id).title):id.slice(6),minimumWidth:180,minimumHeight:120,...(position ? {position}:{})});
     this.dock.layout(this.host.clientWidth,this.host.clientHeight,true); return panel;
   }
   toggleFloat(id) {
     const panel = this.dock.getPanel(id) ?? this.show(id); if(!panel) return;
-    if(panel.group.api.location.type === 'floating') panel.group.api.moveTo({position:'right'});
+    if(panel.group.api.location.type === 'floating') {
+      if(id.startsWith('watch:') && (!this.viewer || id.startsWith('watch:@preview:'))) this.returnTile(id);
+      else panel.group.api.moveTo({position:'right'});
+    }
     else this.dock.addFloatingGroup(panel,{width:Math.min(600,this.host.clientWidth-30),height:Math.min(500,this.host.clientHeight-30),position:{left:30,top:35}});
   }
   attachTile(key,tile) {
@@ -106,8 +126,10 @@ export class DebugWorkspace {
       this.entry(id).node.replaceChildren(tile);
       if(!panel) {
         const previous = this.dock.panels.filter(item=>item.id.startsWith('watch:')).at(-1);
+        const snapshot = this.viewer ? this.dock.getPanel('preview') : null;
         this.dock.addPanel({id,component:'panel',tabComponent:'panel-tab',title:key,minimumWidth:180,minimumHeight:150,
-          ...(previous ? {position:{referencePanel:previous,direction:'right'}}:{})});
+          ...(previous ? {position:{referencePanel:previous,direction:'right'}}:
+            snapshot ? {position:{referencePanel:snapshot,direction:'below'}}:{})});
       }
       this.dock.layout(this.host.clientWidth,this.host.clientHeight,true);
     }
@@ -121,14 +143,14 @@ export class DebugWorkspace {
     this.entries.get(id)?.node.replaceChildren(); this.entries.delete(id);
   }
   pruneTiles(keys) {
-    for(const panel of [...this.dock.panels]) if(panel.id.startsWith('watch:') && !keys.has(panel.id.slice(6))) this.removeTile(panel.id.slice(6));
+    for(const panel of [...this.dock.panels]) if(panel.id.startsWith('watch:') && !panel.id.startsWith('watch:@preview:') && !keys.has(panel.id.slice(6))) this.removeTile(panel.id.slice(6));
   }
   returnTile(id) {
-    const entry = this.entry(id), tile = entry.node.querySelector('.watch-tile');
+    const entry = this.entry(id), tile = entry.node.querySelector('.watch-tile,.preview-sample');
     const panel = this.dock.getPanel(id); if(panel) this.dock.removePanel(panel);
-    if(this.viewer) { if(tile) entry.node.append(tile); this.show(id); }
+    if(this.viewer && !id.startsWith('watch:@preview:')) { if(tile) entry.node.append(tile); this.show(id); }
     else if(tile) {
-      const gallery=document.querySelector('#watch-gallery');
+      const gallery=this.root.querySelector('#watch-gallery');
       const next=[...gallery.children].find(other=>Number(other.dataset.watchOrder) > Number(tile.dataset.watchOrder));
       gallery.insertBefore(tile,next ?? null);
     }
@@ -158,8 +180,23 @@ export class DebugWorkspace {
   }
   translate() {
     for(const [id,entry] of this.entries) if(entry.title) this.dock.getPanel(id)?.api.setTitle(this.t(entry.title));
-    for(const button of document.querySelectorAll('[data-workspace-action]')) {
-      button.setAttribute('aria-label',this.t(button.dataset.workspaceAction)); button.dataset.tooltip=this.t(button.dataset.workspaceAction);
+    for(const button of this.root.querySelectorAll('[data-workspace-action]')) {
+      button.setAttribute('aria-label',this.t(button.dataset.workspaceAction)); button.dataset.tooltip=this.actionTip(button.dataset.workspaceAction);
     }
+    this.updateFloatActions();
+  }
+  updateFloatActions() {
+    for(const [id,{header}] of this.entries) {
+      const button = header.querySelector('[data-workspace-action=floatpanel]');
+      if(!button) continue;
+      const floating = this.dock.getPanel(id)?.group.api.location.type === 'floating';
+      button.dataset.floating = String(floating);
+      button.setAttribute('aria-label',this.t(floating ? 'returngallery':'floatpanel'));
+      button.dataset.tooltip = this.t(floating ? 'dockbacktip':'floatpaneltip');
+    }
+  }
+  actionTip(action) {
+    const tips = {nativeview:'nativeviewtip',floatpanel:'floatpaneltip',newviewer:'newviewertip'};
+    return this.t(tips[action] ?? action);
   }
 }

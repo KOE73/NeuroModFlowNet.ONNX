@@ -1,6 +1,9 @@
 namespace NeuroModFlowNet.Pipeline.WebDebug;
 
-internal sealed record DebugInstruction(string Program, int Index, string Name, string Operation, string[] Reads, string[] Writes);
+internal sealed record DebugInstruction(string Program, int Index, string Name, string Operation, string[] Reads, string[] Writes,
+    string[]? Labels = null, DebugInstructionFlow? Flow = null, string[]? EndLabels = null);
+internal sealed record DebugInstructionFlow(IReadOnlyList<string?> Guards, bool FallsThrough, DebugJump[] Jumps, bool CanStop);
+internal sealed record DebugJump(string Label, int? Index);
 internal sealed record DebugBreakpoint(string Program, int Index);
 internal sealed record DebugLocation(string Program, int Index, string Name, string Phase, long RunId, long? FrameId);
 internal sealed record DebugVariable(string Key, string Type, string Memory, string? Shape, string? ElementType, string? Value,

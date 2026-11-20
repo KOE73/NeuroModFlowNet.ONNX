@@ -13,10 +13,12 @@ if(builder.Configuration.GetSection("Kestrel:Endpoints").GetChildren().Any())
 string urls = builder.Configuration["urls"] ?? "http://127.0.0.1:5264";
 string? accessToken = builder.Configuration["WebDebug:AccessToken"];
 var access = new DebugAccessPolicy(urls, accessToken);
+builder.WebHost.UseStaticWebAssets();
 builder.WebHost.UseUrls(urls);
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddSingleton<DebugRuntime>();
 var app = builder.Build();
+string? observationAddress = builder.Configuration["WebDebug:ObservationAddress"];
 
 app.Use(async (context, next) =>
 {
@@ -32,12 +34,48 @@ app.Use(async (context, next) =>
         }
     }
     try { await next(context); }
-    catch(Exception exception) when(exception is ArgumentException or InvalidOperationException or KeyNotFoundException or NotSupportedException)
+    catch(Exception exception) when(!context.Response.HasStarted && exception is ArgumentException or InvalidOperationException or KeyNotFoundException or NotSupportedException)
     {
         context.Response.StatusCode = exception is KeyNotFoundException ? 404 : exception is InvalidOperationException ? 409 : 400;
         await context.Response.WriteAsJsonAsync(new { error = exception.Message });
     }
 });
+if (observationAddress is not null)
+{
+    if (!Uri.TryCreate(observationAddress, UriKind.Absolute, out Uri? target) || !target.IsLoopback ||
+        target.Scheme != Uri.UriSchemeHttp || target.Port == 443 || target.AbsolutePath != "/" ||
+        target.UserInfo.Length != 0 || target.Query.Length != 0 || target.Fragment.Length != 0)
+        throw new InvalidOperationException("ObservationAddress must be a loopback HTTP origin.");
+    using var recorder = new HttpClient(new SocketsHttpHandler { UseProxy = false })
+    {
+        BaseAddress = target,
+        Timeout = TimeSpan.FromSeconds(4)
+    };
+    app.UseStaticFiles();
+    app.MapGet("/", () => Results.Redirect("/recorder.html"));
+    app.MapGet("/api/observation/sources", (HttpContext context) => ReadObservation(context, "/observation/sources"));
+    app.MapGet("/api/observation/sources/{id}/next", (HttpContext context, string id) =>
+        ReadObservation(context, $"/observation/sources/{Uri.EscapeDataString(id)}/next"));
+    await app.RunAsync();
+    return;
+
+    async Task ReadObservation(HttpContext context, string path)
+    {
+        try
+        {
+            using HttpResponseMessage response = await recorder.GetAsync(path, context.RequestAborted);
+            context.Response.StatusCode = (int)response.StatusCode;
+            if (response.Content.Headers.ContentType is { } contentType)
+                context.Response.ContentType = contentType.ToString();
+            await response.Content.CopyToAsync(context.Response.Body, context.RequestAborted);
+        }
+        catch (Exception exception) when (!context.Response.HasStarted && !context.RequestAborted.IsCancellationRequested &&
+            exception is HttpRequestException or OperationCanceledException)
+        {
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+        }
+    }
+}
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapGet("/api/status", (DebugRuntime runtime) => runtime.Snapshot());
@@ -63,5 +101,6 @@ app.MapPost("/api/cameras/{id}/inspect", async (string id, DebugInspectionReques
 });
 app.MapGet("/api/cameras/{id}/preview.png", async (string id, DebugRuntime runtime, CancellationToken cancellationToken) =>
     Results.Bytes(await runtime.PreviewAsync(id, cancellationToken), "image/png"));
+app.MapPost("/api/cameras/{id}/registers/video", (string id, DebugWatchSelection selection, DebugRuntime runtime, HttpContext context) => runtime.StreamRegisterAsync(id, selection, context));
 app.Lifetime.ApplicationStopping.Register(() => app.Services.GetRequiredService<DebugRuntime>().StopAsync().GetAwaiter().GetResult());
 await app.RunAsync();

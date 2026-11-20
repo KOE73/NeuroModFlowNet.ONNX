@@ -3,10 +3,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);SYSLIB5001</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../NeuroModFlowNet.Pipeline.MultiCamera/NeuroModFlowNet.Pipeline.MultiCamera.csproj" />
+    <ProjectReference Include="../../src/NeuroModFlowNet.Pipeline.Debugger.Web/NeuroModFlowNet.Pipeline.Debugger.Web.csproj" />
     <ProjectReference Include="../../src/NeuroModFlowNet.ONNX.Visualizer/NeuroModFlowNet.ONNX.Visualizer.csproj" />
     <InternalsVisibleTo Include="NeuroModFlowNet.Pipeline.WebDebug.Tests" />
   </ItemGroup>

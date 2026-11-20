@@ -1,6 +1,6 @@
 # Multi-camera VM web debugger
 
-Separate ASP.NET Core laboratory host for the existing MultiCamera pipeline. No VM/ONNX core changes, no Avalonia dependency, no replacement inference path. Programs, sources, transforms, shared endpoints and strict backend policies come from `NeuroModFlowNet.Pipeline.MultiCamera`.
+ASP.NET Core laboratory host for the generic MultiCamera pipeline. It provides source selection, pipeline lifecycle, authorization and session endpoints. The [embeddable debugger workspace](../../src/NeuroModFlowNet.Pipeline.Debugger.Web/README.md) provides the instruction, register and observation panels. Programs, sources, transforms and shared endpoints come from `NeuroModFlowNet.Pipeline.MultiCamera`.
 
 One compact browser overview provides per-camera pause, continue, single-instruction step, next accepted frame, program-local breakpoints, register metadata, typed values and explicit intermediate image inspection. Each camera retains its `[prepare:<id>, common]` chain and one `VmRunContext`. Only this debugger limits concurrency to one in-flight run per camera. The ordinary MultiCamera host keeps its original concurrency and does not create decorators.
 
@@ -9,8 +9,8 @@ One compact browser overview provides per-camera pause, continue, single-instruc
 Use an existing multi-camera JSON configuration. Local native dependency paths go in git-ignored `App.local.config` beside the executable, following the existing MultiCamera `App.config` convention. The configuration and media files are read, never modified.
 
 ```powershell
-./Run-WebDebug.ps1 -CamerasConfig C:/private/cameras.json `
-  -FFmpegLibrariesPath C:/ffmpeg/bin -ModelsRoot C:/models
+./Run-WebDebug.ps1 -CamerasConfig ../NeuroModFlowNet.Pipeline.MultiCamera/cameras.sample.json `
+  -Decoder cpu -ModelsRoot ../../models
 ```
 
 Default: `http://127.0.0.1:5264`. The script checks the port and fails if occupied. Port 443 is prohibited. The web server starts with the cameras stopped; **Start** initializes the actual sources and kernels. Warmup runs without stopping. The first working frame pauses before its first instruction. New TensorRT kernels can take several minutes on first use; the UI remains available throughout.
@@ -21,7 +21,7 @@ The NuGet ONNX Runtime 1.30 GPU package defaults to CUDA 13. For an existing CUD
 
 ```powershell
 $native = ./Install-Cuda12Runtime.ps1
-./Run-WebDebug.ps1 -CamerasConfig C:/private/cameras.json `
+./Run-WebDebug.ps1 -CamerasConfig C:/Video/cameras.json `
   -FFmpegLibrariesPath C:/ffmpeg/bin -ModelsRoot C:/models -NativeRuntimeRoot $native
 ```
 
@@ -138,7 +138,7 @@ The register JSON endpoint allows typed arrays (first 256 items, with explicit t
 
 ## UI provenance
 
-Shell resources, palettes, local Tabler icons and tooltip behavior were copied from `UI.TechnicalShell`; its complete owner standard is retained in `docs/ui-principles.md` and `REQUIREMENTS.md`. Appearance remains the combined theme/density menu, with RU/EN and per-application browser preferences. Icon licensing is in `wwwroot/shell/icons/LICENSE.txt`.
+Shell resources, palettes, local Tabler icons and tooltip behavior were copied from `UI.TechnicalShell`; its complete owner standard is retained in `docs/ui-principles.md` and `REQUIREMENTS.md`. Appearance remains the combined theme/density menu, with RU/EN and per-application browser preferences. The [Tabler license](../../src/NeuroModFlowNet.Pipeline.Debugger.Web/wwwroot/icons/LICENSE.txt) ships with the debugger workspace.
 
 Dockview Core 8.2.0 is vendored locally under `wwwroot/vendor/dockview` with its MIT license. It is the same dependency version already used by the local SeMaps editor. No CDN, frontend framework or bundler is required; the workspace adapter is isolated in `workspace.js`/`workspace.css`.
 

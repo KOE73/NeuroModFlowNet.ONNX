@@ -96,6 +96,25 @@ public sealed class VmRunContext : IDisposable, IAsyncDisposable
         return values.Remove(key);
     }
 
+    internal T MoveOwned<T>(string key) where T : class, IDisposable
+    {
+        T value = Get<T>(key);
+        int owner = -1;
+        for(int index = 0; index < disposables.Count; index++)
+        {
+            if(!ReferenceEquals(value, disposables[index]))
+                continue;
+            if(owner >= 0)
+                throw new InvalidOperationException($"Register '{key}' has multiple ownership entries.");
+            owner = index;
+        }
+        if(owner < 0)
+            throw new InvalidOperationException($"Register '{key}' is not owned by this run.");
+        disposables.RemoveAt(owner);
+        values.Remove(key);
+        return value;
+    }
+
     public IReadOnlyList<VarDebugInfo> SnapshotVariables()
     {
         ThrowIfDisposed();

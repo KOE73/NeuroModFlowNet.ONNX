@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../NeuroModFlowNet.Video.FFmpeg/NeuroModFlowNet.Video.FFmpeg.csproj" />
+    <ProjectReference Include="../NeuroModFlowNet.Pipeline.ONNX/NeuroModFlowNet.Pipeline.ONNX.csproj" />
+    <ProjectReference Include="../NeuroModFlowNet.ONNX.Visualizer/NeuroModFlowNet.ONNX.Visualizer.csproj" />
+  </ItemGroup>
+</Project>

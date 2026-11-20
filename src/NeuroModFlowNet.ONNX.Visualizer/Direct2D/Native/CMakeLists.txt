@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.25)
+project(NeuroModFlowNetDirect2D LANGUAGES CXX)
+
+if(NOT WIN32 OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "The Direct2D backend requires Windows x64.")
+endif()
+
+find_package(CUDAToolkit REQUIRED)
+add_library(NeuroModFlowNet.Direct2D SHARED Direct2DRenderer.cpp)
+target_compile_features(NeuroModFlowNet.Direct2D PRIVATE cxx_std_20)
+target_compile_definitions(NeuroModFlowNet.Direct2D PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+target_link_libraries(NeuroModFlowNet.Direct2D PRIVATE CUDA::cuda_driver d3d11 d3dcompiler dxgi d2d1 dwrite)
+if(MSVC)
+    target_compile_options(NeuroModFlowNet.Direct2D PRIVATE /W4 /permissive- /utf-8)
+endif()

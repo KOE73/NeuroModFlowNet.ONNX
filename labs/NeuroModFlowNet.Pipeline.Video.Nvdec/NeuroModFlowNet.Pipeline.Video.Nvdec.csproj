@@ -8,8 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FFmpeg.AutoGen.Abstractions" Version="9.0.1.1" />
-		<PackageReference Include="FFmpeg.AutoGen.Bindings.DynamicallyLoaded" Version="9.0.1.1" />
 		<PackageReference Include="Google.Protobuf" Version="3.36.2" />
 		<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.30.0" />
 	</ItemGroup>
@@ -20,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="../../src/NeuroModFlowNet.Video.FFmpeg/NeuroModFlowNet.Video.FFmpeg.csproj" />
 		<ProjectReference Include="..\..\src\NeuroModFlowNet.Pipeline\NeuroModFlowNet.Pipeline.csproj" />
 		<ProjectReference Include="..\..\src\NeuroModFlowNet.Pipeline.ONNX\NeuroModFlowNet.Pipeline.ONNX.csproj" />
 		<ProjectReference Include="..\..\src\NeuroModFlowNet.ONNX\NeuroModFlowNet.ONNX.csproj" />

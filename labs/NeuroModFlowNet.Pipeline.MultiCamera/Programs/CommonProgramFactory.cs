@@ -2,19 +2,20 @@ using NeuroModFlowNet.CV.Tracking;
 using NeuroModFlowNet.ONNX;
 using NeuroModFlowNet.Pipeline.ONNX;
 using CvSize = OpenCvSharp.Size;
+using CvRect = OpenCvSharp.Rect;
 
 namespace NeuroModFlowNet.Pipeline.MultiCamera;
 
 /// <summary>
 /// EN: Builds the <c>common</c> program that is identical as code for every camera: rectified U8 NHWC frame ->
-/// whole strip resized to the camera's detector input (RGB NCHW) -> bag detector -> coordinates back to rect space ->
+/// resize to the camera's detector input (RGB NCHW) -> object detection -> coordinates back to rect space ->
 /// tracker (ordered critical section, state in GlobalMemory) -> crops of confirmed
 /// tracks (GPU letterbox batch) -> text OBB on the crops -> text back to rect space with track ids -> PaddleOCR
 /// recognition on the full-resolution rect frame -> optional CPU preview. Each controller receives its own instance;
 /// endpoints are shared.
 ///
-/// RU: Собирает common-программу, одинаковую как код для всех камер: выпрямленный U8 NHWC кадр -> вся полоса,
-/// уменьшенная под вход детектора камеры (RGB NCHW) -> детектор мешков -> координаты обратно в rect-пространство ->
+/// RU: Собирает common-программу, одинаковую как код для всех камер: выпрямленный U8 NHWC кадр ->
+/// изменение размера под вход детектора камеры (RGB NCHW) -> детекция объектов -> координаты обратно в rect-пространство ->
 /// трекер (ordered critical section, state в GlobalMemory) -> вырезки
 /// подтверждённых треков (GPU letterbox-батч) -> text OBB на вырезках -> текст обратно в rect с id треков -> PaddleOCR
 /// на полноразмерном rect-кадре -> опционально CPU-превью. У каждого контроллера свой экземпляр; endpoint-ы общие.
@@ -36,7 +37,7 @@ internal static class CommonProgramFactory
 
         if(config.Ocr.Enabled)
         {
-            // Full-resolution RGB FP32 copy of the rect frame: source for bag crops and OCR ROI extraction.
+            // Use the full-resolution RGB FP32 rect frame for track crops and OCR region extraction.
             builder.Step(new Op_Onnx_BgrU8Hwc_To_RgbFP32Nchw_Div255(
                 MultiCameraKeys.ImageRect,
                 MultiCameraKeys.ImageRectRgb,
@@ -44,7 +45,7 @@ internal static class CommonProgramFactory
                 executionBackend: backend));
         }
 
-        AppendDetector(builder, config.Detector, camera, backend, endpoints);
+        AppendDetector(builder, config.Detector, camera, geometry, backend, endpoints);
 
         TrackerConfig tracker = config.Tracker;
         builder.Step(new Op_Track(
@@ -73,22 +74,33 @@ internal static class CommonProgramFactory
     #region Detector
 
     /// <summary>
-    /// One detector pass over the whole rectified strip: resize (stretch or letterbox) to this camera's model input,
-    /// convert to RGB NCHW in the model precision, detect, map boxes back to rect space. The input size is chosen per
-    /// camera so that a bag has the pixel size of the training data; crops for OCR are taken from the full-resolution
-    /// rect frame, so the reduced detector input only affects box precision, not OCR quality.
+    /// Resize the rectified frame to the model input (stretch or letterbox), convert to RGB NCHW, detect, then map
+    /// boxes back to rect space. OCR extracts regions from the full-resolution rect frame to preserve text detail.
     /// </summary>
     static void AppendDetector(
         VmProgramBuilder builder,
         DetectorConfig detector,
         CameraConfig camera,
+        CameraGeometry geometry,
         InferenceBackend backend,
         SharedInferenceEndpoints endpoints)
     {
         CameraDetectorConfig model = camera.Detector;
         var inputSize = new CvSize(model.InputWidth, model.InputHeight);
 
-        if(detector.IsStretch)
+        if(model.CropX is int cropX && model.CropY is int cropY)
+        {
+            if(cropX > geometry.Width - inputSize.Width || cropY > geometry.Height - inputSize.Height)
+                throw new InvalidDataException($"camera '{camera.Id}': detector crop does not fit the prepared {geometry.Width}x{geometry.Height} frame.");
+            builder.Step(new Op_Onnx_Crop_U8_NHWC(
+                MultiCameraKeys.ImageRect,
+                MultiCameraKeys.DetectorResized,
+                new CvRect(cropX, cropY, inputSize.Width, inputSize.Height),
+                outputTransformKey: MultiCameraKeys.DetectorResizeTransform,
+                isFinal: false,
+                executionBackend: model.CropBackend ?? backend));
+        }
+        else if(detector.IsStretch)
         {
             builder.Step(new Op_Onnx_Resize_U8_NHWC(
                 MultiCameraKeys.ImageRect,
@@ -149,9 +161,8 @@ internal static class CommonProgramFactory
     #region OCR
 
     /// <summary>
-    /// Old pipeline order, now GPU-resident: crop confirmed bags -> text detection on the crops -> recognition of the
-    /// text regions taken from the full-resolution rect frame. Every step after crop selection is conditional, so a
-    /// frame without readable bags costs nothing beyond the detector.
+    /// Crop confirmed tracks, detect text on the crops, then recognize regions taken from the full-resolution rect
+    /// frame. The text stages are skipped when the preceding step finds no crops or text regions.
     /// </summary>
     static void AppendOcr(VmProgramBuilder builder, OcrConfig ocr, InferenceBackend backend, SharedInferenceEndpoints endpoints)
     {
@@ -167,7 +178,7 @@ internal static class CommonProgramFactory
         static bool HasTextRegions(VmRunContext context) =>
             context.TryGet(MultiCameraKeys.TextObbRect, out YoloObb[] regions) && regions.Length > 0;
 
-        builder.Step(new OpConditional(
+        builder.Label("ocr.crops").Step(new OpConditional(
             new Op_Onnx_ExtractObbToLetterboxBatch_FP32_NCHW(
                 imageInputKey: MultiCameraKeys.ImageRectRgb,
                 obbInputKey: MultiCameraKeys.CropBoxes,
@@ -181,7 +192,7 @@ internal static class CommonProgramFactory
                 overflowPolicy: PaddleRecRoiOverflowPolicy.Truncate,
                 isFinal: false,
                 executionBackend: backend),
-            HasCrops));
+            HasCrops, "ocr.hasCrops"));
 
         builder.Step(new OpConditional(
             new Model_OrtValueInference<CropTextRegion>(
@@ -189,7 +200,7 @@ internal static class CommonProgramFactory
                 inputKey: MultiCameraKeys.CropBatch,
                 outputKey: MultiCameraKeys.TextCropRegions,
                 endpoint: endpoints.TextDetector!),
-            HasCrops));
+            HasCrops, "ocr.hasCrops"));
 
         builder.Step(new OpConditional(
             new Op_MapCropTextRegionsToRect(
@@ -199,9 +210,9 @@ internal static class CommonProgramFactory
                 MultiCameraKeys.CropTrackIds,
                 MultiCameraKeys.TextObbRect,
                 MultiCameraKeys.TextTrackIds),
-            HasCrops));
+            HasCrops, "ocr.hasCrops"));
 
-        builder.Step(new OpConditional(
+        builder.Label("ocr.recognition").Step(new OpConditional(
             new Op_Onnx_ExtractObbToPaddleRec_FP32_NCHW(
                 imageInputKey: MultiCameraKeys.ImageRectRgb,
                 obbInputKey: MultiCameraKeys.TextObbRect,
@@ -214,7 +225,7 @@ internal static class CommonProgramFactory
                 actualCountOutputKey: MultiCameraKeys.OcrRoiCount,
                 isFinal: false,
                 executionBackend: backend),
-            HasTextRegions));
+            HasTextRegions, "ocr.hasTextRegions"));
 
         builder.Step(new OpConditional(
             new Model_OrtValueInference<PaddleOCRRecExtractor.OcrResult>(
@@ -222,7 +233,7 @@ internal static class CommonProgramFactory
                 inputKey: MultiCameraKeys.OcrRecInput,
                 outputKey: MultiCameraKeys.OcrRecognition,
                 endpoint: endpoints.Recognition!),
-            HasTextRegions));
+            HasTextRegions, "ocr.hasTextRegions"));
     }
 
     #endregion

@@ -45,8 +45,7 @@ internal sealed class SharedInferenceEndpoints : IAsyncDisposable
 
         DetectorConfig detector = config.Detector;
 
-        // The CGP bag model does not satisfy strict CUDA (ORT assigns some nodes to CPU EP and fallback is disabled),
-        // so the detector backend can differ from the geometry backend; TensorRT is its proven GPU path.
+        // Choose the detector backend explicitly for models that require a different provider from geometry.
         InferenceBackend detectorBackend = detector.Backend ?? config.Backend;
         var boxDetectors = new Dictionary<string, OrtValueBatchedInferenceEndpoint<YoloBox>>(StringComparer.OrdinalIgnoreCase);
         var obbDetectors = new Dictionary<string, OrtValueBatchedInferenceEndpoint<YoloObb>>(StringComparer.OrdinalIgnoreCase);

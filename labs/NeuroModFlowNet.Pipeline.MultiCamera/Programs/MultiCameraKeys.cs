@@ -38,7 +38,7 @@ internal static class MultiCameraKeys
     public const string TrackerStartZone = "tracker.startZone";
     public const string TrackerEndZone = "tracker.endZone";
 
-    // common: bag crops -> text detection -> recognition.
+    // common: track crops -> text detection -> recognition.
     public const string CropBoxes = "ocr.crop.boxes";
     public const string CropTrackIds = "ocr.crop.trackIds";
     public const string CropBatch = "ocr.crop.batch";

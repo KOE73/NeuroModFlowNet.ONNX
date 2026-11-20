@@ -29,6 +29,7 @@ internal static class FrameSourceFactory
             "file" => VideoFileLoopFrameSource.FromFile(source.Path!, source.Loop, VideoCaptureFactory.ParseAcceleration(source.HwAcceleration)),
             "files" => VideoFileLoopFrameSource.FromFiles(source.Files!, source.Loop, VideoCaptureFactory.ParseAcceleration(source.HwAcceleration)),
             "rtsp" => LiveCaptureFrameSource.FromRtsp(source.Url!, source.Transport, VideoCaptureFactory.ParseAcceleration(source.HwAcceleration)),
+            "hls" => LiveCaptureFrameSource.FromHls(source.Url!, VideoCaptureFactory.ParseAcceleration(source.HwAcceleration)),
             "camera" => LiveCaptureFrameSource.FromCameraIndex(source.Index!.Value),
             _ => throw new InvalidDataException($"Unknown source kind '{source.Kind}'.")
         };

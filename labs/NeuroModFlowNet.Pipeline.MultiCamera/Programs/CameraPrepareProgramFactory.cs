@@ -10,11 +10,9 @@ namespace NeuroModFlowNet.Pipeline.MultiCamera;
 /// <summary>
 /// EN: Builds the per-camera <c>prepare</c> program: host Mat -> OrtValue -> model device -> configured geometry chain
 /// (undistort / perspective / rotate / crop / resize as ONNX operators) -> <see cref="MultiCameraKeys.ImageRect"/>.
-/// The transform list mirrors CGPCam2026 <c>cameras.json</c>, so calibration done there can be pasted here.
 ///
 /// RU: Собирает prepare-программу камеры: Mat хоста -> OrtValue -> устройство модели -> настроенная цепочка геометрии
 /// (undistort / perspective / rotate / crop / resize как ONNX-операторы) -> <see cref="MultiCameraKeys.ImageRect"/>.
-/// Список transforms повторяет CGPCam2026 <c>cameras.json</c>, калибровка оттуда переносится копированием.
 /// </summary>
 /// <remarks>
 /// EN: Every controller gets its own program instance because geometry ops hold mutable native state (IoBinding,
@@ -68,7 +66,7 @@ internal static class CameraPrepareProgramFactory
             {
                 case "radialundistort":
                 {
-                    // Output intrinsics come from getOptimalNewCameraMatrix(alpha), exactly as in the CGPCam2026 tool,
+                    // Output intrinsics come from getOptimalNewCameraMatrix(alpha),
                     // so the following transforms can use the points calibrated on that tool's output.
                     builder.Step(new Op_Onnx_Undistort_U8_NHWC(
                         inputKey,

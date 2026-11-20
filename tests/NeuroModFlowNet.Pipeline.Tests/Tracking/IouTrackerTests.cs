@@ -74,6 +74,45 @@ public sealed class IouTrackerTests
     }
 
     [Fact]
+    public void Process_ReacquiresSameTrackAfterMisses()
+    {
+        var tracker = new IouTracker(new IouTrackerOptions(IouThreshold: 0.5f, MinAge: 1, MaxMissedFrames: 2));
+        var frame = new FrameContext(0, DateTimeOffset.UnixEpoch, 0);
+        var options = new TrackerFrameOptions();
+
+        TrackedObject original = Assert.Single(tracker.Process([Detection(10, 10)], frame, options));
+        tracker.Process([], frame with { RunId = 1 }, options);
+        TrackedObject missed = Assert.Single(tracker.Process([], frame with { RunId = 2 }, options));
+        Assert.Equal(2, missed.MissedFrames);
+        Assert.Equal(0f, missed.W);
+        Assert.Equal(0f, missed.Score);
+
+        TrackedObject recovered = Assert.Single(tracker.Process([Detection(13, 10)], frame with { RunId = 3 }, options));
+        Assert.Equal(original.TrackId, recovered.TrackId);
+        Assert.Equal(original.ConfirmedTrackId, recovered.ConfirmedTrackId);
+        Assert.Equal(0, recovered.MissedFrames);
+        Assert.Equal(13f, recovered.X);
+        Assert.Equal(2, recovered.Path.Count);
+    }
+
+    [Fact]
+    public void Process_DoesNotReattachLostTrackAtExit()
+    {
+        var tracker = new IouTracker(new IouTrackerOptions(IouThreshold: 0.5f, MinAge: 1, MaxMissedFrames: 2));
+        var frame = new FrameContext(0, DateTimeOffset.UnixEpoch, 0);
+        var options = new TrackerFrameOptions(EndZone: new TrackRect(0, 80, 100, 110));
+
+        TrackedObject original = Assert.Single(tracker.Process([Detection(20, 90)], frame, options));
+        TrackedObject exiting = Assert.Single(tracker.Process([Detection(20, 92)], frame with { RunId = 1 }, options));
+        Assert.Equal(original.TrackId, exiting.TrackId);
+        tracker.Process([], frame with { RunId = 2 }, options);
+
+        IReadOnlyList<TrackedObject> tracks = tracker.Process([Detection(20, 89)], frame with { RunId = 3 }, options);
+        Assert.Contains(tracks, track => track.TrackId == original.TrackId && track.MissedFrames == 2);
+        Assert.Contains(tracks, track => track.TrackId != original.TrackId && track.MissedFrames == 0);
+    }
+
+    [Fact]
     public void Process_MatchesOnlyWithinSameClass()
     {
         var tracker = new IouTracker(new IouTrackerOptions(

@@ -3,10 +3,10 @@ using OpenCvSharp;
 namespace NeuroModFlowNet.Pipeline.MultiCamera;
 
 /// <summary>
-/// EN: Live source (RTSP URL or local camera index) with reconnect. A read failure closes the capture and reopens it
+/// EN: Live source (RTSP, HLS, or local camera index) with reconnect. A read failure closes the capture and reopens it
 /// after an exponential backoff (1 s .. 15 s); the caller only ever sees frames or cancellation.
 ///
-/// RU: Живой источник (RTSP или индекс камеры) с переподключением. Ошибка чтения закрывает захват и открывает его
+/// RU: Живой источник (RTSP, HLS или индекс камеры) с переподключением. Ошибка чтения закрывает захват и открывает его
 /// заново после экспоненциальной паузы (1 с .. 15 с); вызывающая сторона видит только кадры или отмену.
 /// </summary>
 internal sealed class LiveCaptureFrameSource : IFrameSource
@@ -45,6 +45,14 @@ internal sealed class LiveCaptureFrameSource : IFrameSource
             Environment.SetEnvironmentVariable("OPENCV_FFMPEG_CAPTURE_OPTIONS", $"rtsp_transport;{transport}");
 
         return new LiveCaptureFrameSource(url, null, $"rtsp {MaskCredentials(url)}", acceleration);
+    }
+
+    public static LiveCaptureFrameSource FromHls(string url, VideoAccelerationType acceleration)
+    {
+        if(!Uri.TryCreate(url, UriKind.Absolute, out Uri? uri) || uri.Scheme is not ("http" or "https"))
+            throw new InvalidDataException("An HLS source requires an absolute HTTP or HTTPS URL.");
+
+        return new LiveCaptureFrameSource(url, null, $"hls {uri.Host}{uri.AbsolutePath}", acceleration);
     }
 
     public static LiveCaptureFrameSource FromCameraIndex(int index) =>

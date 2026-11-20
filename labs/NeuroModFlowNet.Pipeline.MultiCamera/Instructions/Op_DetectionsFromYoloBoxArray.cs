@@ -5,12 +5,12 @@ namespace NeuroModFlowNet.Pipeline.MultiCamera;
 
 /// <summary>
 /// EN: Adapter <c>YoloBox[]</c> (OrtValue endpoint result, corners in <c>X, Y</c> / <c>W, H</c>) to neutral
-/// <c>TrackDetection[]</c> (center, size, angle 0). Optionally keeps a single class, as the old CGP pipeline tracked only
-/// "BagTop". <c>SourceIndex</c> points into the unfiltered input array.
+/// <c>TrackDetection[]</c> (center, size, angle 0). An optional class ID filters detections.
+/// <c>SourceIndex</c> points into the unfiltered input array.
 ///
 /// RU: Адаптер <c>YoloBox[]</c> (результат OrtValue endpoint, углы в <c>X, Y</c> / <c>W, H</c>) в нейтральные
-/// <c>TrackDetection[]</c> (центр, размер, угол 0). Опционально оставляет один класс, как старый CGP-пайплайн трекал
-/// только "BagTop". <c>SourceIndex</c> указывает в исходный нефильтрованный массив.
+/// <c>TrackDetection[]</c> (центр, размер, угол 0). Опциональный ID класса фильтрует детекции.
+/// <c>SourceIndex</c> указывает в исходный нефильтрованный массив.
 /// </summary>
 internal sealed class Op_DetectionsFromYoloBoxArray : OpBase
 {

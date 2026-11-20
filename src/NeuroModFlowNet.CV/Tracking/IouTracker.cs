@@ -34,10 +34,16 @@ public sealed class IouTracker : ITracker, ITrackerDebugSnapshot
 
         foreach(TrackState track in tracks)
         {
+            TrackRect lastBounds = track.Bounds;
+            // A detection near the last box after a gap at the exit can belong to the next object.
+            TrackPoint lastCenter = lastBounds.Center;
+            bool lostAtExit = track.MissedFrames > 0 && frameOptions.EndZone is { IsEmpty: false } endZone &&
+                lastCenter.X >= endZone.Left && lastCenter.X <= endZone.Right &&
+                lastCenter.Y >= endZone.Top && lastCenter.Y <= endZone.Bottom;
             float bestIoU = 0;
             int bestIndex = -1;
 
-            for(int index = 0; index < detections.Count; index++)
+            for(int index = 0; !lostAtExit && index < detections.Count; index++)
             {
                 if(matched[index])
                     continue;
@@ -46,7 +52,7 @@ public sealed class IouTracker : ITracker, ITrackerDebugSnapshot
                 if(track.ClassId != detection.ClassId)
                     continue;
 
-                float iou = TrackRect.IoU(track.Bounds, detection.AxisAlignedBounds);
+                float iou = TrackRect.IoU(lastBounds, detection.AxisAlignedBounds);
                 if(iou > bestIoU)
                 {
                     bestIoU = iou;
@@ -123,12 +129,7 @@ public sealed class IouTracker : ITracker, ITrackerDebugSnapshot
 
     static void MarkMissed(TrackState track)
     {
-        track.X = 0;
-        track.Y = 0;
-        track.W = 0;
-        track.H = 0;
-        track.Angle = 0;
-        track.Score = 0;
+        // Keep the last matched bounds for IoU on the next frame.
         track.SourceDetectionIndex = -1;
         track.MissedFrames++;
     }
@@ -180,21 +181,24 @@ public sealed class IouTracker : ITracker, ITrackerDebugSnapshot
             return state;
         }
 
-        public TrackedObject ToTrackedObject() =>
-            new(
+        public TrackedObject ToTrackedObject()
+        {
+            bool matched = MissedFrames == 0;
+            return new TrackedObject(
                 TrackId,
                 ConfirmedTrackId,
                 IsConfirmed,
                 Age,
                 MissedFrames,
-                X,
-                Y,
-                W,
-                H,
-                Angle,
+                matched ? X : 0,
+                matched ? Y : 0,
+                matched ? W : 0,
+                matched ? H : 0,
+                matched ? Angle : 0,
                 ClassId,
-                Score,
+                matched ? Score : 0,
                 SourceDetectionIndex,
                 Path.ToArray());
+        }
     }
 }

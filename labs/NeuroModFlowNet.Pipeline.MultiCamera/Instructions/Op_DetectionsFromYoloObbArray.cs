@@ -6,12 +6,12 @@ namespace NeuroModFlowNet.Pipeline.MultiCamera;
 /// <summary>
 /// EN: Adapter <c>YoloObb[]</c> (the <c>Model_OrtValueInference</c> service result) to neutral <c>TrackDetection[]</c>.
 /// Library <c>Op_DetectionsFromYoloObb</c> consumes the Mat-based <c>YoloDetectionBatchResult</c>; this lab op covers the
-/// OrtValue endpoint path and optionally keeps a single class, as the old CGP pipeline tracked only "BagTop".
+/// OrtValue endpoint path and optionally filters detections by class ID.
 /// <c>SourceIndex</c> always points into the unfiltered input array so downstream can re-associate OCR/overlay data.
 ///
 /// RU: Адаптер <c>YoloObb[]</c> (результат сервиса <c>Model_OrtValueInference</c>) в нейтральные <c>TrackDetection[]</c>.
 /// Библиотечный <c>Op_DetectionsFromYoloObb</c> читает Mat-путь <c>YoloDetectionBatchResult</c>; эта lab-инструкция
-/// закрывает OrtValue-путь и опционально оставляет один класс, как старый CGP-пайплайн трекал только "BagTop".
+/// поддерживает OrtValue-путь и опционально фильтрует детекции по ID класса.
 /// <c>SourceIndex</c> всегда указывает в исходный нефильтрованный массив.
 /// </summary>
 internal sealed class Op_DetectionsFromYoloObbArray : OpBase

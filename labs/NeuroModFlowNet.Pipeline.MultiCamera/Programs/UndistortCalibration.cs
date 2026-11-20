@@ -4,15 +4,15 @@ using CvSize = OpenCvSharp.Size;
 namespace NeuroModFlowNet.Pipeline.MultiCamera;
 
 /// <summary>
-/// EN: Reproduces CGPCam2026 DistortionCorrector calibration for the ONNX undistort operator. That tool builds K as
-/// fx = fy = width * focalLengthFactor, cx = width / 2, cy = height / 2 and undistorts through
+/// EN: Builds the input matrix for ONNX undistort with
+/// fx = fy = width * focalLengthFactor, cx = width / 2, cy = height / 2 and computes the output through
 /// <c>getOptimalNewCameraMatrix(alpha)</c>. The same new camera matrix is passed as the operator's output intrinsics,
-/// so perspective points calibrated on the tool's output apply unchanged.
+/// so perspective points calibrated with the same output matrix apply unchanged.
 ///
-/// RU: Воспроизводит калибровку DistortionCorrector из CGPCam2026 для ONNX undistort. Инструмент строит K как
-/// fx = fy = width * focalLengthFactor, cx = width / 2, cy = height / 2 и исправляет через
+/// RU: Строит входную матрицу для ONNX undistort с параметрами
+/// fx = fy = width * focalLengthFactor, cx = width / 2, cy = height / 2 и вычисляет выходную через
 /// <c>getOptimalNewCameraMatrix(alpha)</c>. Та же новая матрица передаётся оператору как выходные intrinsics, поэтому
-/// точки перспективы, откалиброванные на выходе инструмента, применяются без пересчёта.
+/// точки перспективы, откалиброванные с той же выходной матрицей, применяются без пересчёта.
 /// </summary>
 internal static class UndistortCalibration
 {

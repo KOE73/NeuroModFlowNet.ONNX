@@ -72,7 +72,7 @@ internal sealed class VideoFileLoopFrameSource : IFrameSource
         return new VideoFileLoopFrameSource([file], loop, acceleration, $"file {file}{(loop ? " (loop)" : string.Empty)}");
     }
 
-    /// <summary>Explicit playlist in the given order, for example hand-picked recorder segments that contain bags.</summary>
+    /// <summary>Plays the listed video segments in the supplied order.</summary>
     public static VideoFileLoopFrameSource FromFiles(IReadOnlyList<string> files, bool loop, VideoAccelerationType acceleration)
     {
         ArgumentNullException.ThrowIfNull(files);

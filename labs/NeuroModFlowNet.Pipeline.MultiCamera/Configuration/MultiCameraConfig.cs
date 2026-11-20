@@ -44,12 +44,12 @@ internal sealed record MultiCameraConfig(
 /// EN: Detector settings shared by all cameras. <c>Kind</c> "box" = YOLO box model with NMS inside (output [1,300,6]),
 /// "obb" = OBB model (output [1,300,7]). <c>InputMode</c> "stretch" resizes the whole rectified strip to the camera's
 /// model input (<see cref="CameraDetectorConfig"/>), "letterbox" pads it. The model file and its input size are per
-/// camera, because each strip has its own size and the input is chosen so that a bag has the pixel size seen in training.
+/// camera so the model can be matched to the geometry and expected object scale of that source.
 ///
 /// RU: Общие для всех камер настройки детектора. <c>Kind</c> "box" = YOLO box модель с NMS внутри (выход [1,300,6]),
 /// "obb" = OBB модель (выход [1,300,7]). <c>InputMode</c> "stretch" растягивает всю выпрямленную полосу на вход модели
 /// камеры (<see cref="CameraDetectorConfig"/>), "letterbox" добавляет поля. Файл модели и размер входа задаются у
-/// камеры: у каждой полосы свой размер, а вход подобран так, чтобы мешок был того же размера в пикселях, что при обучении.
+/// камеры с учётом геометрии источника и ожидаемого масштаба объектов.
 /// </summary>
 internal sealed record DetectorConfig(
     string Kind = "box",
@@ -92,13 +92,18 @@ internal sealed record DetectorConfig(
 /// RU: Модель детектора камеры: статическая модель, выгруженная под полосу этой камеры. <c>InputWidth</c> x
 /// <c>InputHeight</c> обязаны точно совпадать с входом модели (проверяется endpoint-ом на первом запуске).
 /// </summary>
-internal sealed record CameraDetectorConfig(string ModelPath, int InputWidth, int InputHeight)
+internal sealed record CameraDetectorConfig(string ModelPath, int InputWidth, int InputHeight, int? CropX = null,
+    int? CropY = null, InferenceBackend? CropBackend = null)
 {
     public void Validate(string cameraId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(ModelPath, $"camera '{cameraId}': detector.modelPath");
         if(InputWidth <= 0 || InputHeight <= 0 || InputWidth % 32 != 0 || InputHeight % 32 != 0)
             throw new InvalidDataException($"camera '{cameraId}': detector input must be positive multiples of 32, got {InputWidth}x{InputHeight}.");
+        if(CropX.HasValue != CropY.HasValue || CropX < 0 || CropY < 0)
+            throw new InvalidDataException($"camera '{cameraId}': specify both nonnegative detector crop coordinates or omit both.");
+        if(CropBackend.HasValue && !CropX.HasValue)
+            throw new InvalidDataException($"camera '{cameraId}': detector crop backend requires crop coordinates.");
     }
 }
 
@@ -110,11 +115,11 @@ internal sealed record TrackerConfig(
     float StartZoneContainmentThreshold = 1f);
 
 /// <summary>
-/// EN: OCR on bag crops. <c>MaxCrops</c> is the fixed crop batch (must equal the text model's fixed batch, for example 4
+/// EN: OCR on tracked object crops. <c>MaxCrops</c> is the fixed crop batch (must equal the text model's fixed batch, for example 4
 /// for <c>img-text-to-obb__640_b4_fp32.onnx</c>); <c>DetectionInputSize</c> is the crop canvas; crop padding widens the
 /// track box before cutting. The text model must be FP32: the crop batch is produced in FP32.
 ///
-/// RU: OCR на вырезках мешков. <c>MaxCrops</c> это фиксированный батч вырезок (должен равняться фиксированному батчу
+/// RU: OCR на вырезках отслеживаемых объектов. <c>MaxCrops</c> это фиксированный батч вырезок (должен равняться фиксированному батчу
 /// текстовой модели, например 4 для <c>img-text-to-obb__640_b4_fp32.onnx</c>); <c>DetectionInputSize</c> это холст
 /// вырезки; отступ расширяет бокс трека перед вырезкой. Текстовая модель должна быть FP32: батч вырезок делается в FP32.
 /// </summary>
@@ -232,6 +237,11 @@ internal sealed record SourceConfig(
             case "rtsp":
                 ArgumentException.ThrowIfNullOrWhiteSpace(Url, $"camera '{cameraId}': source.url");
                 break;
+            case "hls":
+                if(IsNvdec)
+                    throw new InvalidDataException($"camera '{cameraId}': source.kind 'hls' requires decoder 'cpu'.");
+                ArgumentException.ThrowIfNullOrWhiteSpace(Url, $"camera '{cameraId}': source.url");
+                break;
             case "camera":
                 if(Index is null or < 0)
                     throw new InvalidDataException($"camera '{cameraId}': source.index is required for kind 'camera'.");
@@ -244,7 +254,7 @@ internal sealed record SourceConfig(
 
 /// <summary>
 /// EN: One geometric transform of the per-camera prepare program. Flat record: the fields used depend on <see cref="Type"/>
-/// (radialUndistort, perspective, rotate, crop, resize), mirroring the CGPCam2026 cameras.json schema.
+/// (radialUndistort, perspective, rotate, crop, resize).
 ///
 /// RU: Один геометрический шаг prepare-программы камеры. Плоская запись: набор полей зависит от <see cref="Type"/>.
 /// </summary>

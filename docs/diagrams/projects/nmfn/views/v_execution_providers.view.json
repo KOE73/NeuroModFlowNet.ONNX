@@ -31,10 +31,10 @@
     {
       "entity": "e_runtime",
       "parent": null,
-      "x": -530,
+      "x": -330,
       "y": 510,
-      "width": 2022,
-      "height": 880,
+      "width": 1660,
+      "height": 640,
       "override": {
         "fill": "#fefce8",
         "border": {
@@ -139,20 +139,20 @@
     {
       "entity": "e_irunner",
       "parent": "e_runtime",
-      "x": 1200,
-      "y": 700
+      "x": 1040,
+      "y": 590
     },
     {
       "entity": "e_runner",
       "parent": "e_runtime",
-      "x": 1010,
-      "y": 700
+      "x": 850,
+      "y": 590
     },
     {
       "entity": "e_strategyrunner",
       "parent": "e_runtime",
-      "x": 1010,
-      "y": 870,
+      "x": 850,
+      "y": 760,
       "width": 360
     },
     {

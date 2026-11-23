@@ -19,12 +19,13 @@ internal sealed class VideoStreamWorker : IAsyncDisposable
     long latestSequence = long.MinValue;
     volatile bool accepting = true;
 
-    public VideoStreamWorker(VideoStreamProfile profile, string rendererLibrary, SemaphoreSlim gpuWork, Action<VideoOutputEvent>? notify)
+    public VideoStreamWorker(VideoStreamProfile profile, string rendererLibrary, IDirect2DDrawer drawer,
+        SemaphoreSlim gpuWork, Action<VideoOutputEvent>? notify)
     {
         this.profile = profile;
         this.gpuWork = gpuWork;
         this.notify = notify;
-        renderer = new(profile, rendererLibrary, gpuWork, deviceWork, PublishRendered, notify);
+        renderer = new(profile, rendererLibrary, drawer, gpuWork, deviceWork, PublishRendered, notify);
         worker = Task.Run(RunAsync);
     }
 

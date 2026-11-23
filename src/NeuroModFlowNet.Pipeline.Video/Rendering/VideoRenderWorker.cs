@@ -8,6 +8,7 @@ internal sealed class VideoRenderWorker : IDisposable
 {
     readonly VideoStreamProfile profile;
     readonly string rendererLibrary;
+    readonly IDirect2DDrawer drawer;
     readonly SemaphoreSlim gpuWork;
     readonly SemaphoreSlim deviceWork;
     readonly Action<NvencSurface, long, long> publish;
@@ -21,11 +22,12 @@ internal sealed class VideoRenderWorker : IDisposable
     long latestSequence = long.MinValue;
     bool accepting = true;
 
-    public VideoRenderWorker(VideoStreamProfile profile, string rendererLibrary, SemaphoreSlim gpuWork,
+    public VideoRenderWorker(VideoStreamProfile profile, string rendererLibrary, IDirect2DDrawer drawer, SemaphoreSlim gpuWork,
         SemaphoreSlim deviceWork, Action<NvencSurface, long, long> publish, Action<VideoOutputEvent>? notify)
     {
         this.profile = profile;
         this.rendererLibrary = rendererLibrary;
+        this.drawer = drawer;
         this.gpuWork = gpuWork;
         this.deviceWork = deviceWork;
         this.publish = publish;
@@ -99,7 +101,7 @@ internal sealed class VideoRenderWorker : IDisposable
             }
             finally { gpuWork.Release(); }
 
-            var program = new VideoRenderProgram(renderer, surfaces);
+            var program = new VideoRenderProgram(renderer, surfaces, profile.DrawerName ?? RectangleVideoDrawer.RegisterKey, drawer);
             Report("ready");
             using var clock = new PeriodicTimer(TimeSpan.FromSeconds(1d / profile.FramesPerSecond));
             while(await clock.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))

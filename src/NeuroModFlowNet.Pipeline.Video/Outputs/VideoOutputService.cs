@@ -19,6 +19,25 @@ public sealed class VideoOutputService : IAsyncDisposable
 
     public VideoOutputService(string ffmpegLibrariesPath, string rendererLibraryPath,
         IEnumerable<VideoStreamProfile> profiles, int maximumConcurrentGpuWork = 1, Action<VideoOutputEvent>? notify = null)
+        : this(ffmpegLibrariesPath, rendererLibraryPath, profiles, maximumConcurrentGpuWork, notify, resolveDrawer: null)
+    {
+    }
+
+    /// <param name="resolveDrawer">
+    /// EN: Host resolver called once for each render VM whose profile specifies a drawer key.
+    /// RU: Функция хоста, вызываемая один раз для каждой render VM, профиль которой задаёт ключ рисовальщика.
+    /// </param>
+    public VideoOutputService(string ffmpegLibrariesPath, string rendererLibraryPath,
+        IEnumerable<VideoStreamProfile> profiles, Func<string, IDirect2DDrawer> resolveDrawer,
+        int maximumConcurrentGpuWork = 1, Action<VideoOutputEvent>? notify = null)
+        : this(ffmpegLibrariesPath, rendererLibraryPath, profiles, maximumConcurrentGpuWork, notify,
+            resolveDrawer ?? throw new ArgumentNullException(nameof(resolveDrawer)))
+    {
+    }
+
+    VideoOutputService(string ffmpegLibrariesPath, string rendererLibraryPath,
+        IEnumerable<VideoStreamProfile> profiles, int maximumConcurrentGpuWork, Action<VideoOutputEvent>? notify,
+        Func<string, IDirect2DDrawer>? resolveDrawer)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximumConcurrentGpuWork);
         ArgumentNullException.ThrowIfNull(profiles);
@@ -30,10 +49,13 @@ public sealed class VideoOutputService : IAsyncDisposable
         if(!File.Exists(renderer))
             throw new FileNotFoundException("The Direct2D renderer library is required.", renderer);
 
+        // Resolve all keys before starting any workers. The bound objects live for the lifetime of their render VMs.
+        var drawers = configurations.Values.ToDictionary(static profile => profile.StreamId,
+            profile => BindDrawer(profile, resolveDrawer), StringComparer.Ordinal);
         FfmpegRuntime.Initialize(ffmpegLibrariesPath);
         gpuWork = new(maximumConcurrentGpuWork, maximumConcurrentGpuWork);
         streams = configurations.Values.ToDictionary(static profile => profile.StreamId,
-            profile => new VideoStreamWorker(profile, renderer, gpuWork, notify), StringComparer.Ordinal);
+            profile => new VideoStreamWorker(profile, renderer, drawers[profile.StreamId], gpuWork, notify), StringComparer.Ordinal);
     }
 
     public bool IsAccepting(string streamId) => Volatile.Read(ref disposed) == 0 &&
@@ -74,6 +96,24 @@ public sealed class VideoOutputService : IAsyncDisposable
             if(string.IsNullOrWhiteSpace(output.Id) || !ids.Add(output.Id) || output.CreateSink is null ||
                 output.MaximumQueueBytes <= 0 || output.MaximumQueueMilliseconds <= 0 || output.MaximumQueuePackets <= 0)
                 throw new ArgumentException($"Invalid packet output in '{profile.StreamId}'.");
+        }
+    }
+
+    static IDirect2DDrawer BindDrawer(VideoStreamProfile profile, Func<string, IDirect2DDrawer>? resolveDrawer)
+    {
+        if(profile.DrawerName is not string name)
+            return new RectangleVideoDrawer();
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(profile.DrawerName));
+        if(resolveDrawer is null)
+            throw new InvalidOperationException($"The render VM for '{profile.StreamId}' requires a resolver for drawer '{name}'.");
+
+        try
+        {
+            return resolveDrawer(name) ?? throw new InvalidOperationException("The host resolver returned no drawer.");
+        }
+        catch(InvalidOperationException exception)
+        {
+            throw new InvalidOperationException($"Could not bind Direct2D drawer '{name}' for '{profile.StreamId}'.", exception);
         }
     }
 }

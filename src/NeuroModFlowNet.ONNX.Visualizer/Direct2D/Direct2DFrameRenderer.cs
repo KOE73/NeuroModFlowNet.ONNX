@@ -21,8 +21,14 @@ public sealed unsafe class Direct2DFrameRenderer : IDisposable
     readonly delegate* unmanaged[Cdecl]<nint, int> prepareBackground;
     readonly delegate* unmanaged[Cdecl]<nint, nint, uint, NativeRectangle*, uint, char*, int> drawPrepared;
     readonly delegate* unmanaged[Cdecl]<nint, int> reset;
+    readonly delegate* unmanaged[Cdecl]<nint, int> beginDraw;
+    readonly delegate* unmanaged[Cdecl]<nint, nint, uint, int> endDraw;
+    readonly delegate* unmanaged[Cdecl]<nint, float, float, float, float, float, uint, float, int> drawRectangle;
+    readonly delegate* unmanaged[Cdecl]<nint, float, float, float, float, uint, float, int> drawLine;
+    readonly delegate* unmanaged[Cdecl]<nint, char*, uint, float, float, float, float, uint, float, int> drawText;
     readonly delegate* unmanaged[Cdecl]<nint, void> destroy;
     readonly delegate* unmanaged[Cdecl]<nint> error;
+    readonly Direct2DCanvas canvas;
     nint renderer;
 
     public Direct2DFrameRenderer(string libraryPath, int deviceId, int width, int height, int outputWidth, int outputHeight)
@@ -32,7 +38,14 @@ public sealed unsafe class Direct2DFrameRenderer : IDisposable
 
     public Direct2DFrameRenderer(string libraryPath, int deviceId, int width, int height, int outputWidth, int outputHeight,
         bool requireStagedDrawing)
+        : this(libraryPath, deviceId, width, height, outputWidth, outputHeight, requireStagedDrawing, requireCanvasDrawing: false)
     {
+    }
+
+    public Direct2DFrameRenderer(string libraryPath, int deviceId, int width, int height, int outputWidth, int outputHeight,
+        bool requireStagedDrawing, bool requireCanvasDrawing)
+    {
+        canvas = new(this, width, height);
         library = NativeLibrary.Load(Path.GetFullPath(libraryPath));
         try
         {
@@ -50,8 +63,22 @@ public sealed unsafe class Direct2DFrameRenderer : IDisposable
                 drawPrepared = (delegate* unmanaged[Cdecl]<nint, nint, uint, NativeRectangle*, uint, char*, int>)drawPreparedAddress;
                 reset = (delegate* unmanaged[Cdecl]<nint, int>)resetAddress;
             }
-            if(requireStagedDrawing)
+            if(NativeLibrary.TryGetExport(library, "NmfD2DBeginDraw", out nint beginDrawAddress) &&
+                NativeLibrary.TryGetExport(library, "NmfD2DEndDraw", out nint endDrawAddress) &&
+                NativeLibrary.TryGetExport(library, "NmfD2DDrawRectangle", out nint drawRectangleAddress) &&
+                NativeLibrary.TryGetExport(library, "NmfD2DDrawLine", out nint drawLineAddress) &&
+                NativeLibrary.TryGetExport(library, "NmfD2DDrawText", out nint drawTextAddress))
+            {
+                beginDraw = (delegate* unmanaged[Cdecl]<nint, int>)beginDrawAddress;
+                endDraw = (delegate* unmanaged[Cdecl]<nint, nint, uint, int>)endDrawAddress;
+                drawRectangle = (delegate* unmanaged[Cdecl]<nint, float, float, float, float, float, uint, float, int>)drawRectangleAddress;
+                drawLine = (delegate* unmanaged[Cdecl]<nint, float, float, float, float, uint, float, int>)drawLineAddress;
+                drawText = (delegate* unmanaged[Cdecl]<nint, char*, uint, float, float, float, float, uint, float, int>)drawTextAddress;
+            }
+            if(requireStagedDrawing || requireCanvasDrawing)
                 RequireStagedDrawing();
+            if(requireCanvasDrawing)
+                RequireCanvasDrawing();
             renderer = create(deviceId, width, height, outputWidth, outputHeight);
             if(renderer == 0)
                 throw ReadError();
@@ -95,6 +122,31 @@ public sealed unsafe class Direct2DFrameRenderer : IDisposable
     {
         RequireStagedDrawing();
         DrawCore(nv12Texture, slice, rectangles, drawPrepared);
+    }
+
+    /// <summary>
+    /// EN: Opens a drawing pass on the prepared background. The canvas is valid until EndDraw or Reset.
+    ///
+    /// RU: Открывает проход рисования поверх подготовленного фона. Холст действителен до EndDraw или Reset.
+    /// </summary>
+    public IDirect2DCanvas BeginDraw()
+    {
+        RequireCanvasDrawing();
+        if(beginDraw(GetRenderer()) != 0)
+            throw ReadError();
+        return canvas;
+    }
+
+    /// <summary>
+    /// EN: Finishes drawing, writes the NV12 GPU surface, and waits for it to become ready.
+    ///
+    /// RU: Завершает рисование, записывает поверхность NV12 на GPU и дожидается её готовности.
+    /// </summary>
+    public void EndDraw(nint nv12Texture, uint slice)
+    {
+        RequireCanvasDrawing();
+        if(endDraw(GetRenderer(), nv12Texture, slice) != 0)
+            throw ReadError();
     }
 
     /// <summary>
@@ -167,7 +219,42 @@ public sealed unsafe class Direct2DFrameRenderer : IDisposable
             throw new EntryPointNotFoundException("The Direct2D renderer library does not export the staged drawing API. Rebuild the native Direct2D renderer.");
     }
 
+    void RequireCanvasDrawing()
+    {
+        if(beginDraw == null)
+            throw new EntryPointNotFoundException("The Direct2D renderer library does not export the drawing canvas API. Rebuild the native Direct2D renderer.");
+    }
+
     InvalidOperationException ReadError() => new(Marshal.PtrToStringUTF8(error()) ?? "Direct2D renderer failed.");
+
+    sealed class Direct2DCanvas(Direct2DFrameRenderer owner, int width, int height) : IDirect2DCanvas
+    {
+        public int Width { get; } = width;
+        public int Height { get; } = height;
+
+        public void DrawRectangle(float centerX, float centerY, float width, float height, float angleDegrees, uint rgba,
+            float strokeWidth)
+        {
+            if(owner.drawRectangle(owner.GetRenderer(), centerX, centerY, width, height, angleDegrees, rgba, strokeWidth) != 0)
+                throw owner.ReadError();
+        }
+
+        public void DrawLine(float startX, float startY, float endX, float endY, uint rgba, float strokeWidth)
+        {
+            if(owner.drawLine(owner.GetRenderer(), startX, startY, endX, endY, rgba, strokeWidth) != 0)
+                throw owner.ReadError();
+        }
+
+        public void DrawText(string text, float left, float top, float width, float height, uint rgba, float fontSize)
+        {
+            ArgumentNullException.ThrowIfNull(text);
+            fixed(char* characters = text)
+            {
+                if(owner.drawText(owner.GetRenderer(), characters, (uint)text.Length, left, top, width, height, rgba, fontSize) != 0)
+                    throw owner.ReadError();
+            }
+        }
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     readonly struct NativeRectangle(Direct2DRectangle rectangle, uint labelOffset, uint labelLength)

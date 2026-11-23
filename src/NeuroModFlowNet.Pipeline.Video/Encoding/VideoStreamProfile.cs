@@ -16,4 +16,12 @@ public sealed record VideoStreamProfile(
     IReadOnlyList<VideoPacketOutput> Outputs,
     int CudaDeviceId = 0,
     int MaximumFrameAgeMilliseconds = 2000,
-    bool RepeatLastFrame = true);
+    bool RepeatLastFrame = true)
+{
+    /// <summary>
+    /// EN: Key of the drawer bound to this profile when the host builds its render VM.
+    ///
+    /// RU: Ключ рисовальщика, который хост привязывает к этому профилю при сборке render VM.
+    /// </summary>
+    public string? DrawerName { get; init; }
+}

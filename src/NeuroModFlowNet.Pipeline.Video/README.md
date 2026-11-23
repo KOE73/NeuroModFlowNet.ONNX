@@ -1,8 +1,10 @@
 # GPU video output
 
-`VideoOutputService` runs optional video outputs in the host process. Each profile consumes a CUDA BGR U8 NHWC tensor with a fixed input shape and image-space rectangles with optional labels. The device, dimensions, FPS, bitrate, output factories and queue limits are explicit. Raw pixels stay on the GPU.
+`VideoOutputService` runs optional video outputs in the host process. Each profile consumes a CUDA BGR U8 NHWC tensor with a fixed input shape and can take additional named register values for drawing. The device, dimensions, FPS, bitrate, output factories and queue limits are explicit. Raw pixels stay on the GPU.
 
-The render worker keeps the latest input per profile and runs a separate VM program named `render`. Each run has its own register context and executes `Op_Video_PrepareSurface`, `Op_Video_DrawDirect2D`, and `Op_PostOwned<NvencSurface>` in order. The first operation prepares a GPU surface from the tensor and the second draws the supplied scene and produces D3D11 NV12. `POST MOVE` transfers the completed surface to the encoding worker's inbox. The service takes ownership of each posted frame, including frames it drops or replaces.
+The render worker keeps the latest input per profile and runs a separate VM program named `render`. Each run has its own register context and executes `Op_Video_PrepareSurface`, `Op_Video_DrawDirect2D`, and `Op_PostOwned<NvencSurface>` in order. `PREPARE SURFACE` prepares a GPU surface from the tensor. `DRAW DIRECT2D` opens the drawing pass, calls the bound drawer and completes the D3D11 NV12 surface. `POST MOVE` transfers the completed surface to the encoding worker's inbox. The service takes ownership of each posted frame, including frames it drops or replaces.
+
+Implement `IDirect2DDrawer` in the host project and set the profile's `DrawerName` to its registration key. Pass the host's keyed DI resolver to `VideoOutputService`. The service resolves each named drawer once when constructing its render VM. `Draw` runs synchronously and receives an `IVmRegisterReader` for the current run and an `IDirect2DCanvas` in input pixel coordinates. Keep the host DI scope and any borrowed register values valid for their documented lifetimes. A profile without a drawer name uses the existing rectangle input contract.
 
 The encoding worker takes the latest completed surface at its configured FPS and can repeat it until it expires. NVENC produces H.264 for the configured packet destinations. Dispose the service before disposing the sessions or allocators that supplied its input tensors.
 

@@ -1,16 +1,15 @@
 using System.Runtime.Versioning;
-using NeuroModFlowNet.ONNX.Visualizer;
 
 namespace NeuroModFlowNet.Pipeline.Video;
 
 [SupportedOSPlatform("windows")]
 internal sealed class Op_Video_DrawDirect2D(
     string surfaceKey,
-    string rectanglesKey,
+    string drawerName,
+    IDirect2DDrawer drawer,
     D3D11VideoRenderer renderer)
-    : OpBase(OpDescriptor.Create("DRAW DIRECT2D", "video.draw-direct2d",
-        reads: [VarRequirement.Read<NvencSurface>(surfaceKey),
-            VarRequirement.Read<ReadOnlyMemory<Direct2DRectangle>>(rectanglesKey)],
+    : OpBase(OpDescriptor.Create($"DRAW DIRECT2D {surfaceKey}, \"{drawerName}\"", "video.draw-direct2d",
+        reads: [VarRequirement.Read<NvencSurface>(surfaceKey)],
         writes: [VarRequirement.Write<NvencSurface>(surfaceKey)],
         hasSideEffects: true))
 {
@@ -18,8 +17,8 @@ internal sealed class Op_Video_DrawDirect2D(
     {
         cancellationToken.ThrowIfCancellationRequested();
         NvencSurface surface = context.Get<NvencSurface>(surfaceKey);
-        ReadOnlyMemory<Direct2DRectangle> rectangles = context.Get<ReadOnlyMemory<Direct2DRectangle>>(rectanglesKey);
-        renderer.Draw(surface, rectangles.Span);
+        drawer.Draw(new VmRegisterReader(context), renderer.BeginDraw());
+        renderer.EndDraw(surface);
         return ValueTask.FromResult(OpResult.Continue);
     }
 }

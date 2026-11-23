@@ -8,6 +8,7 @@
 #include <cudaD3D11.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <format>
 #include <memory>
@@ -168,28 +169,65 @@ struct Renderer {
 
     void DrawPrepared(ID3D11Texture2D* destination, uint32_t slice,
                       const OverlayRectangle* rectangles, uint32_t count, const wchar_t* labels) {
-        if (!prepared) throw std::runtime_error("prepare the D3D11 background before drawing");
-        drawing->SetTarget(d2dTarget.Get());
-        drawing->BeginDraw();
+        BeginDraw();
         for (uint32_t index = 0; index < count; ++index) {
             const auto& box = rectangles[index];
-            const float left = box.centerX - box.width * 0.5f;
-            const float top = box.centerY - box.height * 0.5f;
-            const auto bounds = D2D1::RectF(left, top, left + box.width, top + box.height);
-            brush->SetColor(D2D1::ColorF(box.rgba >> 8, (box.rgba & 255) / 255.0f));
-            drawing->SetTransform(D2D1::Matrix3x2F::Rotation(box.angleDegrees, D2D1::Point2F(box.centerX, box.centerY)));
-            drawing->DrawRectangle(bounds, brush.Get(), box.strokeWidth);
-            drawing->SetTransform(D2D1::Matrix3x2F::Identity());
+            DrawRectangle(box.centerX, box.centerY, box.width, box.height, box.angleDegrees, box.rgba, box.strokeWidth);
             if (box.labelLength) {
-                const float labelTop = std::max(0.0f, top - text->GetFontSize() - 2);
-                const auto labelBounds = D2D1::RectF(std::max(0.0f, left), labelTop, static_cast<float>(width), labelTop + text->GetFontSize() + 4);
-                drawing->DrawText(labels + box.labelOffset, box.labelLength, text.Get(), labelBounds, brush.Get(),
-                                  D2D1_DRAW_TEXT_OPTIONS_CLIP);
+                const float fontSize = text->GetFontSize();
+                const float left = std::max(0.0f, box.centerX - box.width * 0.5f);
+                const float top = std::max(0.0f, box.centerY - box.height * 0.5f - fontSize - 2);
+                DrawText(labels + box.labelOffset, box.labelLength, left, top, static_cast<float>(width) - left,
+                         fontSize + 4, box.rgba, 0);
             }
         }
-        HRESULT drawingResult = drawing->EndDraw();
-        drawing->SetTarget(nullptr);
-        Hr(drawingResult, "complete Direct2D overlay");
+        EndDraw(destination, slice);
+    }
+
+    void BeginDraw() {
+        if (!prepared || drawingOpen) throw std::runtime_error("prepare the D3D11 background before opening a drawing pass");
+        drawing->SetTarget(d2dTarget.Get());
+        drawing->BeginDraw();
+        drawingOpen = true;
+    }
+
+    void DrawRectangle(float centerX, float centerY, float boxWidth, float boxHeight, float angleDegrees,
+                       uint32_t rgba, float strokeWidth) {
+        RequireDrawing();
+        const float left = centerX - boxWidth * 0.5f;
+        const float top = centerY - boxHeight * 0.5f;
+        SetColor(rgba);
+        drawing->SetTransform(D2D1::Matrix3x2F::Rotation(angleDegrees, D2D1::Point2F(centerX, centerY)));
+        drawing->DrawRectangle(D2D1::RectF(left, top, left + boxWidth, top + boxHeight), brush.Get(), strokeWidth);
+        drawing->SetTransform(D2D1::Matrix3x2F::Identity());
+    }
+
+    void DrawLine(float startX, float startY, float endX, float endY, uint32_t rgba, float strokeWidth) {
+        RequireDrawing();
+        SetColor(rgba);
+        drawing->DrawLine(D2D1::Point2F(startX, startY), D2D1::Point2F(endX, endY), brush.Get(), strokeWidth);
+    }
+
+    void DrawText(const wchar_t* characters, uint32_t length, float left, float top, float textWidth, float textHeight,
+                  uint32_t rgba, float fontSize) {
+        RequireDrawing();
+        if (!length) return;
+        if (!characters || !std::isfinite(fontSize) || fontSize < 0)
+            throw std::invalid_argument("invalid Direct2D text or font size");
+        IDWriteTextFormat* format = text.Get();
+        if (fontSize != 0 && fontSize != text->GetFontSize()) {
+            if (!customText || customText->GetFontSize() != fontSize)
+                customText = CreateTextFormat(fontSize);
+            format = customText.Get();
+        }
+        SetColor(rgba);
+        drawing->DrawText(characters, length, format, D2D1::RectF(left, top, left + textWidth, top + textHeight),
+                          brush.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP);
+    }
+
+    void EndDraw(ID3D11Texture2D* destination, uint32_t slice) {
+        RequireDrawing();
+        Hr(CloseDrawing(), "complete Direct2D overlay");
         ConvertToNv12(destination, slice);
         WaitForGpu();
         prepared = false;
@@ -197,13 +235,30 @@ struct Renderer {
 
     void Reset() {
         if (mapped) Unmap();
+        const HRESULT drawingResult = drawingOpen ? CloseDrawing() : S_OK;
         if (prepared) {
             WaitForGpu();
             prepared = false;
         }
+        Hr(drawingResult, "close abandoned Direct2D drawing pass");
     }
 
 private:
+    void RequireDrawing() const {
+        if (!drawingOpen) throw std::runtime_error("no active Direct2D drawing pass");
+    }
+
+    void SetColor(uint32_t rgba) {
+        brush->SetColor(D2D1::ColorF(rgba >> 8, (rgba & 255) / 255.0f));
+    }
+
+    HRESULT CloseDrawing() {
+        const HRESULT result = drawing->EndDraw();
+        drawing->SetTarget(nullptr);
+        drawingOpen = false;
+        return result;
+    }
+
     void Unmap() {
         CurrentContext current(cuda.context);
         Cuda(cuGraphicsUnmapResources(1, &resource, nullptr), "return CUDA buffer to D3D11");
@@ -301,12 +356,17 @@ private:
         Hr(drawing->CreateBitmapFromDxgiSurface(surface.Get(), &props, &d2dTarget), "bind DXGI target to Direct2D");
         Hr(drawing->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &brush), "create overlay brush");
 
-        ComPtr<IDWriteFactory> writing;
         Hr(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
                                reinterpret_cast<IUnknown**>(writing.GetAddressOf())), "create DirectWrite factory");
+        text = CreateTextFormat(std::clamp(height / 48.0f, 14.0f, 36.0f));
+    }
+
+    ComPtr<IDWriteTextFormat> CreateTextFormat(float fontSize) {
+        ComPtr<IDWriteTextFormat> format;
         Hr(writing->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
-                                     DWRITE_FONT_STRETCH_NORMAL, std::clamp(height / 48.0f, 14.0f, 36.0f), L"en-us", &text),
+                                     DWRITE_FONT_STRETCH_NORMAL, fontSize, L"en-us", &format),
            "create DirectWrite text format");
+        return format;
     }
 
     void InitConversion() {
@@ -416,6 +476,7 @@ private:
     CUgraphicsResource resource{};
     bool mapped{};
     bool prepared{};
+    bool drawingOpen{};
     uint64_t fenceValue{};
     ComPtr<IDXGIAdapter1> adapter;
     ComPtr<ID3D11Device> device;
@@ -432,13 +493,26 @@ private:
     ComPtr<ID2D1DeviceContext> drawing;
     ComPtr<ID2D1Bitmap1> d2dTarget;
     ComPtr<ID2D1SolidColorBrush> brush;
+    ComPtr<IDWriteFactory> writing;
     ComPtr<IDWriteTextFormat> text;
+    ComPtr<IDWriteTextFormat> customText;
     ComPtr<ID3D11VideoDevice> videoDevice;
     ComPtr<ID3D11VideoContext1> videoContext;
     ComPtr<ID3D11VideoProcessorEnumerator> enumerator;
     ComPtr<ID3D11VideoProcessor> processor;
     ComPtr<ID3D11VideoProcessorInputView> inputView;
 };
+
+template<typename Action>
+int InvokeDrawing(Action action) {
+    try {
+        action();
+        return 0;
+    } catch (const std::exception& error) {
+        lastError = error.what();
+        return -1;
+    }
+}
 }
 
 extern "C" {
@@ -501,6 +575,29 @@ __declspec(dllexport) int NmfD2DDrawPrepared(Renderer* renderer, ID3D11Texture2D
         lastError = error.what();
         return -1;
     }
+}
+
+__declspec(dllexport) int NmfD2DBeginDraw(Renderer* renderer) {
+    return InvokeDrawing([&] { renderer->BeginDraw(); });
+}
+
+__declspec(dllexport) int NmfD2DEndDraw(Renderer* renderer, ID3D11Texture2D* destination, uint32_t slice) {
+    return InvokeDrawing([&] { renderer->EndDraw(destination, slice); });
+}
+
+__declspec(dllexport) int NmfD2DDrawRectangle(Renderer* renderer, float centerX, float centerY, float width,
+                                            float height, float angleDegrees, uint32_t rgba, float strokeWidth) {
+    return InvokeDrawing([&] { renderer->DrawRectangle(centerX, centerY, width, height, angleDegrees, rgba, strokeWidth); });
+}
+
+__declspec(dllexport) int NmfD2DDrawLine(Renderer* renderer, float startX, float startY, float endX, float endY,
+                                       uint32_t rgba, float strokeWidth) {
+    return InvokeDrawing([&] { renderer->DrawLine(startX, startY, endX, endY, rgba, strokeWidth); });
+}
+
+__declspec(dllexport) int NmfD2DDrawText(Renderer* renderer, const wchar_t* characters, uint32_t length,
+                                       float left, float top, float width, float height, uint32_t rgba, float fontSize) {
+    return InvokeDrawing([&] { renderer->DrawText(characters, length, left, top, width, height, rgba, fontSize); });
 }
 
 __declspec(dllexport) int NmfD2DReset(Renderer* renderer) {

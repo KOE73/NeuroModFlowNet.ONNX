@@ -32,7 +32,7 @@ internal sealed unsafe class D3D11VideoRenderer : IDisposable
         try
         {
             renderer = new(rendererLibraryPath, deviceId, profile.InputWidth, profile.InputHeight,
-                profile.OutputWidth, profile.OutputHeight, requireStagedDrawing: true);
+                profile.OutputWidth, profile.OutputHeight, requireStagedDrawing: true, requireCanvasDrawing: true);
             var key = new RuntimeOnnxOperatorKernelKey("BgrU8Nhwc_To_BgraU8Nhwc",
                 $"{profile.InputWidth}x{profile.InputHeight}", InferenceBackend.Cuda, $"device_id={deviceId}");
             packing = RuntimeOnnxOperatorKernelCache.CreateContext(key,
@@ -76,14 +76,16 @@ internal sealed unsafe class D3D11VideoRenderer : IDisposable
         renderer.PrepareBackground();
     }
 
-    public void Draw(NvencSurface target, ReadOnlySpan<Direct2DRectangle> rectangles)
+    public IDirect2DCanvas BeginDraw() => renderer.BeginDraw();
+
+    public void EndDraw(NvencSurface target)
     {
         ObjectDisposedException.ThrowIf(disposed, this);
         AVFrame* frame = target.Frame;
         if(frame is null || frame->format != (int)AVPixelFormat.AV_PIX_FMT_D3D11 || frame->data[0] is null)
             throw new InvalidOperationException("The video target must be a live D3D11 encoder surface.");
 
-        renderer.DrawPrepared((nint)frame->data[0], checked((uint)(nuint)frame->data[1]), rectangles);
+        renderer.EndDraw((nint)frame->data[0], checked((uint)(nuint)frame->data[1]));
         pending = false;
     }
 

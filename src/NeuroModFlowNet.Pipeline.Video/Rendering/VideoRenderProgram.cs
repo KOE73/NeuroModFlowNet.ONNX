@@ -5,24 +5,19 @@ namespace NeuroModFlowNet.Pipeline.Video;
 [SupportedOSPlatform("windows")]
 internal sealed class VideoRenderProgram
 {
-    const string FrameKey = "frame";
-    const string RectanglesKey = "rectangles";
-    const string SurfaceKey = "surface";
-    const string HandoffKey = "video.handoff";
-
     readonly D3D11VideoRenderer renderer;
     readonly VmProgram program;
     readonly VmGlobalMemory globalMemory = new();
     readonly VmSyncGateRegistry syncGates = new();
     long runId;
 
-    public VideoRenderProgram(D3D11VideoRenderer renderer, D3D11Nv12SurfacePool surfaces)
+    public VideoRenderProgram(D3D11VideoRenderer renderer, D3D11Nv12SurfacePool surfaces, string drawerName, IDirect2DDrawer drawer)
     {
         this.renderer = renderer;
         program = new VmProgramBuilder("render")
-            .Step(new Op_Video_PrepareSurface(FrameKey, SurfaceKey, renderer, surfaces))
-            .Step(new Op_Video_DrawDirect2D(SurfaceKey, RectanglesKey, renderer))
-            .Step(new Op_PostOwned<NvencSurface>(SurfaceKey, HandoffKey))
+            .Step(new Op_Video_PrepareSurface(VideoInputFrame.FrameRegister, VideoInputFrame.SurfaceRegister, renderer, surfaces))
+            .Step(new Op_Video_DrawDirect2D(VideoInputFrame.SurfaceRegister, drawerName, drawer, renderer))
+            .Step(new Op_PostOwned<NvencSurface>(VideoInputFrame.SurfaceRegister, VideoInputFrame.HandoffRegister))
             .Build();
     }
 
@@ -33,9 +28,10 @@ internal sealed class VideoRenderProgram
             new VmRunIdentity(sourceId, ++runId, DateTimeOffset.UtcNow, input.Sequence), globalMemory, syncGates);
         await using(context.ConfigureAwait(false))
         {
-            context.Set(FrameKey, input.Tensor);
-            context.Set(RectanglesKey, input.Rectangles);
-            context.Set(HandoffKey, handoff);
+            foreach(var (key, value) in input.Registers)
+                context.Set(key, value);
+            context.Set(VideoInputFrame.FrameRegister, input.Tensor);
+            context.Set(VideoInputFrame.HandoffRegister, handoff);
 
             try
             {

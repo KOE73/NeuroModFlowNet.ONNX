@@ -1,12 +1,5 @@
-using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using FFmpeg.AutoGen.Abstractions;
-using Microsoft.ML.OnnxRuntime;
-using Microsoft.ML.OnnxRuntime.Tensors;
-using NeuroModFlowNet.ONNX;
-using NeuroModFlowNet.ONNX.Graph.Builders;
-using NeuroModFlowNet.ONNX.Visualizer;
-using NeuroModFlowNet.Pipeline.ONNX;
 using NeuroModFlowNet.Video.FFmpeg;
 
 namespace NeuroModFlowNet.Pipeline.Video;
@@ -16,35 +9,17 @@ internal sealed unsafe class D3D11NvencEncoder : IDisposable
 {
     const int ClockRate = 90_000;
     readonly VideoStreamProfile profile;
-    readonly Direct2DFrameRenderer renderer;
-    readonly OrtMemoryInfo memory;
-    readonly long[] inputShape;
-    readonly long[] packedShape;
-    readonly long packedSize;
-    AVBufferRef* surfaces;
     AVCodecContext* codec;
     AVPacket* packet;
-    OnnxExecutionContext? packing;
     long sequence;
     bool disposed;
 
-    public D3D11NvencEncoder(VideoStreamProfile profile, string rendererLibraryPath)
+    public D3D11NvencEncoder(VideoStreamProfile profile, NvencSurface firstSurface)
     {
         this.profile = profile;
-        inputShape = [1, profile.InputHeight, profile.InputWidth, 3];
-        packedShape = [1, profile.InputHeight, profile.InputWidth, 4];
-        packedSize = (long)profile.InputHeight * profile.InputWidth * 4;
-        memory = new(OrtMemoryInfo.allocatorCUDA, OrtAllocatorType.DeviceAllocator, profile.CudaDeviceId, OrtMemType.Default);
         try
         {
-            renderer = new(rendererLibraryPath, profile.CudaDeviceId,
-                profile.InputWidth, profile.InputHeight, profile.OutputWidth, profile.OutputHeight);
-            Open();
-            var key = new RuntimeOnnxOperatorKernelKey("BgrU8Nhwc_To_BgraU8Nhwc",
-                $"{profile.InputWidth}x{profile.InputHeight}", InferenceBackend.Cuda, $"device_id={profile.CudaDeviceId}");
-            packing = RuntimeOnnxOperatorKernelCache.CreateContext(key,
-                () => BgrToBgraBuilder.Build(profile.InputWidth, profile.InputHeight),
-                config => config.DeviceId = profile.CudaDeviceId, "BGR to BGRA");
+            Open(firstSurface.Frame);
             if(codec->extradata is null || codec->extradata_size <= 0)
                 throw new InvalidOperationException("NVENC did not provide global H.264 headers.");
             Description = new(profile.StreamId, Guid.NewGuid(), "h264", "annex-b",
@@ -56,35 +31,15 @@ internal sealed unsafe class D3D11NvencEncoder : IDisposable
 
     public EncodedVideoStream Description { get; }
 
-    #region Encoder and GPU surfaces
+    #region Encoder initialization
 
-    void Open()
+    void Open(AVFrame* firstSurface)
     {
-        AVBufferRef* device = ffmpeg.av_hwdevice_ctx_alloc(AVHWDeviceType.AV_HWDEVICE_TYPE_D3D11VA);
-        if(device is null)
-            throw new OutOfMemoryException("Could not allocate the FFmpeg D3D11 device context.");
-        try
-        {
-            var hardware = (AVHWDeviceContext*)device->data;
-            var d3d = (AVD3D11VADeviceContext*)hardware->hwctx;
-            nint pointer = renderer.Device;
-            Marshal.AddRef(pointer);
-            d3d->device = (ID3D11Device*)pointer;
-            FfmpegRuntime.Check(ffmpeg.av_hwdevice_ctx_init(device), "initialize shared D3D11 device");
-
-            surfaces = ffmpeg.av_hwframe_ctx_alloc(device);
-            if(surfaces is null)
-                throw new OutOfMemoryException("Could not allocate the NVENC surface pool.");
-            var frames = (AVHWFramesContext*)surfaces->data;
-            frames->format = AVPixelFormat.AV_PIX_FMT_D3D11;
-            frames->sw_format = AVPixelFormat.AV_PIX_FMT_NV12;
-            frames->width = profile.OutputWidth;
-            frames->height = profile.OutputHeight;
-            const uint renderTargetBinding = 0x20;
-            ((AVD3D11VAFramesContext*)frames->hwctx)->BindFlags = renderTargetBinding;
-            FfmpegRuntime.Check(ffmpeg.av_hwframe_ctx_init(surfaces), "initialize NVENC surfaces");
-        }
-        finally { ffmpeg.av_buffer_unref(&device); }
+        if(firstSurface is null || firstSurface->format != (int)AVPixelFormat.AV_PIX_FMT_D3D11 || firstSurface->hw_frames_ctx is null)
+            throw new InvalidOperationException("NVENC requires a prepared D3D11 NV12 surface.");
+        var frames = (AVHWFramesContext*)firstSurface->hw_frames_ctx->data;
+        if(frames->sw_format != AVPixelFormat.AV_PIX_FMT_NV12 || frames->width != profile.OutputWidth || frames->height != profile.OutputHeight)
+            throw new InvalidDataException("The prepared surface does not match the output profile.");
 
         AVCodec* encoder = ffmpeg.avcodec_find_encoder_by_name("h264_nvenc");
         if(encoder is null)
@@ -96,7 +51,7 @@ internal sealed unsafe class D3D11NvencEncoder : IDisposable
         codec->width = profile.OutputWidth;
         codec->height = profile.OutputHeight;
         codec->pix_fmt = AVPixelFormat.AV_PIX_FMT_D3D11;
-        codec->hw_frames_ctx = ffmpeg.av_buffer_ref(surfaces);
+        codec->hw_frames_ctx = ffmpeg.av_buffer_ref(firstSurface->hw_frames_ctx);
         if(codec->hw_frames_ctx is null)
             throw new OutOfMemoryException("Could not retain the NVENC surface pool.");
         codec->time_base = new() { num = 1, den = ClockRate };
@@ -118,47 +73,6 @@ internal sealed unsafe class D3D11NvencEncoder : IDisposable
         FfmpegRuntime.Check(ffmpeg.avcodec_open2(codec, encoder, null), "open H.264 NVENC");
     }
 
-    public NvencSurface Render(VideoInputFrame frame)
-    {
-        OrtValue input = frame.Tensor;
-        var info = input.GetTensorTypeAndShape();
-        using OrtMemoryInfo placement = input.GetTensorMemoryInfo();
-        if(info.ElementDataType != TensorElementType.UInt8 || !info.Shape.AsSpan().SequenceEqual(inputShape) ||
-            placement.Name != "Cuda" || placement.Id != profile.CudaDeviceId)
-            throw new InvalidDataException("The video profile requires BGR U8 NHWC in its declared CUDA device and shape.");
-
-        AVFrame* target = ffmpeg.av_frame_alloc();
-        if(target is null)
-            throw new OutOfMemoryException("Could not allocate a surface reference.");
-        var surface = new NvencSurface(target);
-        try
-        {
-            FfmpegRuntime.Check(ffmpeg.av_hwframe_get_buffer(surfaces, target, 0), "rent NV12 surface");
-            if(target->format != (int)AVPixelFormat.AV_PIX_FMT_D3D11)
-                throw new InvalidOperationException("The encoder surface is not D3D11.");
-            nint mapped = renderer.MapPackedBgra();
-            using(OrtValue destination = OrtValue.CreateTensorValueWithData(memory, TensorElementType.UInt8, packedShape, mapped, packedSize))
-            {
-                OnnxExecutionContext context = packing!;
-                try
-                {
-                    context.IoBinding.BindInput("bgr", input);
-                    context.IoBinding.BindOutput("bgra", destination);
-                    context.Model.Session.RunWithBinding(context.RunOptions, context.IoBinding);
-                    context.IoBinding.SynchronizeBoundOutputs();
-                }
-                finally
-                {
-                    context.IoBinding.ClearBoundInputs();
-                    context.IoBinding.ClearBoundOutputs();
-                }
-            }
-            renderer.Draw((nint)target->data[0], checked((uint)(nuint)target->data[1]), frame.Rectangles.Span);
-            return surface;
-        }
-        catch { surface.Dispose(); throw; }
-    }
-
     #endregion
 
     #region Packets and shutdown
@@ -166,6 +80,8 @@ internal sealed unsafe class D3D11NvencEncoder : IDisposable
     public void Encode(NvencSurface surface, long tick, Action<EncodedVideoPacket> publish)
     {
         AVFrame* frame = surface.Frame;
+        if(frame->hw_frames_ctx is null || frame->hw_frames_ctx->data != codec->hw_frames_ctx->data)
+            throw new InvalidDataException("The prepared surface belongs to a different hardware pool.");
         frame->pts = checked(tick * ClockRate) / profile.FramesPerSecond;
         frame->duration = checked((tick + 1) * ClockRate) / profile.FramesPerSecond - frame->pts;
         FfmpegRuntime.Check(ffmpeg.avcodec_send_frame(codec, frame), "submit NVENC surface");
@@ -216,15 +132,10 @@ internal sealed unsafe class D3D11NvencEncoder : IDisposable
         if(disposed)
             return;
         disposed = true;
-        packing?.Dispose();
         AVPacket* ownedPacket = packet;
         ffmpeg.av_packet_free(&ownedPacket);
         AVCodecContext* ownedCodec = codec;
         ffmpeg.avcodec_free_context(&ownedCodec);
-        AVBufferRef* ownedSurfaces = surfaces;
-        ffmpeg.av_buffer_unref(&ownedSurfaces);
-        renderer?.Dispose();
-        memory.Dispose();
     }
 
     #endregion

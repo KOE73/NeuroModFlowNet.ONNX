@@ -1,10 +1,12 @@
 # GPU video output
 
-`VideoOutputService` runs optional video outputs in the host process. Each profile consumes a CUDA BGR U8 NHWC tensor with a fixed input shape, draws image-space rectangles and optional labels with Direct2D and DirectWrite, and produces H.264 through D3D11 NV12 and NVENC. The device, dimensions, FPS, bitrate, output factories and queue limits are explicit. Raw pixels stay on the GPU.
+`VideoOutputService` runs optional video outputs in the host process. Each profile consumes a CUDA BGR U8 NHWC tensor with a fixed input shape and image-space rectangles with optional labels. The device, dimensions, FPS, bitrate, output factories and queue limits are explicit. Raw pixels stay on the GPU.
 
-The input slot keeps the latest frame per profile. The service accepts ownership of `VideoInputFrame` even when it drops the frame. Producer-side conversion to the encoder's format is unnecessary. Each stream updates at its configured output clock and can repeat the last rendered surface until it expires. The service limits concurrent render and encode work separately from the source. Dispose the service before disposing the sessions or allocators that supplied its input tensors.
+The render worker keeps the latest input per profile and runs a separate VM program named `render`. Each run has its own register context and executes `Op_Video_PrepareSurface`, `Op_Video_DrawDirect2D`, and `Op_PostOwned<NvencSurface>` in order. The first operation prepares a GPU surface from the tensor and the second draws the supplied scene and produces D3D11 NV12. `POST MOVE` transfers the completed surface to the encoding worker's inbox. The service takes ownership of each posted frame, including frames it drops or replaces.
 
-`Op_PostOwned<T>` can move an owned VM register into a per-run `VmOwnedHandoff<T>` supplied by the host. The host publishes the staged value after a successful run and disposes the handoff after every outcome. The renderer and packet outputs have no dependencies on application register names or payload types.
+The encoding worker takes the latest completed surface at its configured FPS and can repeat it until it expires. NVENC produces H.264 for the configured packet destinations. Dispose the service before disposing the sessions or allocators that supplied its input tensors.
+
+`Op_PostOwned<T>` moves an owned VM register into a per-run `VmOwnedHandoff<T>`. The host publishes the staged value after a successful run and disposes the handoff after every outcome. The renderer and packet outputs have no dependencies on application register names or payload types.
 
 ## Build on Windows x64
 

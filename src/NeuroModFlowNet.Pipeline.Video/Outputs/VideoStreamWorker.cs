@@ -7,77 +7,82 @@ namespace NeuroModFlowNet.Pipeline.Video;
 internal sealed class VideoStreamWorker : IAsyncDisposable
 {
     readonly VideoStreamProfile profile;
-    readonly string rendererLibrary;
     readonly SemaphoreSlim gpuWork;
+    readonly SemaphoreSlim deviceWork = new(1, 1);
     readonly Action<VideoOutputEvent>? notify;
     readonly object gate = new();
     readonly CancellationTokenSource stop = new();
+    readonly VideoRenderWorker renderer;
     readonly Task worker;
-    VideoInputFrame? pending;
+    NvencSurface? ready;
+    long readyTimestamp;
     long latestSequence = long.MinValue;
-    bool accepting = true;
+    volatile bool accepting = true;
 
     public VideoStreamWorker(VideoStreamProfile profile, string rendererLibrary, SemaphoreSlim gpuWork, Action<VideoOutputEvent>? notify)
     {
         this.profile = profile;
-        this.rendererLibrary = rendererLibrary;
         this.gpuWork = gpuWork;
         this.notify = notify;
+        renderer = new(profile, rendererLibrary, gpuWork, deviceWork, PublishRendered, notify);
         worker = Task.Run(RunAsync);
     }
 
-    #region Input ownership
-
-    public bool IsAccepting
-    {
-        get { lock(gate) return accepting; }
-    }
+    public bool IsAccepting => accepting && renderer.IsAccepting;
 
     public bool Post(VideoInputFrame frame)
     {
-        VideoInputFrame? release;
-        bool accepted;
+        if(accepting)
+            return renderer.Post(frame);
+        frame.Dispose();
+        return false;
+    }
+
+    #region Prepared frames from the render VM
+
+    void PublishRendered(NvencSurface prepared, long sequence, long timestamp)
+    {
+        NvencSurface? release;
         lock(gate)
         {
-            accepted = accepting && frame.Sequence > latestSequence;
-            if(accepted)
-            {
-                latestSequence = frame.Sequence;
-                release = pending;
-                pending = frame;
-            }
+            if(!accepting || sequence <= latestSequence)
+                release = prepared;
             else
-                release = frame;
+            {
+                latestSequence = sequence;
+                release = ready;
+                ready = prepared;
+                readyTimestamp = timestamp;
+            }
         }
         release?.Dispose();
-        return accepted;
     }
 
-    VideoInputFrame? TakePending()
+    (NvencSurface? Surface, long Timestamp) TakeReady()
     {
         lock(gate)
         {
-            VideoInputFrame? frame = pending;
-            pending = null;
-            return frame;
+            NvencSurface? surface = ready;
+            ready = null;
+            return (surface, readyTimestamp);
         }
     }
 
-    bool HasPending()
+    bool HasReady()
     {
-        lock(gate) return pending is not null;
+        lock(gate) return ready is not null;
     }
 
     void CloseInput()
     {
         lock(gate)
             accepting = false;
-        TakePending()?.Dispose();
+        TakeReady().Surface?.Dispose();
     }
 
     #endregion
 
-    #region Output clock and GPU work
+    #region Encoding and output clock
 
     async Task RunAsync()
     {
@@ -92,40 +97,44 @@ internal sealed class VideoStreamWorker : IAsyncDisposable
             using var clock = new PeriodicTimer(TimeSpan.FromSeconds(1d / profile.FramesPerSecond));
             while(await clock.WaitForNextTickAsync(stop.Token).ConfigureAwait(false))
             {
-                if(!HasPending() && (last is null || !profile.RepeatLastFrame || IsExpired(lastFrameTime)))
+                if(!HasReady() && (last is null || !profile.RepeatLastFrame || IsExpired(lastFrameTime)))
                     continue;
 
-                await gpuWork.WaitAsync(stop.Token).ConfigureAwait(false);
+                await deviceWork.WaitAsync(stop.Token).ConfigureAwait(false);
                 try
                 {
-                    using VideoInputFrame? input = TakePending();
-                    bool renderedNewFrame = false;
-                    if(input is not null && !IsExpired(input.SubmittedAt))
+                    await gpuWork.WaitAsync(stop.Token).ConfigureAwait(false);
+                    try
                     {
+                        var (completed, capturedAt) = TakeReady();
+                        bool newFrame = completed is not null && !IsExpired(capturedAt);
+                        if(newFrame)
+                        {
+                            last?.Dispose();
+                            last = completed;
+                            lastFrameTime = capturedAt;
+                        }
+                        else
+                            completed?.Dispose();
+
+                        if(last is null || IsExpired(lastFrameTime) || (!profile.RepeatLastFrame && !newFrame))
+                            continue;
+
                         if(encoder is null)
                         {
-                            encoder = new(profile, rendererLibrary);
+                            encoder = new(profile, last);
                             output = new(encoder.Description, profile.Outputs, notify);
                             origin = Stopwatch.GetTimestamp();
                             Report("ready");
                         }
-                        NvencSurface rendered = encoder.Render(input);
-                        last?.Dispose();
-                        last = rendered;
-                        lastFrameTime = input.SubmittedAt;
-                        renderedNewFrame = true;
+
+                        long tick = Math.Max(lastTick + 1, (long)(Stopwatch.GetElapsedTime(origin).TotalSeconds * profile.FramesPerSecond));
+                        encoder.Encode(last, tick, output!.Publish);
+                        lastTick = tick;
                     }
-
-                    if(last is null || IsExpired(lastFrameTime))
-                        continue;
-                    if(!profile.RepeatLastFrame && !renderedNewFrame)
-                        continue;
-
-                    long tick = Math.Max(lastTick + 1, (long)(Stopwatch.GetElapsedTime(origin).TotalSeconds * profile.FramesPerSecond));
-                    encoder!.Encode(last, tick, output!.Publish);
-                    lastTick = tick;
+                    finally { gpuWork.Release(); }
                 }
-                finally { gpuWork.Release(); }
+                finally { deviceWork.Release(); }
             }
         }
         catch(OperationCanceledException) when(stop.IsCancellationRequested) { }
@@ -135,6 +144,7 @@ internal sealed class VideoStreamWorker : IAsyncDisposable
             CloseInput();
             try
             {
+                await renderer.StopAsync().ConfigureAwait(false);
                 if(encoder is not null && output is not null)
                     encoder.Flush(output.Publish);
             }
@@ -143,6 +153,8 @@ internal sealed class VideoStreamWorker : IAsyncDisposable
             {
                 last?.Dispose();
                 encoder?.Dispose();
+                // NVENC must finish using the renderer's CUDA and D3D11 resources before teardown.
+                renderer.Dispose();
                 if(output is not null)
                     await output.DisposeAsync().ConfigureAwait(false);
                 Report("closed");
@@ -163,7 +175,11 @@ internal sealed class VideoStreamWorker : IAsyncDisposable
         CloseInput();
         await stop.CancelAsync().ConfigureAwait(false);
         try { await worker.ConfigureAwait(false); }
-        finally { stop.Dispose(); }
+        finally
+        {
+            stop.Dispose();
+            deviceWork.Dispose();
+        }
     }
 
     #endregion

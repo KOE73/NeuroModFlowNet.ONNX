@@ -131,6 +131,8 @@ struct Renderer {
 
     ~Renderer() {
         if (!resource) return;
+        try { Reset(); }
+        catch (...) { }
         CUcontext previous{};
         if (cuCtxPushCurrent(cuda.context) != CUDA_SUCCESS) return;
         if (mapped) cuGraphicsUnmapResources(1, &resource, nullptr);
@@ -139,29 +141,34 @@ struct Renderer {
     }
 
     uint64_t Map() {
-        if (mapped) throw std::runtime_error("D3D11 buffer is already mapped");
+        if (mapped || prepared) throw std::runtime_error("complete or reset the current D3D11 frame before mapping");
         CurrentContext current(cuda.context);
         Cuda(cuGraphicsMapResources(1, &resource, nullptr), "map D3D11 buffer for CUDA");
         mapped = true;
-        CUdeviceptr pointer{};
-        size_t mappedBytes{};
-        Cuda(cuGraphicsResourceGetMappedPointer(&pointer, &mappedBytes, resource), "get mapped CUDA pointer");
-        if (mappedBytes < bytes) throw std::runtime_error("mapped buffer smaller than BGRA frame");
-        return pointer;
+        try {
+            CUdeviceptr pointer{};
+            size_t mappedBytes{};
+            Cuda(cuGraphicsResourceGetMappedPointer(&pointer, &mappedBytes, resource), "get mapped CUDA pointer");
+            if (mappedBytes < bytes) throw std::runtime_error("mapped buffer smaller than BGRA frame");
+            return pointer;
+        } catch (...) {
+            if (cuGraphicsUnmapResources(1, &resource, nullptr) == CUDA_SUCCESS) mapped = false;
+            throw;
+        }
     }
 
     ID3D11Device* Device() const { return device.Get(); }
 
-    void Draw(ID3D11Texture2D* destination, uint32_t slice,
-              const OverlayRectangle* rectangles, uint32_t count, const wchar_t* labels) {
+    void PrepareBackground() {
         if (!mapped) throw std::runtime_error("D3D11 buffer must be mapped before drawing");
-        {
-            CurrentContext current(cuda.context);
-            Cuda(cuGraphicsUnmapResources(1, &resource, nullptr), "return buffer to D3D11 after CUDA write");
-            mapped = false;
-        }
-
+        Unmap();
+        prepared = true;
         DrawBackground();
+    }
+
+    void DrawPrepared(ID3D11Texture2D* destination, uint32_t slice,
+                      const OverlayRectangle* rectangles, uint32_t count, const wchar_t* labels) {
+        if (!prepared) throw std::runtime_error("prepare the D3D11 background before drawing");
         drawing->SetTarget(d2dTarget.Get());
         drawing->BeginDraw();
         for (uint32_t index = 0; index < count; ++index) {
@@ -185,9 +192,24 @@ struct Renderer {
         Hr(drawingResult, "complete Direct2D overlay");
         ConvertToNv12(destination, slice);
         WaitForGpu();
+        prepared = false;
+    }
+
+    void Reset() {
+        if (mapped) Unmap();
+        if (prepared) {
+            WaitForGpu();
+            prepared = false;
+        }
     }
 
 private:
+    void Unmap() {
+        CurrentContext current(cuda.context);
+        Cuda(cuGraphicsUnmapResources(1, &resource, nullptr), "return CUDA buffer to D3D11");
+        mapped = false;
+    }
+
     void InitDevice() {
         ComPtr<IDXGIFactory1> factory;
         Hr(CreateDXGIFactory1(IID_PPV_ARGS(&factory)), "create DXGI factory");
@@ -374,10 +396,12 @@ private:
         Hr(context->Signal(fence.Get(), fenceValue), "signal D3D11 work completed");
         Hr(fence->SetEventOnCompletion(fenceValue, event.get()), "arm D3D11 fence event");
         context->Flush();
-        auto wait = WaitForSingleObject(event.get(), 5000);
-        if (wait != WAIT_OBJECT_0) {
+        const ULONGLONG deadline = GetTickCount64() + 5000;
+        while (fence->GetCompletedValue() < fenceValue) {
+            const ULONGLONG now = GetTickCount64();
+            if (now >= deadline) throw std::runtime_error("timeout while waiting for D3D11 fence");
+            const DWORD wait = WaitForSingleObject(event.get(), static_cast<DWORD>(deadline - now));
             if (wait == WAIT_FAILED) Hr(HRESULT_FROM_WIN32(GetLastError()), "wait for D3D11 fence event");
-            throw std::runtime_error("timeout while waiting for D3D11 fence");
         }
         Hr(device->GetDeviceRemovedReason(), "check D3D11 device");
     }
@@ -391,6 +415,7 @@ private:
     EventHandle event;
     CUgraphicsResource resource{};
     bool mapped{};
+    bool prepared{};
     uint64_t fenceValue{};
     ComPtr<IDXGIAdapter1> adapter;
     ComPtr<ID3D11Device> device;
@@ -446,7 +471,41 @@ __declspec(dllexport) uint64_t NmfD2DMap(Renderer* renderer) {
 __declspec(dllexport) int NmfD2DDraw(Renderer* renderer, ID3D11Texture2D* destination, uint32_t slice,
                                    const OverlayRectangle* rectangles, uint32_t count, const wchar_t* labels) {
     try {
-        renderer->Draw(destination, slice, rectangles, count, labels);
+        renderer->PrepareBackground();
+        renderer->DrawPrepared(destination, slice, rectangles, count, labels);
+        return 0;
+    } catch (const std::exception& error) {
+        lastError = error.what();
+        try { renderer->Reset(); }
+        catch (...) { }
+        return -1;
+    }
+}
+
+__declspec(dllexport) int NmfD2DPrepareBackground(Renderer* renderer) {
+    try {
+        renderer->PrepareBackground();
+        return 0;
+    } catch (const std::exception& error) {
+        lastError = error.what();
+        return -1;
+    }
+}
+
+__declspec(dllexport) int NmfD2DDrawPrepared(Renderer* renderer, ID3D11Texture2D* destination, uint32_t slice,
+                                           const OverlayRectangle* rectangles, uint32_t count, const wchar_t* labels) {
+    try {
+        renderer->DrawPrepared(destination, slice, rectangles, count, labels);
+        return 0;
+    } catch (const std::exception& error) {
+        lastError = error.what();
+        return -1;
+    }
+}
+
+__declspec(dllexport) int NmfD2DReset(Renderer* renderer) {
+    try {
+        renderer->Reset();
         return 0;
     } catch (const std::exception& error) {
         lastError = error.what();
